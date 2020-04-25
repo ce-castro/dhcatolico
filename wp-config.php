@@ -18,7 +18,7 @@
 /** El nombre de tu base de datos de WordPress */
 define('DB_NAME', 'dhcatolico');
 
-/** MySQL database username */ 
+/** MySQL database username */  
 define('DB_USER', getenv("WORDPRESS_DB_USER"));
 
 /** MySQL database password */
