@@ -1,0 +1,23 @@
+[29-Oct-2016 14:08:32 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/rss-functions.php on line 8
+[29-Oct-2016 14:11:11 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/rss-functions.php on line 8
+[27-Dec-2016 15:53:40 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/registration-functions.php on line 7
+[27-Dec-2016 15:53:40 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/registration-functions.php on line 7
+[05-Jan-2017 15:53:15 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/registration-functions.php on line 7
+[05-Jan-2017 15:53:15 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/registration-functions.php on line 7
+[08-Mar-2017 23:44:31 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/rss-functions.php on line 8
+[21-Mar-2017 08:32:59 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/registration-functions.php on line 7
+[27-Nov-2017 16:12:41 America/El_Salvador] PHP Fatal error:  Class 'Walker' not found in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/class-walker-nav-menu.php on line 17
+[19-Jan-2018 18:16:12 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/locale.php on line 10
+[14-Mar-2018 13:54:43 America/El_Salvador] PHP Fatal error:  Class 'Walker' not found in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/class-walker-nav-menu.php on line 17
+[22-Mar-2018 23:20:59 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/locale.php on line 10
+[11-Sep-2018 08:52:03 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/rss.php on line 19
+[11-Sep-2018 09:14:07 America/El_Salvador] PHP Fatal error:  Call to undefined function _deprecated_file() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/rss-functions.php on line 8
+[19-Nov-2018 09:10:41 America/El_Salvador] PHP Fatal error:  Call to undefined function is_robots() in /home/ccnuevaa/public_html/dhcatolico.com/wp-includes/template-loader.php on line 28
+[08-Sep-2019 19:35:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function _deprecated_file() in /home/dtnf7ls98wsk/public_html/wp-includes/rss-functions.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/dtnf7ls98wsk/public_html/wp-includes/rss-functions.php on line 8
+[27-Jan-2020 00:15:55 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/dtnf7ls98wsk/public_html/wp-includes/functions.php on line 8
+[27-Jan-2020 00:15:55 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/dtnf7ls98wsk/public_html/wp-includes/functions.php on line 8
+[27-Jan-2020 00:15:55 UTC] PHP Warning:  require(ABSPATHWPINC/option.php): failed to open stream: No such file or directory in /home/dtnf7ls98wsk/public_html/wp-includes/functions.php on line 8
+[27-Jan-2020 00:15:55 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/option.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/dtnf7ls98wsk/public_html/wp-includes/functions.php on line 8

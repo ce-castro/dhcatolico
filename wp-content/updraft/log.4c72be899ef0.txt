@@ -1,0 +1,938 @@
+0000.000 (0) Opened log file at time: Sat, 27 Jul 2019 01:54:55 +0000 on http://dhcatolico.com
+0002.492 (0) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+0005.661 (0) Free space on disk containing Updraft's temporary directory: 1726317.5 MB
+0005.664 (0) Tasks: Backup files: 1 (schedule: weekly) Backup DB:  (schedule: weekly)
+0005.665 (0) Processed schedules. Combining jobs from identical schedules. Tasks now: Backup files: 1 Backup DB: 1
+0005.671 (0) Requesting semaphore lock (fd) (apparently via scheduler: last_scheduled_action_called_at=1542659504, seconds_ago=21532997)
+0005.673 (0) Set semaphore last lock (fd) time to 2019-07-27 01:55:01
+0005.674 (0) Semaphore lock (fd) complete
+0005.685 (0) Backup run: resumption=0, nonce=4c72be899ef0, begun at=1564192495 (6s ago), job type=backup
+0005.691 (0) Scheduling a resumption (1) after 300 seconds (1564192801) in case this run gets aborted
+0005.707 (0) Checking if we have a zip executable available
+0005.715 (0) Testing: /usr/bin/zip
+0009.412 (0) Output: zip warning: binziptest/test.zip not found or empty
+0013.116 (0) Output: adding: binziptest/subdir1/	(in=0) (out=0) (stored 0%)
+0013.120 (0) Output: adding: binziptest/subdir1/subdir2/	(in=0) (out=0) (stored 0%)
+0013.125 (0) Output: adding: binziptest/subdir1/subdir2/test.html	(in=131) (out=107) (deflated 18%)
+0013.130 (0) Output: total bytes=131, compressed=107 -> 18% savings
+0015.662 (0) Output: adding: binziptest/subdir1/subdir2/test2.html	(in=138) (out=113) (deflated 18%)
+0015.664 (0) Output: total bytes=269, compressed=220 -> 18% savings
+0015.670 (0) Working binary zip found: /usr/bin/zip
+0015.671 (0) Zip engine: found/will use a binary zip: /usr/bin/zip
+0015.679 (0) Creation of backups of directories: beginning
+0015.708 (0) Beginning creation of dump of plugins (split every: 400 MB)
+0022.518 (0) Total entities for the zip file: 961 directories, 6131 files (0 skipped as non-modified), 82 MB
+0022.525 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 2.0 seconds have passed since the last write (0 MB, 1 (1) files added so far); re-opening (prior size: 0 KB)
+0022.648 (0) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 0.20 MB
+0022.651 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 100 files added (on-disk size: 223.8 KB)
+0022.653 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 200 files added (on-disk size: 223.8 KB)
+0022.655 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 300 files added (on-disk size: 223.8 KB)
+0022.658 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 400 files added (on-disk size: 223.8 KB)
+0022.662 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 500 files added (on-disk size: 223.8 KB)
+0022.668 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (4.8 MB, 6131 files batched, 501 (502) added so far); re-opening (prior size: 223.8 KB)
+0023.356 (0) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 3.00 MB
+0023.360 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 600 files added (on-disk size: 3100.7 KB)
+0023.362 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 700 files added (on-disk size: 3100.7 KB)
+0023.365 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 800 files added (on-disk size: 3100.7 KB)
+0023.368 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 900 files added (on-disk size: 3100.7 KB)
+0023.372 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1000 files added (on-disk size: 3100.7 KB)
+0023.381 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.8 MB, 6131 files batched, 501 (1003) added so far); re-opening (prior size: 3100.7 KB)
+0023.982 (0) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 4.60 MB
+0023.986 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1100 files added (on-disk size: 4668.3 KB)
+0023.988 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1200 files added (on-disk size: 4668.3 KB)
+0023.990 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1300 files added (on-disk size: 4668.3 KB)
+0023.993 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1400 files added (on-disk size: 4668.3 KB)
+0023.996 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1500 files added (on-disk size: 4668.3 KB)
+0023.997 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.6 MB, 6131 files batched, 501 (1504) added so far); re-opening (prior size: 4668.3 KB)
+0024.922 (0) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 6.50 MB
+0024.926 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1600 files added (on-disk size: 6616.7 KB)
+0024.928 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1700 files added (on-disk size: 6616.7 KB)
+0024.930 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1800 files added (on-disk size: 6616.7 KB)
+0024.932 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1900 files added (on-disk size: 6616.7 KB)
+0024.936 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2000 files added (on-disk size: 6616.7 KB)
+0024.939 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (18.6 MB, 6131 files batched, 501 (2005) added so far); re-opening (prior size: 6616.7 KB)
+0044.830 (0) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 11.90 MB
+0044.856 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2100 files added (on-disk size: 12208.4 KB)
+0044.858 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2200 files added (on-disk size: 12208.4 KB)
+0044.860 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2300 files added (on-disk size: 12208.4 KB)
+0044.863 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2400 files added (on-disk size: 12208.4 KB)
+0044.865 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2500 files added (on-disk size: 12208.4 KB)
+0044.867 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (4.8 MB, 6131 files batched, 501 (2506) added so far); re-opening (prior size: 12208.4 KB)
+0054.792 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2600 files added (on-disk size: 13590.6 KB)
+0054.794 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2700 files added (on-disk size: 13590.6 KB)
+0054.797 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2800 files added (on-disk size: 13590.6 KB)
+0054.801 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2900 files added (on-disk size: 13590.6 KB)
+0054.804 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3000 files added (on-disk size: 13590.6 KB)
+0054.809 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (1.5 MB, 6131 files batched, 501 (3007) added so far); re-opening (prior size: 13590.6 KB)
+0064.288 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3100 files added (on-disk size: 14276 KB)
+0064.295 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3200 files added (on-disk size: 14276 KB)
+0064.300 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3300 files added (on-disk size: 14276 KB)
+0064.306 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3400 files added (on-disk size: 14276 KB)
+0064.308 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3500 files added (on-disk size: 14276 KB)
+0064.311 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.5 MB, 6131 files batched, 501 (3508) added so far); re-opening (prior size: 14276 KB)
+0074.916 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3600 files added (on-disk size: 16322.3 KB)
+0074.919 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3700 files added (on-disk size: 16322.3 KB)
+0074.921 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3800 files added (on-disk size: 16322.3 KB)
+0074.924 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3900 files added (on-disk size: 16322.3 KB)
+0074.935 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4000 files added (on-disk size: 16322.3 KB)
+0074.935 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (2.8 MB, 6131 files batched, 501 (4009) added so far); re-opening (prior size: 16322.3 KB)
+0084.558 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4100 files added (on-disk size: 18130 KB)
+0084.560 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4200 files added (on-disk size: 18130 KB)
+0084.562 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4300 files added (on-disk size: 18130 KB)
+0084.564 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4400 files added (on-disk size: 18130 KB)
+0084.567 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4500 files added (on-disk size: 18130 KB)
+0084.569 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (14 MB, 6131 files batched, 501 (4510) added so far); re-opening (prior size: 18130 KB)
+0113.557 (0) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 26.40 MB
+0113.581 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4600 files added (on-disk size: 26991 KB)
+0113.583 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4700 files added (on-disk size: 26991 KB)
+0113.586 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4800 files added (on-disk size: 26991 KB)
+0113.588 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4900 files added (on-disk size: 26991 KB)
+0113.592 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5000 files added (on-disk size: 26991 KB)
+0113.597 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (9.8 MB, 6131 files batched, 501 (5011) added so far); re-opening (prior size: 26991 KB)
+0163.998 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5100 files added (on-disk size: 31850.7 KB)
+0164.008 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5200 files added (on-disk size: 31850.7 KB)
+0164.014 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5300 files added (on-disk size: 31850.7 KB)
+0164.061 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5400 files added (on-disk size: 31850.7 KB)
+0164.092 (0) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5500 files added (on-disk size: 31850.7 KB)
+0164.107 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.3 MB, 6131 files batched, 501 (5512) added so far); re-opening (prior size: 31850.7 KB)
+0576.858 (1) Opened log file at time: Sat, 27 Jul 2019 02:04:32 +0000 on http://dhcatolico.com
+0578.759 (1) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 60.5M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+0578.951 (1) Free space on disk containing Updraft's temporary directory: 1726093.4 MB
+0578.955 (1) Backup run: resumption=1, nonce=4c72be899ef0, begun at=1564192495 (579s ago), job type=backup, previous check-in=239.4s
+0578.956 (1) Scheduling a resumption (2) after 300 seconds (1564193374) in case this run gets aborted
+0578.972 (1) Checking if we have a zip executable available
+0578.975 (1) Zip engine: found/will use a binary zip: /usr/bin/zip
+0578.976 (1) Creation of backups of directories: had begun; will resume
+0578.978 (1) Beginning creation of dump of plugins (split every: 400 MB)
+0578.982 (1) File exists (/home/dtnf7ls98wsk/public_html/wp-content/updraft/backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp), but was apparently not modified within the last 30 seconds, so we assume that any previous run has now terminated (time_mod=1564192741, time_now=1564193074, diff=333)
+0580.909 (1) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: Zip file already exists, with 5512 files
+0581.121 (1) Total entities for the zip file: 961 directories, 6131 files (0 skipped as non-modified), 82 MB
+0581.123 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 100 files added (on-disk size: 33586 KB)
+0581.124 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 200 files added (on-disk size: 33586 KB)
+0581.124 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 300 files added (on-disk size: 33586 KB)
+0581.125 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 400 files added (on-disk size: 33586 KB)
+0581.126 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 500 files added (on-disk size: 33586 KB)
+0581.127 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 600 files added (on-disk size: 33586 KB)
+0581.128 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 700 files added (on-disk size: 33586 KB)
+0581.129 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 800 files added (on-disk size: 33586 KB)
+0581.132 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 900 files added (on-disk size: 33586 KB)
+0581.133 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1000 files added (on-disk size: 33586 KB)
+0581.141 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1100 files added (on-disk size: 33586 KB)
+0585.109 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1200 files added (on-disk size: 33586 KB)
+0585.111 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1300 files added (on-disk size: 33586 KB)
+0585.112 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1400 files added (on-disk size: 33586 KB)
+0585.113 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1500 files added (on-disk size: 33586 KB)
+0585.114 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1600 files added (on-disk size: 33586 KB)
+0585.115 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1700 files added (on-disk size: 33586 KB)
+0585.116 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1800 files added (on-disk size: 33586 KB)
+0585.117 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1900 files added (on-disk size: 33586 KB)
+0585.133 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2000 files added (on-disk size: 33586 KB)
+0585.135 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2100 files added (on-disk size: 33586 KB)
+0585.136 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2200 files added (on-disk size: 33586 KB)
+0585.137 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2300 files added (on-disk size: 33586 KB)
+0585.138 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2400 files added (on-disk size: 33586 KB)
+0585.139 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2500 files added (on-disk size: 33586 KB)
+0585.140 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2600 files added (on-disk size: 33586 KB)
+0585.141 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2700 files added (on-disk size: 33586 KB)
+0585.142 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2800 files added (on-disk size: 33586 KB)
+0585.143 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2900 files added (on-disk size: 33586 KB)
+0585.146 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3000 files added (on-disk size: 33586 KB)
+0585.148 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3100 files added (on-disk size: 33586 KB)
+0585.149 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3200 files added (on-disk size: 33586 KB)
+0585.150 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3300 files added (on-disk size: 33586 KB)
+0585.151 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3400 files added (on-disk size: 33586 KB)
+0585.152 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3500 files added (on-disk size: 33586 KB)
+0585.153 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3600 files added (on-disk size: 33586 KB)
+0585.159 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3700 files added (on-disk size: 33586 KB)
+0585.160 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3800 files added (on-disk size: 33586 KB)
+0585.161 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3900 files added (on-disk size: 33586 KB)
+0585.162 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4000 files added (on-disk size: 33586 KB)
+0585.177 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4100 files added (on-disk size: 33586 KB)
+0585.178 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4200 files added (on-disk size: 33586 KB)
+0585.180 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4300 files added (on-disk size: 33586 KB)
+0585.181 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4400 files added (on-disk size: 33586 KB)
+0585.182 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4500 files added (on-disk size: 33586 KB)
+0585.183 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4600 files added (on-disk size: 33586 KB)
+0585.184 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4700 files added (on-disk size: 33586 KB)
+0585.199 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4800 files added (on-disk size: 33586 KB)
+0585.200 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4900 files added (on-disk size: 33586 KB)
+0585.201 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5000 files added (on-disk size: 33586 KB)
+0585.206 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5100 files added (on-disk size: 33586 KB)
+0585.206 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5200 files added (on-disk size: 33586 KB)
+0585.207 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5300 files added (on-disk size: 33586 KB)
+0585.208 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5400 files added (on-disk size: 33586 KB)
+0585.209 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5500 files added (on-disk size: 33586 KB)
+0585.213 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5600 files added (on-disk size: 33586 KB)
+0585.216 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5700 files added (on-disk size: 33586 KB)
+0585.225 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5800 files added (on-disk size: 33586 KB)
+0585.236 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5900 files added (on-disk size: 33586 KB)
+0585.239 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 6000 files added (on-disk size: 33586 KB)
+0585.240 (1) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.7 MB, 6131 files batched, 501 (501) added so far); re-opening (prior size: 33586 KB)
+0633.209 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 6100 files added (on-disk size: 35113.3 KB)
+0663.856 (1) Created plugins zip (0) - 35376.3 KB in 84.7 s (417.5 KB/s) (sha1: af7c88c261e223c7ce0c189692ba03be36c0fdd2, sha256: 71a7e190671daeb969cc8fa0b2903fe22fdcf4cf2730311d0e8accae8b381a13)
+0664.605 (1) Beginning creation of dump of themes (split every: 400 MB)
+0664.724 (1) Total entities for the zip file: 34 directories, 303 files (0 skipped as non-modified), 6.3 MB
+0664.726 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: 100 files added (on-disk size: 0 KB)
+0664.736 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: 200 files added (on-disk size: 0 KB)
+0664.739 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: 300 files added (on-disk size: 0 KB)
+0684.288 (1) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: size is now: 4.70 MB
+0684.394 (1) Created themes zip (0) - 4860.8 KB in 19.7 s (247 KB/s) (sha1: 71e7175f11fc985cd93d33f02672229390af9ada, sha256: adbbc9a8934d4fffe1c7e5e2d34da10f7e76d561db41861014a7d13f222c0b9e)
+0689.943 (1) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+0689.945 (1) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content/uploads
+0689.954 (1) finding files: 2019: adding to list (1)
+0689.955 (1) finding files: 2016: adding to list (2)
+0689.955 (1) finding files: wpcf7_uploads: adding to list (3)
+0689.956 (1) finding files: 2017: adding to list (4)
+0689.956 (1) finding files: 2018: adding to list (5)
+0689.957 (1) Beginning creation of dump of uploads (split every: 400 MB)
+0690.078 (1) Total entities for the zip file: 37 directories, 1324 files (0 skipped as non-modified), 283.1 MB
+0690.094 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 100 files added (on-disk size: 0 KB)
+0690.735 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 200 files added (on-disk size: 0 KB)
+0690.737 (1) Adding batch to zip file (UpdraftPlus_BinZip): over 25 MB added on this batch (25.7 MB, 1324 files batched, 267 (267) added so far); re-opening (prior size: 0 KB)
+0733.416 (1) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: size is now: 25.70 MB
+0733.418 (1) A useful amount of data was added after this amount of zip processing: 44.2 s (normalised: 43 s, rate: 595.4 KB/s)
+0733.420 (1) Performance is good - will increase the amount of data we attempt to batch (time=44.168302059174, normalised_time=42.995631889131, max_time=239, data points known=1, old_max_bytes=26214400, new_max_bytes=87430857)
+0733.422 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 300 files added (on-disk size: 26358 KB)
+0733.424 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 400 files added (on-disk size: 26358 KB)
+0733.426 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 500 files added (on-disk size: 26358 KB)
+0733.432 (1) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 600 files added (on-disk size: 26358 KB)
+0733.438 (1) Adding batch to zip file (UpdraftPlus_BinZip): over 83.4 MB added on this batch (83.7 MB, 1324 files batched, 420 (687) added so far); re-opening (prior size: 26358 KB)
+1067.196 (2) Opened log file at time: Sat, 27 Jul 2019 02:12:42 +0000 on http://dhcatolico.com
+1067.197 (2) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+1067.247 (2) Free space on disk containing Updraft's temporary directory: 1726195.3 MB
+1067.249 (2) Backup run: resumption=2, nonce=4c72be899ef0, begun at=1564192495 (1067s ago), job type=backup, previous check-in=253.4s
+1067.250 (2) Scheduling a resumption (3) after 300 seconds (1564193862) in case this run gets aborted
+1067.266 (2) Checking if we have a zip executable available
+1067.267 (2) Zip engine: found/will use a binary zip: /usr/bin/zip
+1067.267 (2) Creation of backups of directories: had begun; will resume
+1067.269 (2) Beginning creation of dump of plugins (split every: 400 MB)
+1067.269 (2) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: this file has already been created (age: 405 s)
+1067.271 (2) Beginning creation of dump of themes (split every: 400 MB)
+1067.272 (2) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: this file has already been created (age: 383 s)
+1067.273 (2) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+1067.274 (2) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content/uploads
+1067.274 (2) finding files: 2019: adding to list (1)
+1067.275 (2) finding files: 2016: adding to list (2)
+1067.275 (2) finding files: wpcf7_uploads: adding to list (3)
+1067.276 (2) finding files: 2017: adding to list (4)
+1067.276 (2) finding files: 2018: adding to list (5)
+1067.277 (2) Beginning creation of dump of uploads (split every: 400 MB)
+1067.277 (2) File exists (/home/dtnf7ls98wsk/public_html/wp-content/updraft/backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp), but was apparently not modified within the last 30 seconds, so we assume that any previous run has now terminated (time_mod=1564193379, time_now=1564193563, diff=184)
+1067.341 (2) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: Zip file already exists, with 687 files
+1067.368 (2) Total entities for the zip file: 37 directories, 1324 files (0 skipped as non-modified), 283.1 MB
+1067.370 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 100 files added (on-disk size: 112148.6 KB)
+1067.371 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 200 files added (on-disk size: 112148.6 KB)
+1067.372 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 300 files added (on-disk size: 112148.6 KB)
+1067.373 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 400 files added (on-disk size: 112148.6 KB)
+1067.374 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 500 files added (on-disk size: 112148.6 KB)
+1067.374 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 600 files added (on-disk size: 112148.6 KB)
+1067.375 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 700 files added (on-disk size: 112148.6 KB)
+1067.378 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 800 files added (on-disk size: 112148.6 KB)
+1067.381 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 900 files added (on-disk size: 112148.6 KB)
+1067.383 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1000 files added (on-disk size: 112148.6 KB)
+1067.384 (2) Adding batch to zip file (UpdraftPlus_BinZip): over 83.4 MB added on this batch (83.7 MB, 1324 files batched, 333 (333) added so far); re-opening (prior size: 112148.6 KB)
+1269.242 (2) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: size is now: 193.30 MB
+1269.244 (2) A useful amount of data was added after this amount of zip processing: 202 s (normalised: 201.3 s, rate: 424.2 KB/s)
+1269.247 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1100 files added (on-disk size: 197898.2 KB)
+1269.250 (2) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1200 files added (on-disk size: 197898.2 KB)
+1269.253 (2) Adding batch to zip file (UpdraftPlus_BinZip): over 83.4 MB added on this batch (88.6 MB, 1324 files batched, 274 (607) added so far); re-opening (prior size: 197898.2 KB)
+1398.685 (3) Opened log file at time: Sat, 27 Jul 2019 02:18:14 +0000 on http://dhcatolico.com
+1398.765 (3) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+1399.035 (3) Free space on disk containing Updraft's temporary directory: 1726003.8 MB
+1399.139 (3) Backup run: resumption=3, nonce=4c72be899ef0, begun at=1564192495 (1399s ago), job type=backup, previous check-in=202s
+1399.264 (3) Scheduling a resumption (4) after 300 seconds (1564194195) in case this run gets aborted
+1402.866 (3) Checking if we have a zip executable available
+1402.869 (3) Zip engine: found/will use a binary zip: /usr/bin/zip
+1402.871 (3) Creation of backups of directories: had begun; will resume
+1403.327 (3) Beginning creation of dump of plugins (split every: 400 MB)
+1403.449 (3) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: this file has already been created (age: 741 s)
+1404.633 (3) Terminate: zizNBoBo exists with activity within the last 30 seconds (time_mod=1564193900, time_now=1564193899, diff=-1, size=115648KB). This likely means that another UpdraftPlus run is at work; so we will exit.
+1404.738 (3) Rescheduling resumption 4: moving to 420 seconds from now (1564194320)
+1404.861 (3) To decrease the likelihood of overlaps, increasing resumption interval to: 300 + 120 = 420
+2603.180 (4) Opened log file at time: Sat, 27 Jul 2019 02:38:18 +0000 on http://dhcatolico.com
+2603.181 (4) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+2603.228 (4) Free space on disk containing Updraft's temporary directory: 1726012.6 MB
+2603.233 (4) Backup run: resumption=4, nonce=4c72be899ef0, begun at=1564192495 (2603s ago), job type=backup, previous check-in=5.9s
+2603.233 (4) Long time past since expected resumption time: approx expected=1564194320.4, now=1564195098.9, diff=778.5
+2603.234 (4) [Warning] Su sitio web es visitado con poca frecuencia y UpdraftPlus no está recibiendo los recursos que se espera, por favor lea esta página: https://updraftplus.com/faqs/why-am-i-getting-warnings-about-my-site-not-having-enough-visitors/
+2603.236 (4) Scheduling a resumption (5) after 420 seconds (1564195518) in case this run gets aborted
+2603.408 (4) Checking if we have a zip executable available
+2603.412 (4) Zip engine: found/will use a binary zip: /usr/bin/zip
+2603.413 (4) Creation of backups of directories: had begun; will resume
+2603.414 (4) Beginning creation of dump of plugins (split every: 400 MB)
+2603.414 (4) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: this file has already been created (age: 1941 s)
+2603.416 (4) Beginning creation of dump of themes (split every: 400 MB)
+2603.417 (4) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: this file has already been created (age: 1919 s)
+2603.419 (4) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+2603.419 (4) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content/uploads
+2603.427 (4) finding files: 2019: adding to list (1)
+2603.428 (4) finding files: 2016: adding to list (2)
+2603.428 (4) finding files: wpcf7_uploads: adding to list (3)
+2603.429 (4) finding files: 2017: adding to list (4)
+2603.429 (4) finding files: 2018: adding to list (5)
+2603.430 (4) Beginning creation of dump of uploads (split every: 400 MB)
+2603.430 (4) File exists (/home/dtnf7ls98wsk/public_html/wp-content/updraft/backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp), but was apparently not modified within the last 30 seconds, so we assume that any previous run has now terminated (time_mod=1564194090, time_now=1564195099, diff=1009)
+2603.512 (4) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: Zip file already exists, with 1294 files
+2603.708 (4) Total entities for the zip file: 37 directories, 1324 files (0 skipped as non-modified), 283.1 MB
+2603.713 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 100 files added (on-disk size: 288666 KB)
+2603.714 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 200 files added (on-disk size: 288666 KB)
+2603.715 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 300 files added (on-disk size: 288666 KB)
+2603.716 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 400 files added (on-disk size: 288666 KB)
+2603.717 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 500 files added (on-disk size: 288666 KB)
+2603.718 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 600 files added (on-disk size: 288666 KB)
+2603.719 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 700 files added (on-disk size: 288666 KB)
+2603.719 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 800 files added (on-disk size: 288666 KB)
+2603.720 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 900 files added (on-disk size: 288666 KB)
+2603.721 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1000 files added (on-disk size: 288666 KB)
+2603.734 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1100 files added (on-disk size: 288666 KB)
+2603.736 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1200 files added (on-disk size: 288666 KB)
+2603.737 (4) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1300 files added (on-disk size: 288666 KB)
+3712.315 (5) Opened log file at time: Sat, 27 Jul 2019 02:56:48 +0000 on http://dhcatolico.com
+3712.316 (5) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+3712.400 (5) Free space on disk containing Updraft's temporary directory: 1727536.2 MB
+3712.402 (5) Backup run: resumption=5, nonce=4c72be899ef0, begun at=1564192495 (3713s ago), job type=backup
+3712.403 (5) Scheduling a resumption (6) after 420 seconds (1564196628) in case this run gets aborted
+3712.571 (5) Checking if we have a zip executable available
+3712.575 (5) Zip engine: found/will use a binary zip: /usr/bin/zip
+3712.576 (5) Creation of backups of directories: had begun; will resume
+3712.576 (5) No check-in was detected on the previous run - as a result, we are reducing the batch amount (old=87430857, new=65573142)
+3712.579 (5) Beginning creation of dump of plugins (split every: 400 MB)
+3712.721 (5) Total entities for the zip file: 961 directories, 6131 files (0 skipped as non-modified), 82 MB
+3712.736 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 100 files added (on-disk size: 0 KB)
+3712.764 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 200 files added (on-disk size: 0 KB)
+3712.766 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 300 files added (on-disk size: 0 KB)
+3712.769 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 400 files added (on-disk size: 0 KB)
+3712.771 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 500 files added (on-disk size: 0 KB)
+3712.771 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (4.8 MB, 6131 files batched, 501 (501) added so far); re-opening (prior size: 0 KB)
+3718.882 (5) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 3.00 MB
+3718.887 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 600 files added (on-disk size: 3098.6 KB)
+3718.890 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 700 files added (on-disk size: 3098.6 KB)
+3718.892 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 800 files added (on-disk size: 3098.6 KB)
+3718.894 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 900 files added (on-disk size: 3098.6 KB)
+3718.896 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1000 files added (on-disk size: 3098.6 KB)
+3718.896 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.8 MB, 6131 files batched, 501 (1002) added so far); re-opening (prior size: 3098.6 KB)
+3723.720 (5) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 4.50 MB
+3723.724 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1100 files added (on-disk size: 4641.4 KB)
+3723.726 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1200 files added (on-disk size: 4641.4 KB)
+3723.728 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1300 files added (on-disk size: 4641.4 KB)
+3723.731 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1400 files added (on-disk size: 4641.4 KB)
+3723.733 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1500 files added (on-disk size: 4641.4 KB)
+3723.734 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.6 MB, 6131 files batched, 501 (1503) added so far); re-opening (prior size: 4641.4 KB)
+3736.733 (5) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 6.50 MB
+3736.737 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1600 files added (on-disk size: 6616.1 KB)
+3736.739 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1700 files added (on-disk size: 6616.1 KB)
+3736.742 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1800 files added (on-disk size: 6616.1 KB)
+3736.745 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1900 files added (on-disk size: 6616.1 KB)
+3736.749 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2000 files added (on-disk size: 6616.1 KB)
+3736.753 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (18.6 MB, 6131 files batched, 501 (2004) added so far); re-opening (prior size: 6616.1 KB)
+3756.087 (5) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 11.90 MB
+3756.094 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2100 files added (on-disk size: 12204.9 KB)
+3756.097 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2200 files added (on-disk size: 12204.9 KB)
+3756.099 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2300 files added (on-disk size: 12204.9 KB)
+3756.101 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2400 files added (on-disk size: 12204.9 KB)
+3756.104 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2500 files added (on-disk size: 12204.9 KB)
+3756.104 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (4.8 MB, 6131 files batched, 501 (2505) added so far); re-opening (prior size: 12204.9 KB)
+3773.560 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2600 files added (on-disk size: 13589.7 KB)
+3773.563 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2700 files added (on-disk size: 13589.7 KB)
+3773.565 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2800 files added (on-disk size: 13589.7 KB)
+3773.567 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2900 files added (on-disk size: 13589.7 KB)
+3773.570 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3000 files added (on-disk size: 13589.7 KB)
+3773.570 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (1.5 MB, 6131 files batched, 501 (3006) added so far); re-opening (prior size: 13589.7 KB)
+3788.432 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3100 files added (on-disk size: 14274.6 KB)
+3788.435 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3200 files added (on-disk size: 14274.6 KB)
+3788.437 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3300 files added (on-disk size: 14274.6 KB)
+3788.439 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3400 files added (on-disk size: 14274.6 KB)
+3788.441 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3500 files added (on-disk size: 14274.6 KB)
+3788.442 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.5 MB, 6131 files batched, 501 (3507) added so far); re-opening (prior size: 14274.6 KB)
+3802.380 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3600 files added (on-disk size: 16321.4 KB)
+3802.383 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3700 files added (on-disk size: 16321.4 KB)
+3802.385 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3800 files added (on-disk size: 16321.4 KB)
+3802.387 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3900 files added (on-disk size: 16321.4 KB)
+3802.389 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4000 files added (on-disk size: 16321.4 KB)
+3802.397 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (2.8 MB, 6131 files batched, 501 (4008) added so far); re-opening (prior size: 16321.4 KB)
+3824.947 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4100 files added (on-disk size: 18129.6 KB)
+3824.949 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4200 files added (on-disk size: 18129.6 KB)
+3824.952 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4300 files added (on-disk size: 18129.6 KB)
+3824.954 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4400 files added (on-disk size: 18129.6 KB)
+3824.956 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4500 files added (on-disk size: 18129.6 KB)
+3824.956 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (14 MB, 6131 files batched, 501 (4509) added so far); re-opening (prior size: 18129.6 KB)
+3847.139 (5) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: size is now: 26.40 MB
+3847.214 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4600 files added (on-disk size: 26985.8 KB)
+3847.217 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4700 files added (on-disk size: 26985.8 KB)
+3847.219 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4800 files added (on-disk size: 26985.8 KB)
+3847.221 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4900 files added (on-disk size: 26985.8 KB)
+3847.224 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5000 files added (on-disk size: 26985.8 KB)
+3847.224 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (9.8 MB, 6131 files batched, 501 (5010) added so far); re-opening (prior size: 26985.8 KB)
+3887.235 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5100 files added (on-disk size: 31847.7 KB)
+3887.237 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5200 files added (on-disk size: 31847.7 KB)
+3887.239 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5300 files added (on-disk size: 31847.7 KB)
+3887.242 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5400 files added (on-disk size: 31847.7 KB)
+3887.244 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5500 files added (on-disk size: 31847.7 KB)
+3887.244 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.3 MB, 6131 files batched, 501 (5511) added so far); re-opening (prior size: 31847.7 KB)
+3918.963 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5600 files added (on-disk size: 33584.7 KB)
+3918.965 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5700 files added (on-disk size: 33584.7 KB)
+3918.968 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5800 files added (on-disk size: 33584.7 KB)
+3918.970 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5900 files added (on-disk size: 33584.7 KB)
+3918.972 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 6000 files added (on-disk size: 33584.7 KB)
+3918.972 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.7 MB, 6131 files batched, 501 (6012) added so far); re-opening (prior size: 33584.7 KB)
+3961.982 (5) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 6100 files added (on-disk size: 35113.1 KB)
+3964.784 (5) Adding batch to zip file (UpdraftPlus_BinZip): over 2.0 seconds have passed since the last write (0.6 MB, 89 (6101) files added so far); re-opening (prior size: 35113.1 KB)
+4809.458 (6) Opened log file at time: Sat, 27 Jul 2019 03:15:05 +0000 on http://dhcatolico.com
+4809.458 (6) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+4809.503 (6) Free space on disk containing Updraft's temporary directory: 1727502 MB
+4809.505 (6) Backup run: resumption=6, nonce=4c72be899ef0, begun at=1564192495 (4810s ago), job type=backup, previous check-in=287s
+4809.507 (6) Scheduling a resumption (7) after 420 seconds (1564197725) in case this run gets aborted
+4809.515 (6) Checking if we have a zip executable available
+4809.515 (6) Zip engine: found/will use a binary zip: /usr/bin/zip
+4809.516 (6) Creation of backups of directories: had begun; will resume
+4809.517 (6) Beginning creation of dump of plugins (split every: 400 MB)
+4809.518 (6) File exists (/home/dtnf7ls98wsk/public_html/wp-content/updraft/backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp), but was apparently not modified within the last 30 seconds, so we assume that any previous run has now terminated (time_mod=1564196529, time_now=1564197305, diff=776)
+4809.642 (6) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: Zip file already exists, with 6131 files
+4809.745 (6) Total entities for the zip file: 961 directories, 6131 files (0 skipped as non-modified), 82 MB
+4809.747 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 100 files added (on-disk size: 35376.3 KB)
+4809.748 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 200 files added (on-disk size: 35376.3 KB)
+4809.749 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 300 files added (on-disk size: 35376.3 KB)
+4809.750 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 400 files added (on-disk size: 35376.3 KB)
+4809.751 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 500 files added (on-disk size: 35376.3 KB)
+4809.752 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 600 files added (on-disk size: 35376.3 KB)
+4809.753 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 700 files added (on-disk size: 35376.3 KB)
+4809.754 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 800 files added (on-disk size: 35376.3 KB)
+4809.755 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 900 files added (on-disk size: 35376.3 KB)
+4809.756 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1000 files added (on-disk size: 35376.3 KB)
+4809.758 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1100 files added (on-disk size: 35376.3 KB)
+4809.759 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1200 files added (on-disk size: 35376.3 KB)
+4809.760 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1300 files added (on-disk size: 35376.3 KB)
+4809.761 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1400 files added (on-disk size: 35376.3 KB)
+4809.763 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1500 files added (on-disk size: 35376.3 KB)
+4809.764 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1600 files added (on-disk size: 35376.3 KB)
+4809.765 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1700 files added (on-disk size: 35376.3 KB)
+4809.766 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1800 files added (on-disk size: 35376.3 KB)
+4809.767 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 1900 files added (on-disk size: 35376.3 KB)
+4809.768 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2000 files added (on-disk size: 35376.3 KB)
+4809.770 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2100 files added (on-disk size: 35376.3 KB)
+4809.771 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2200 files added (on-disk size: 35376.3 KB)
+4809.772 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2300 files added (on-disk size: 35376.3 KB)
+4809.773 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2400 files added (on-disk size: 35376.3 KB)
+4809.775 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2500 files added (on-disk size: 35376.3 KB)
+4809.776 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2600 files added (on-disk size: 35376.3 KB)
+4809.778 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2700 files added (on-disk size: 35376.3 KB)
+4809.779 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2800 files added (on-disk size: 35376.3 KB)
+4809.780 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 2900 files added (on-disk size: 35376.3 KB)
+4809.781 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3000 files added (on-disk size: 35376.3 KB)
+4809.783 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3100 files added (on-disk size: 35376.3 KB)
+4809.784 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3200 files added (on-disk size: 35376.3 KB)
+4809.785 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3300 files added (on-disk size: 35376.3 KB)
+4809.786 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3400 files added (on-disk size: 35376.3 KB)
+4809.788 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3500 files added (on-disk size: 35376.3 KB)
+4809.789 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3600 files added (on-disk size: 35376.3 KB)
+4809.790 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3700 files added (on-disk size: 35376.3 KB)
+4809.790 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3800 files added (on-disk size: 35376.3 KB)
+4809.791 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 3900 files added (on-disk size: 35376.3 KB)
+4809.792 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4000 files added (on-disk size: 35376.3 KB)
+4809.794 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4100 files added (on-disk size: 35376.3 KB)
+4809.795 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4200 files added (on-disk size: 35376.3 KB)
+4809.796 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4300 files added (on-disk size: 35376.3 KB)
+4809.797 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4400 files added (on-disk size: 35376.3 KB)
+4809.798 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4500 files added (on-disk size: 35376.3 KB)
+4809.799 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4600 files added (on-disk size: 35376.3 KB)
+4809.800 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4700 files added (on-disk size: 35376.3 KB)
+4809.801 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4800 files added (on-disk size: 35376.3 KB)
+4809.802 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 4900 files added (on-disk size: 35376.3 KB)
+4809.803 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5000 files added (on-disk size: 35376.3 KB)
+4809.805 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5100 files added (on-disk size: 35376.3 KB)
+4809.806 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5200 files added (on-disk size: 35376.3 KB)
+4809.807 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5300 files added (on-disk size: 35376.3 KB)
+4809.808 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5400 files added (on-disk size: 35376.3 KB)
+4809.810 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5500 files added (on-disk size: 35376.3 KB)
+4809.810 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5600 files added (on-disk size: 35376.3 KB)
+4809.811 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5700 files added (on-disk size: 35376.3 KB)
+4809.813 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5800 files added (on-disk size: 35376.3 KB)
+4809.814 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 5900 files added (on-disk size: 35376.3 KB)
+4809.815 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 6000 files added (on-disk size: 35376.3 KB)
+4809.816 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip.tmp: 6100 files added (on-disk size: 35376.3 KB)
+4842.532 (6) Created plugins zip (0) - 35376.3 KB in 33 s (1073 KB/s) (sha1: f077d01a50705492e0fd3e7cd7b383b224facd8b, sha256: b352fe252942eabf30c90815ffbb0318e259432ae842992865196234356fe41e)
+4842.534 (6) Beginning creation of dump of themes (split every: 400 MB)
+4842.584 (6) Total entities for the zip file: 34 directories, 303 files (0 skipped as non-modified), 6.3 MB
+4842.586 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: 100 files added (on-disk size: 0 KB)
+4842.588 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: 200 files added (on-disk size: 0 KB)
+4842.590 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: 300 files added (on-disk size: 0 KB)
+4854.538 (6) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip.tmp: size is now: 4.70 MB
+4854.602 (6) Created themes zip (0) - 4860.8 KB in 12 s (404.3 KB/s) (sha1: 71e7175f11fc985cd93d33f02672229390af9ada, sha256: adbbc9a8934d4fffe1c7e5e2d34da10f7e76d561db41861014a7d13f222c0b9e)
+4854.603 (6) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+4854.604 (6) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content/uploads
+4854.605 (6) finding files: 2019: adding to list (1)
+4854.605 (6) finding files: 2016: adding to list (2)
+4854.605 (6) finding files: wpcf7_uploads: adding to list (3)
+4854.606 (6) finding files: 2017: adding to list (4)
+4854.607 (6) finding files: 2018: adding to list (5)
+4854.607 (6) Beginning creation of dump of uploads (split every: 400 MB)
+4854.694 (6) Total entities for the zip file: 37 directories, 1324 files (0 skipped as non-modified), 283.1 MB
+4854.698 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 100 files added (on-disk size: 0 KB)
+4854.701 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 200 files added (on-disk size: 0 KB)
+4854.704 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 300 files added (on-disk size: 0 KB)
+4854.708 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 400 files added (on-disk size: 0 KB)
+4854.710 (6) Adding batch to zip file (UpdraftPlus_BinZip): over 62.5 MB added on this batch (62.7 MB, 1324 files batched, 453 (453) added so far); re-opening (prior size: 0 KB)
+4939.533 (6) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: size is now: 62.80 MB
+4939.535 (6) A useful amount of data was added after this amount of zip processing: 85.3 s (normalised: 85.1 s, rate: 752.5 KB/s)
+4939.535 (6) Was going to raise maxzipbytes to 132687948, but this is too high: a previous failure led to the ceiling being set at 65573142, which we will use instead
+4939.536 (6) Performance is good - but we will not increase the amount of data we batch, as we are already at the present limit (time=85.284645080566, normalised_time=85.099628120675, max_time=287, data points known=5, max_bytes=65573142)
+4939.538 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 500 files added (on-disk size: 64273.7 KB)
+4939.540 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 600 files added (on-disk size: 64273.7 KB)
+4939.542 (6) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 700 files added (on-disk size: 64273.7 KB)
+4939.544 (6) Adding batch to zip file (UpdraftPlus_BinZip): over 62.5 MB added on this batch (62.6 MB, 1324 files batched, 319 (772) added so far); re-opening (prior size: 64273.7 KB)
+5348.881 (7) Opened log file at time: Sat, 27 Jul 2019 03:24:04 +0000 on http://dhcatolico.com
+5348.881 (7) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+5348.927 (7) Free space on disk containing Updraft's temporary directory: 1727367.6 MB
+5348.929 (7) Backup run: resumption=7, nonce=4c72be899ef0, begun at=1564192495 (5349s ago), job type=backup, previous check-in=242.4s
+5348.930 (7) Scheduling a resumption (8) after 420 seconds (1564198264) in case this run gets aborted
+5348.938 (7) Checking if we have a zip executable available
+5348.938 (7) Zip engine: found/will use a binary zip: /usr/bin/zip
+5348.939 (7) Creation of backups of directories: had begun; will resume
+5348.940 (7) Beginning creation of dump of plugins (split every: 400 MB)
+5348.941 (7) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: this file has already been created (age: 507 s)
+5348.942 (7) Beginning creation of dump of themes (split every: 400 MB)
+5348.943 (7) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: this file has already been created (age: 494 s)
+5348.944 (7) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+5348.944 (7) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content/uploads
+5348.945 (7) finding files: 2019: adding to list (1)
+5348.945 (7) finding files: 2016: adding to list (2)
+5348.946 (7) finding files: wpcf7_uploads: adding to list (3)
+5348.946 (7) finding files: 2017: adding to list (4)
+5348.946 (7) finding files: 2018: adding to list (5)
+5348.947 (7) Beginning creation of dump of uploads (split every: 400 MB)
+5348.947 (7) File exists (/home/dtnf7ls98wsk/public_html/wp-content/updraft/backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp), but was apparently not modified within the last 30 seconds, so we assume that any previous run has now terminated (time_mod=1564197578, time_now=1564197844, diff=266)
+5349.003 (7) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: Zip file already exists, with 772 files
+5349.021 (7) Total entities for the zip file: 37 directories, 1324 files (0 skipped as non-modified), 283.1 MB
+5349.022 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 100 files added (on-disk size: 128458.2 KB)
+5349.023 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 200 files added (on-disk size: 128458.2 KB)
+5349.024 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 300 files added (on-disk size: 128458.2 KB)
+5349.025 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 400 files added (on-disk size: 128458.2 KB)
+5349.026 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 500 files added (on-disk size: 128458.2 KB)
+5349.026 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 600 files added (on-disk size: 128458.2 KB)
+5349.027 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 700 files added (on-disk size: 128458.2 KB)
+5349.028 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 800 files added (on-disk size: 128458.2 KB)
+5349.031 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 900 files added (on-disk size: 128458.2 KB)
+5349.033 (7) Adding batch to zip file (UpdraftPlus_BinZip): over 62.5 MB added on this batch (63.3 MB, 1324 files batched, 228 (228) added so far); re-opening (prior size: 128458.2 KB)
+5551.043 (7) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: size is now: 188.80 MB
+5551.045 (7) A useful amount of data was added after this amount of zip processing: 202.8 s (normalised: 200.3 s, rate: 319.8 KB/s)
+5551.046 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1000 files added (on-disk size: 193352.9 KB)
+5551.049 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1100 files added (on-disk size: 193352.9 KB)
+5551.052 (7) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: 1200 files added (on-disk size: 193352.9 KB)
+5551.054 (7) Adding batch to zip file (UpdraftPlus_BinZip): over 62.5 MB added on this batch (82.3 MB, 1324 files batched, 284 (512) added so far); re-opening (prior size: 193352.9 KB)
+5837.349 (8) Opened log file at time: Sat, 27 Jul 2019 03:32:13 +0000 on http://dhcatolico.com
+5837.350 (8) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+5837.685 (8) Free space on disk containing Updraft's temporary directory: 1727218 MB
+5837.687 (8) Backup run: resumption=8, nonce=4c72be899ef0, begun at=1564192495 (5838s ago), job type=backup, previous check-in=202.2s
+5837.689 (8) Time passed on previous resumptions: 0:239.4 1:253.4 2:202 3:5.9 4:? 5:287 6:242.4 7:202.2  (known: 7, max: 287)
+5837.689 (8) Based on the available data, we are bringing the resumption interval down to: 339 seconds
+5837.697 (8) Scheduling a resumption (9) after 339 seconds (1564198672) in case this run gets aborted
+5837.865 (8) Checking if we have a zip executable available
+5837.869 (8) Zip engine: found/will use a binary zip: /usr/bin/zip
+5837.870 (8) Creation of backups of directories: had begun; will resume
+5837.872 (8) Beginning creation of dump of plugins (split every: 400 MB)
+5837.873 (8) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: this file has already been created (age: 996 s)
+5837.887 (8) Beginning creation of dump of themes (split every: 400 MB)
+5837.888 (8) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: this file has already been created (age: 983 s)
+5837.890 (8) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+5837.891 (8) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content/uploads
+5837.891 (8) finding files: 2019: adding to list (1)
+5837.892 (8) finding files: 2016: adding to list (2)
+5837.892 (8) finding files: wpcf7_uploads: adding to list (3)
+5837.893 (8) finding files: 2017: adding to list (4)
+5837.893 (8) finding files: 2018: adding to list (5)
+5837.894 (8) Beginning creation of dump of uploads (split every: 400 MB)
+5837.896 (8) Terminate: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp exists with activity within the last 30 seconds (time_mod=1564198328, time_now=1564198333, diff=5, size=277738.2KB). This likely means that another UpdraftPlus run is at work; so we will exit.
+5837.900 (8) Rescheduling resumption 9: moving to 459 seconds from now (1564198792)
+5837.909 (8) To decrease the likelihood of overlaps, increasing resumption interval to: 339 + 120 = 459
+6470.164 (9) Opened log file at time: Sat, 27 Jul 2019 03:42:45 +0000 on http://dhcatolico.com
+6470.165 (9) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.4M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+6470.209 (9) Free space on disk containing Updraft's temporary directory: 1727218 MB
+6470.211 (9) Backup run: resumption=9, nonce=4c72be899ef0, begun at=1564192495 (6470s ago), job type=backup, previous check-in=0.5s
+6470.212 (9) The current run is resumption number 9, and there was nothing useful done on the last run (last useful run: 7) - will not schedule a further attempt until we see something useful happening this time
+6470.220 (9) Zip engine: ZipArchive (a.k.a. php-zip) is not available or is disabled (will use PclZip (much slower) if needed)
+6470.220 (9) Creation of backups of directories: had begun; will resume
+6470.222 (9) Beginning creation of dump of plugins (split every: 400 MB)
+6470.222 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: this file has already been created (age: 1628 s)
+6470.224 (9) Beginning creation of dump of themes (split every: 400 MB)
+6470.225 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: this file has already been created (age: 1615 s)
+6470.226 (9) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+6470.226 (9) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content/uploads
+6470.227 (9) finding files: 2019: adding to list (1)
+6470.227 (9) finding files: 2016: adding to list (2)
+6470.228 (9) finding files: wpcf7_uploads: adding to list (3)
+6470.228 (9) finding files: 2017: adding to list (4)
+6470.229 (9) finding files: 2018: adding to list (5)
+6470.229 (9) Beginning creation of dump of uploads (split every: 400 MB)
+6470.230 (9) File exists (/home/dtnf7ls98wsk/public_html/wp-content/updraft/backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp), but was apparently not modified within the last 30 seconds, so we assume that any previous run has now terminated (time_mod=1564198328, time_now=1564198965, diff=637)
+6470.309 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip.tmp: Zip file already exists, with 1284 files
+6470.310 (9) No check-in on last two runs; bumping index and reducing zip split to: 270.2 MB
+6589.810 (9) This is resumption 9, but meaningful activity is still taking place; so a new one will be scheduled
+6589.812 (9) Created uploads zip (0) - 277738.2 KB in 0 s (7706781 KB/s) (checksums: sha1: b1c4529ced4aa592b67806183937eb8f1c987725, sha256: 4a133661755ad3221b2ec3a1c7e41d2ad1c5e5ec4a7cdf59e2f134071584605d)
+6589.871 (9) Total entities for the zip file: 37 directories, 1324 files (0 skipped as non-modified), 283.1 MB
+6589.874 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 100 files added (on-disk size: 0 KB)
+6589.875 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 200 files added (on-disk size: 0 KB)
+6589.877 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 300 files added (on-disk size: 0 KB)
+6589.877 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 400 files added (on-disk size: 0 KB)
+6589.878 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 500 files added (on-disk size: 0 KB)
+6589.879 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 600 files added (on-disk size: 0 KB)
+6589.880 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 700 files added (on-disk size: 0 KB)
+6589.881 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 800 files added (on-disk size: 0 KB)
+6589.882 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 900 files added (on-disk size: 0 KB)
+6589.883 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 1000 files added (on-disk size: 0 KB)
+6589.884 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 1100 files added (on-disk size: 0 KB)
+6589.885 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 1200 files added (on-disk size: 0 KB)
+6589.886 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip.tmp: 1300 files added (on-disk size: 0 KB)
+6631.289 (9) Created uploads zip (1) - 11797.7 KB in 41.5 s (284.4 KB/s) (sha1: c9d2e37c42c95f8ed7ab035bdbbec47507f61472, sha256: a21a6340f4379b7a0ef5fe1dd069ab0371f0a99b93a3b7debde64d809e28faff)
+6631.300 (9) Beginning backup of other directories found in the content directory (index: 0)
+6631.301 (9) Exclusion option setting (others): upgrade,cache,updraft,backup*,*backups,mysql.sql,debug.log
+6631.301 (9) Looking for candidates to backup in: /home/dtnf7ls98wsk/public_html/wp-content
+6631.302 (9) finding files: upgrade: skipping: excluded by options
+6631.302 (9) finding files: backupwordpress-2f1f09d43c-backups: skipping: excluded by options (glob)
+6631.303 (9) finding files: backupwordpress-2f1f09d43c-backups: skipping: excluded by options (glob)
+6631.303 (9) finding files: index.php: adding to list (1)
+6631.303 (9) finding files: wflogs: adding to list (2)
+6631.303 (9) finding files: themes: skipping: this is the themes directory
+6631.304 (9) finding files: languages: adding to list (3)
+6631.304 (9) finding files: updraft: skipping: this is the updraft directory
+6631.305 (9) finding files: uploads: skipping: this is the uploads directory
+6631.305 (9) finding files: plugins: skipping: this is the plugins directory
+6631.455 (9) Total entities for the zip file: 4 directories, 415 files (0 skipped as non-modified), 9.4 MB
+6631.458 (9) Only one archive required (UpdraftPlus_PclZip) - will attempt to do in single operation (data: 9655 KB, split: 276480 KB)
+6631.460 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-others.zip.tmp: 100 files added (on-disk size: 0 KB)
+6631.462 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-others.zip.tmp: 200 files added (on-disk size: 0 KB)
+6631.464 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-others.zip.tmp: 300 files added (on-disk size: 0 KB)
+6631.473 (9) Zip: backup_2019-07-26-1954_DHCatlico_4c72be899ef0-others.zip.tmp: 400 files added (on-disk size: 0 KB)
+6634.520 (9) Created others zip (0) - 3685 KB in 3.1 s (1199.1 KB/s) (sha1: 96d903bbc3eaecff32cc7847e1e0658946454edb, sha256: ead6ce4911e9a2209db7b22b415dcf76a78dc8ab15a621a6ceb22e511f9e1696)
+6634.524 (9) Saving backup status to database (elements: 9)
+6634.551 (9) Resuming creation of database dump (WordPress DB)
+6634.554 (9) Testing: /usr/bin/mysqldump
+6634.568 (9) Output: /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;\n/*!40103 SET TIME_ZONE='+00:00' */;\n/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;\n/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\nDROP TABLE IF EXISTS `wp_options`;\n/*!40101 SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCRE (truncated - 1193 bytes total)
+6634.570 (9) Working binary mysqldump found: /usr/bin/mysqldump
+6634.575 (9) Table wp_options: Total expected rows (approximate): 467
+6634.591 (9) Table wp_options: Total rows added: 463 in 0.02 seconds
+6634.593 (9) Table wp_options: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_options.table.gz - 60.3 KB)
+6634.595 (9) Table wp_users: Total expected rows (approximate): 9
+6634.597 (9) Table wp_users: Total rows added: 9 in 0.00 seconds
+6634.598 (9) Table wp_users: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_users.table.gz - 1.2 KB)
+6634.601 (9) Table wp_usermeta: Total expected rows (approximate): 281
+6634.604 (9) Table wp_usermeta: Total rows added: 281 in 0.00 seconds
+6634.605 (9) Table wp_usermeta: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_usermeta.table.gz - 5.9 KB)
+6634.609 (9) Table wp_commentmeta: Total expected rows (approximate): 146
+6634.614 (9) Table wp_commentmeta: Total rows added: 146 in 0.00 seconds
+6634.615 (9) Table wp_commentmeta: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_commentmeta.table.gz - 3.2 KB)
+6634.618 (9) Table wp_comments: Total expected rows (approximate): 46
+6634.622 (9) Table wp_comments: Total rows added: 46 in 0.00 seconds
+6634.622 (9) Table wp_comments: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_comments.table.gz - 8.3 KB)
+6634.627 (9) Table wp_links: Total expected rows (approximate): 0
+6634.628 (9) Table wp_links: Total rows added: 0 in 0.00 seconds
+6634.629 (9) Table wp_links: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_links.table.gz - 0.4 KB)
+6634.632 (9) Table wp_postmeta: Total expected rows (approximate): 2541
+6634.660 (9) Table wp_postmeta: Total rows added: 2541 in 0.03 seconds
+6634.661 (9) Table wp_postmeta: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_postmeta.table.gz - 60.1 KB)
+6634.665 (9) Table wp_posts: Total expected rows (approximate): 1065
+6634.780 (9) Table wp_posts: Total rows added: 1065 in 0.11 seconds
+6634.781 (9) Table wp_posts: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_posts.table.gz - 305.4 KB)
+6634.783 (9) Table wp_term_relationships: Total expected rows (approximate): 906
+6634.788 (9) Table wp_term_relationships: Total rows added: 906 in 0.00 seconds
+6634.788 (9) Table wp_term_relationships: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_term_relationships.table.gz - 2.8 KB)
+6634.791 (9) Table wp_term_taxonomy: Total expected rows (approximate): 166
+6634.793 (9) Table wp_term_taxonomy: Total rows added: 166 in 0.00 seconds
+6634.794 (9) Table wp_term_taxonomy: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_term_taxonomy.table.gz - 1.6 KB)
+6634.796 (9) Table wp_termmeta: Total expected rows (approximate): 0
+6634.797 (9) Table wp_termmeta: Total rows added: 0 in 0.00 seconds
+6634.798 (9) Table wp_termmeta: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_termmeta.table.gz - 0.4 KB)
+6634.800 (9) Table wp_terms: Total expected rows (approximate): 166
+6634.802 (9) Table wp_terms: Total rows added: 166 in 0.00 seconds
+6634.803 (9) Table wp_terms: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_terms.table.gz - 2.5 KB)
+6634.807 (9) Table wp_cf7dbplugin_st: Total expected rows (approximate): 1061
+6634.812 (9) Table wp_cf7dbplugin_st: Total rows added: 1061 in 0.00 seconds
+6634.812 (9) Table wp_cf7dbplugin_st: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_cf7dbplugin_st.table.gz - 7.6 KB)
+6634.815 (9) Table wp_cf7dbplugin_submits: Total expected rows (approximate): 6717
+6682.120 (9) Table wp_cf7dbplugin_submits: Total rows added: 6717 in 47.30 seconds
+6682.121 (9) Table wp_cf7dbplugin_submits: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_cf7dbplugin_submits.table.gz - 48960.5 KB)
+6682.125 (9) Table wp_hustle_modules: Total expected rows (approximate): 0
+6682.127 (9) Table wp_hustle_modules: Total rows added: 0 in 0.00 seconds
+6682.128 (9) Table wp_hustle_modules: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_hustle_modules.table.gz - 0.4 KB)
+6682.131 (9) Table wp_hustle_modules_meta: Total expected rows (approximate): 0
+6682.132 (9) Table wp_hustle_modules_meta: Total rows added: 0 in 0.00 seconds
+6682.133 (9) Table wp_hustle_modules_meta: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_hustle_modules_meta.table.gz - 0.4 KB)
+6682.137 (9) Table wp_optin_meta: Total expected rows (approximate): 436
+6682.144 (9) Table wp_optin_meta: Total rows added: 436 in 0.01 seconds
+6682.145 (9) Table wp_optin_meta: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_optin_meta.table.gz - 14.6 KB)
+6682.149 (9) Table wp_optins: Total expected rows (approximate): 4
+6682.150 (9) Table wp_optins: Total rows added: 4 in 0.00 seconds
+6682.151 (9) Table wp_optins: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_optins.table.gz - 1.2 KB)
+6682.154 (9) Table wp_popover_ip_cache: Total expected rows (approximate): 0
+6682.155 (9) Table wp_popover_ip_cache: Total rows added: 0 in 0.00 seconds
+6682.156 (9) Table wp_popover_ip_cache: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_popover_ip_cache.table.gz - 0.3 KB)
+6682.159 (9) Table wp_snippets: Total expected rows (approximate): 2
+6682.209 (9) Table wp_snippets: Total rows added: 2 in 0.00 seconds
+6682.210 (9) Table wp_snippets: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_snippets.table.gz - 0.6 KB)
+6682.213 (9) Table wp_wfBadLeechers: Total expected rows (approximate): 0
+6682.214 (9) Table wp_wfBadLeechers: Total rows added: 0 in 0.00 seconds
+6682.215 (9) Table wp_wfBadLeechers: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBadLeechers.table.gz - 0.3 KB)
+6682.218 (9) Table wp_wfBlockedCommentLog: Total expected rows (approximate): 0
+6682.219 (9) Table wp_wfBlockedCommentLog: Total rows added: 0 in 0.00 seconds
+6682.220 (9) Table wp_wfBlockedCommentLog: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlockedCommentLog.table.gz - 0.3 KB)
+6682.223 (9) Table wp_wfBlockedIPLog: Total expected rows (approximate): 0
+6682.224 (9) Table wp_wfBlockedIPLog: Total rows added: 0 in 0.00 seconds
+6682.224 (9) Table wp_wfBlockedIPLog: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlockedIPLog.table.gz - 0.3 KB)
+6682.227 (9) Table wp_wfBlocks: Total expected rows (approximate): 0
+6682.229 (9) Table wp_wfBlocks: Total rows added: 0 in 0.00 seconds
+6682.229 (9) Table wp_wfBlocks: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlocks.table.gz - 0.4 KB)
+6682.233 (9) Table wp_wfBlocks7: Total expected rows (approximate): 0
+6682.234 (9) Table wp_wfBlocks7: Total rows added: 0 in 0.00 seconds
+6682.235 (9) Table wp_wfBlocks7: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlocks7.table.gz - 0.4 KB)
+6682.239 (9) Table wp_wfBlocksAdv: Total expected rows (approximate): 0
+6682.240 (9) Table wp_wfBlocksAdv: Total rows added: 0 in 0.00 seconds
+6682.241 (9) Table wp_wfBlocksAdv: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlocksAdv.table.gz - 0.3 KB)
+6682.243 (9) Table wp_wfConfig: Total expected rows (approximate): 256
+6682.259 (9) Table wp_wfConfig: Total rows added: 256 in 0.02 seconds
+6682.260 (9) Table wp_wfConfig: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfConfig.table.gz - 243.1 KB)
+6682.263 (9) Table wp_wfCrawlers: Total expected rows (approximate): 5
+6682.265 (9) Table wp_wfCrawlers: Total rows added: 5 in 0.00 seconds
+6682.266 (9) Table wp_wfCrawlers: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfCrawlers.table.gz - 0.5 KB)
+6682.269 (9) Table wp_wfFileChanges: Total expected rows (approximate): 0
+6682.271 (9) Table wp_wfFileChanges: Total rows added: 0 in 0.00 seconds
+6682.271 (9) Table wp_wfFileChanges: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfFileChanges.table.gz - 0.3 KB)
+6682.274 (9) Table wp_wfFileMods: Total expected rows (approximate): 5982
+6682.369 (9) Table wp_wfFileMods: Total rows added: 5982 in 0.09 seconds
+6682.370 (9) Table wp_wfFileMods: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfFileMods.table.gz - 464.9 KB)
+6682.373 (9) Table wp_wfHits: Total expected rows (approximate): 63
+6682.377 (9) Table wp_wfHits: Total rows added: 63 in 0.00 seconds
+6682.378 (9) Table wp_wfHits: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfHits.table.gz - 2.5 KB)
+6682.381 (9) Table wp_wfHoover: Total expected rows (approximate): 0
+6682.383 (9) Table wp_wfHoover: Total rows added: 0 in 0.00 seconds
+6682.383 (9) Table wp_wfHoover: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfHoover.table.gz - 0.3 KB)
+6682.386 (9) Table wp_wfIssues: Total expected rows (approximate): 19
+6682.389 (9) Table wp_wfIssues: Total rows added: 19 in 0.00 seconds
+6682.389 (9) Table wp_wfIssues: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfIssues.table.gz - 5.4 KB)
+6682.392 (9) Table wp_wfKnownFileList: Total expected rows (approximate): 5982
+6682.424 (9) Table wp_wfKnownFileList: Total rows added: 5982 in 0.03 seconds
+6682.424 (9) Table wp_wfKnownFileList: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfKnownFileList.table.gz - 57.2 KB)
+6682.427 (9) Table wp_wfLeechers: Total expected rows (approximate): 18
+6682.429 (9) Table wp_wfLeechers: Total rows added: 18 in 0.00 seconds
+6682.430 (9) Table wp_wfLeechers: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLeechers.table.gz - 0.4 KB)
+6682.433 (9) Table wp_wfLiveTrafficHuman: Total expected rows (approximate): 2
+6682.435 (9) Table wp_wfLiveTrafficHuman: Total rows added: 2 in 0.00 seconds
+6682.435 (9) Table wp_wfLiveTrafficHuman: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLiveTrafficHuman.table.gz - 0.5 KB)
+6682.439 (9) Table wp_wfLockedOut: Total expected rows (approximate): 0
+6682.440 (9) Table wp_wfLockedOut: Total rows added: 0 in 0.00 seconds
+6682.441 (9) Table wp_wfLockedOut: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLockedOut.table.gz - 0.3 KB)
+6682.444 (9) Table wp_wfLocs: Total expected rows (approximate): 0
+6682.445 (9) Table wp_wfLocs: Total rows added: 0 in 0.00 seconds
+6682.446 (9) Table wp_wfLocs: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLocs.table.gz - 0.4 KB)
+6682.449 (9) Table wp_wfLogins: Total expected rows (approximate): 154
+6682.452 (9) Table wp_wfLogins: Total rows added: 154 in 0.00 seconds
+6682.453 (9) Table wp_wfLogins: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLogins.table.gz - 4.6 KB)
+6682.456 (9) Table wp_wfNet404s: Total expected rows (approximate): 2
+6682.458 (9) Table wp_wfNet404s: Total rows added: 2 in 0.00 seconds
+6682.458 (9) Table wp_wfNet404s: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfNet404s.table.gz - 0.4 KB)
+6682.461 (9) Table wp_wfNotifications: Total expected rows (approximate): 21
+6682.463 (9) Table wp_wfNotifications: Total rows added: 21 in 0.00 seconds
+6682.464 (9) Table wp_wfNotifications: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfNotifications.table.gz - 3.6 KB)
+6682.467 (9) Table wp_wfPendingIssues: Total expected rows (approximate): 1
+6682.469 (9) Table wp_wfPendingIssues: Total rows added: 1 in 0.00 seconds
+6682.469 (9) Table wp_wfPendingIssues: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfPendingIssues.table.gz - 0.7 KB)
+6682.472 (9) Table wp_wfReverseCache: Total expected rows (approximate): 5
+6682.473 (9) Table wp_wfReverseCache: Total rows added: 5 in 0.00 seconds
+6682.474 (9) Table wp_wfReverseCache: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfReverseCache.table.gz - 0.4 KB)
+6682.477 (9) Table wp_wfSNIPCache: Total expected rows (approximate): 0
+6682.478 (9) Table wp_wfSNIPCache: Total rows added: 0 in 0.00 seconds
+6682.479 (9) Table wp_wfSNIPCache: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfSNIPCache.table.gz - 0.4 KB)
+6682.481 (9) Table wp_wfScanners: Total expected rows (approximate): 5
+6682.483 (9) Table wp_wfScanners: Total rows added: 5 in 0.00 seconds
+6682.483 (9) Table wp_wfScanners: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfScanners.table.gz - 0.4 KB)
+6682.486 (9) Table wp_wfStatus: Total expected rows (approximate): 1008
+6682.514 (9) Table wp_wfStatus: Total rows added: 1008 in 0.03 seconds
+6682.515 (9) Table wp_wfStatus: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfStatus.table.gz - 19.4 KB)
+6682.519 (9) Table wp_wfThrottleLog: Total expected rows (approximate): 0
+6682.520 (9) Table wp_wfThrottleLog: Total rows added: 0 in 0.00 seconds
+6682.520 (9) Table wp_wfThrottleLog: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfThrottleLog.table.gz - 0.3 KB)
+6682.523 (9) Table wp_wfVulnScanners: Total expected rows (approximate): 0
+6682.524 (9) Table wp_wfVulnScanners: Total rows added: 0 in 0.00 seconds
+6682.525 (9) Table wp_wfVulnScanners: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfVulnScanners.table.gz - 0.3 KB)
+6682.528 (9) Table wp_wpfront_ure_login_redirect: Total expected rows (approximate): 0
+6682.529 (9) Table wp_wpfront_ure_login_redirect: Total rows added: 0 in 0.00 seconds
+6682.530 (9) Table wp_wpfront_ure_login_redirect: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wpfront_ure_login_redirect.table.gz - 0.4 KB)
+6682.532 (9) Table wp_wpfront_ure_options: Total expected rows (approximate): 4
+6682.534 (9) Table wp_wpfront_ure_options: Total rows added: 4 in 0.00 seconds
+6682.534 (9) Table wp_wpfront_ure_options: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wpfront_ure_options.table.gz - 0.4 KB)
+6682.537 (9) Table wp_wpmm_subscribers: Total expected rows (approximate): 0
+6682.539 (9) Table wp_wpmm_subscribers: Total rows added: 0 in 0.00 seconds
+6682.539 (9) Table wp_wpmm_subscribers: finishing file (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wpmm_subscribers.table.gz - 0.3 KB)
+6682.541 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_options.table.gz (1/51): adding to final database dump
+6682.553 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_users.table.gz (2/51): adding to final database dump
+6682.554 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_usermeta.table.gz (3/51): adding to final database dump
+6682.555 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_commentmeta.table.gz (4/51): adding to final database dump
+6682.557 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_comments.table.gz (5/51): adding to final database dump
+6682.559 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_links.table.gz (6/51): adding to final database dump
+6682.559 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_postmeta.table.gz (7/51): adding to final database dump
+6682.575 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_posts.table.gz (8/51): adding to final database dump
+6682.659 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_term_relationships.table.gz (9/51): adding to final database dump
+6682.661 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_term_taxonomy.table.gz (10/51): adding to final database dump
+6682.662 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_termmeta.table.gz (11/51): adding to final database dump
+6682.663 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_terms.table.gz (12/51): adding to final database dump
+6682.664 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_cf7dbplugin_st.table.gz (13/51): adding to final database dump
+6682.667 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_cf7dbplugin_submits.table.gz (14/51): adding to final database dump
+6726.284 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_hustle_modules.table.gz (15/51): adding to final database dump
+6726.285 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_hustle_modules_meta.table.gz (16/51): adding to final database dump
+6726.286 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_optin_meta.table.gz (17/51): adding to final database dump
+6726.289 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_optins.table.gz (18/51): adding to final database dump
+6726.290 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_popover_ip_cache.table.gz (19/51): adding to final database dump
+6726.290 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_snippets.table.gz (20/51): adding to final database dump
+6726.291 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBadLeechers.table.gz (21/51): adding to final database dump
+6726.292 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlockedCommentLog.table.gz (22/51): adding to final database dump
+6726.292 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlockedIPLog.table.gz (23/51): adding to final database dump
+6726.293 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlocks.table.gz (24/51): adding to final database dump
+6726.293 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlocks7.table.gz (25/51): adding to final database dump
+6726.294 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfBlocksAdv.table.gz (26/51): adding to final database dump
+6726.294 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfConfig.table.gz (27/51): adding to final database dump
+6726.308 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfCrawlers.table.gz (28/51): adding to final database dump
+6726.309 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfFileChanges.table.gz (29/51): adding to final database dump
+6726.309 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfFileMods.table.gz (30/51): adding to final database dump
+6726.356 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfHits.table.gz (31/51): adding to final database dump
+6726.357 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfHoover.table.gz (32/51): adding to final database dump
+6726.358 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfIssues.table.gz (33/51): adding to final database dump
+6726.359 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfKnownFileList.table.gz (34/51): adding to final database dump
+6726.376 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLeechers.table.gz (35/51): adding to final database dump
+6726.376 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLiveTrafficHuman.table.gz (36/51): adding to final database dump
+6726.377 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLockedOut.table.gz (37/51): adding to final database dump
+6726.377 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLocs.table.gz (38/51): adding to final database dump
+6726.378 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfLogins.table.gz (39/51): adding to final database dump
+6726.379 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfNet404s.table.gz (40/51): adding to final database dump
+6726.380 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfNotifications.table.gz (41/51): adding to final database dump
+6726.381 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfPendingIssues.table.gz (42/51): adding to final database dump
+6726.382 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfReverseCache.table.gz (43/51): adding to final database dump
+6726.382 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfSNIPCache.table.gz (44/51): adding to final database dump
+6726.383 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfScanners.table.gz (45/51): adding to final database dump
+6726.383 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfStatus.table.gz (46/51): adding to final database dump
+6726.388 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfThrottleLog.table.gz (47/51): adding to final database dump
+6726.389 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wfVulnScanners.table.gz (48/51): adding to final database dump
+6726.389 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wpfront_ure_login_redirect.table.gz (49/51): adding to final database dump
+6726.390 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wpfront_ure_options.table.gz (50/51): adding to final database dump
+6726.390 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db-table-wp_wpmm_subscribers.table.gz (51/51): adding to final database dump
+6726.391 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db.gz: finished writing out complete database file (50208 KB)
+6727.018 (9) Total database tables backed up: 51 (backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db.gz, size: 51444759, sha256)
+6727.022 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: plugins: This file has not yet been successfully uploaded: will queue
+6727.022 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: themes: This file has not yet been successfully uploaded: will queue
+6727.022 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip: uploads: This file has not yet been successfully uploaded: will queue
+6727.023 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip: uploads: This file has not yet been successfully uploaded: will queue
+6727.023 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-others.zip: others: This file has not yet been successfully uploaded: will queue
+6727.024 (9) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db.gz: db: This file has not yet been successfully uploaded: will queue
+6727.024 (9) Saving backup history. Total backup size: 374.7 MB
+6727.026 (9) Requesting upload of the files that have not yet been successfully uploaded (6)
+6727.028 (9) Cloud backup selection (1/1): googledrive with instance (1/1) (last)
+6727.028 (9) Beginning dispatch of backup to remote (googledrive) (instance identifier s-ec90ceaa4ce17477ab5bba69f8b354fd)
+6727.133 (9) ERROR: Have not yet obtained an access token from Google (has the user authorised?) (Invalid request (refresh token not present).) (no_refresh_token)
+6727.134 (9) An error condition has occurred for the first time during this job
+6727.136 (9) Retain: beginning examination of existing backup sets; user setting: retain_files=1, retain_db=1
+6727.137 (9) Number of backup sets in history: 2; groups (db): 1
+6727.137 (9) Examining (for databases) backup set with group_id=0, nonce=4c72be899ef0, datestamp=1564192495 (Jul 27 2019 01:54:55)
+6727.138 (9) This backup set is the backup set just made, so will not be deleted.
+6727.138 (9) Examining (for databases) backup set with group_id=0, nonce=06c8e24f5a83, datestamp=1542659503 (Nov 19 2018 20:31:43)
+6727.138 (9) 1542659503: db: this set includes a database (backup_2018-11-19-1431_DHCatlico_06c8e24f5a83-db.gz); db count is now 1
+6727.138 (9) 1542659503: db: over retain limit (1); will delete this database
+6727.138 (9) Delete file: backup_2018-11-19-1431_DHCatlico_06c8e24f5a83-db.gz, service=googledrive
+6727.217 (9) ERROR: Have not yet obtained an access token from Google (has the user authorised?) (Invalid request (refresh token not present).) (no_refresh_token)
+6727.219 (9) This backup set remains non-empty (f=1/d=0); will retain in history
+6727.220 (9) Number of backup sets in history: 2; groups (files): 1
+6727.220 (9) Examining (for files) backup set with nonce=4c72be899ef0, datestamp=1564192495 (Jul 27 2019 01:54:55)
+6727.220 (9) This backup set is the backup set just made, so will not be deleted.
+6727.221 (9) This backup set is the backup set just made, so will not be deleted.
+6727.221 (9) This backup set is the backup set just made, so will not be deleted.
+6727.221 (9) This backup set is the backup set just made, so will not be deleted.
+6727.221 (9) This backup set remains non-empty (f=1/d=1); will retain in history
+6727.222 (9) Examining (for files) backup set with nonce=06c8e24f5a83, datestamp=1542659503 (Nov 19 2018 20:31:43)
+6727.222 (9) plugins: over retain limit (1); will delete this file entity
+6727.222 (9) themes: over retain limit (1); will delete this file entity
+6727.222 (9) uploads: over retain limit (1); will delete this file entity
+6727.222 (9) others: over retain limit (1); will delete this file entity
+6727.222 (9) Delete file: backup_2018-11-19-1431_DHCatlico_06c8e24f5a83-plugins.zip, service=googledrive
+6727.222 (9) Delete file: backup_2018-11-19-1431_DHCatlico_06c8e24f5a83-themes.zip, service=googledrive
+6727.223 (9) Delete file: backup_2018-11-19-1431_DHCatlico_06c8e24f5a83-uploads.zip, service=googledrive
+6727.223 (9) Delete file: backup_2018-11-19-1431_DHCatlico_06c8e24f5a83-others.zip, service=googledrive
+6727.294 (9) ERROR: Have not yet obtained an access token from Google (has the user authorised?) (Invalid request (refresh token not present).) (no_refresh_token)
+6727.295 (9) This backup set is now empty; will remove from history
+6727.296 (9) Deleting log file (log.06c8e24f5a83.txt)
+6727.296 (9) Retain: saving new backup history (sets now: 1) and finishing retain operation
+6727.298 (9) Resume backup (4c72be899ef0, 9): finish run
+6727.299 (9) There were errors in the uploads, so the 'resume' event is remaining scheduled
+6727.300 (9) No email will/can be sent - the user has not configured an email address.
+6727.301 (9) El respaldo no ha terminado; una reanudación está programada
+7052.094 (10) Opened log file at time: Sat, 27 Jul 2019 03:52:27 +0000 on http://dhcatolico.com
+7052.095 (10) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.5M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+7052.144 (10) Free space on disk containing Updraft's temporary directory: 1727161.1 MB
+7052.149 (10) Backup run: resumption=10, nonce=4c72be899ef0, begun at=1564192495 (7052s ago), job type=backup, previous check-in=257.1s
+7052.150 (10) Scheduling a resumption (11) after 459 seconds (1564200006) in case this run gets aborted
+7052.308 (10) Zip engine: ZipArchive (a.k.a. php-zip) is not available or is disabled (will use PclZip (much slower) if needed)
+7052.312 (10) Creation of backups of directories: already finished
+7052.312 (10) Saving backup status to database (elements: 9)
+7052.317 (10) Database dump (WordPress DB): Creation was completed already
+7052.320 (10) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: plugins: This file has not yet been successfully uploaded: will queue
+7052.320 (10) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: themes: This file has not yet been successfully uploaded: will queue
+7052.321 (10) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip: uploads: This file has not yet been successfully uploaded: will queue
+7052.321 (10) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip: uploads: This file has not yet been successfully uploaded: will queue
+7052.322 (10) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-others.zip: others: This file has not yet been successfully uploaded: will queue
+7052.322 (10) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db.gz: db: This file has not yet been successfully uploaded: will queue
+7052.322 (10) Saving backup history. Total backup size: 374.7 MB
+7052.324 (10) Requesting upload of the files that have not yet been successfully uploaded (6)
+7052.325 (10) Cloud backup selection (1/1): googledrive with instance (1/1) (last)
+7052.326 (10) Beginning dispatch of backup to remote (googledrive) (instance identifier s-ec90ceaa4ce17477ab5bba69f8b354fd)
+7052.400 (10) ERROR: Have not yet obtained an access token from Google (has the user authorised?) (Invalid request (refresh token not present).) (no_refresh_token)
+7052.401 (10) An error condition has occurred for the first time during this job
+7052.403 (10) Retain: beginning examination of existing backup sets; user setting: retain_files=1, retain_db=1
+7052.404 (10) Number of backup sets in history: 1; groups (db): 1
+7052.404 (10) Examining (for databases) backup set with group_id=0, nonce=4c72be899ef0, datestamp=1564192495 (Jul 27 2019 01:54:55)
+7052.405 (10) This backup set is the backup set just made, so will not be deleted.
+7052.405 (10) Number of backup sets in history: 1; groups (files): 1
+7052.405 (10) Examining (for files) backup set with nonce=4c72be899ef0, datestamp=1564192495 (Jul 27 2019 01:54:55)
+7052.405 (10) This backup set is the backup set just made, so will not be deleted.
+7052.406 (10) This backup set is the backup set just made, so will not be deleted.
+7052.406 (10) This backup set is the backup set just made, so will not be deleted.
+7052.406 (10) This backup set is the backup set just made, so will not be deleted.
+7052.406 (10) This backup set remains non-empty (f=1/d=1); will retain in history
+7052.406 (10) Retain: saving new backup history (sets now: 1) and finishing retain operation
+7052.408 (10) Resume backup (4c72be899ef0, 10): finish run
+7052.409 (10) There were errors in the uploads, so the 'resume' event is remaining scheduled
+7052.411 (10) No email will/can be sent - the user has not configured an email address.
+7052.411 (10) El respaldo no ha terminado; una reanudación está programada
+8414.219 (11) Opened log file at time: Sat, 27 Jul 2019 04:15:09 +0000 on http://dhcatolico.com
+8414.220 (11) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.2 WP: 4.9.10 PHP: 7.2.19 (litespeed, Linux a2plcpnl0932.prod.iad2.secureserver.net 2.6.32-954.3.5.lve1.4.66.el6.x86_64 #1 SMP Thu Jun 20 11:00:35 EDT 2019 x86_64) MySQL: 5.6.44 WPLANG: es_ES Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 59.5M | 62.3M) multisite: N openssl: OpenSSL 1.0.2k  26 Jan 2017 mcrypt: N LANG:  ZipArchive::addFile: N
+8414.265 (11) Free space on disk containing Updraft's temporary directory: 1727138.8 MB
+8414.270 (11) Backup run: resumption=11, nonce=4c72be899ef0, begun at=1564192495 (8415s ago), job type=backup
+8414.270 (11) Long time past since expected resumption time: approx expected=1564200006.8, now=1564200910, diff=903.1
+8414.271 (11) [Warning] Su sitio web es visitado con poca frecuencia y UpdraftPlus no está recibiendo los recursos que se espera, por favor lea esta página: https://updraftplus.com/faqs/why-am-i-getting-warnings-about-my-site-not-having-enough-visitors/
+8414.272 (11) The current run is resumption number 11, and there was nothing useful done on the last run (last useful run: 9) - will not schedule a further attempt until we see something useful happening this time
+8414.280 (11) Zip engine: ZipArchive (a.k.a. php-zip) is not available or is disabled (will use PclZip (much slower) if needed)
+8414.281 (11) Creation of backups of directories: already finished
+8414.282 (11) Saving backup status to database (elements: 9)
+8414.286 (11) Database dump (WordPress DB): Creation was completed already
+8414.289 (11) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-plugins.zip: plugins: This file has not yet been successfully uploaded: will queue
+8414.289 (11) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-themes.zip: themes: This file has not yet been successfully uploaded: will queue
+8414.290 (11) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads.zip: uploads: This file has not yet been successfully uploaded: will queue
+8414.290 (11) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-uploads2.zip: uploads: This file has not yet been successfully uploaded: will queue
+8414.290 (11) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-others.zip: others: This file has not yet been successfully uploaded: will queue
+8414.291 (11) backup_2019-07-26-1954_DHCatlico_4c72be899ef0-db.gz: db: This file has not yet been successfully uploaded: will queue
+8414.291 (11) Saving backup history. Total backup size: 374.7 MB
+8414.293 (11) Requesting upload of the files that have not yet been successfully uploaded (6)
+8414.294 (11) Cloud backup selection (1/1): googledrive with instance (1/1) (last)
+8414.294 (11) Beginning dispatch of backup to remote (googledrive) (instance identifier s-ec90ceaa4ce17477ab5bba69f8b354fd)
+8414.433 (11) ERROR: Have not yet obtained an access token from Google (has the user authorised?) (Invalid request (refresh token not present).) (no_refresh_token)
+8414.434 (11) An error condition has occurred for the first time during this job
+8414.436 (11) Retain: beginning examination of existing backup sets; user setting: retain_files=1, retain_db=1
+8414.437 (11) Number of backup sets in history: 1; groups (db): 1
+8414.437 (11) Examining (for databases) backup set with group_id=0, nonce=4c72be899ef0, datestamp=1564192495 (Jul 27 2019 01:54:55)
+8414.438 (11) This backup set is the backup set just made, so will not be deleted.
+8414.438 (11) Number of backup sets in history: 1; groups (files): 1
+8414.438 (11) Examining (for files) backup set with nonce=4c72be899ef0, datestamp=1564192495 (Jul 27 2019 01:54:55)
+8414.438 (11) This backup set is the backup set just made, so will not be deleted.
+8414.439 (11) This backup set is the backup set just made, so will not be deleted.
+8414.439 (11) This backup set is the backup set just made, so will not be deleted.
+8414.439 (11) This backup set is the backup set just made, so will not be deleted.
+8414.439 (11) This backup set remains non-empty (f=1/d=1); will retain in history
+8414.439 (11) Retain: saving new backup history (sets now: 1) and finishing retain operation
+8414.441 (11) Resume backup (4c72be899ef0, 11): finish run
+8414.442 (11) There were errors in the uploads, so the 'resume' event is remaining scheduled
+8414.443 (11) No email will/can be sent - the user has not configured an email address.
+8414.443 (11) El intento de respaldo ha terminado, al parecer sin éxito

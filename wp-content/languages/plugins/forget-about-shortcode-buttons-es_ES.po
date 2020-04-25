@@ -1,0 +1,32 @@
+# Translation of Plugins - Forget About Shortcode Buttons - Stable (latest release) in Spanish (Spain)
+# This file is distributed under the same license as the Plugins - Forget About Shortcode Buttons - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2018-05-28 22:16:10+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: es\n"
+"Project-Id-Version: Plugins - Forget About Shortcode Buttons - Stable (latest release)\n"
+
+#. Author URI of the plugin/theme
+msgid "http://designsandcode.com"
+msgstr "http://designsandcode.com"
+
+#. Author of the plugin/theme
+msgid "Designs & Code"
+msgstr "Designs & Code"
+
+#. Description of the plugin/theme
+msgid "A visual way to add CSS buttons in the rich text editor and to your themes."
+msgstr "Un manera visual de de añadir botones CSS en el editor enriquecido de texto y a tus temas"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.designsandcode.com/wordpress-plugins/forget-about-shortcode-buttons-plugin/"
+msgstr "http://www.designsandcode.com/wordpress-plugins/forget-about-shortcode-buttons-plugin/"
+
+#. Plugin Name of the plugin/theme
+msgid "Forget About Shortcode Buttons"
+msgstr "Forget About Shortcode Buttons"

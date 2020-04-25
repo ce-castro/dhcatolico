@@ -1,0 +1,280 @@
+# Translation of Plugins - Fancier Author Box by ThematoSoup - Development (trunk) in Spanish (Spain)
+# This file is distributed under the same license as the Plugins - Fancier Author Box by ThematoSoup - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2019-01-17 10:36:40+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: es\n"
+"Project-Id-Version: Plugins - Fancier Author Box by ThematoSoup - Development (trunk)\n"
+
+#: ts-fab.php:47
+msgid "Settings"
+msgstr "Ajustes"
+
+#: includes/ts-fab-construct-tabs.php:44 includes/ts-fab-construct-tabs.php:219
+msgid "My Twitter profile"
+msgstr "Mi perfil de Twitter"
+
+#: includes/ts-fab-construct-tabs.php:54 includes/ts-fab-construct-tabs.php:229
+msgid "My Facebook profile"
+msgstr "Mi perfil de Facebook"
+
+#: includes/ts-fab-construct-tabs.php:64 includes/ts-fab-construct-tabs.php:239
+msgid "My Google+ profile"
+msgstr "Mi perfil de Google +"
+
+#: includes/ts-fab-construct-tabs.php:156
+#: includes/ts-fab-construct-tabs.php:160
+msgid "at"
+msgstr "en"
+
+#: includes/ts-fab-construct-tabs.php:316
+msgid "Latest posts by "
+msgstr "Últimas entradas de"
+
+#: includes/ts-fab-construct-tabs.php:316
+msgid "see all"
+msgstr "ver todo"
+
+#: includes/ts-fab-construct-tabs.php:374
+msgid "Latest Posts"
+msgstr "Últimas entradas"
+
+#: includes/ts-fab-settings.php:66
+msgid "Display Settings"
+msgstr "Mostrar los ajustes"
+
+#: includes/ts-fab-settings.php:74
+msgid "Show in posts"
+msgstr "Mostrar en entradas "
+
+#: includes/ts-fab-settings.php:79
+msgid "Toggle displaying Fancier Author Box in posts"
+msgstr "Alternar la visualización de Fancier Author Box en las entradas"
+
+#: includes/ts-fab-settings.php:85
+msgid "Show in pages"
+msgstr "Mostrar en páginas"
+
+#: includes/ts-fab-settings.php:90
+msgid "Toggle displaying Fancier Author Box in pages."
+msgstr "Alternar la visualización de Fancier Author Box en las páginas."
+
+#: includes/ts-fab-settings.php:107
+msgid "Show in"
+msgstr "Mostrar en"
+
+#: includes/ts-fab-settings.php:121
+msgid "Latest posts"
+msgstr "Últimas entradas"
+
+#: includes/ts-fab-settings.php:126
+msgid "Toggle displaying latest posts tab"
+msgstr "Alternar la visualización de la pestaña de las últimas entradas"
+
+#: includes/ts-fab-settings.php:127
+msgid "Number of latest posts to show:"
+msgstr "Número de últimas entradas a mostrar:"
+
+#: includes/ts-fab-settings.php:134
+msgid "Color Settings"
+msgstr "Ajuste de color"
+
+#: includes/ts-fab-settings.php:141
+msgid "Inactive tab colors"
+msgstr "Anular todos los ajustes de colores"
+
+#: includes/ts-fab-settings.php:148 includes/ts-fab-settings.php:164
+#: includes/ts-fab-settings.php:180
+msgid "Background"
+msgstr "Fondo"
+
+#: includes/ts-fab-settings.php:149 includes/ts-fab-settings.php:165
+#: includes/ts-fab-settings.php:181
+msgid "Border"
+msgstr "Borde"
+
+#: includes/ts-fab-settings.php:150 includes/ts-fab-settings.php:166
+#: includes/ts-fab-settings.php:182
+msgid "Color"
+msgstr "Color"
+
+#: includes/ts-fab-settings.php:157
+msgid "Active tab colors"
+msgstr "Activar colores de la pestaña"
+
+#: includes/ts-fab-settings.php:173
+msgid "Tab content colors"
+msgstr "Colores del contenido de la pestaña"
+
+#: includes/ts-fab-settings.php:204
+msgid "Select where and how Fancier Author Box appears in your posts, pages and custom posts."
+msgstr "Seleccionar dónde y como Fancier Author Box se visualiza en tus entradas y  páginas."
+
+#: includes/ts-fab-settings.php:229 includes/ts-fab-settings.php:247
+#: includes/ts-fab-settings.php:266
+msgid "Above"
+msgstr "Superior"
+
+#: includes/ts-fab-settings.php:230 includes/ts-fab-settings.php:248
+#: includes/ts-fab-settings.php:267
+msgid "Below"
+msgstr "Inferior"
+
+#: includes/ts-fab-settings.php:231 includes/ts-fab-settings.php:249
+#: includes/ts-fab-settings.php:268
+msgid "Both"
+msgstr "Ambos"
+
+#: includes/ts-fab-settings.php:232 includes/ts-fab-settings.php:250
+#: includes/ts-fab-settings.php:269
+msgid "No"
+msgstr "No"
+
+#: includes/ts-fab-settings.php:330
+msgid "The only author box plugin you'll ever need. Unless you need something fancier, like <a href=\"http://codecanyon.net/item/fanciest-author-box/2504522?ref=ThematoSoup\">Fanciest Author Box</a>."
+msgstr "El único plugin de Author Box que necesitarás. A menos que necesites algo más sofisticado, como <a href=\"http://codecanyon.net/item/fanciest-author-box/2504522?ref=ThematoSoup\">Fanciest Author Box</a>."
+
+#: includes/ts-fab-settings.php:344
+msgid "Reset all color settings"
+msgstr "Anular todos los ajustes de colores"
+
+#: includes/ts-fab-user-settings.php:23
+msgid "User Details"
+msgstr "Detalles del usuario"
+
+#: includes/ts-fab-user-settings.php:32
+msgid "Display Fancier Author Box"
+msgstr "Mostrar Fancier Author Box"
+
+#: includes/ts-fab-user-settings.php:36
+msgid "Do not show Fancier Author Box in your posts, pages and custom posts"
+msgstr "No mostrar Fancier Author Box en tus entradas y páginas"
+
+#: includes/ts-fab-user-settings.php:113
+msgid "Position"
+msgstr "Puesto"
+
+#: includes/ts-fab-user-settings.php:116
+msgid "Your position."
+msgstr "Tu puesto."
+
+#: includes/ts-fab-user-settings.php:121
+msgid "Company"
+msgstr "Empresa"
+
+#: includes/ts-fab-user-settings.php:124
+msgid "Your company."
+msgstr "Tu empresa."
+
+#: includes/ts-fab-user-settings.php:129
+msgid "Company URL"
+msgstr "URL de la empresa"
+
+#: includes/ts-fab-user-settings.php:132
+msgid "Your company URL."
+msgstr "URL de tu empresa"
+
+#: includes/ts-fab-construct-tabs.php:74 includes/ts-fab-construct-tabs.php:249
+msgid "My LinkedIn profile"
+msgstr "Mi perfil de LinkedIn"
+
+#: includes/ts-fab-construct-tabs.php:84 includes/ts-fab-construct-tabs.php:259
+msgid "My Instagram profile"
+msgstr "Mi perfil de Instagram"
+
+#: includes/ts-fab-construct-tabs.php:94 includes/ts-fab-construct-tabs.php:269
+msgid "My Flickr profile"
+msgstr "Mi perfil de Flickr"
+
+#: includes/ts-fab-construct-tabs.php:104
+#: includes/ts-fab-construct-tabs.php:279
+msgid "My Pinterest profile"
+msgstr "Mi perfil de Pinterest"
+
+#: includes/ts-fab-construct-tabs.php:114
+#: includes/ts-fab-construct-tabs.php:289
+msgid "My Tumblr blog"
+msgstr "Mi blog de Tumblr"
+
+#: includes/ts-fab-construct-tabs.php:124
+#: includes/ts-fab-construct-tabs.php:299
+msgid "My YouTube channel"
+msgstr "Mi canal de Youtube"
+
+#: includes/ts-fab-construct-tabs.php:134
+#: includes/ts-fab-construct-tabs.php:309
+msgid "My Vimeo channel"
+msgstr "Mi canal de Vimeo"
+
+#: includes/ts-fab-construct-tabs.php:369
+msgid "The following two tabs change content below."
+msgstr "Las dos pestañas siguientes cambian el contenido de abajo."
+
+#: includes/ts-fab-construct-tabs.php:372
+msgid "Bio"
+msgstr "Biografía"
+
+#. Plugin Name of the plugin/theme
+msgid "Fancier Author Box"
+msgstr "Fancier Author Box"
+
+#: includes/ts-fab-user-settings.php:108
+msgid "Your Vimeo username or profile URL"
+msgstr "Tu usuario o URL de perfil de Vimeo"
+
+#: includes/ts-fab-user-settings.php:101
+msgid "Your YouTube username or profile URL."
+msgstr "Tu usuario o URL de perfil de YouTube."
+
+#: includes/ts-fab-user-settings.php:94
+msgid "Your Tumblr username or blog URL."
+msgstr "Tu usuario o URL de blog de Tumblr."
+
+#. Author URI of the plugin/theme
+msgid "http://thematosoup.com/"
+msgstr "http://thematosoup.com/"
+
+#. Author of the plugin/theme
+msgid "ThematoSoup"
+msgstr "ThematoSoup"
+
+#: includes/ts-fab-user-settings.php:87
+msgid "Your Pinterest username or profile URL."
+msgstr "Tu usuario o URL de perfil de Pinterest."
+
+#: includes/ts-fab-user-settings.php:80
+msgid "Your Flickr username or profile URL."
+msgstr "Tu usuario o URL de perfil de Flickr."
+
+#: includes/ts-fab-user-settings.php:73
+msgid "Your Instagram username or profile URL."
+msgstr "Tu usuario o URL de perfil de Instagram."
+
+#: includes/ts-fab-user-settings.php:66
+msgid "Your LinkedIn username or profile URL."
+msgstr "Tu usuario o URL de perfil de LinkedIn."
+
+#: includes/ts-fab-user-settings.php:59
+msgid "Your Google+ ID/username or profile URL."
+msgstr "Tu ID/usuario o URL de perfil de Google+."
+
+#: includes/ts-fab-user-settings.php:52
+msgid "Your Facebook username or profile URL."
+msgstr "Tu usuario o URL de perfil de Facebook."
+
+#: includes/ts-fab-user-settings.php:45
+msgid "Your Twitter username or profile URL."
+msgstr "Tu usuario o URL de perfil de Twitter."
+
+#. Plugin URI of the plugin/theme
+msgid "https://wordpress.org/plugins/fancier-author-box/"
+msgstr "https://wordpress.org/plugins/fancier-author-box/"
+
+#. Description of the plugin/theme
+msgid "Adds feature rich author box to your posts, pages and custom post types. If you decide to switch to <a href=\"http://fanciestauthorbox.com\">Fanciest Author Box</a>, please deactivate Fancier Author Box first."
+msgstr "Añade una caja de autor llena de características a tus entradas, páginas y tipos de contenido personalizados. Si decides pasarte a <a href=\"http://fanciestauthorbox.com\">Fanciest Author Box</a>, desactiva antes Fancier Author Box."
