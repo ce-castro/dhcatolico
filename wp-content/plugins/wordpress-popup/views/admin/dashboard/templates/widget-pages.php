@@ -1,15 +1,25 @@
 <?php
-$sshare_count = Hustle_Module_Collection::instance()->get_all( null, array(
-	'module_type' => array( Hustle_Module_Model::SOCIAL_SHARING_MODULE ),
-	'count_only' => true,
-));
+/**
+ * Template for the widget that display the per-page share count for ssharing.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+$sshare_count = Hustle_Module_Collection::instance()->get_all(
+	null,
+	array(
+		'module_type' => array( Hustle_Module_Model::SOCIAL_SHARING_MODULE ),
+		'count_only'  => true,
+	)
+);
 ?>
 <div class="sui-box">
 
 	<div class="sui-box-header">
 
 		<h2 class="sui-box-title">
-			<i class="sui-icon-<?php echo esc_attr( $widget_type ); ?>" aria-hidden="true"></i>
+			<span class="sui-icon-<?php echo esc_attr( $widget_type ); ?>" aria-hidden="true"></span>
 			<?php echo esc_html( $widget_name ); ?>
 		</h2>
 
@@ -36,7 +46,8 @@ $sshare_count = Hustle_Module_Collection::instance()->get_all( null, array(
 
 				<tbody>
 
-					<?php foreach ( $sshare_per_page_data as $page_data ) {
+					<?php
+					foreach ( $sshare_per_page_data as $page_data ) {
 						?>
 
 						<tr>
@@ -69,16 +80,16 @@ $sshare_count = Hustle_Module_Collection::instance()->get_all( null, array(
 					<?php
 					$query_array = array( 'page' => Hustle_Module_Admin::get_listing_page_by_module_type( $widget_type ) );
 					if ( Hustle_Module_Admin::can_create_new_module( $widget_type ) ) {
-						$args = array_merge( $query_array, ['create-module' => 'true'] );
+						$args = array_merge( $query_array, array( 'create-module' => 'true' ) );
 					} else {
-						$args = array_merge( $query_array, ['requires-pro' => 'true'] );
+						$args = array_merge( $query_array, array( 'requires-pro' => 'true' ) );
 					}
 					echo esc_url( add_query_arg( $args, 'admin.php' ) );
 					?>
 				"
 				class="sui-button sui-button-blue"
 			>
-				<i class="sui-icon-plus" aria-hidden="true"></i>
+				<span class="sui-icon-plus" aria-hidden="true"></span>
 				<?php esc_html_e( 'Create', 'hustle' ); ?>
 			</a>
 		<?php } ?>
@@ -86,6 +97,7 @@ $sshare_count = Hustle_Module_Collection::instance()->get_all( null, array(
 		<?php if ( $sshare_count ) : ?>
 
 			<div class="sui-actions-right">
+				<?php /* translators: widget's module type */ ?>
 				<p><small><strong><a href="<?php echo esc_url( add_query_arg( $query_array, 'admin.php' ) ); ?>" style="color: #888888;"><?php printf( esc_html__( 'View all %s', 'hustle' ), esc_html( strtolower( $widget_name ) ) ); ?></a></strong></small></p>
 			</div>
 

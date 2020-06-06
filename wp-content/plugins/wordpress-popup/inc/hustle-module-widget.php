@@ -97,14 +97,14 @@ class Hustle_Module_Widget extends WP_Widget {
 					if ( is_wp_error( $module ) ) {
 						continue;
 					}
-					//if( $module->settings->widget->show_in_front() ):
+					// if( $module->settings->widget->show_in_front() ):
 					?>
-					<option <?php selected( $instance['module_id'],  $mod->module_id ); ?> value="<?php echo esc_attr( $mod->module_id ); ?>"><?php echo esc_attr( $mod->module_name ); ?></option>
+					<option <?php selected( $instance['module_id'], $mod->module_id ); ?> value="<?php echo esc_attr( $mod->module_id ); ?>"><?php echo esc_attr( $mod->module_name ); ?></option>
 
 					<?php
-					//endif;
+					// endif;
 						endforeach;
-					?>
+				?>
 			</select>
 		</p>
 		<?php
@@ -122,9 +122,9 @@ class Hustle_Module_Widget extends WP_Widget {
 	 * @return array Updated safe values to be saved.
 	 */
 	public function update( $new_instance, $old_instance ) {
-		$instance = array();
-		$instance['title'] = ! empty( $new_instance['title'] )  ? wp_strip_all_tags( $new_instance['title'] ) : '';
-		$instance['module_id'] = ! empty( $new_instance['module_id'] )  ? wp_strip_all_tags( $new_instance['module_id'] ) : '';
+		$instance              = array();
+		$instance['title']     = ! empty( $new_instance['title'] ) ? wp_strip_all_tags( $new_instance['title'] ) : '';
+		$instance['module_id'] = ! empty( $new_instance['module_id'] ) ? wp_strip_all_tags( $new_instance['module_id'] ) : '';
 
 		return $instance;
 	}

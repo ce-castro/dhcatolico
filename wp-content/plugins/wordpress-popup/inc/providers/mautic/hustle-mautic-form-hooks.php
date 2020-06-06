@@ -19,8 +19,8 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
-		$addon = $this->addon;
-		$module_id = $this->module_id;
+		$addon                  = $this->addon;
+		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
 		/**
@@ -28,9 +28,9 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		 *
 		 * @since 4.0
 		 *
-		 * @param array                                    	$submitted_data
-		 * @param int                                      	$module_id                current module_id
-		 * @param Hustle_Mautic_Form_Settings 	   	   		$form_settings_instance
+		 * @param array                                     $submitted_data
+		 * @param int                                       $module_id                current module_id
+		 * @param Hustle_Mautic_Form_Settings               $form_settings_instance
 		 */
 		$submitted_data = apply_filters(
 			'hustle_provider_mautic_form_submitted_data',
@@ -49,10 +49,10 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
 			$list_id = $addon_setting_values['list_id'];
 
-			$submitted_data = $this->check_legacy( $submitted_data );
+			$submitted_data  = $this->check_legacy( $submitted_data );
 			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
 
-			$url = $addon->get_setting( 'url', '', $global_multi_id );
+			$url      = $addon->get_setting( 'url', '', $global_multi_id );
 			$username = $addon->get_setting( 'username', '', $global_multi_id );
 			$password = $addon->get_setting( 'password', '', $global_multi_id );
 
@@ -75,26 +75,29 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$existing_member = $this->get_subscriber( $api, $submitted_data['email'] );
 
 			// Add extra fields
-			$extra_data = array_diff_key( $submitted_data, array(
-				'email' => '',
-				'firstname' => '',
-				'lastname' => '',
-			) );
+			$extra_data = array_diff_key(
+				$submitted_data,
+				array(
+					'email'     => '',
+					'firstname' => '',
+					'lastname'  => '',
+				)
+			);
 			$extra_data = array_filter( $extra_data );
 			if ( ! empty( $extra_data ) ) {
-				$module 		= Hustle_Module_Model::instance()->get( $module_id );
-				$form_fields 	= $module->get_form_fields();
-				$custom_fields 	= array();
+				$module        = Hustle_Module_Model::instance()->get( $module_id );
+				$form_fields   = $module->get_form_fields();
+				$custom_fields = array();
 				foreach ( $extra_data as $key => $value ) {
 					$type = isset( $form_fields[ $key ] ) ? $this->get_field_type( $form_fields[ $key ]['type'] ) : 'text';
 
-					if( 'date' === $type && 'Y-m-d' !== $form_fields[ $key ]['date_format'] && ! empty( $submitted_data[$key] ) ){
-						$submitted_data[$key] = date( "Y-m-d", strtotime( $submitted_data[$key] ) );
+					if ( 'date' === $type && 'Y-m-d' !== $form_fields[ $key ]['date_format'] && ! empty( $submitted_data[ $key ] ) ) {
+						$submitted_data[ $key ] = date( 'Y-m-d', strtotime( $submitted_data[ $key ] ) );
 					}
 					$custom_fields[] = array(
 						'label' => $key,
-						'name' => $key,
-						'type' => $type,
+						'name'  => $key,
+						'type'  => $type,
 					);
 
 					// Make the fields' names lowercase so they match the "alias" from Mautic's side.
@@ -115,7 +118,8 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 * @param array  $submitted_data
 			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_mautic_before_add_subscriber',
+			do_action(
+				'hustle_provider_mautic_before_add_subscriber',
 				$module_id,
 				$submitted_data,
 				$form_settings_instance
@@ -124,7 +128,7 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
 			if ( false !== $existing_member && ! is_wp_error( $existing_member ) ) {
 				$contact_id = $api->update_contact( $existing_member, $submitted_data );
-				$updated = true;
+				$updated    = true;
 			} else {
 				$contact_id = $api->add_contact( $submitted_data );
 			}
@@ -133,21 +137,21 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				// Remove ipAddress
 				unset( $submitted_data['ipAddress'] );
 				$error_code = $contact_id->get_error_code();
-				$details = $contact_id->get_error_message( $error_code );
-			} elseif( $updated ) {
-				$is_sent = true;
-				$details = __( 'Successfully updated member on Mautic list', 'hustle' );
+				$details    = $contact_id->get_error_message( $error_code );
+			} elseif ( $updated ) {
+				$is_sent       = true;
+				$details       = __( 'Successfully updated member on Mautic list', 'hustle' );
 				$member_status = __( 'OK', 'hustle' );
-			}elseif( ! $updated ){
+			} elseif ( ! $updated ) {
 				$api->add_contact_to_segment( $list_id, $contact_id );
 
-				$is_sent = true;
-				$details = __( 'Successfully added member on Mautic list', 'hustle' );
+				$is_sent       = true;
+				$details       = __( 'Successfully added member on Mautic list', 'hustle' );
 				$member_status = __( 'Added', 'hustle' );
 			} else {
 
-				$is_sent = true;
-				$details = __( 'Successfully updated member on Mautic list', 'hustle' );
+				$is_sent       = true;
+				$details       = __( 'Successfully updated member on Mautic list', 'hustle' );
 				$member_status = __( 'Updated', 'hustle' );
 			}
 
@@ -161,7 +165,8 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 * @param mixed  $contact_id
 			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_mailerlite_after_add_subscriber',
+			do_action(
+				'hustle_provider_mailerlite_after_add_subscriber',
 				$module_id,
 				$submitted_data,
 				$contact_id,
@@ -182,11 +187,12 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$entry_fields = $this->exception( $e );
 		}
 
-		if ( !empty( $addon_setting_values['list_name'] ) ) {
+		if ( ! empty( $addon_setting_values['list_name'] ) ) {
 			$entry_fields[0]['value']['list_name'] = $addon_setting_values['list_name'];
 		}
 
-		$entry_fields = apply_filters( 'hustle_provider_' . $addon->get_slug() . '_entry_fields',
+		$entry_fields = apply_filters(
+			'hustle_provider_' . $addon->get_slug() . '_entry_fields',
 			$entry_fields,
 			$module_id,
 			$submitted_data,
@@ -206,11 +212,11 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
 
-		$is_success 				= true;
-		$module_id                	= $this->module_id;
-		$form_settings_instance 	= $this->form_settings_instance;
-		$addon 						= $this->addon;
-		$addon_setting_values 		= $form_settings_instance->get_form_settings_values();
+		$is_success             = true;
+		$module_id              = $this->module_id;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon                  = $this->addon;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
 
 		if ( empty( $submitted_data['email'] ) ) {
 			return __( 'Required Field "email" was not filled by the user.', 'hustle' );
@@ -234,16 +240,17 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$form_settings_instance
 			);
 
-			//triggers exception if not found.
-			$global_multi_id 	= $addon_setting_values['selected_global_multi_id'];
-			$url 				= $addon->get_setting( 'url', '', $global_multi_id );
-			$username 			= $addon->get_setting( 'username', '', $global_multi_id );
-			$password 			= $addon->get_setting( 'password', '', $global_multi_id );
-			$api 				= $addon::api( $url, $username, $password );
-			$existing_member 	= $this->get_subscriber( $api, $submitted_data['email'] );
+			// triggers exception if not found.
+			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
+			$url             = $addon->get_setting( 'url', '', $global_multi_id );
+			$username        = $addon->get_setting( 'username', '', $global_multi_id );
+			$password        = $addon->get_setting( 'password', '', $global_multi_id );
+			$api             = $addon::api( $url, $username, $password );
+			$existing_member = $this->get_subscriber( $api, $submitted_data['email'] );
 
-			if( false !== $existing_member && ! is_wp_error( $existing_member ) )
+			if ( false !== $existing_member && ! is_wp_error( $existing_member ) ) {
 				$is_success = self::ALREADY_SUBSCRIBED_ERROR;
+			}
 		}
 
 		/**
@@ -288,12 +295,12 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param 	object 	$api
-	 * @param 	mixed  	$data
-	 * @return  mixed 	array/object API response on queried subscriber
+	 * @param   object $api
+	 * @param   mixed  $data
+	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if( empty ( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ){
+		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ) {
 			$this->_subscriber[ md5( $data ) ] = $api->email_exist( $data );
 		}
 
@@ -305,12 +312,12 @@ class Hustle_Mautic_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * This method is to be inherited
 	 * and extended by child classes.
-	 * 
-	 * List the fields supported by the 
+	 *
+	 * List the fields supported by the
 	 * provider
 	 *
 	 * @since 4.1
-	 *	
+	 *
 	 * @param string hustle field type
 	 * @return string Api field type
 	 */

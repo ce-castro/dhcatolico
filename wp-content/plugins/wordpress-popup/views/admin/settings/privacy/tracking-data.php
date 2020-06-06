@@ -1,4 +1,11 @@
 <?php
+/**
+ * Tracking data section under the "privacy" tab.
+ *
+ * @package Hustle
+ * @since 4.0.3
+ */
+
 $retain_tracking_forever   = '1' === $settings['retain_tracking_forever'];
 $tracking_retention_number = $settings['tracking_retention_number'];
 $tracking_retention_unit   = $settings['tracking_retention_number_unit'];

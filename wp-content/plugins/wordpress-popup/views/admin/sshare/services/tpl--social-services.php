@@ -1,3 +1,12 @@
+<?php
+/**
+ * Container for the platforms' rows.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -13,7 +22,7 @@
 			<div class="sui-box-builder-header">
 
 				<button class="sui-button sui-button-purple hustle-choose-platforms">
-					<i class="sui-icon-plus" aria-hidden="true"></i>
+					<span class="sui-icon-plus" aria-hidden="true"></span>
 					<?php esc_html_e( 'Add Platform', 'hustle' ); ?>
 				</button>
 
@@ -25,7 +34,7 @@
 				<div id="hustle-social-services" class="sui-builder-fields sui-accordion"></div>
 
 				<button class="sui-button sui-button-dashed hustle-choose-platforms">
-					<i class="sui-icon-plus" aria-hidden="true"></i>
+					<span class="sui-icon-plus" aria-hidden="true"></span>
 					<?php esc_html_e( 'Add Platform', 'hustle' ); ?>
 				</button>
 

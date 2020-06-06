@@ -1,3 +1,12 @@
+<?php
+/**
+ * Inline display type section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -12,7 +21,7 @@
 
 		<?php
 		// SETTINGS: Enable inline module.
-		self::static_render(
+		$this->render(
 			'admin/sshare/display-options/tpl--position-settings',
 			array(
 				'label'       => esc_html__( 'inline module', 'hustle' ),

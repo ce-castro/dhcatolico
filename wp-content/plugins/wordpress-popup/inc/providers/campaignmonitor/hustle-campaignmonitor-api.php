@@ -45,7 +45,7 @@ class Hustle_Campaignmonitor_API {
 	 * @return Exception
 	 */
 	private function __construct( $api_key ) {
-		//prerequisites
+		// prerequisites
 		if ( ! $api_key ) {
 			throw new Exception( __( 'Missing required API Key', 'hustle' ) );
 		}
@@ -166,12 +166,12 @@ class Hustle_Campaignmonitor_API {
 			$_args['body'] = wp_json_encode( $args );
 		}
 
-		$res         = wp_remote_request( $url, $_args );
+		$res = wp_remote_request( $url, $_args );
 
-		//logging data
-		$utils = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request 	= $url;
-		$utils->_last_data_sent 	= $_args;
+		// logging data
+		$utils                      = Hustle_Provider_Utils::get_instance();
+		$utils->_last_url_request   = $url;
+		$utils->_last_data_sent     = $_args;
 		$utils->_last_data_received = $res;
 
 		$wp_response = $res;
@@ -201,7 +201,7 @@ class Hustle_Campaignmonitor_API {
 				if ( 404 === $status_code ) {
 					throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
 				}
-//				/* translators: ... */
+				// * translators: ... */
 				throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
 			}
 		}
@@ -298,7 +298,7 @@ class Hustle_Campaignmonitor_API {
 	 * @since 4.0.2
 	 *
 	 * @param       $list_id
-	 * @param array $args
+	 * @param array   $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -321,7 +321,7 @@ class Hustle_Campaignmonitor_API {
 	 * @since 4.0.2
 	 *
 	 * @param       $client_id
-	 * @param array $args
+	 * @param array     $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -366,7 +366,7 @@ class Hustle_Campaignmonitor_API {
 	 * @since 4.0.2
 	 *
 	 * @param       $client_id
-	 * @param array $args
+	 * @param array     $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -389,7 +389,7 @@ class Hustle_Campaignmonitor_API {
 	 * @since 4.0.2
 	 *
 	 * @param       $list_id
-	 * @param array $args
+	 * @param array   $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -412,7 +412,7 @@ class Hustle_Campaignmonitor_API {
 	 * @since 4.0.2
 	 *
 	 * @param       $list_id
-	 * @param array $args
+	 * @param array   $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -437,7 +437,7 @@ class Hustle_Campaignmonitor_API {
 	 * @since 4.0.2
 	 *
 	 * @param       $list_id
-	 * @param array $args
+	 * @param array   $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -456,7 +456,7 @@ class Hustle_Campaignmonitor_API {
 	 * @since 4.0.2
 	 *
 	 * @param       $list_id
-	 * @param array $args
+	 * @param array   $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -464,7 +464,7 @@ class Hustle_Campaignmonitor_API {
 	public function update_subscriber( $list_id, $args = array() ) {
 		return $this->_request(
 			'PUT',
-			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json?email='. $args['EmailAddress'],
+			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json?email=' . $args['EmailAddress'],
 			$args
 		);
 	}
@@ -476,7 +476,7 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @param       $list_id
 	 * @param       $email_address
-	 * @param array $args
+	 * @param array         $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception
@@ -502,7 +502,7 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @param       $list_id
 	 * @param       $email_address
-	 * @param array $args
+	 * @param array         $args
 	 *
 	 * @return array|mixed|object
 	 * @return Exception

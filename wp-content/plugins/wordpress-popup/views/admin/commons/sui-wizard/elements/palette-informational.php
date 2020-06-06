@@ -1,4 +1,11 @@
 <?php
+/**
+ * Template for the color pickers to customize the elements of informational modules.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $palette_info = array(
 	'basic'      => array(
 		'group_name' => esc_html__( 'Basic', 'hustle' ),
@@ -52,7 +59,7 @@ $palette_info = array(
 						'value' => 'link_static_color',
 						'alpha' => 'false',
 					),
-				)
+				),
 			),
 			'hover'   => array(
 				'name'    => esc_html__( 'Hover', 'hustle' ),
@@ -62,8 +69,8 @@ $palette_info = array(
 						'name'  => esc_html__( 'Link color', 'hustle' ),
 						'value' => 'link_hover_color',
 						'alpha' => 'false',
-					)
-				)
+					),
+				),
 			),
 			'active'  => array(
 				'name'    => esc_html__( 'Focus', 'hustle' ),
@@ -73,8 +80,8 @@ $palette_info = array(
 						'name'  => esc_html__( 'Link color', 'hustle' ),
 						'value' => 'link_active_color',
 						'alpha' => 'false',
-					)
-				)
+					),
+				),
 			),
 		),
 	),
@@ -127,7 +134,7 @@ $palette_info = array(
 				'name'    => esc_html__( 'Active', 'hustle' ),
 				'current' => false,
 				'colors'  => array(
-					'cta_button_border_active' => array(
+					'cta_button_border_active'     => array(
 						'name'  => esc_html__( 'Border color', 'hustle' ),
 						'value' => 'cta_button_active_bo',
 						'alpha' => 'true',
@@ -147,7 +154,7 @@ $palette_info = array(
 		),
 	),
 	'additional' => array(
-		'group_name'   => esc_html__( 'Additional Settings', 'hustle' ),
+		'group_name' => esc_html__( 'Additional Settings', 'hustle' ),
 	),
 );
 
@@ -176,32 +183,32 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 				),
 			),
 		),
-		'hover' => array(
+		'hover'   => array(
 			'name'    => esc_html__( 'Hover', 'hustle' ),
 			'current' => false,
 			'colors'  => array(
-				'close_button'  => array(
+				'close_button' => array(
 					'name'  => esc_html__( 'Close button', 'hustle' ),
 					'value' => 'close_button_hover_color',
 					'alpha' => 'true',
 				),
-				'nsa_link'      => array(
+				'nsa_link'     => array(
 					'name'  => esc_html__( 'Never see link', 'hustle' ),
 					'value' => 'never_see_link_hover',
 					'alpha' => 'true',
 				),
 			),
 		),
-		'active' => array(
+		'active'  => array(
 			'name'    => esc_html__( 'Active', 'hustle' ),
 			'current' => false,
 			'colors'  => array(
-				'close_button'  => array(
+				'close_button' => array(
 					'name'  => esc_html__( 'Close button', 'hustle' ),
 					'value' => 'close_button_active_color',
 					'alpha' => 'true',
 				),
-				'nsa_link'      => array(
+				'nsa_link'     => array(
 					'name'  => esc_html__( 'Never see link', 'hustle' ),
 					'value' => 'never_see_link_active',
 					'alpha' => 'true',
@@ -213,7 +220,6 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 	if ( Hustle_Module_Model::SLIDEIN_MODULE === $module_type ) {
 		unset( $palette_info['additional']['group_states']['default']['colors']['overlay_color'] );
 	}
-
 } else {
 
 	$palette_info['additional']['colors'] = array(
@@ -240,11 +246,11 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 
 				<div class="sui-accordion-item-header">
 
-					<div class="sui-accordion-item-title"><?php echo esc_attr( $palette['group_name'], 'hustle' ); ?></div>
+					<div class="sui-accordion-item-title"><?php echo esc_html( $palette['group_name'] ); ?></div>
 
 					<div class="sui-accordion-col-auto">
 						<button class="sui-button-icon sui-accordion-open-indicator">
-							<i class="sui-icon-chevron-down" aria-hidden="true"></i>
+							<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Edit colors', 'hustle' ); ?></span>
 						</button>
 					</div>
@@ -265,7 +271,12 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 
 										<?php foreach ( $palette['group_states'] as $key_state => $state ) { ?>
 
-											<div <?php if ( true === $state['current'] ) { echo ' class="active"'; } ?>><?php echo esc_attr( $state['name'] ); ?></div>
+											<div
+											<?php
+											if ( true === $state['current'] ) {
+												echo ' class="active"'; }
+											?>
+											><?php echo esc_html( $state['name'] ); ?></div>
 
 										<?php } ?>
 
@@ -275,13 +286,18 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 
 										<?php foreach ( $palette['group_states'] as $key_state => $state ) { ?>
 
-											<div <?php if ( true === $state['current'] ) { echo ' class="active"'; } ?>>
+											<div
+											<?php
+											if ( true === $state['current'] ) {
+												echo ' class="active"'; }
+											?>
+											>
 
 												<?php foreach ( $state['colors'] as $key_color => $color ) { ?>
 
 													<div class="sui-form-field">
 
-														<label class="sui-label"><?php echo esc_attr( $color['name'] ); ?></label>
+														<label class="sui-label"><?php echo esc_html( $color['name'] ); ?></label>
 
 														<?php Opt_In_Utils::sui_colorpicker( $key_color, $color['value'], $color['alpha'], false, $settings[ $color['value'] ] ); ?>
 
@@ -303,7 +319,7 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 
 									<div class="sui-form-field">
 
-										<label class="sui-label"><?php echo esc_attr( $color['name'] ); ?></label>
+										<label class="sui-label"><?php echo esc_html( $color['name'] ); ?></label>
 
 										<?php Opt_In_Utils::sui_colorpicker( $key_color, $color['value'], $color['alpha'], false, $settings[ $color['value'] ] ); ?>
 
@@ -336,8 +352,8 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 				<div class="sui-accordion-col-12">
 
 					<button class="sui-button sui-button-ghost hustle-reset-color-palette">
-						<span class="sui-loading-text"><?php esc_attr_e( 'Reset', 'hustle' ); ?></span>
-						<i class="sui-icon-loader sui-loading" aria-hidden="true"></i></button>
+						<span class="sui-loading-text"><?php esc_html_e( 'Reset', 'hustle' ); ?></span>
+						<span class="sui-icon-loader sui-loading" aria-hidden="true"></span></button>
 
 
 				</div>

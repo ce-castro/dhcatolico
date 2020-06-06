@@ -1,4 +1,13 @@
-<div class="sui-box" <?php if ( 'services' !== $section ) echo ' style="display: none;"'; ?> data-tab="services">
+<?php
+/**
+ * Main template for the services (content) tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
+<div class="sui-box" <?php echo 'services' !== $section ? ' style="display: none;"' : ''; ?> data-tab="services">
 
 	<div class="sui-box-header">
 
@@ -10,13 +19,13 @@
 
 		<?php
 		// SETTING: Counter.
-		self::static_render(
+		$this->render(
 			'admin/sshare/services/tpl--counter',
-			[ 'counter_enabled' => $settings['counter_enabled'] ]
+			array( 'counter_enabled' => $settings['counter_enabled'] )
 		);
 
 		// SETTING: Social Services.
-		self::static_render( 'admin/sshare/services/tpl--social-services' );
+		$this->render( 'admin/sshare/services/tpl--social-services' );
 		?>
 
 	</div>
@@ -26,9 +35,9 @@
 		<div class="sui-actions-right">
 			<button class="sui-button sui-button-icon-right wpmudev-button-navigation" data-direction="next">
 				<span class="sui-loading-text">
-					<?php esc_html_e( 'Display Options', 'hustle' ); ?> <i class="sui-icon-arrow-right" aria-hidden="true"></i>
+					<?php esc_html_e( 'Display Options', 'hustle' ); ?> <span class="sui-icon-arrow-right" aria-hidden="true"></span>
 				</span>
-				<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 		</div>
 

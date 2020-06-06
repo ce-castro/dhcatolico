@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Hustle_General_Data_Protection
  *
- *
  * @since 4.0.2
  */
 class Hustle_General_Data_Protection {
@@ -17,7 +16,7 @@ class Hustle_General_Data_Protection {
 	 * @var string
 	 */
 	protected $cron_cleanup_interval;
-	
+
 	/**
 	 * Privacy settings array
 	 *
@@ -54,9 +53,9 @@ class Hustle_General_Data_Protection {
 	 * @return array
 	 */
 	public function register_eraser( $erasers = array() ) {
-		$erasers[ 'hustle-module-submissions' ] = array(
+		$erasers['hustle-module-submissions'] = array(
 			'eraser_friendly_name' => __( 'Hustle Module Submissions', 'hustle' ),
-			'callback' => array( 'Hustle_General_Data_Protection', 'do_submissions_eraser' )
+			'callback'             => array( 'Hustle_General_Data_Protection', 'do_submissions_eraser' ),
 		);
 		return $erasers;
 	}
@@ -71,9 +70,9 @@ class Hustle_General_Data_Protection {
 	 * @return array
 	 */
 	public function register_exporter( $exporter = array() ) {
-		$exporter[ 'hustle-module-submissions' ] = array(
+		$exporter['hustle-module-submissions'] = array(
 			'exporter_friendly_name' => __( 'Hustle Module Submissions', 'hustle' ),
-			'callback' => array( 'Hustle_General_Data_Protection', 'do_submissions_exporter' )
+			'callback'               => array( 'Hustle_General_Data_Protection', 'do_submissions_exporter' ),
 		);
 		return $exporter;
 	}
@@ -115,7 +114,7 @@ class Hustle_General_Data_Protection {
 		$settings = self::_get_privacy_settings();
 
 		$erasure_disabled = '1' === $settings['retain_sub_on_erasure'];
-		
+
 		$response = array(
 			'items_removed'  => false,
 			'items_retained' => true,
@@ -123,31 +122,31 @@ class Hustle_General_Data_Protection {
 			'done'           => true,
 		);
 
-		if( true === $erasure_disabled ) {
+		if ( true === $erasure_disabled ) {
 
 			$response['messages'][] = __( 'Hustle submissions were retained.', 'hustle' );
 			return $response;
 		}
 
 		$entry_ids = Hustle_Entry_Model::get_entries_by_email( $email );
-		
-		//using action instead of filter here to stop data manipulation
+
+		// using action instead of filter here to stop data manipulation
 		do_action( 'hustle_before_submission_eraser', $email, $page, $entry_ids );
 
-		if( ! empty ( $entry_ids ) ){
+		if ( ! empty( $entry_ids ) ) {
 			foreach ( $entry_ids as $entry_id ) {
 				$entry_model = new Hustle_Entry_Model( $entry_id );
 				Hustle_Entry_Model::delete_by_entry( $entry_model->module_id, $entry_id );
-				$response['messages'][] 	= sprintf( __( 'Hustle submission #%d was deleted.', 'hustle' ), $entry_id );
+				$response['messages'][] = sprintf( __( 'Hustle submission #%d was deleted.', 'hustle' ), $entry_id );
 
 			}
-			$response['items_removed'] 	= true;
+			$response['items_removed']  = true;
 			$response['items_retained'] = false;
-		}else{
+		} else {
 			$response['messages'][] = __( ' Hustle submissions not found.', 'hustle' );
 		}
 
-		//using action instead of filter here to stop data manipulation
+		// using action instead of filter here to stop data manipulation
 		do_action( 'hustle_after_submission_eraser', $email, $page, $entry_ids );
 
 		return $response;
@@ -164,7 +163,7 @@ class Hustle_General_Data_Protection {
 	 * @return array
 	 */
 	public static function do_submissions_exporter( $email, $page ) {
-		$entry_ids = Hustle_Entry_Model::get_entries_by_email( $email );
+		$entry_ids      = Hustle_Entry_Model::get_entries_by_email( $email );
 		$data_to_export = array();
 
 		if ( ! empty( $entry_ids ) && is_array( $entry_ids ) ) {
@@ -173,8 +172,9 @@ class Hustle_General_Data_Protection {
 
 				$data = array();
 
-				if( is_object( $entry_model ) )
+				if ( is_object( $entry_model ) ) {
 					$data = self::get_custom_form_export_mappers( $entry_model );
+				}
 
 				$data_to_export[] = array(
 					'group_id'    => 'hustle_module_submissions',
@@ -205,7 +205,6 @@ class Hustle_General_Data_Protection {
 	/**
 	 * Get data mappers and their values
 	 *
-	 *
 	 * @since   4.0.2
 	 *
 	 * @param Hustle_Entry_Model $model
@@ -215,30 +214,34 @@ class Hustle_General_Data_Protection {
 	public static function get_custom_form_export_mappers( $model ) {
 
 		$ignored_field_types = Hustle_Entry_Model::ignored_fields();
-		$meta = $model->meta_data;
+		$meta                = $model->meta_data;
 
 		$mappers = array(
 			array(
-				'name'    	=> __( 'Entry ID', 'hustle' ),
-				'value'	   	=> $model->entry_id
+				'name'  => __( 'Entry ID', 'hustle' ),
+				'value' => $model->entry_id,
 			),
 			array(
-				'name'    	=> __( 'Submission Date', 'hustle' ),
-				'value'	   	=> $model->date_created_sql
+				'name'  => __( 'Submission Date', 'hustle' ),
+				'value' => $model->date_created_sql,
 			),
 		);
 
-		if( ! empty( $meta ) ){
+		if ( ! empty( $meta ) ) {
 			foreach ( $meta as $key => $value ) {
 				// base mapper for every field
-				if( is_array( $value['value'] ) ) continue;
+				if ( is_array( $value['value'] ) ) {
+					continue;
+				}
 
 				$mapper             = array();
 				$mapper['meta_key'] = $key;
-				$mapper['name']    	= $key;
+				$mapper['name']     = $key;
 				$mapper['value']    = $value['value'];
 
-				if( ! empty( $mapper ) ) $mappers[] = $mapper;
+				if ( ! empty( $mapper ) ) {
+					$mappers[] = $mapper;
+				}
 			}
 		}
 
@@ -261,7 +264,7 @@ class Hustle_General_Data_Protection {
 		$this->_cleanup_tracking_data( $settings );
 
 		return true;
-	}	
+	}
 
 	/**
 	 * Clean up form submissions
@@ -273,7 +276,7 @@ class Hustle_General_Data_Protection {
 	 * @return bool
 	 */
 	private function _cleanup_submissions( $settings ) {
-		
+
 		$retain_number = $settings['submissions_retention_number'];
 		$retain_unit   = $settings['submissions_retention_number_unit'];
 
@@ -312,7 +315,7 @@ class Hustle_General_Data_Protection {
 	 *
 	 * @param privacy settings $settings
 	 *
-	 * @return bool 
+	 * @return bool
 	 */
 	private function _cleanup_ip_address( $settings ) {
 
@@ -337,8 +340,8 @@ class Hustle_General_Data_Protection {
 		$retain_time = strtotime( '-' . $retain_number . ' ' . $retain_unit, current_time( 'timestamp' ) );
 		$retain_time = date_i18n( 'Y-m-d H:i:s', $retain_time );
 
-		$entry_ids 		= Hustle_Entry_Model::get_older_entry_ids( $retain_time );
-		$tracking_ids  	= Hustle_Tracking_Model::get_older_tracking_ids( $retain_time );
+		$entry_ids    = Hustle_Entry_Model::get_older_entry_ids( $retain_time );
+		$tracking_ids = Hustle_Tracking_Model::get_older_tracking_ids( $retain_time );
 
 		foreach ( $entry_ids as $entry_id ) {
 			$entry_model = new Hustle_Entry_Model( $entry_id );
@@ -373,7 +376,6 @@ class Hustle_General_Data_Protection {
 			if ( $anon_value !== $meta_value ) {
 				$entry_model->update_meta( $meta_id, 'hustle_ip', $anon_value );
 			}
-
 		}
 	}
 
@@ -382,7 +384,7 @@ class Hustle_General_Data_Protection {
 	 *
 	 * @since 4.0.2
 	 * @param privacy settings $settings
-	 * @return bool 
+	 * @return bool
 	 */
 	private function _cleanup_tracking_data( $settings ) {
 
@@ -421,10 +423,10 @@ class Hustle_General_Data_Protection {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @return settings array() 
+	 * @return settings array()
 	 */
-	private static function _get_privacy_settings(){
-		if( empty ( self::$_privacy_settings ) ){
+	private static function _get_privacy_settings() {
+		if ( empty( self::$_privacy_settings ) ) {
 			self::$_privacy_settings = Hustle_Settings_Admin::get_privacy_settings();
 		}
 		return self::$_privacy_settings;
@@ -438,11 +440,11 @@ class Hustle_General_Data_Protection {
 	 * @param tracking id $tracking
 	 */
 	private function _anonymize_tracking_model( $tracking ) {
-		if( ! empty( $tracking ) ){
+		if ( ! empty( $tracking ) ) {
 
 			$ip = Hustle_Tracking_Model::get_ip_from_tracking_id( $tracking );
 
-			if( ! empty( $ip ) ){
+			if ( ! empty( $ip ) ) {
 
 				if ( function_exists( 'wp_privacy_anonymize_ip' ) ) {
 					$anon_value = wp_privacy_anonymize_ip( $ip[0] );

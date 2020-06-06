@@ -10,7 +10,7 @@ if ( ! class_exists( 'Hustle_SShare_Admin' ) ) :
 
 			$this->page_title = Opt_In_Utils::get_module_type_display_name( $this->module_type, false, true );
 
-			$this->page_template_path = '/admin/sshare/listing';
+			$this->page_template_path      = '/admin/sshare/listing';
 			$this->page_edit_template_path = '/admin/sshare/wizard';
 		}
 
@@ -20,12 +20,12 @@ if ( ! class_exists( 'Hustle_SShare_Admin' ) ) :
 
 			if ( $this->page_edit === $this->current_page ) {
 
-				$current_array['social_platforms'] = Opt_In_Utils::get_social_platform_names();
-				$current_array['social_platforms_with_endpoints'] = Hustle_Sshare_Model::get_sharing_endpoints();
-				$current_array['social_platforms_with_api'] = Hustle_Sshare_Model::get_networks_counter_endpoint();
-				$current_array['social_platforms_data'] = [
+				$current_array['social_platforms']                = Opt_In_Utils::get_social_platform_names();
+				$current_array['social_platforms_with_endpoints'] = Hustle_SShare_Model::get_sharing_endpoints();
+				$current_array['social_platforms_with_api']       = Hustle_SShare_Model::get_networks_counter_endpoint();
+				$current_array['social_platforms_data']           = array(
 					'email_message_default' => __( "I've found an excellent article on {page_url} which may interest you.", 'hustle' ),
-				];
+				);
 			}
 
 			return $current_array;
@@ -42,9 +42,9 @@ if ( ! class_exists( 'Hustle_SShare_Admin' ) ) :
 			$current_section = Hustle_Module_Admin::get_current_section();
 
 			return array(
-				'section' => ( ! $current_section ) ? 'services' : $current_section,
+				'section'   => ( ! $current_section ) ? 'services' : $current_section,
 				'module_id' => $this->module->module_id,
-				'module' => $this->module,
+				'module'    => $this->module,
 				'is_active' => (bool) $this->module->active,
 			);
 		}

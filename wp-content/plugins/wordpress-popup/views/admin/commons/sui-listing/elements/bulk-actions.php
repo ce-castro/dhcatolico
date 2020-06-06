@@ -1,4 +1,11 @@
 <?php
+/**
+ * Displays the bulk action options that can be performed in the listing page.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $can_create = current_user_can( 'hustle_create' );
 ?>
 <form class="hustle-bulk-actions-container sui-bulk-actions">
@@ -43,7 +50,7 @@ $can_create = current_user_can( 'hustle_create' );
 		<span class="sui-loading-text">
 			<?php esc_html_e( 'Apply', 'hustle' ); ?>
 		</span>
-		<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+		<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 	</button>
 </form>
 

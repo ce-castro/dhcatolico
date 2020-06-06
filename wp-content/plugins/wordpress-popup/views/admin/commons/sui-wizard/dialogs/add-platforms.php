@@ -1,66 +1,53 @@
-<div
-	id="hustle-dialog--add-platforms"
-	class="sui-dialog"
-	tabindex="-1"
-	aria-hidden="true"
->
+<?php
+/**
+ * Modal for adding social network platforms in Social Sharing modules.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
 
-	<div class="sui-dialog-overlay sui-fade-out"></div>
+ob_start();
+?>
 
-	<div
-		role="dialog"
-		class="sui-dialog-content sui-bounce-out"
-		aria-labelledby="dialogTitle"
-		aria-describedby="dialogDescription"
-	>
+<div class="sui-box-selectors sui-box-selectors-col-5" style="margin-bottom: 0;">
 
-		<div class="sui-box" role="document">
-
-			<div class="sui-box-header">
-
-				<h3 id="dialogTitle" class="sui-box-title"><?php esc_html_e( 'Add Platform', 'hustle' ); ?></h3>
-
-				<div class="sui-actions-right">
-
-					<button class="hustle-discard-changes sui-dialog-close hustle-cancel-platforms">
-						<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog window', 'hustle' ); ?></span>
-					</button>
-
-				</div>
-
-			</div>
-
-			<div class="sui-box-body">
-
-				<p><?php esc_html_e( 'Choose the platforms to insert into your social sharing module.', 'hustle' ); ?></p>
-
-			</div>
-
-			<div class="sui-box-selectors sui-box-selectors-col-5">
-
-				<ul class="sui-spacing-slim" id="hustle_add_platforms_container"></ul>
-
-			</div>
-
-			<div class="sui-box-footer">
-
-				<button class="sui-button sui-button-ghost hustle-cancel-platforms">
-					<?php esc_html_e( 'Cancel', 'hustle' ); ?>
-				</button>
-
-				<div class="sui-actions-right">
-
-					<button id="hustle-add-platforms" class="sui-button sui-button-blue">
-						<span class="sui-loading-text"><?php esc_html_e( 'Add Platform', 'hustle' ); ?></span>
-						<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
-					</button>
-
-				</div>
-
-			</div>
-
-		</div>
-
-	</div>
+	<ul class="sui-spacing-slim" id="hustle_add_platforms_container"></ul>
 
 </div>
+
+<?php
+$after_body_content = ob_get_clean();
+
+$attributes = array(
+	'modal_id'           => 'add-platforms',
+	'has_description'    => true,
+	'modal_size'         => 'lg',
+
+	'header'             => array(
+		'title' => __( 'Add Platform', 'hustle' ),
+	),
+	'body'               => array(
+		'classes'     => 'sui-spacing-bottom--0',
+		'description' => __( 'Choose the platforms to insert into your social sharing module.', 'hustle' ),
+	),
+	'after_body_content' => $after_body_content,
+	'footer'             => array(
+		'classes' => 'sui-content-separated sui-flatten sui-spacing-top--30',
+		'buttons' => array(
+			array(
+				'classes'  => 'sui-button-ghost',
+				'text'     => __( 'Cancel', 'hustle' ),
+				'is_close' => true,
+			),
+			array(
+				'id'       => 'hustle-add-platforms',
+				'classes'  => 'sui-button-blue',
+				'has_load' => true,
+				'text'     => __( 'Add Platform', 'hustle' ),
+			),
+		),
+	),
+);
+
+$this->render_modal( $attributes );
+

@@ -1,3 +1,12 @@
+<?php
+/**
+ * Form design section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row" data-toggle-content="use-vanilla">
 
 	<div class="sui-box-settings-col-1">
@@ -7,8 +16,7 @@
 
 	<div class="sui-box-settings-col-2">
 
-		<?php
-		// SETTING: Form fields style ?>
+		<?php // SETTING: Form fields style. ?>
 		<div class="sui-form-field">
 
 			<label class="sui-label"><?php esc_html_e( 'Form fields style', 'hustle' ); ?></label>
@@ -87,11 +95,11 @@
 									<label for="hustle-module--form-border-type" class="sui-label"><?php esc_html_e( 'Border type', 'hustle' ); ?></label>
 
 									<select id="hustle-module--form-border-type" data-attribute="form_fields_border_type">
-										<option value="solid" <?php selected( $settings['form_fields_border_type'], 'solid' ); ?>><?php esc_attr_e( "Solid", 'hustle' ); ?></option>
-										<option value="dotted" <?php selected( $settings['form_fields_border_type'], 'dotted' ); ?>><?php esc_attr_e( "Dotted", 'hustle' ); ?></option>
-										<option value="dashed" <?php selected( $settings['form_fields_border_type'], 'dashed' ); ?>><?php esc_attr_e( "Dashed", 'hustle' ); ?></option>
-										<option value="double" <?php selected( $settings['form_fields_border_type'], 'double' ); ?>><?php esc_attr_e( "Double", 'hustle' ); ?></option>
-										<option value="none" <?php selected( $settings['form_fields_border_type'], 'none' ); ?>><?php esc_attr_e( "None", 'hustle' ); ?></option>
+										<option value="solid" <?php selected( $settings['form_fields_border_type'], 'solid' ); ?>><?php esc_attr_e( 'Solid', 'hustle' ); ?></option>
+										<option value="dotted" <?php selected( $settings['form_fields_border_type'], 'dotted' ); ?>><?php esc_attr_e( 'Dotted', 'hustle' ); ?></option>
+										<option value="dashed" <?php selected( $settings['form_fields_border_type'], 'dashed' ); ?>><?php esc_attr_e( 'Dashed', 'hustle' ); ?></option>
+										<option value="double" <?php selected( $settings['form_fields_border_type'], 'double' ); ?>><?php esc_attr_e( 'Double', 'hustle' ); ?></option>
+										<option value="none" <?php selected( $settings['form_fields_border_type'], 'none' ); ?>><?php esc_attr_e( 'None', 'hustle' ); ?></option>
 									</select>
 
 								</div>

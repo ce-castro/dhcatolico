@@ -1,9 +1,16 @@
 <?php
+/**
+ * Submissions behavior section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 ob_start();
 
-require self::$plugin_path . 'assets/css/sui-editor.min.css';
+require Opt_In::$plugin_path . 'assets/css/sui-editor.min.css';
 $editor_css = ob_get_clean();
-$editor_css = '<style>' . $editor_css. '</style>';
+$editor_css = '<style>' . $editor_css . '</style>';
 ?>
 
 <div class="sui-box-settings-row">
@@ -25,7 +32,7 @@ $editor_css = '<style>' . $editor_css. '</style>';
 						data-attribute="after_successful_submission"
 						data-tab-menu="show_success"
 						value="show_success"
-						<?php checked( $settings['after_successful_submission'] , 'show_success' ); ?>
+						<?php checked( $settings['after_successful_submission'], 'show_success' ); ?>
 					/>
 					<?php esc_html_e( 'Success message', 'hustle' ); ?>
 				</label>
@@ -35,7 +42,7 @@ $editor_css = '<style>' . $editor_css. '</style>';
 						data-attribute="after_successful_submission"
 						data-tab-menu="redirect"
 						value="redirect"
-						<?php checked( $settings['after_successful_submission'] , 'redirect' ); ?>
+						<?php checked( $settings['after_successful_submission'], 'redirect' ); ?>
 					/>
 					<?php esc_html_e( 'Redirect', 'hustle' ); ?>
 				</label>
@@ -59,7 +66,7 @@ $editor_css = '<style>' . $editor_css. '</style>';
 								'textarea_name'    => 'success_message',
 								'editor_css'       => $editor_css,
 								'tinymce'          => array(
-									'content_css' => self::$plugin_url . 'assets/css/sui-editor.min.css'
+									'content_css' => self::$plugin_url . 'assets/css/sui-editor.min.css',
 								),
 								'editor_height'    => 192,
 								'drag_drop_upload' => false,

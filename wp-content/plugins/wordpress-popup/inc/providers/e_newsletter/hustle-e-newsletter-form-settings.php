@@ -2,36 +2,35 @@
 if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 
 	/**
- * Class Hustle_E_Newsletter_Form_Settings
- * Form Settings e-Newsletter Process
- *
- */
+	 * Class Hustle_E_Newsletter_Form_Settings
+	 * Form Settings e-Newsletter Process
+	 */
 	class Hustle_E_Newsletter_Form_Settings extends Hustle_Provider_Form_Settings_Abstract {
 
 		/**
-	 * For settings Wizard steps
-	 *
-	 * @since 3.0.5
-	 * @return array
-	 */
+		 * For settings Wizard steps
+		 *
+		 * @since 3.0.5
+		 * @return array
+		 */
 		public function form_settings_wizards() {
 			// already filtered on Abstract
 			// numerical array steps
 			return array(
-			// 0
-			array(
-				'callback'     => array( $this, 'first_step_callback' ),
-				'is_completed' => array( $this, 'first_step_is_completed' ),
-			),
+				// 0
+				array(
+					'callback'     => array( $this, 'first_step_callback' ),
+					'is_completed' => array( $this, 'first_step_is_completed' ),
+				),
 			);
 		}
 
 		/**
-	 * Check if step is completed
-	 *
-	 * @since 3.0.5
-	 * @return bool
-	 */
+		 * Check if step is completed
+		 *
+		 * @since 3.0.5
+		 * @return bool
+		 */
 		public function first_step_is_completed() {
 			$this->addon_form_settings = $this->get_form_settings_values();
 			if ( ! isset( $this->addon_form_settings['list_id'] ) ) {
@@ -49,22 +48,22 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 		}
 
 		/**
-	 * Returns all settings and conditions for 1st step of e-Newsletter settings
-	 *
-	 * @since 3.0.5
-	 * @since 4.0 param $validate removed.
-	 *
-	 * @param array $submitted_data
-	 * @return array
-	 */
+		 * Returns all settings and conditions for 1st step of e-Newsletter settings
+		 *
+		 * @since 3.0.5
+		 * @since 4.0 param $validate removed.
+		 *
+		 * @param array $submitted_data
+		 * @return array
+		 */
 		public function first_step_callback( $submitted_data ) {
 			$this->addon_form_settings = $this->get_form_settings_values();
-			$current_data = array(
-			'list_id' => '',
-			'auto_optin' => '',
+			$current_data              = array(
+				'list_id'    => '',
+				'auto_optin' => '',
 			);
-			$current_data = $this->get_current_data( $current_data, $submitted_data );
-			$is_submit = ! empty( $submitted_data['hustle_is_submit'] );
+			$current_data              = $this->get_current_data( $current_data, $submitted_data );
+			$is_submit                 = ! empty( $submitted_data['hustle_is_submit'] );
 			if ( $is_submit && empty( $submitted_data['list_id'] ) ) {
 				$error_message = __( 'The email list is required.', 'hustle' );
 			}
@@ -86,28 +85,28 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 			}
 
 			$buttons = array(
-			'disconnect' => array(
-				'markup' => Hustle_Provider_Utils::get_provider_button_markup(
-					__( 'Disconnect', 'hustle' ),
-					'sui-button-ghost',
-					'disconnect_form',
-					true
+				'disconnect' => array(
+					'markup' => Hustle_Provider_Utils::get_provider_button_markup(
+						__( 'Disconnect', 'hustle' ),
+						'sui-button-ghost',
+						'disconnect_form',
+						true
+					),
 				),
-			),
-			'save' => array(
-				'markup' => Hustle_Provider_Utils::get_provider_button_markup(
-					__( 'Save', 'hustle' ),
-					'',
-					'next',
-					true
+				'save'       => array(
+					'markup' => Hustle_Provider_Utils::get_provider_button_markup(
+						__( 'Save', 'hustle' ),
+						'',
+						'next',
+						true
+					),
 				),
-			),
 			);
 
 			$response = array(
-			'html'       => $step_html,
-			'buttons'    => $buttons,
-			'has_errors' => $has_errors,
+				'html'       => $step_html,
+				'buttons'    => $buttons,
+				'has_errors' => $has_errors,
 			);
 
 			// Save only after the step has been validated and there are no errors
@@ -135,7 +134,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 			}
 
 			$lists = array();
-			foreach( $current_data['list_id'] as $list ) {
+			foreach ( $current_data['list_id'] as $list ) {
 				$lists[] = $this->_lists[ $list ]['label'];
 			}
 
@@ -143,33 +142,33 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 		}
 
 		/**
-	 * Return an array of options used to display the settings of the 1st step.
-	 *
-	 * @since 4.0
-	 *
-	 * @param array $submitted_data
-	 * @return array
-	 */
-	private function get_first_step_options( $submitted_data, $is_submit ) {
+		 * Return an array of options used to display the settings of the 1st step.
+		 *
+		 * @since 4.0
+		 *
+		 * @param array $submitted_data
+		 * @return array
+		 */
+		private function get_first_step_options( $submitted_data, $is_submit ) {
 
-		$lists = array();
+			$lists = array();
 
-		try {
+			try {
 
-			$_lists = $this->provider->get_groups();
+				$_lists = $this->provider->get_groups();
 
-			if ( is_array( $_lists ) && ! empty( $_lists ) ) {
-				$lists = wp_list_pluck( $_lists, 'group_name', 'group_id' );
+				if ( is_array( $_lists ) && ! empty( $_lists ) ) {
+					$lists = wp_list_pluck( $_lists, 'group_name', 'group_id' );
 
-				$this->_lists = $lists;
+					$this->_lists = $lists;
+
+				}
+			} catch ( Exception $e ) {
+
+				// TODO: handle this properly
+				return array();
 
 			}
-		} catch ( Exception $e ) {
-
-			// TODO: handle this properly
-			return array();
-
-		}
 
 			$selected_lists = isset( $submitted_data['list_id'] ) && is_array( $submitted_data['list_id'] ) ?
 				array_intersect( $submitted_data['list_id'], array_keys( $lists ) ) :
@@ -178,14 +177,14 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 			if ( $is_submit ) {
 
 				$module_id = $this->module_id;
-				$module = Hustle_Module_Model::instance()->get( $module_id );
+				$module    = Hustle_Module_Model::instance()->get( $module_id );
 
 				if ( ! is_wp_error( $module ) ) {
-					$synced = Hustle_E_Newsletter::get_synced( $module );
+					$synced           = Hustle_E_Newsletter::get_synced( $module );
 					$saved_auto_optin = ! empty( $this->addon_form_settings['auto_optin'] ) && 'pending' !== $this->addon_form_settings['auto_optin'] ? 'subscribed' : 'pending';
 				}
 			} else {
-				$synced = 0;
+				$synced           = 0;
 				$saved_auto_optin = 'pending';
 			}
 
@@ -205,7 +204,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 							'id'       => 'wph-email-provider-lists',
 							'selected' => $selected_lists,
 							'options'  => $lists,
-							'class'    => 'sui-checkbox-sm sui-checkbox-stacked'
+							'class'    => 'sui-checkbox-sm sui-checkbox-stacked',
 						),
 					),
 				),

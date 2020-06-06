@@ -1,4 +1,11 @@
 <?php
+/**
+ * Layout section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $info_default = self::$plugin_url . 'assets/images/layouts/layout-info-default';
 $info_compact = self::$plugin_url . 'assets/images/layouts/layout-info-compact';
 $info_stacked = self::$plugin_url . 'assets/images/layouts/layout-info-stacked';
@@ -15,8 +22,10 @@ $content_focus = self::$plugin_url . 'assets/images/layouts/layout-content-focus
 		<span class="sui-settings-label"><?php esc_html_e( 'Layout', 'hustle' ); ?></span>
 
 		<?php if ( $is_optin ) { ?>
+			<?php /* translators: module type in small caps and in singular */ ?>
 			<span class="sui-description"><?php printf( esc_html__( 'Select from one of the pre-built layouts for your %s as per your liking.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 		<?php } else { ?>
+			<?php /* translators: module type in small caps and in singular */ ?>
 			<span class="sui-description"><?php printf( esc_html__( 'Choose one of the pre-built layouts for your %s content.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 		<?php } ?>
 	</div>

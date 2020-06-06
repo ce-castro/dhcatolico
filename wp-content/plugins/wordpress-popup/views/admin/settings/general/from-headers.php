@@ -1,3 +1,12 @@
+<?php
+/**
+ * Email section under the "general" tab.
+ *
+ * @package Hustle
+ * @since 4.0.4
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -14,7 +23,7 @@
 			<input
 				type="email"
 				name="sender_email_address"
-				value="<?php echo isset( $settings['sender_email_address'] ) ? esc_attr( $settings['sender_email_address'] ):''; ?>"
+				value="<?php echo isset( $settings['sender_email_address'] ) ? esc_attr( $settings['sender_email_address'] ) : ''; ?>"
 				placeholder="admin@website.com"
 				id="hustle-sender-email"
 				class="sui-form-control"
@@ -30,7 +39,7 @@
 			<input
 				type="text"
 				name="sender_email_name"
-				value="<?php echo isset( $settings['sender_email_name'] ) ? esc_attr( $settings['sender_email_name'] ):''; ?>"
+				value="<?php echo isset( $settings['sender_email_name'] ) ? esc_attr( $settings['sender_email_name'] ) : ''; ?>"
 				placeholder="<?php esc_html_e( 'Website Title', 'hustle' ); ?>"
 				id="hustle-sender-name"
 				class="sui-form-control"

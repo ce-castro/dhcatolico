@@ -19,12 +19,12 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
-		$addon = $this->addon;
-		$module_id = $this->module_id;
+		$addon                  = $this->addon;
+		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
-		$utils = Hustle_Provider_Utils::get_instance();
-		$addon_setting_values = $form_settings_instance->get_form_settings_values();
-		$global_multi_id = $addon_setting_values['selected_global_multi_id'];
+		$utils                  = Hustle_Provider_Utils::get_instance();
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
 
 		/**
 		 * Filter submitted form data to be processed
@@ -33,7 +33,7 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		 *
 		 * @param array                                    $submitted_data
 		 * @param int                                      $module_id                current module_id
-		 * @param Hustle_Aweber_Form_Settings 	   $form_settings_instance
+		 * @param Hustle_Aweber_Form_Settings      $form_settings_instance
 		 */
 		$submitted_data = apply_filters(
 			'hustle_provider_aweber_form_submitted_data',
@@ -45,10 +45,10 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		try {
 
 			if ( empty( $submitted_data['email'] ) ) {
-				throw new Exception( __('Required Field "email" was not filled by the user.', 'hustle' ) );
+				throw new Exception( __( 'Required Field "email" was not filled by the user.', 'hustle' ) );
 			}
 
-			$api = $addon->get_api( $global_multi_id );
+			$api        = $addon->get_api( $global_multi_id );
 			$account_id = $addon->get_account_id( $global_multi_id );
 
 			$list_id = $addon_setting_values['list_id'];
@@ -60,7 +60,7 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			if ( ! empty( $subscribe_data['name'] ) ) {
 				$default_fields = array(
 					'email' => '',
-					'name' => '',
+					'name'  => '',
 				);
 
 			} else {
@@ -95,9 +95,9 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			}
 
 			if ( ! empty( $subscribe_data['custom_fields'] ) ) {
-				$result = $api->get_account_list_custom_fields( $account_id, $list_id );
+				$result        = $api->get_account_list_custom_fields( $account_id, $list_id );
 				$custom_fields = array();
-				if ( !empty( $result->entries ) ) {
+				if ( ! empty( $result->entries ) ) {
 					$custom_fields = wp_list_pluck( $result->entries, 'name' );
 				}
 
@@ -115,10 +115,10 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				}
 			}
 
-			$search_data = array( 'email' => $subscribe_data['email'] );
+			$search_data   = array( 'email' => $subscribe_data['email'] );
 			$find_by_email = $api->find_account_list_subscriber( $account_id, $list_id, $search_data );
 
-			$is_sent = false;
+			$is_sent       = false;
 			$member_status = __( 'Member could not be subscribed.', 'hustle' );
 
 			/**
@@ -130,7 +130,8 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 * @param array  $submitted_data
 			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_aweber_before_add_subscriber',
+			do_action(
+				'hustle_provider_aweber_before_add_subscriber',
 				$module_id,
 				$submitted_data,
 				$form_settings_instance
@@ -139,13 +140,13 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			// The user is already subscribed. Update it.
 			if ( ! empty( $find_by_email ) && ! empty( $find_by_email->entries ) ) {
 				$member_data = $find_by_email->entries[0];
-				$subscriber = $api->update_account_list_subscriber( $account_id, $list_id, $member_data->id, $subscribe_data );
-				$action = 'updated';
+				$subscriber  = $api->update_account_list_subscriber( $account_id, $list_id, $member_data->id, $subscribe_data );
+				$action      = 'updated';
 
 			} else {
 				// Subscribe a new user.
 				$subscriber = $api->add_account_list_subscriber( $account_id, $list_id, $subscribe_data );
-				$action = 'created';
+				$action     = 'created';
 
 			}
 
@@ -159,7 +160,8 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 * @param mixed  $subscriber
 			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_aweber_after_add_subscriber',
+			do_action(
+				'hustle_provider_aweber_after_add_subscriber',
 				$module_id,
 				$submitted_data,
 				$subscriber,
@@ -170,13 +172,21 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			if ( empty( $subscriber ) || is_wp_error( $subscriber ) ) {
 				throw new Exception( $error_message );
 			}
-			if ( 'created' === $action && ! empty( $subscriber['response'] ) && 400 <= intval( $subscriber['response']['code'] ) ) {
 
-				if ( ! empty( $subscriber['response']['message'] ) && ! empty( $subscriber['response']['code'] ) ) {
-					$error_message = $error_message . $subscriber['response']['code'] . ': ' . $subscriber['response']['message'];
+			if ( 'created' === $action && ! empty( $subscriber->response ) && 400 <= intval( $subscriber->response['code'] ) ) {
+
+				if ( ! empty( $subscriber->response['message'] ) && ! empty( $subscriber->response['code'] ) ) {
+					$error_message = $error_message . $subscriber->response['code'] . ': ' . $subscriber->response['message'];
 				}
 				throw new Exception( $error_message );
 
+			} elseif ( ! empty( $subscriber->error ) ) {
+
+				$error_message = $subscriber->error;
+				if ( ! empty( $subscriber->error_description ) ) {
+					$error_message .= ': ' . $subscriber->error_description;
+				}
+				throw new Exception( $error_message );
 			}
 
 			$is_sent = true;
@@ -188,13 +198,13 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				// We aren't retrieving the created subscriber so we don't know the current custom fields in order to check them.
 
 			} else {
-				$member_status = $subscriber->status;
+				$member_status            = $subscriber->status;
 				$subscriber_custom_fields = $subscriber->custom_fields;
 
 				if ( ! empty( $subscriber_custom_fields ) && ! empty( $subscribe_data['custom_fields'] ) ) {
 
 					// Let's double check if all custom fields are successfully added
-					$found_missing_field = [];
+					$found_missing_field = array();
 					foreach ( array_filter( $subscribe_data['custom_fields'] ) as $label => $field ) {
 
 						// Check the custom field was actually updated.
@@ -210,7 +220,6 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				}
 			}
 
-
 			$entry_fields = array(
 				array(
 					'name'  => 'status',
@@ -225,11 +234,12 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$entry_fields = $this->exception( $e );
 		}
 
-		if ( !empty( $addon_setting_values['list_name'] ) ) {
+		if ( ! empty( $addon_setting_values['list_name'] ) ) {
 			$entry_fields[0]['value']['list_name'] = $addon_setting_values['list_name'];
 		}
 
-		$entry_fields = apply_filters( 'hustle_provider_aweber_entry_fields',
+		$entry_fields = apply_filters(
+			'hustle_provider_aweber_entry_fields',
 			$entry_fields,
 			$module_id,
 			$submitted_data,
@@ -249,14 +259,14 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
 
-		$is_success 				= true;
-		$module_id                	= $this->module_id;
-		$form_settings_instance 	= $this->form_settings_instance;
-		$addon 						= $this->addon;
-		$addon_setting_values 		= $form_settings_instance->get_form_settings_values();
-		$list_id					= $addon_setting_values['list_id'];
-		$global_multi_id			= $addon_setting_values['selected_global_multi_id'];
-		$api_key					= $addon->get_setting( 'api_key', null, $global_multi_id );
+		$is_success             = true;
+		$module_id              = $this->module_id;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon                  = $this->addon;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$list_id                = $addon_setting_values['list_id'];
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
+		$api_key                = $addon->get_setting( 'api_key', null, $global_multi_id );
 
 		$account_id = $addon->get_account_id( $global_multi_id );
 
@@ -296,11 +306,9 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				if ( ! empty( $find_by_email ) && ! empty( $find_by_email->entries ) ) {
 					$is_success = self::ALREADY_SUBSCRIBED_ERROR;
 				}
-
 			} catch ( Exception $e ) {
 				Hustle_Provider_Utils::maybe_log( __METHOD__, $e->getMessage() );
 			}
-
 		}
 
 		/**
@@ -345,12 +353,12 @@ class Hustle_Aweber_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param 	object 	$api
-	 * @param 	mixed  	$data
-	 * @return  mixed 	array/object API response on queried subscriber
+	 * @param   object $api
+	 * @param   mixed  $data
+	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if( empty ( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ){
+		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ) {
 			$this->_subscriber[ md5( $data['email'] ) ] = $api->find_account_list_subscriber( $data['account_id'], $data['list_id'], array( 'email' => $data['email'] ) );
 		}
 		return $this->_subscriber[ md5( $data['email'] ) ];

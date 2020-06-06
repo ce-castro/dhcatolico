@@ -8,7 +8,8 @@
 	 * @type {{define, getModules, get, modules}}
 	 */
 	window.Hustle = ( function( $, doc, win ) {
-		var _modules = {},
+		var currentModules = {},
+			_modules = {},
 			_TemplateOptions = {
 				evaluate: /<#([\s\S]+?)#>/g,
 				interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
@@ -42,9 +43,6 @@
 					let m = _modules[moduleName] || {};
 					_modules[moduleName] = _.extend( m, module.call( null, $, doc, win ) );
 				}
-			},
-			getModules = function() {
-				return _modules;
 			},
 			get = function( moduleName ) {
 				var module, recursive;
@@ -99,46 +97,18 @@
 			getTemplateOptions = function() {
 				return $.extend(  true, {}, _TemplateOptions );
 			},
-			cookie = ( function() {
 
-				// Get a cookie value.
-				var get = function( name ) {
-					var i, c, cookieName, value,
-						ca = document.cookie.split( ';' ),
-						caLength = ca.length;
-					cookieName = name + '=';
-					for ( i = 0; i < caLength; i += 1 ) {
-						c = ca[i];
-						while ( ' ' === c.charAt( 0 ) ) {
-							c = c.substring( 1, c.length );
-						}
-						if ( 0 === c.indexOf( cookieName ) ) {
-							let _val = c.substring( cookieName.length, c.length );
-							return _val ? JSON.parse( _val ) : _val;
-						}
-					}
-					return null;
-				};
+			setModule = ( moduleId, moduleView ) => {
+				currentModules[ moduleId ] = moduleView;
+			},
 
-				// Saves the value into a cookie.
-				var set = function( name, value, days ) {
-					var date, expires;
+			getModules = function() {
+				return currentModules;
+			},
 
-					value = $.isArray( value ) || $.isPlainObject( value ) ? JSON.stringify( value ) : value;
-					if ( ! isNaN( days ) ) {
-						date = new Date();
-						date.setTime( date.getTime() + ( days * 24 * 60 * 60 * 1000 ) );
-						expires = '; expires=' + date.toGMTString();
-					} else {
-						expires = '';
-					}
-					document.cookie = name + '=' + value + expires + '; path=/';
-				};
-				return {
-					set: set,
-					get: get
-				};
-			}() ),
+			getModule = function( moduleId ) {
+				return currentModules[ moduleId ];
+			},
 			consts = ( function() {
 				return {
 					ModuleShowCount: 'hustle_module_show_count-'
@@ -147,29 +117,24 @@
 
 		return {
 			define,
+			setModule,
 			getModules,
+			getModule,
 			get,
 			Events,
 			View,
 			template,
 			createTemplate,
 			getTemplateOptions,
-			cookie,
 			consts
 		};
 	}( jQuery, document, window ) );
 
 }( jQuery ) );
 
-var  Optin = Optin || {};
+var  Optin = window.Optin || {};
 
-Optin.View = {};
 Optin.Models = {};
-Optin.Events = {};
-
-if ( 'undefined' !== typeof Backbone ) {
-	_.extend( Optin.Events, Backbone.Events );
-}
 
 ( function( $ ) {
 	'use strict';
@@ -178,171 +143,6 @@ if ( 'undefined' !== typeof Backbone ) {
 	Optin.POPUP_COOKIE_PREFIX = 'inc_optin_popup_long_hidden-';
 	Optin.SLIDE_IN_COOKIE_PREFIX = 'inc_optin_slide_in_long_hidden-';
 	Optin.EMBEDDED_COOKIE_PREFIX = 'inc_optin_embedded_long_hidden-';
-
-	Optin.globalMixin = function() {
-		_.mixin({
-
-			/**
-			 * Logs to console
-			 */
-			log: function() {
-				console.log( arguments );
-			},
-
-			/**
-			 * Converts val to boolian
-			 *
-			 * @param val
-			 * @returns {*}
-			 */
-			toBool: function( val ) {
-				if ( _.isBoolean( val ) ) {
-					return val;
-				}
-				if ( _.isString( val ) && -1 !== [ 'true', 'false', '1' ].indexOf( val.toLowerCase() ) ) {
-					return 'true' === val.toLowerCase() || '1' === val.toLowerCase() ? true : false;
-				}
-				if ( _.isNumber( val ) ) {
-					return ! ! val;
-				}
-				if ( _.isUndefined( val ) || _.isNull( val ) || _.isNaN( val ) ) {
-					return false;
-				}
-				return val;
-			},
-
-			/**
-			 * Checks if val is truthy
-			 *
-			 * @param val
-			 * @returns {boolean}
-			 */
-			isTrue: function( val ) {
-				if ( _.isUndefined( val ) || _.isNull( val ) || _.isNaN( val ) ) {
-					return false;
-				}
-				if ( _.isNumber( val ) ) {
-					return 0 !== val;
-				}
-				val = val.toString().toLowerCase();
-				return -1 !== [ '1', 'true', 'on' ].indexOf( val );
-			},
-			isFalse: function( val ) {
-				return ! _.isTrue( val );
-			},
-			controlBase: function( checked, current, attribute ) {
-				attribute = _.isUndefined( attribute ) ? 'checked' : attribute;
-				checked  = _.toBool( checked );
-				current = _.isBoolean( checked ) ? _.isTrue( current ) : current;
-				if ( _.isEqual( checked, current ) ) {
-					return  attribute + '=' + attribute;
-				}
-				return '';
-			},
-
-			/**
-			 * Returns checked=check if checked variable is equal to current state
-			 *
-			 *
-			 * @param checked checked state
-			 * @param current current state
-			 * @returns {*}
-			 */
-			checked: function( checked, current ) {
-				return _.controlBase( checked, current, 'checked' );
-			},
-
-			/**
-			 * Adds selected attribute
-			 *
-			 * @param selected
-			 * @param current
-			 * @returns {*}
-			 */
-			selected: function( selected, current ) {
-				return _.controlBase( selected, current, 'selected' );
-			},
-
-			/**
-			 * Adds disabled attribute
-			 *
-			 * @param disabled
-			 * @param current
-			 * @returns {*}
-			 */
-			disabled: function( disabled, current ) {
-				return _.controlBase( disabled, current, 'disabled' );
-			},
-
-			/**
-			 * Returns css class based on the passed in condition
-			 *
-			 * @param conditon
-			 * @param cls
-			 * @param negating_cls
-			 * @returns {*}
-			 */
-			class: function( conditon, cls, negatingCls ) {
-				if ( _.isTrue( conditon ) ) {
-					return cls;
-				}
-				return 'undefined' !== typeof negatingCls ? negatingCls : '';
-			},
-
-			/**
-			 * Returns class attribute with relevant class name
-			 *
-			 * @param conditon
-			 * @param cls
-			 * @param negating_cls
-			 * @returns {string}
-			 */
-			add_class: function( conditon, cls, negatingCls ) { // eslint-disable-line camelcase
-				return 'class={class}'.replace( '{class}',  _.class( conditon, cls, negatingCls ) );
-			},
-
-			toUpperCase: function( str ) {
-				return  _.isString( str ) ? str.toUpperCase() : '';
-			}
-		});
-
-		if ( ! _.findKey ) {
-			_.mixin({
-				findKey: function( obj, predicate, context ) {
-					predicate = cb( predicate, context );
-					let keys = _.keys( obj ),
-                        key;
-					for ( let i = 0, length = keys.length; i < length; i++ ) {
-						key = keys[i];
-						if ( predicate( obj[ key ], key, obj ) ) {
-							return key;
-						}
-					}
-				}
-			});
-		}
-	};
-
-	Optin.globalMixin();
-
-	/**
-	 * Recursive toJSON
-	 *
-	 * @returns {*}
-	 */
-	Backbone.Model.prototype.toJSON = function() {
-		var json = _.clone( this.attributes );
-		var attr;
-		for ( attr in json ) {
-			if (
-				( json[ attr ] instanceof Backbone.Model ) ||
-				( Backbone.Collection && json[attr] instanceof Backbone.Collection )
-			) {
-				json[ attr ] = json[ attr ].toJSON();
-			}
-		}
-		return json;
-	};
 
 	Optin.template = _.memoize( function( id ) {
 		var compiled,
@@ -372,7 +172,42 @@ if ( 'undefined' !== typeof Backbone ) {
 		};
 	});
 
-	Optin.cookie = Hustle.cookie;
+	Optin.cookie = {
+
+		// Get a cookie value.
+		get: function( name ) {
+			var i, c, cookieName, value,
+				ca = document.cookie.split( ';' ),
+				caLength = ca.length;
+			cookieName = name + '=';
+			for ( i = 0; i < caLength; i += 1 ) {
+				c = ca[i];
+				while ( ' ' === c.charAt( 0 ) ) {
+					c = c.substring( 1, c.length );
+				}
+				if ( 0 === c.indexOf( cookieName ) ) {
+					let _val = c.substring( cookieName.length, c.length );
+					return _val ? JSON.parse( _val ) : _val;
+				}
+			}
+			return null;
+		},
+
+		// Saves the value into a cookie.
+		set: function( name, value, days ) {
+			var date, expires;
+
+			value = $.isArray( value ) || $.isPlainObject( value ) ? JSON.stringify( value ) : value;
+			if ( ! isNaN( days ) ) {
+				date = new Date();
+				date.setTime( date.getTime() + ( days * 24 * 60 * 60 * 1000 ) );
+				expires = '; expires=' + date.toGMTString();
+			} else {
+				expires = '';
+			}
+			document.cookie = name + '=' + value + expires + '; path=/';
+		}
+	};
 
 	Optin.Mixins = {
 		_mixins: {},
@@ -433,8 +268,10 @@ if ( 'undefined' !== typeof Backbone ) {
 
 			// set cookies used for "show less than" display condition
 			let showCountKey = Hustle.consts.ModuleShowCount + type + '-' + module.moduleId,
-				currentShowCount = Hustle.cookie.get( showCountKey );
-				Hustle.cookie.set( showCountKey, currentShowCount + 1, 30 );
+
+				currentShowCount = Optin.cookie.get( showCountKey );
+
+				Optin.cookie.set( showCountKey, currentShowCount + 1, 30 );
 
 			// Log number of times this module type has been shown so far
 			const logType = 'undefined' !== module.$el.data( 'sub-type' ) ? module.$el.data( 'sub-type' ) : null;
@@ -682,16 +519,21 @@ if ( 'undefined' !== typeof Backbone ) {
 				display = false;
 				return display;
 			}
+
+			// Hide after close.
 			if ( 'no_show_on_post' === this.settings.after_close ) {
 				if ( 0 < parseInt( incOpt.page_id, 10 ) ) {
-					display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_' + incOpt.page_id ) );
+					display = ! Optin.cookie.get( this.cookieKey + '_' + incOpt.page_id );
+
 				} else if ( 0 === parseInt( incOpt.page_id, 10 ) && incOpt.page_slug ) {
-					display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_' + incOpt.page_slug ) );
+					display = ! Optin.cookie.get( this.cookieKey + '_' + incOpt.page_slug );
+
 				} else {
 					display = true;
 				}
 			} else if ( 'no_show_all' === this.settings.after_close ) {
-				display = ! _.isTrue( Optin.cookie.get( this.cookieKey ) );
+				display = ! Optin.cookie.get( this.cookieKey );
+
 			} else {
 				display = true;
 			}
@@ -699,33 +541,38 @@ if ( 'undefined' !== typeof Backbone ) {
 				return display;
 			}
 
-			//check if user is already subscribed
+			// Hide after subscription.
 			if ( 'no_show_on_post' === this.data.settings.hide_after_subscription ) {
 				if ( 0 < parseInt( incOpt.page_id, 10 ) ) {
-					display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_success_' + incOpt.page_id ) );
+					display = ! Optin.cookie.get( this.cookieKey + '_success_' + incOpt.page_id );
+
 				} else if ( 0 === parseInt( incOpt.page_id, 10 ) && incOpt.page_slug ) {
-					display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_' + incOpt.page_slug ) );
+					display = ! Optin.cookie.get( this.cookieKey + '_' + incOpt.page_slug );
+
 				} else {
 					display = true;
 				}
 			} else if ( 'no_show_all' === this.data.settings.hide_after_subscription ) {
-				display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_success' ) );
+				display = ! Optin.cookie.get( this.cookieKey + '_success' );
 			}
 			if ( ! display ) {
 				return display;
 			}
 
-			//check if user is already clicked CTA button
+			// Hide after CTA.
 			if ( 'no_show_on_post' === this.data.settings.hide_after_cta ) {
 				if ( 0 < parseInt( incOpt.page_id, 10 ) ) {
-					display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_cta_success_' + incOpt.page_id ) );
+					display = ! Optin.cookie.get( this.cookieKey + '_cta_success_' + incOpt.page_id );
+
 				} else if ( 0 === parseInt( incOpt.page_id, 10 ) && incOpt.page_slug ) {
-					display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_cta_' + incOpt.page_slug ) );
+					display = ! Optin.cookie.get( this.cookieKey + '_cta_' + incOpt.page_slug );
+
 				} else {
 					display = true;
 				}
 			} else if ( 'no_show_all' === this.data.settings.hide_after_cta ) {
-				display = ! _.isTrue( Optin.cookie.get( this.cookieKey + '_cta_success' ) );
+
+				display = ! Optin.cookie.get( this.cookieKey + '_cta_success' );
 			}
 
 			return display;
@@ -850,7 +697,7 @@ if ( 'undefined' !== typeof Backbone ) {
 			let me = this,
 				selector = '';
 
-			if ( _.isTrue( this.triggers.enableOnClickElement ) && '' !== ( selector = $.trim( this.triggers.onClickElement ) )  ) {
+			if ( '1' === this.triggers.enableOnClickElement && '' !== ( selector = $.trim( this.triggers.onClickElement ) )  ) {
 				const $clickable = $( selector );
 
 				if ( $clickable.length ) {
@@ -861,7 +708,7 @@ if ( 'undefined' !== typeof Backbone ) {
 				}
 			}
 
-			if ( _.isTrue( this.triggers.enableOnClickShortcode ) ) {
+			if ( '1' === this.triggers.enableOnClickShortcode ) {
 
 				// Clickable button added with shortcode
 				$( document ).on( 'click', '.hustle_module_shortcode_trigger', function( e ) {
@@ -912,7 +759,7 @@ if ( 'undefined' !== typeof Backbone ) {
 			;
 
 			// handle delay
-			if ( _.isTrue( this.triggers.onExitIntentDelayed ) ) {
+			if ( '1' === this.triggers.onExitIntentDelayed ) {
 
 				delay = parseInt( this.triggers.onExitIntentDelayedTime, 10 ) * 1000;
 
@@ -924,7 +771,7 @@ if ( 'undefined' !== typeof Backbone ) {
 			}
 
 			// handle per session
-			if ( _.isTrue( this.triggers.onExitIntentperSession ) ) {
+			if ( '1' === this.triggers.onExitIntentperSession ) {
 				$( doc ).on( 'mouseleave', _.debounce( function( e ) {
 					if ( ! $( 'input' ).is( ':focus' ) ) {
 						me.setExitTimer();
@@ -975,7 +822,7 @@ if ( 'undefined' !== typeof Backbone ) {
 
 		adblockTrigger: function() {
 			var adblock = ! $( '#hustle_optin_adBlock_detector' ).length;
-			if ( adblock && _.isTrue( this.triggers.onAdblock ) ) {
+			if ( adblock && '1' === this.triggers.onAdblock ) {
 				this.display();
 			}
 		},
@@ -1014,7 +861,7 @@ if ( 'undefined' !== typeof Backbone ) {
 				}
 
 			} else if ( 'click_never_see' === closedBy ) {
-				Hustle.cookie.set( this.neverSeeCookieKey, this.moduleId, this.expirationDays );
+				Optin.cookie.set( this.neverSeeCookieKey, this.moduleId, this.expirationDays );
 			}
 
 			this.isShown = false;
@@ -1429,7 +1276,7 @@ if ( 'undefined' !== typeof Backbone ) {
 ( function( $ ) {
 	'use strict';
 
-	Optin = Optin || {};
+	Optin = window.Optin || {};
 
 	Optin.Embedded = Optin.Module.extend({
 		type: 'embedded',
@@ -1449,7 +1296,9 @@ if ( 'undefined' !== typeof Backbone ) {
 
 		showModule() {
 			HUI.inlineResize( this.el );
+			this.$el.trigger( 'hustle:module:beforeEmbedLoad', this.$el );
 			HUI.inlineLoad( this.el );
+			this.$el.trigger( 'hustle:module:afterEmbedLoad', this.$el );
 		}
 
 	});
@@ -1471,14 +1320,15 @@ if ( 'undefined' !== typeof Backbone ) {
 		type: 'popup',
 
 		showModule() {
-
 			if ( '0' === this.settings.allow_scroll_page ) {
 				$( 'html' ).addClass( 'hustle-no-scroll' );
 			}
 
 			const autohideDelay = 'false' === String( this.$el.data( 'close-delay' ) ) ? false : this.$el.data( 'close-delay' );
 
+			this.$el.trigger( 'hustle:module:beforePopupLoad', this.$el );
 			HUI.popupLoad( this.el, autohideDelay );
+			this.$el.trigger( 'hustle:module:afterPopupLoad', this.$el );
 		},
 
 		close( delay = 0 ) {
@@ -1513,7 +1363,9 @@ if ( 'undefined' !== typeof Backbone ) {
 				HUI.slideinLayouts( self.$el );
 			});
 
+			this.$el.trigger( 'hustle:module:beforeSlideInLoad', this.$el );
 			HUI.slideinLoad( this.$el, autohideDelay );
+			this.$el.trigger( 'hustle:module:afterSlideInLoad', this.$el );
 		},
 
 		close( delay = 0 ) {
@@ -1555,12 +1407,14 @@ if ( 'undefined' !== typeof Backbone ) {
 				self = this;
 
 			if ( 'floating' === data.subType ) {
-
+				this.$el.trigger( 'hustle:module:beforeSshareLoad', this.$el );
 				HUI.floatLoad( this.el );
-
+				this.$el.trigger( 'hustle:module:afterSshareLoad', this.$el );
 				$( window ).on( 'resize', () => HUI.floatLoad( self.el ) );
 			} else {
+				this.$el.trigger( 'hustle:module:beforeSshareLoad', this.$el );
 				HUI.inlineLoad( this.el );
+				this.$el.trigger( 'hustle:module:afterSshareLoad', this.$el );
 			}
 		},
 
@@ -1645,7 +1499,7 @@ if ( 'undefined' !== typeof Backbone ) {
 
 				this.storeUpdatedClickCounter( network );
 
-				_.delay( function() {
+				setTimeout( function() {
 
 					$( containerClass + ' a[data-network="' + network + '"]' ).not( 'a[data-counter="native"]' ).each( function() {
 
@@ -1663,7 +1517,7 @@ if ( 'undefined' !== typeof Backbone ) {
 
 			} else {
 
-				_.delay( function() {
+				setTimeout( function() {
 
 					$( containerClass + ' a[data-network="' + network + '"]' ).not( 'a[data-counter="click"]' ).each( function() {
 
@@ -1735,45 +1589,61 @@ if ( 'undefined' !== typeof Backbone ) {
 	}, 300 ) );
 
 	$( document ).ready( () => {
+
 		_.each( Modules, function( module, key ) {
-			module.el = '.hustle_module_id_' + module.module_id;
+
+			const moduleId = module.module_id;
+
+			module.el = '.hustle_module_id_' + moduleId;
 
 			if ( 'popup' === module.module_type ) {
-				new Optin.PopUp( module );
+				Hustle.setModule( moduleId, new Optin.PopUp( module ) );
 
 			} else if ( 'slidein' === module.module_type ) {
-				new Optin.SlideIn( module );
+				Hustle.setModule( moduleId, new Optin.SlideIn( module ) );
 
 			} else if ( 'embedded' === module.module_type ) {
 
+				const embedsViews = [];
+
 				let embededs = $( module.el );
+
 				if ( embededs.length ) {
 					embededs.each( function() {
 						module.el = this;
-						new Optin.Embedded( module );
+						embedsViews.push( new Optin.Embedded( module ) );
 					});
+					Hustle.setModule( moduleId, embedsViews );
+
 				} else {
 
 					//lazy load this so that modules loaded by ajax
 					//can run properly
 					setTimeout( function() {
 						embededs = $( module.el );
+
 						embededs.each( function() {
 							module.el = this;
-							new Optin.Embedded( module );
+							embedsViews.push( new Optin.Embedded( module ) );
 						});
+						Hustle.setModule( moduleId, embedsViews );
+
 					}, incOpt.script_delay );
 				}
 
 			} else if ( 'social_sharing' === module.module_type ) {
-				const sshares = $( module.el );
+				const sshares = $( module.el ),
+					sshareViews = [];
 
 				sshares.each( function() {
 					module.el = this;
-					new Optin.SShare( module );
+					sshareViews.push( new Optin.SShare( module ) );
 				});
+				Hustle.setModule( moduleId, sshareViews );
 			}
 		});
+
+		$( document ).trigger( 'hustleInitialized' );
 
 		Optin.updateSshareNetworks();
 	});

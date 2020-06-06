@@ -1,6 +1,11 @@
 <?php
 /**
+ * Popup wizard.
+ *
  * @var Opt_In $this
+ *
+ * @package Hustle
+ * @since 4.0.0
  */
 
 $module_name         = $module->module_name;
@@ -85,7 +90,7 @@ $this->render(
 					'smallcaps_singular' => $smallcaps_singular,
 				),
 			),
-			'behavior'    => array(
+			'behavior'     => array(
 				'name'     => esc_html__( 'Behavior', 'hustle' ),
 				'template' => 'admin/commons/sui-wizard/templates/tab-behaviour',
 				'support'  => array(
@@ -94,7 +99,6 @@ $this->render(
 					'is_optin'            => $is_optin,
 					'is_active'           => $is_active,
 					'module_type'         => $module_type,
-					'module_name'         => $module_name,
 					'capitalize_singular' => $capitalize_singular,
 					'capitalize_plural'   => $capitalize_plural,
 					'smallcaps_singular'  => $smallcaps_singular,

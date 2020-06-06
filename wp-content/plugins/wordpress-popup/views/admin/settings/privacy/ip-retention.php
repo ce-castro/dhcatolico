@@ -1,4 +1,11 @@
 <?php
+/**
+ * IP retention section under the "privacy" tab.
+ *
+ * @package Hustle
+ * @since 4.0.3
+ */
+
 $retain_ip_forever   = '1' === $settings['retain_ip_forever'];
 $ip_retention_number = $settings['ip_retention_number'];
 $ip_retention_unit   = $settings['ip_retention_number_unit'];

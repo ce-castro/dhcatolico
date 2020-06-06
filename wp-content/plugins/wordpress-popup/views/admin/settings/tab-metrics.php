@@ -1,4 +1,13 @@
-<div id="top-metrics-box" class="sui-box" data-tab="metrics" <?php if ( 'metrics' !== $section ) echo 'style="display: none;"'; ?>>
+<?php
+/**
+ * Metrics tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
+<div id="top-metrics-box" class="sui-box" data-tab="metrics" <?php echo 'metrics' !== $section ? 'style="display: none;"' : ''; ?>>
 
 	<div class="sui-box-header">
 		<h2 class="sui-box-title"><?php esc_html_e( 'Top 3 Metrics', 'hustle' ); ?></h2>
@@ -91,7 +100,7 @@
 			</label>
 			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The module which has the highest number of conversions.', 'hustle' ); ?></span>
 		</div>
-		
+
 		<div class="sui-form-field">
 			<label for="hustle-metrics-inactive-modules" class="sui-checkbox">
 				<input type="checkbox"
@@ -125,13 +134,13 @@
 	<div class="sui-box-footer">
 		<div class="sui-actions-right">
 			<div class="sui-tooltip-top-right" data-tooltip="<?php esc_html_e( 'Please select 3 metrics to save settings.', 'hustle' ); ?>">
-				<button 
+				<button
 					class="sui-button sui-button-blue hustle-settings-save"
 					data-form-id="hustle-top-metrics-settings-form"
 					data-target="top_metrics"
 				>
 					<span class="sui-loading-text"><?php esc_html_e( 'Save Settings', 'hustle' ); ?></span>
-					<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 				</button>
 			</div>
 		</div>

@@ -1,10 +1,20 @@
+<?php
+/**
+ * Wizard lateral navigation.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-sidenav">
 
 	<div class="sui-sidenav-sticky sui-sidenav-hide-md">
 
 		<ul class="sui-vertical-tabs sui-alt-design">
 
-			<?php foreach ( $wizard_tabs as $key => $option ) {
+			<?php
+			foreach ( $wizard_tabs as $key => $option ) {
 
 				$tab_name = $key;
 
@@ -14,7 +24,8 @@
 
 				if ( isset( $option['is_optin'] ) ) {
 
-					if ( $is_optin ) : ?>
+					if ( $is_optin ) :
+						?>
 
 						<li class="sui-vertical-tab">
 							<a href="#" data-tab="<?php echo esc_html( $key ); ?>" class="<?php echo $key === $section ? 'current' : ''; ?>">
@@ -22,9 +33,11 @@
 							</a>
 						</li>
 
-					<?php endif;
+						<?php
+					endif;
 
-				} else { ?>
+				} else {
+					?>
 
 					<li class="sui-vertical-tab">
 						<a href="#" data-tab="<?php echo esc_html( $key ); ?>" class="<?php echo $key === $section ? 'current' : ''; ?>">
@@ -32,9 +45,10 @@
 						</a>
 					</li>
 
-				<?php }
-
-			} ?>
+					<?php
+				}
+			}
+			?>
 
 		</ul>
 
@@ -44,10 +58,10 @@
 
 				<button id="hustle-preview-module" class="sui-button sui-sidenav-hide-md">
 					<span class="sui-loading-text">
-						<i class="sui-icon-eye" aria-hidden="true"></i>
+						<span class="sui-icon-eye" aria-hidden="true"></span>
 						<span class="button-text"><?php esc_html_e( 'Preview', 'hustle' ); ?></span>
 					</span>
-					<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 				</button>
 
 			</div>
@@ -78,10 +92,10 @@
 
 				<button id="hustle-preview-module" class="sui-button">
 					<span class="sui-loading-text">
-						<i class="sui-icon-eye" aria-hidden="true"></i>
+						<span class="sui-icon-eye" aria-hidden="true"></span>
 						<span class="button-text"><?php esc_html_e( 'Preview', 'hustle' ); ?></span>
 					</span>
-					<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 				</button>
 
 			</div>

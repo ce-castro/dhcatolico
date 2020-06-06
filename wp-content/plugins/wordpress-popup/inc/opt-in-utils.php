@@ -14,7 +14,7 @@ class Opt_In_Utils {
 	 *
 	 * @var Opt_In_Geo
 	 */
-	private $_geo;
+	private $geo;
 
 	/**
 	 * CPT
@@ -33,7 +33,7 @@ class Opt_In_Utils {
 	public static $comment;
 
 	public function __construct( Opt_In_Geo $geo ) {
-		$this->_geo = $geo;
+		$this->geo = $geo;
 	}
 
 	/**
@@ -48,10 +48,12 @@ class Opt_In_Utils {
 
 			if ( ! self::$comment && is_user_logged_in() ) {
 				// For logged-in users we can also check the database.
-				$count = get_comments( [
-					'count' => true,
-					'user_id' => get_current_user_id(),
-				] );
+				$count         = get_comments(
+					array(
+						'count'   => true,
+						'user_id' => get_current_user_id(),
+					)
+				);
 				self::$comment = $count > 0;
 			}
 		}
@@ -66,12 +68,12 @@ class Opt_In_Utils {
 	public function get_referrer() {
 		$referrer = '';
 
-		$is_ajax = (defined( 'DOING_AJAX' ) && DOING_AJAX)
+		$is_ajax = ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 			|| ( ! empty( $_POST['_po_method_'] ) && 'raw' === $_POST['_po_method_'] ); // WPCS: CSRF ok.
 
 		if ( isset( $_REQUEST['thereferrer'] ) ) { // WPCS: CSRF ok.
 			$referrer = $_REQUEST['thereferrer']; // WPCS: CSRF ok.
-		} else if ( ! $is_ajax && isset( $_SERVER['HTTP_REFERER'] ) ) {
+		} elseif ( ! $is_ajax && isset( $_SERVER['HTTP_REFERER'] ) ) {
 			// When doing Ajax request we NEVER use the HTTP_REFERER!
 			$referrer = $_SERVER['HTTP_REFERER'];
 		}
@@ -82,7 +84,6 @@ class Opt_In_Utils {
 	/**
 	 * Tests if the current referrer is one of the referers of the list.
 	 * Current referrer has to be specified in the URL param "thereferer".
-	 *
 	 *
 	 * @param  array $list List of referers to check.
 	 * @return bool
@@ -101,7 +102,7 @@ class Opt_In_Utils {
 		if ( ! empty( $referrer ) ) {
 			foreach ( $list as $item ) {
 				$item = trim( $item );
-				$res = stripos( $referrer, $item );
+				$res  = stripos( $referrer, $item );
 				if ( false !== $res ) {
 					$response = true;
 					break;
@@ -117,7 +118,7 @@ class Opt_In_Utils {
 	 *
 	 * @since  4.6
 	 * @param  string $test_url The URL to test.
-	 * @param  array $list List of URL-patterns to test against.
+	 * @param  array  $list List of URL-patterns to test against.
 	 * @return bool
 	 */
 	public function check_url( $list ) {
@@ -129,7 +130,7 @@ class Opt_In_Utils {
 
 		} else {
 
-			$test_url = strtok( $this->get_current_actual_url( true ), '#' );
+			$test_url             = strtok( $this->get_current_actual_url( true ), '#' );
 			$test_url_no_protocol = strtok( $this->get_current_actual_url(), '#' );
 
 			foreach ( $list as $match ) {
@@ -161,7 +162,7 @@ class Opt_In_Utils {
 				} else {
 					// Check for regex urls.
 					$match = ltrim( $match, '%' );
-					$exp = $match;
+					$exp   = $match;
 
 					$res = preg_match( $exp, $test_url );
 				}
@@ -214,7 +215,7 @@ class Opt_In_Utils {
 	 */
 	public function test_country( $country_codes ) {
 		$response = true;
-		$country = $this->_geo->get_user_country();
+		$country  = $this->geo->get_user_country();
 
 		if ( 'XX' === $country ) {
 			return $response;
@@ -228,7 +229,7 @@ class Opt_In_Utils {
 	 *
 	 * @since 4.0
 	 * @param array $capability Hustle capability
-	 * @param int $module_id Optional. Module id
+	 * @param int   $module_id Optional. Module id
 	 */
 	public static function is_user_allowed_ajax( $capability, $module_id = null ) {
 		if ( is_null( $module_id ) ) {
@@ -267,7 +268,7 @@ class Opt_In_Utils {
 	public static function get_admin_roles() {
 
 		if ( is_null( self::$admin_roles ) ) {
-			$admins    = [];
+			$admins    = array();
 			$all_roles = wp_roles();
 
 			if ( $all_roles->is_role( 'administrator' ) ) {
@@ -306,34 +307,11 @@ class Opt_In_Utils {
 	}
 
 	/**
-	 * Get months names html escaped and translated
-	 *
-	 * @since 4.0
-	 * @return array
-	 */
-	public static function get_months_names() {
-		return array(
-			esc_html__( 'January', 'hustle' ),
-			esc_html__( 'February', 'hustle' ),
-			esc_html__( 'March', 'hustle' ),
-			esc_html__( 'April', 'hustle' ),
-			esc_html__( 'May', 'hustle' ),
-			esc_html__( 'June', 'hustle' ),
-			esc_html__( 'July', 'hustle' ),
-			esc_html__( 'August', 'hustle' ),
-			esc_html__( 'September', 'hustle' ),
-			esc_html__( 'October', 'hustle' ),
-			esc_html__( 'November', 'hustle' ),
-			esc_html__( 'December', 'hustle' ),
-		);
-	}
-
-	/**
 	 * Checks if user has the capability
 	 *
 	 * @since 4.0
 	 * @param array $capability Hustle capability
-	 * @param int $module_id Optional. Module id
+	 * @param int   $module_id Optional. Module id
 	 * @return bool
 	 */
 	public static function is_user_allowed( $capability, $module_id = null ) {
@@ -436,7 +414,7 @@ class Opt_In_Utils {
 	 * @return array
 	 */
 	public static function validate_and_sanitize_fields( $post_data, $required_fields = array() ) {
-		//for serialized data or form
+		// for serialized data or form
 		if ( ! is_array( $post_data ) && is_string( $post_data ) ) {
 			$post_string = $post_data;
 			$post_data   = array();
@@ -500,7 +478,7 @@ class Opt_In_Utils {
 
 		$enabled = ( defined( 'HUSTLE_DEBUG' ) && HUSTLE_DEBUG );
 
-		$stored_settings = Hustle_Settings_Admin::get_general_settings();
+		$stored_settings       = Hustle_Settings_Admin::get_general_settings();
 		$debug_setting_enabled = '1' === $stored_settings['debug_enabled'];
 
 		$enabled = ( $wp_debug_enabled && ( $debug_setting_enabled || $enabled ) );
@@ -546,7 +524,7 @@ class Opt_In_Utils {
 		if ( $hide_branding ) {
 			return $image;
 		}
-		$image_name   = esc_html__( 'Hustle image', 'hustle' );
+		$image_name = esc_html__( 'Hustle image', 'hustle' );
 		if ( ( true === $support ) || ( '2x' === $support ) ) {
 			if ( '' !== $image_class ) {
 				$image = '<img src="' . $image_path . '.' . $image_suffix . '" srcset="' . $image_path . '.' . $image_suffix . ' 1x, ' . $image_path . '@2x' . '.' . $image_suffix . ' 2x" alt="' . $image_name . '" class="' . $image_class . '" aria-hidden="true">';
@@ -588,10 +566,8 @@ class Opt_In_Utils {
 					<span role="button">
 						<span style="background-color: ' . $value . '"></span>
 					</span>
-					<input type="text"
-						value="' . $value . '"
-						readonly="readonly" />
-					<button><i class="sui-icon-close" aria-hidden="true"></i></button>
+					<input class="hustle-colorpicker-input" type="text" value="' . $value . '"/>
+					<button><span class="sui-icon-close" aria-hidden="true"></span></button>
 				</div>
 				<button class="sui-button">' . esc_html__( 'Select', 'hustle' ) . '</button>
 			</div>
@@ -618,47 +594,57 @@ class Opt_In_Utils {
 	 * @param string $retina_image_path
 	 * @return string
 	 */
-	public static function render_image_markup( $image_path, $retina_image_path = '', $class = '', $max_width = '', $max_height = '', $branding = true ) {
+	public static function render_image_markup( $image_path, $image_retina_path = '', $image_class = '', $image_width = '', $image_height = '' ) {
+
 		$image = '';
-		/**
-		 * White labeling based on Dash Plugin Settings
-		 */
-		$hide_branding = false;
-		if ( $branding ) {
-			$hide_branding = apply_filters( 'wpmudev_branding_hide_branding', $hide_branding );
+
+		$image_path   = esc_url( $image_path );
+		$image_srcset = '';
+		$image_styles = '';
+
+		if ( ! empty( $image_retina_path ) || '' !== $image_retina_path ) {
+			$image_srcset = $image_path . ' 1x, ' . esc_url( $image_retina_path ) . ' 2x';
 		}
-		if ( $hide_branding ) {
-			return $image;
-		}
-		$image_name = esc_html__( 'Hustle image', 'hustle' );
-		$image_path = esc_url( $image_path );
-		$retina_image_path = esc_url( $retina_image_path );
-		$styles = '';
-		if ( '' !== $max_width || '' !== $max_height ) {
-			$styles .= ' style="';
-			if ( '' !== $max_width ) {
-				$styles .= 'max-width: ' . $max_width . ';';
-				if ( '' !== $max_height ) {
-					$styles .= ' ';
+
+		if ( '' !== $image_width || '' !== $image_height ) {
+
+			$image_styles .= ' styles="';
+
+				if ( '' !== $image_width ) {
+					$image_styles = 'max-width: ' . $image_width . 'px';
+
+					if ( '' !== $image_height ) {
+						$image_styles = ' ';
+					}
 				}
-			}
-			if ( '' !== $max_height ) {
-				$styles .= 'max-height: ' . $max_height . ';';
-			}
-			$styles .= '"';
+
+				if ( '' !== $image_height ) {
+					$image_styles = 'max-height: ' . $image_height . 'px';
+				}
+
+			$image_styles .= '"';
+
 		}
+
 		$image .= '<img';
-		$image .= ' src="' . $image_path . '"';
-		if ( ! empty( $retina_image_path ) || '' !== $retina_image_path ) {
-			$image .= ' srcset="' . esc_url( $image_path ) . ' 1x, ' . esc_url( $retina_image_path ) . ' 2x"';
-		}
-		$image .= ' alt="' . $image_name . '"';
-		if ( ! empty( $class ) || '' !== $class ) {
-			$image .= ' class="' . esc_attr( $class ) . '"';
-		}
-		$image .= $styles;
-		$image .= ' aria-hidden="true"';
+
+			$image .= ' src="' . $image_path . '"';
+
+			if ( '' !== $image_srcset ) {
+				$image .= ' srcset="' . $image_srcset . '"';
+			}
+
+			$image .= ' title="Hustle image"';
+			$image .= ' alt="Hustle image commonly Hustle-Man doing something fun"';
+
+			if ( ! empty( $image_class ) || '' !== $image_class ) {
+				$image .= ' class="' . $image_class . '"';
+			}
+
+			$image .= ' aria-hidden="true"';
+
 		$image .= '/>';
+
 		return $image;
 	}
 
@@ -678,10 +664,13 @@ class Opt_In_Utils {
 			 * Add all custom post types
 			 */
 			$post_types = array();
-			$cpts = get_post_types( array(
-				'public'   => true,
-				'_builtin' => false,
-			), 'objects' );
+			$cpts       = get_post_types(
+				array(
+					'public'   => true,
+					'_builtin' => false,
+				),
+				'objects'
+			);
 			foreach ( $cpts as $cpt ) {
 
 				// skip ms_invoice
@@ -689,9 +678,9 @@ class Opt_In_Utils {
 					continue;
 				}
 
-				$cpt_array['name'] = $cpt->name;
+				$cpt_array['name']  = $cpt->name;
 				$cpt_array['label'] = $cpt->label;
-				$cpt_array['data'] = self::get_select2_data( $cpt->name );
+				$cpt_array['data']  = self::get_select2_data( $cpt->name );
 
 				$post_types[ $cpt->name ] = $cpt_array;
 			}
@@ -708,13 +697,13 @@ class Opt_In_Utils {
 	 * @return array
 	 */
 	public static function get_select2_data( $post_type, $include_ids = null ) {
-		$data = [];
-		$args = [
+		$data = array();
+		$args = array(
 			'numberposts' => -1,
-			'post_type' => $post_type,
+			'post_type'   => $post_type,
 			'post_status' => 'publish',
-			'order' => 'ASC',
-		];
+			'order'       => 'ASC',
+		);
 
 		if ( ! empty( $include_ids ) ) {
 			$args['post__in'] = $include_ids;
@@ -722,10 +711,10 @@ class Opt_In_Utils {
 
 		$posts = get_posts( $args );
 		foreach ( $posts as $post ) {
-			$data[] = (object)[
-				'id' => $post->ID,
+			$data[] = (object) array(
+				'id'   => $post->ID,
 				'text' => $post->post_title,
-			];
+			);
 		}
 
 		return $data;
@@ -737,12 +726,12 @@ class Opt_In_Utils {
 	 *
 	 * @since 4.0
 	 * @return array
-	*/
+	 */
 	public static function get_time_periods() {
 		$periods = array(
 			'am' => __( 'AM', 'hustle' ),
 			'pm' => __( 'PM', 'hustle' ),
-			);
+		);
 
 		return $periods;
 	}
@@ -753,7 +742,7 @@ class Opt_In_Utils {
 	 *
 	 * @since 4.0
 	 * @return array
-	*/
+	 */
 	public static function get_date_formats() {
 		$formats = array(
 			'yy/mm/dd' => __( '2012/07/31', 'hustle' ),
@@ -768,7 +757,7 @@ class Opt_In_Utils {
 			'dd.mm.yy' => __( '31.07.2012', 'hustle' ),
 			'mm.dd.yy' => __( '07.31.2012', 'hustle' ),
 			'yy.mm.dd' => __( '2012.07.31', 'hustle' ),
-			);
+		);
 
 		$formats = apply_filters( 'hustle_date_formats', $formats );
 
@@ -785,36 +774,36 @@ class Opt_In_Utils {
 	public static function get_months( $version = 'full' ) {
 
 		if ( 'full' === $version ) {
-			$months = [
-				__( 'January', 'hustle' ),
-				__( 'February', 'hustle' ),
-				__( 'March', 'hustle' ),
-				__( 'April', 'hustle' ),
-				__( 'May', 'hustle' ),
-				__( 'June', 'hustle' ),
-				__( 'July', 'hustle' ),
-				__( 'August', 'hustle' ),
-				__( 'September', 'hustle' ),
-				__( 'October', 'hustle' ),
-				__( 'November', 'hustle' ),
-				__( 'December', 'hustle' ),
-			];
+			$months = array(
+				esc_html__( 'January', 'hustle' ),
+				esc_html__( 'February', 'hustle' ),
+				esc_html__( 'March', 'hustle' ),
+				esc_html__( 'April', 'hustle' ),
+				esc_html__( 'May', 'hustle' ),
+				esc_html__( 'June', 'hustle' ),
+				esc_html__( 'July', 'hustle' ),
+				esc_html__( 'August', 'hustle' ),
+				esc_html__( 'September', 'hustle' ),
+				esc_html__( 'October', 'hustle' ),
+				esc_html__( 'November', 'hustle' ),
+				esc_html__( 'December', 'hustle' ),
+			);
 
 		} else {
-			$months = [
-				__( 'Jan', 'hustle' ),
-				__( 'Feb', 'hustle' ),
-				__( 'Mar', 'hustle' ),
-				__( 'Apr', 'hustle' ),
-				__( 'May', 'hustle' ),
-				__( 'Jun', 'hustle' ),
-				__( 'Jul', 'hustle' ),
-				__( 'Aug', 'hustle' ),
-				__( 'Sep', 'hustle' ),
-				__( 'Oct', 'hustle' ),
-				__( 'Nov', 'hustle' ),
-				__( 'Dec', 'hustle' ),
-			];
+			$months = array(
+				esc_html__( 'Jan', 'hustle' ),
+				esc_html__( 'Feb', 'hustle' ),
+				esc_html__( 'Mar', 'hustle' ),
+				esc_html__( 'Apr', 'hustle' ),
+				esc_html__( 'May', 'hustle' ),
+				esc_html__( 'Jun', 'hustle' ),
+				esc_html__( 'Jul', 'hustle' ),
+				esc_html__( 'Aug', 'hustle' ),
+				esc_html__( 'Sep', 'hustle' ),
+				esc_html__( 'Oct', 'hustle' ),
+				esc_html__( 'Nov', 'hustle' ),
+				esc_html__( 'Dec', 'hustle' ),
+			);
 		}
 
 		return apply_filters( 'hustle_get_months', $months, $version );
@@ -830,37 +819,37 @@ class Opt_In_Utils {
 	public static function get_week_days( $version = 'full' ) {
 
 		if ( 'full' === $version ) {
-			$days = [
-				__( 'Sunday', 'hustle' ),
-				__( 'Monday', 'hustle' ),
-				__( 'Tuesday', 'hustle' ),
-				__( 'Wednesday', 'hustle' ),
-				__( 'Thursday', 'hustle' ),
-				__( 'Friday', 'hustle' ),
-				__( 'Saturday', 'hustle' ),
-			];
+			$days = array(
+				esc_html__( 'Sunday', 'hustle' ),
+				esc_html__( 'Monday', 'hustle' ),
+				esc_html__( 'Tuesday', 'hustle' ),
+				esc_html__( 'Wednesday', 'hustle' ),
+				esc_html__( 'Thursday', 'hustle' ),
+				esc_html__( 'Friday', 'hustle' ),
+				esc_html__( 'Saturday', 'hustle' ),
+			);
 
 		} elseif ( 'short' === $version ) {
-			$days = [
-				__( 'Sun', 'hustle' ),
-				__( 'Mon', 'hustle' ),
-				__( 'Tue', 'hustle' ),
-				__( 'Wed', 'hustle' ),
-				__( 'Thu', 'hustle' ),
-				__( 'Fri', 'hustle' ),
-				__( 'Sat', 'hustle' ),
-			];
+			$days = array(
+				esc_html__( 'Sun', 'hustle' ),
+				esc_html__( 'Mon', 'hustle' ),
+				esc_html__( 'Tue', 'hustle' ),
+				esc_html__( 'Wed', 'hustle' ),
+				esc_html__( 'Thu', 'hustle' ),
+				esc_html__( 'Fri', 'hustle' ),
+				esc_html__( 'Sat', 'hustle' ),
+			);
 
 		} else {
-			$days = [
-				__( 'Su', 'hustle' ),
-				__( 'Mo', 'hustle' ),
-				__( 'Tu', 'hustle' ),
-				__( 'We', 'hustle' ),
-				__( 'Th', 'hustle' ),
-				__( 'Fr', 'hustle' ),
-				__( 'Sa', 'hustle' ),
-			];
+			$days = array(
+				esc_html__( 'Su', 'hustle' ),
+				esc_html__( 'Mo', 'hustle' ),
+				esc_html__( 'Tu', 'hustle' ),
+				esc_html__( 'We', 'hustle' ),
+				esc_html__( 'Th', 'hustle' ),
+				esc_html__( 'Fr', 'hustle' ),
+				esc_html__( 'Sa', 'hustle' ),
+			);
 		}
 
 		return apply_filters( 'hustle_get_months', $days, $version );
@@ -871,7 +860,7 @@ class Opt_In_Utils {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $value
+	 * @param int    $value
 	 * @param string $unit
 	 * @return int
 	 */
@@ -880,7 +869,7 @@ class Opt_In_Utils {
 		if ( 'seconds' === $unit ) {
 			return intval( $value, 10 ) * 1000;
 
-		} else if ( 'minutes' === $unit ) {
+		} elseif ( 'minutes' === $unit ) {
 			return intval( $value, 10 ) * 60 * 1000;
 
 		} else {
@@ -894,12 +883,12 @@ class Opt_In_Utils {
 	 * @return array
 	 */
 	public static function get_analytic_ranges() {
-		$ranges = [
-			1 => __( 'Last 24 hrs', 'hustle' ),
-			7 => __( 'Last 7 days', 'hustle' ),
+		$ranges = array(
+			1  => __( 'Last 24 hrs', 'hustle' ),
+			7  => __( 'Last 7 days', 'hustle' ),
 			30 => __( 'Last 30 days', 'hustle' ),
-		//	90 => __( 'Last 90 days', 'hustle' ),
-		];
+		// 90 => __( 'Last 90 days', 'hustle' ),
+		);
 
 		return $ranges;
 	}
@@ -912,20 +901,20 @@ class Opt_In_Utils {
 	 */
 	public static function get_social_platform_names() {
 		$social_platform_names = array(
-			'facebook' => esc_html__( 'Facebook', 'hustle' ),
-			'twitter' => esc_html__( 'Twitter', 'hustle' ),
-			'pinterest' => esc_html__( 'Pinterest', 'hustle' ),
-			'reddit' => esc_html__( 'Reddit', 'hustle' ),
-			'linkedin' => esc_html__( 'LinkedIn', 'hustle' ),
-			'vkontakte' => esc_html__( 'Vkontakte', 'hustle' ),
+			'facebook'      => esc_html__( 'Facebook', 'hustle' ),
+			'twitter'       => esc_html__( 'Twitter', 'hustle' ),
+			'pinterest'     => esc_html__( 'Pinterest', 'hustle' ),
+			'reddit'        => esc_html__( 'Reddit', 'hustle' ),
+			'linkedin'      => esc_html__( 'LinkedIn', 'hustle' ),
+			'vkontakte'     => esc_html__( 'Vkontakte', 'hustle' ),
 			'fivehundredpx' => esc_html__( '500px', 'hustle' ),
-			'houzz' => esc_html__( 'Houzz', 'hustle' ),
-			'instagram' => esc_html__( 'Instagram', 'hustle' ),
-			'twitch' => esc_html__( 'Twitch', 'hustle' ),
-			'youtube' => esc_html__( 'YouTube', 'hustle' ),
-			'telegram' => esc_html__( 'Telegram', 'hustle' ),
-			'whatsapp' => esc_html__( 'WhatsApp', 'hustle' ),
-			'email'    	  => esc_html__( 'Email', 'hustle' ),
+			'houzz'         => esc_html__( 'Houzz', 'hustle' ),
+			'instagram'     => esc_html__( 'Instagram', 'hustle' ),
+			'twitch'        => esc_html__( 'Twitch', 'hustle' ),
+			'youtube'       => esc_html__( 'YouTube', 'hustle' ),
+			'telegram'      => esc_html__( 'Telegram', 'hustle' ),
+			'whatsapp'      => esc_html__( 'WhatsApp', 'hustle' ),
+			'email'         => esc_html__( 'Email', 'hustle' ),
 		);
 
 		/**
@@ -943,81 +932,81 @@ class Opt_In_Utils {
 	 *
 	 * @since 4.0
 	 * @return array
-	*/
+	 */
 	public static function get_captcha_languages() {
 		return apply_filters(
 			'hustle_captcha_languages',
 			array(
-				'ar' => esc_html__( 'Arabic', 'hustle' ),
-				'af' => esc_html__( 'Afrikaans', 'hustle' ),
-				'am' => esc_html__( 'Amharic', 'hustle' ),
-				'hy' => esc_html__( 'Armenian', 'hustle' ),
-				'az' => esc_html__( 'Azerbaijani', 'hustle' ),
-				'eu' => esc_html__( 'Basque', 'hustle' ),
-				'bn' => esc_html__( 'Bengali', 'hustle' ),
-				'bg' => esc_html__( 'Bulgarian', 'hustle' ),
-				'ca' => esc_html__( 'Catalan', 'hustle' ),
-				'zh-HK' => esc_html__( 'Chinese (Hong Kong)', 'hustle' ),
-				'zh-CN' => esc_html__( 'Chinese (Simplified)', 'hustle' ),
-				'zh-TW' => esc_html__( 'Chinese (Traditional)', 'hustle' ),
-				'hr' => esc_html__( 'Croatian', 'hustle' ),
-				'cs' => esc_html__( 'Czech', 'hustle' ),
-				'da' => esc_html__( 'Danish', 'hustle' ),
-				'nl' => esc_html__( 'Dutch', 'hustle' ),
-				'en-GB' => esc_html__( 'English (UK)', 'hustle' ),
-				'en' => esc_html__( 'English (US)', 'hustle' ),
-				'et' => esc_html__( 'Estonian', 'hustle' ),
-				'fil' => esc_html__( 'Filipino', 'hustle' ),
-				'fi' => esc_html__( 'Finnish', 'hustle' ),
-				'fr' => esc_html__( 'French', 'hustle' ),
-				'fr-CA' => esc_html__( 'French (Canadian)', 'hustle' ),
-				'gl' => esc_html__( 'Galician', 'hustle' ),
-				'ka' => esc_html__( 'Georgian', 'hustle' ),
-				'de' => esc_html__( 'German', 'hustle' ),
-				'de-AT' => esc_html__( 'German (Austria)', 'hustle' ),
-				'de-CH' => esc_html__( 'German (Switzerland)', 'hustle' ),
-				'el' => esc_html__( 'Greek', 'hustle' ),
-				'gu' => esc_html__( 'Gujarati', 'hustle' ),
-				'iw' => esc_html__( 'Hebrew', 'hustle' ),
-				'hi' => esc_html__( 'Hindi', 'hustle' ),
-				'hu' => esc_html__( 'Hungarain', 'hustle' ),
-				'is' => esc_html__( 'Icelandic', 'hustle' ),
-				'id' => esc_html__( 'Indonesian', 'hustle' ),
-				'it' => esc_html__( 'Italian', 'hustle' ),
-				'ja' => esc_html__( 'Japanese', 'hustle' ),
-				'kn' => esc_html__( 'Kannada', 'hustle' ),
-				'ko' => esc_html__( 'Korean', 'hustle' ),
-				'lo' => esc_html__( 'Laothian', 'hustle' ),
-				'lv' => esc_html__( 'Latvian', 'hustle' ),
-				'lt' => esc_html__( 'Lithuanian', 'hustle' ),
-				'ms' => esc_html__( 'Malay', 'hustle' ),
-				'ml' => esc_html__( 'Malayalam', 'hustle' ),
-				'mr' => esc_html__( 'Marathi', 'hustle' ),
-				'mn' => esc_html__( 'Mongolian', 'hustle' ),
-				'no' => esc_html__( 'Norwegian', 'hustle' ),
-				'fa' => esc_html__( 'Persian', 'hustle' ),
-				'pl' => esc_html__( 'Polish', 'hustle' ),
-				'pt' => esc_html__( 'Portuguese', 'hustle' ),
-				'pt-BR' => esc_html__( 'Portuguese (Brazil)', 'hustle' ),
-				'pt-PT' => esc_html__( 'Portuguese (Portugal)', 'hustle' ),
-				'ro' => esc_html__( 'Romanian', 'hustle' ),
-				'ru' => esc_html__( 'Russian', 'hustle' ),
-				'sr' => esc_html__( 'Serbian', 'hustle' ),
-				'si' => esc_html__( 'Sinhalese', 'hustle' ),
-				'sk' => esc_html__( 'Slovak', 'hustle' ),
-				'sl' => esc_html__( 'Slovenian', 'hustle' ),
-				'es' => esc_html__( 'Spanish', 'hustle' ),
+				'ar'     => esc_html__( 'Arabic', 'hustle' ),
+				'af'     => esc_html__( 'Afrikaans', 'hustle' ),
+				'am'     => esc_html__( 'Amharic', 'hustle' ),
+				'hy'     => esc_html__( 'Armenian', 'hustle' ),
+				'az'     => esc_html__( 'Azerbaijani', 'hustle' ),
+				'eu'     => esc_html__( 'Basque', 'hustle' ),
+				'bn'     => esc_html__( 'Bengali', 'hustle' ),
+				'bg'     => esc_html__( 'Bulgarian', 'hustle' ),
+				'ca'     => esc_html__( 'Catalan', 'hustle' ),
+				'zh-HK'  => esc_html__( 'Chinese (Hong Kong)', 'hustle' ),
+				'zh-CN'  => esc_html__( 'Chinese (Simplified)', 'hustle' ),
+				'zh-TW'  => esc_html__( 'Chinese (Traditional)', 'hustle' ),
+				'hr'     => esc_html__( 'Croatian', 'hustle' ),
+				'cs'     => esc_html__( 'Czech', 'hustle' ),
+				'da'     => esc_html__( 'Danish', 'hustle' ),
+				'nl'     => esc_html__( 'Dutch', 'hustle' ),
+				'en-GB'  => esc_html__( 'English (UK)', 'hustle' ),
+				'en'     => esc_html__( 'English (US)', 'hustle' ),
+				'et'     => esc_html__( 'Estonian', 'hustle' ),
+				'fil'    => esc_html__( 'Filipino', 'hustle' ),
+				'fi'     => esc_html__( 'Finnish', 'hustle' ),
+				'fr'     => esc_html__( 'French', 'hustle' ),
+				'fr-CA'  => esc_html__( 'French (Canadian)', 'hustle' ),
+				'gl'     => esc_html__( 'Galician', 'hustle' ),
+				'ka'     => esc_html__( 'Georgian', 'hustle' ),
+				'de'     => esc_html__( 'German', 'hustle' ),
+				'de-AT'  => esc_html__( 'German (Austria)', 'hustle' ),
+				'de-CH'  => esc_html__( 'German (Switzerland)', 'hustle' ),
+				'el'     => esc_html__( 'Greek', 'hustle' ),
+				'gu'     => esc_html__( 'Gujarati', 'hustle' ),
+				'iw'     => esc_html__( 'Hebrew', 'hustle' ),
+				'hi'     => esc_html__( 'Hindi', 'hustle' ),
+				'hu'     => esc_html__( 'Hungarain', 'hustle' ),
+				'is'     => esc_html__( 'Icelandic', 'hustle' ),
+				'id'     => esc_html__( 'Indonesian', 'hustle' ),
+				'it'     => esc_html__( 'Italian', 'hustle' ),
+				'ja'     => esc_html__( 'Japanese', 'hustle' ),
+				'kn'     => esc_html__( 'Kannada', 'hustle' ),
+				'ko'     => esc_html__( 'Korean', 'hustle' ),
+				'lo'     => esc_html__( 'Laothian', 'hustle' ),
+				'lv'     => esc_html__( 'Latvian', 'hustle' ),
+				'lt'     => esc_html__( 'Lithuanian', 'hustle' ),
+				'ms'     => esc_html__( 'Malay', 'hustle' ),
+				'ml'     => esc_html__( 'Malayalam', 'hustle' ),
+				'mr'     => esc_html__( 'Marathi', 'hustle' ),
+				'mn'     => esc_html__( 'Mongolian', 'hustle' ),
+				'no'     => esc_html__( 'Norwegian', 'hustle' ),
+				'fa'     => esc_html__( 'Persian', 'hustle' ),
+				'pl'     => esc_html__( 'Polish', 'hustle' ),
+				'pt'     => esc_html__( 'Portuguese', 'hustle' ),
+				'pt-BR'  => esc_html__( 'Portuguese (Brazil)', 'hustle' ),
+				'pt-PT'  => esc_html__( 'Portuguese (Portugal)', 'hustle' ),
+				'ro'     => esc_html__( 'Romanian', 'hustle' ),
+				'ru'     => esc_html__( 'Russian', 'hustle' ),
+				'sr'     => esc_html__( 'Serbian', 'hustle' ),
+				'si'     => esc_html__( 'Sinhalese', 'hustle' ),
+				'sk'     => esc_html__( 'Slovak', 'hustle' ),
+				'sl'     => esc_html__( 'Slovenian', 'hustle' ),
+				'es'     => esc_html__( 'Spanish', 'hustle' ),
 				'es-419' => esc_html__( 'Spanish (Latin America)', 'hustle' ),
-				'sw' => esc_html__( 'Swahili', 'hustle' ),
-				'sv' => esc_html__( 'Swedish', 'hustle' ),
-				'ta' => esc_html__( 'Tamil', 'hustle' ),
-				'te' => esc_html__( 'Telugu', 'hustle' ),
-				'th' => esc_html__( 'Thai', 'hustle' ),
-				'tr' => esc_html__( 'Turkish', 'hustle' ),
-				'uk' => esc_html__( 'Ukrainian', 'hustle' ),
-				'ur' => esc_html__( 'Urdu', 'hustle' ),
-				'vi' => esc_html__( 'Vietnamese', 'hustle' ),
-				'zu' => esc_html__( 'Zulu', 'hustle' ),
+				'sw'     => esc_html__( 'Swahili', 'hustle' ),
+				'sv'     => esc_html__( 'Swedish', 'hustle' ),
+				'ta'     => esc_html__( 'Tamil', 'hustle' ),
+				'te'     => esc_html__( 'Telugu', 'hustle' ),
+				'th'     => esc_html__( 'Thai', 'hustle' ),
+				'tr'     => esc_html__( 'Turkish', 'hustle' ),
+				'uk'     => esc_html__( 'Ukrainian', 'hustle' ),
+				'ur'     => esc_html__( 'Urdu', 'hustle' ),
+				'vi'     => esc_html__( 'Vietnamese', 'hustle' ),
+				'zu'     => esc_html__( 'Zulu', 'hustle' ),
 			)
 		);
 	}
@@ -1084,13 +1073,13 @@ class Opt_In_Utils {
 	 * @since 4.0
 	 *
 	 * @param $module_id
-	 * @param string $subtype
-	 * @param string $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion
+	 * @param string    $subtype
+	 * @param string    $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion
 	 * @return string
 	 */
 	public static function get_latest_conversion_time_by_module_id( $module_id, $subtype = '', $cta_or_optin = 'all_conversion' ) {
 		$tracking_model = Hustle_Tracking_Model::get_instance();
-		$latest_entry = $tracking_model->get_latest_conversion_date_by_module_id( $module_id, $subtype, $cta_or_optin );
+		$latest_entry   = $tracking_model->get_latest_conversion_date_by_module_id( $module_id, $subtype, $cta_or_optin );
 		if ( $latest_entry ) {
 			$entry_date = date_i18n( 'j M Y @ H:i A', strtotime( $latest_entry ) );
 			return $entry_date;
@@ -1110,7 +1099,7 @@ class Opt_In_Utils {
 	 */
 	public static function get_latest_conversion_time( $entry_type ) {
 		$tracking_model = Hustle_Tracking_Model::get_instance();
-		$date = $tracking_model->get_latest_conversion_date( $entry_type );
+		$date           = $tracking_model->get_latest_conversion_date( $entry_type );
 
 		if ( $date ) {
 			$last_entry_time = mysql2date( 'U', $date );
@@ -1208,14 +1197,14 @@ class Opt_In_Utils {
 	 *
 	 * @param string $old_key
 	 * @param string $new_key
-	 * @param array $array
+	 * @param array  $array
 	 * @return array
 	 */
 	public static function replace_array_key( $old_key, $new_key, $array ) {
 
 		// Replace the name without changing the array's order.
 		$keys_array = array_keys( $array );
-		$index = array_search( $old_key, $keys_array, true );
+		$index      = array_search( $old_key, $keys_array, true );
 
 		if ( false === $index ) {
 			return $array;
@@ -1248,28 +1237,24 @@ class Opt_In_Utils {
 			} else {
 				$display_name = __( 'pop-ups', 'hustle' );
 			}
-
 		} elseif ( Hustle_Module_Model::SLIDEIN_MODULE === $module_type ) {
 			if ( ! $plural ) {
 				$display_name = __( 'slide-in', 'hustle' );
 			} else {
 				$display_name = __( 'slide-ins', 'hustle' );
 			}
-
 		} elseif ( Hustle_Module_Model::EMBEDDED_MODULE === $module_type ) {
 			if ( ! $plural ) {
 				$display_name = __( 'embed', 'hustle' );
 			} else {
 				$display_name = __( 'embeds', 'hustle' );
 			}
-
 		} elseif ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module_type ) {
 			if ( ! $plural ) {
 				$display_name = __( 'social sharing', 'hustle' );
 			} else {
 				$display_name = __( 'social shares', 'hustle' );
 			}
-
 		}
 
 		if ( $capitalized ) {
@@ -1285,10 +1270,10 @@ class Opt_In_Utils {
 	 * @since 4.0.3
 	 */
 	public static function hustle_get_page_templates() {
-		$templates = get_page_templates();
+		$templates      = get_page_templates();
 		$page_templates = array();
 		foreach ( $templates as $template_name => $template_filename ) {
-			$page_templates[$template_filename] = $template_name;
+			$page_templates[ $template_filename ] = $template_name;
 		}
 		return $page_templates;
 	}
@@ -1303,6 +1288,18 @@ class Opt_In_Utils {
 	}
 
 	/**
+	 * Gets the first key of an array.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param array $array
+	 * @return mixed
+	 */
+	public static function array_key_first( array $array ) {
+		return $array ? array_keys( $array )[0] : null;
+	}
+
+	/**
 	 * Get the global placeholders for display.
 	 * The array's key has the placeholder value, that's what's inserted between
 	 * brackets and then replaced by self::replace_global_placeholders().
@@ -1314,12 +1311,12 @@ class Opt_In_Utils {
 	 */
 	public static function get_global_placeholders() {
 
-		$placeholders = [
+		$placeholders = array(
 			'site_url'   => __( 'Site URL', 'hustle' ),
 			'site_name'  => __( 'Site name', 'hustle' ),
 			'post_url'   => __( 'Post/page URL', 'hustle' ),
 			'post_title' => __( 'Post/page title', 'hustle' ),
-		];
+		);
 
 		/**
 		 * Filter the available global placeholders.
@@ -1349,12 +1346,12 @@ class Opt_In_Utils {
 
 		if ( ! empty( $matches[0] ) && is_array( $matches[0] ) ) {
 
-			$defined_placeholders = [
+			$defined_placeholders = array(
 				'{site_url}'   => site_url(),
 				'{site_name}'  => get_bloginfo( 'name' ),
 				'{post_url}'   => get_permalink(),
 				'{post_title}' => esc_html( get_the_title() ),
-			];
+			);
 
 			/**
 			 * Filter the placeholders and their values.
@@ -1381,5 +1378,300 @@ class Opt_In_Utils {
 		}
 
 		return $string;
+	}
+
+	// Static stuff below.
+
+	/**
+	 * Returns array of browsers
+	 *
+	 * @since 4.1
+	 * @return array|mixed|null|void
+	 */
+	public static function get_browsers() {
+
+		$browsers = array(
+			'chrome'  => __( 'Chrome', 'hustle' ),
+			'firefox' => __( 'Firefox', 'hustle' ),
+			'safari'  => __( 'Safari', 'hustle' ),
+			'edge'    => __( 'Edge', 'hustle' ),
+			'MSIE'    => __( 'Internet Explorer', 'hustle' ),
+			'opera'   => __( 'Opera', 'hustle' ),
+		);
+
+		/**
+		 * Filter the list of browsers
+		 * Must return an associative array where the key is the browser's slug
+		 * and the value is its display name.
+		 *
+		 * @since 4.1
+		 */
+		return apply_filters( 'hustle_get_browsers_list', $browsers );
+	}
+
+	/**
+	 * Returns array of countries
+	 *
+	 * @return array|mixed|null|void
+	 */
+	public static function get_countries() {
+
+		$countries = array(
+			'AU' => __( 'Australia', 'hustle' ),
+			'AF' => __( 'Afghanistan', 'hustle' ),
+			'AL' => __( 'Albania', 'hustle' ),
+			'DZ' => __( 'Algeria', 'hustle' ),
+			'AS' => __( 'American Samoa', 'hustle' ),
+			'AD' => __( 'Andorra', 'hustle' ),
+			'AO' => __( 'Angola', 'hustle' ),
+			'AI' => __( 'Anguilla', 'hustle' ),
+			'AQ' => __( 'Antarctica', 'hustle' ),
+			'AG' => __( 'Antigua and Barbuda', 'hustle' ),
+			'AR' => __( 'Argentina', 'hustle' ),
+			'AM' => __( 'Armenia', 'hustle' ),
+			'AW' => __( 'Aruba', 'hustle' ),
+			'AT' => __( 'Austria', 'hustle' ),
+			'AZ' => __( 'Azerbaijan', 'hustle' ),
+			'BS' => __( 'Bahamas', 'hustle' ),
+			'BH' => __( 'Bahrain', 'hustle' ),
+			'BD' => __( 'Bangladesh', 'hustle' ),
+			'BB' => __( 'Barbados', 'hustle' ),
+			'BY' => __( 'Belarus', 'hustle' ),
+			'BE' => __( 'Belgium', 'hustle' ),
+			'BZ' => __( 'Belize', 'hustle' ),
+			'BJ' => __( 'Benin', 'hustle' ),
+			'BM' => __( 'Bermuda', 'hustle' ),
+			'BT' => __( 'Bhutan', 'hustle' ),
+			'BO' => __( 'Bolivia', 'hustle' ),
+			'BA' => __( 'Bosnia and Herzegovina', 'hustle' ),
+			'BW' => __( 'Botswana', 'hustle' ),
+			'BV' => __( 'Bouvet Island', 'hustle' ),
+			'BR' => __( 'Brazil', 'hustle' ),
+			'IO' => __( 'British Indian Ocean Territory', 'hustle' ),
+			'BN' => __( 'Brunei', 'hustle' ),
+			'BG' => __( 'Bulgaria', 'hustle' ),
+			'BF' => __( 'Burkina Faso', 'hustle' ),
+			'BI' => __( 'Burundi', 'hustle' ),
+			'KH' => __( 'Cambodia', 'hustle' ),
+			'CM' => __( 'Cameroon', 'hustle' ),
+			'CA' => __( 'Canada', 'hustle' ),
+			'CV' => __( 'Cape Verde', 'hustle' ),
+			'KY' => __( 'Cayman Islands', 'hustle' ),
+			'CF' => __( 'Central African Republic', 'hustle' ),
+			'TD' => __( 'Chad', 'hustle' ),
+			'CL' => __( 'Chile', 'hustle' ),
+			'CN' => __( 'China, People\'s Republic of', 'hustle' ),
+			'CX' => __( 'Christmas Island', 'hustle' ),
+			'CC' => __( 'Cocos Islands', 'hustle' ),
+			'CO' => __( 'Colombia', 'hustle' ),
+			'KM' => __( 'Comoros', 'hustle' ),
+			'CD' => __( 'Congo, Democratic Republic of the', 'hustle' ),
+			'CG' => __( 'Congo, Republic of the', 'hustle' ),
+			'CK' => __( 'Cook Islands', 'hustle' ),
+			'CR' => __( 'Costa Rica', 'hustle' ),
+			'CI' => __( 'Côte d\'Ivoire', 'hustle' ),
+			'HR' => __( 'Croatia', 'hustle' ),
+			'CU' => __( 'Cuba', 'hustle' ),
+			'CW' => __( 'Curaçao', 'hustle' ),
+			'CY' => __( 'Cyprus', 'hustle' ),
+			'CZ' => __( 'Czech Republic', 'hustle' ),
+			'DK' => __( 'Denmark', 'hustle' ),
+			'DJ' => __( 'Djibouti', 'hustle' ),
+			'DM' => __( 'Dominica', 'hustle' ),
+			'DO' => __( 'Dominican Republic', 'hustle' ),
+			'TL' => __( 'East Timor', 'hustle' ),
+			'EC' => __( 'Ecuador', 'hustle' ),
+			'EG' => __( 'Egypt', 'hustle' ),
+			'SV' => __( 'El Salvador', 'hustle' ),
+			'GQ' => __( 'Equatorial Guinea', 'hustle' ),
+			'ER' => __( 'Eritrea', 'hustle' ),
+			'EE' => __( 'Estonia', 'hustle' ),
+			'ET' => __( 'Ethiopia', 'hustle' ),
+			'FK' => __( 'Falkland Islands', 'hustle' ),
+			'FO' => __( 'Faroe Islands', 'hustle' ),
+			'FJ' => __( 'Fiji', 'hustle' ),
+			'FI' => __( 'Finland', 'hustle' ),
+			'FR' => __( 'France', 'hustle' ),
+			'FX' => __( 'France, Metropolitan', 'hustle' ),
+			'GF' => __( 'French Guiana', 'hustle' ),
+			'PF' => __( 'French Polynesia', 'hustle' ),
+			'TF' => __( 'French South Territories', 'hustle' ),
+			'GA' => __( 'Gabon', 'hustle' ),
+			'GM' => __( 'Gambia', 'hustle' ),
+			'GE' => __( 'Georgia', 'hustle' ),
+			'DE' => __( 'Germany', 'hustle' ),
+			'GH' => __( 'Ghana', 'hustle' ),
+			'GI' => __( 'Gibraltar', 'hustle' ),
+			'GR' => __( 'Greece', 'hustle' ),
+			'GL' => __( 'Greenland', 'hustle' ),
+			'GD' => __( 'Grenada', 'hustle' ),
+			'GP' => __( 'Guadeloupe', 'hustle' ),
+			'GU' => __( 'Guam', 'hustle' ),
+			'GT' => __( 'Guatemala', 'hustle' ),
+			'GN' => __( 'Guinea', 'hustle' ),
+			'GW' => __( 'Guinea-Bissau', 'hustle' ),
+			'GY' => __( 'Guyana', 'hustle' ),
+			'HT' => __( 'Haiti', 'hustle' ),
+			'HM' => __( 'Heard Island And Mcdonald Island', 'hustle' ),
+			'HN' => __( 'Honduras', 'hustle' ),
+			'HK' => __( 'Hong Kong', 'hustle' ),
+			'HU' => __( 'Hungary', 'hustle' ),
+			'IS' => __( 'Iceland', 'hustle' ),
+			'IN' => __( 'India', 'hustle' ),
+			'ID' => __( 'Indonesia', 'hustle' ),
+			'IR' => __( 'Iran', 'hustle' ),
+			'IQ' => __( 'Iraq', 'hustle' ),
+			'IE' => __( 'Ireland', 'hustle' ),
+			'IL' => __( 'Israel', 'hustle' ),
+			'IT' => __( 'Italy', 'hustle' ),
+			'JM' => __( 'Jamaica', 'hustle' ),
+			'JP' => __( 'Japan', 'hustle' ),
+			'JT' => __( 'Johnston Island', 'hustle' ),
+			'JO' => __( 'Jordan', 'hustle' ),
+			'KZ' => __( 'Kazakhstan', 'hustle' ),
+			'KE' => __( 'Kenya', 'hustle' ),
+			'XK' => __( 'Kosovo', 'hustle' ),
+			'KI' => __( 'Kiribati', 'hustle' ),
+			'KP' => __( 'Korea, Democratic People\'s Republic of', 'hustle' ),
+			'KR' => __( 'Korea, Republic of', 'hustle' ),
+			'KW' => __( 'Kuwait', 'hustle' ),
+			'KG' => __( 'Kyrgyzstan', 'hustle' ),
+			'LA' => __( 'Lao People\'s Democratic Republic', 'hustle' ),
+			'LV' => __( 'Latvia', 'hustle' ),
+			'LB' => __( 'Lebanon', 'hustle' ),
+			'LS' => __( 'Lesotho', 'hustle' ),
+			'LR' => __( 'Liberia', 'hustle' ),
+			'LY' => __( 'Libya', 'hustle' ),
+			'LI' => __( 'Liechtenstein', 'hustle' ),
+			'LT' => __( 'Lithuania', 'hustle' ),
+			'LU' => __( 'Luxembourg', 'hustle' ),
+			'MO' => __( 'Macau', 'hustle' ),
+			'MK' => __( 'Macedonia', 'hustle' ),
+			'MG' => __( 'Madagascar', 'hustle' ),
+			'MW' => __( 'Malawi', 'hustle' ),
+			'MY' => __( 'Malaysia', 'hustle' ),
+			'MV' => __( 'Maldives', 'hustle' ),
+			'ML' => __( 'Mali', 'hustle' ),
+			'MT' => __( 'Malta', 'hustle' ),
+			'MH' => __( 'Marshall Islands', 'hustle' ),
+			'MQ' => __( 'Martinique', 'hustle' ),
+			'MR' => __( 'Mauritania', 'hustle' ),
+			'MU' => __( 'Mauritius', 'hustle' ),
+			'YT' => __( 'Mayotte', 'hustle' ),
+			'MX' => __( 'Mexico', 'hustle' ),
+			'FM' => __( 'Micronesia', 'hustle' ),
+			'MD' => __( 'Moldova', 'hustle' ),
+			'MC' => __( 'Monaco', 'hustle' ),
+			'MN' => __( 'Mongolia', 'hustle' ),
+			'ME' => __( 'Montenegro', 'hustle' ),
+			'MS' => __( 'Montserrat', 'hustle' ),
+			'MA' => __( 'Morocco', 'hustle' ),
+			'MZ' => __( 'Mozambique', 'hustle' ),
+			'MM' => __( 'Myanmar', 'hustle' ),
+			'NA' => __( 'Namibia', 'hustle' ),
+			'NR' => __( 'Nauru', 'hustle' ),
+			'NP' => __( 'Nepal', 'hustle' ),
+			'NL' => __( 'Netherlands', 'hustle' ),
+			'AN' => __( 'Netherlands Antilles', 'hustle' ),
+			'NC' => __( 'New Caledonia', 'hustle' ),
+			'NZ' => __( 'New Zealand', 'hustle' ),
+			'NI' => __( 'Nicaragua', 'hustle' ),
+			'NE' => __( 'Niger', 'hustle' ),
+			'NG' => __( 'Nigeria', 'hustle' ),
+			'NU' => __( 'Niue', 'hustle' ),
+			'NF' => __( 'Norfolk Island', 'hustle' ),
+			'MP' => __( 'Northern Mariana Islands', 'hustle' ),
+			'MP' => __( 'Mariana Islands, Northern', 'hustle' ),
+			'NO' => __( 'Norway', 'hustle' ),
+			'OM' => __( 'Oman', 'hustle' ),
+			'PK' => __( 'Pakistan', 'hustle' ),
+			'PW' => __( 'Palau', 'hustle' ),
+			'PS' => __( 'Palestine, State of', 'hustle' ),
+			'PA' => __( 'Panama', 'hustle' ),
+			'PG' => __( 'Papua New Guinea', 'hustle' ),
+			'PY' => __( 'Paraguay', 'hustle' ),
+			'PE' => __( 'Peru', 'hustle' ),
+			'PH' => __( 'Philippines', 'hustle' ),
+			'PN' => __( 'Pitcairn Islands', 'hustle' ),
+			'PL' => __( 'Poland', 'hustle' ),
+			'PT' => __( 'Portugal', 'hustle' ),
+			'PR' => __( 'Puerto Rico', 'hustle' ),
+			'QA' => __( 'Qatar', 'hustle' ),
+			'RE' => __( 'Réunion', 'hustle' ),
+			'RO' => __( 'Romania', 'hustle' ),
+			'RU' => __( 'Russia', 'hustle' ),
+			'RW' => __( 'Rwanda', 'hustle' ),
+			'SH' => __( 'Saint Helena', 'hustle' ),
+			'KN' => __( 'Saint Kitts and Nevis', 'hustle' ),
+			'LC' => __( 'Saint Lucia', 'hustle' ),
+			'PM' => __( 'Saint Pierre and Miquelon', 'hustle' ),
+			'VC' => __( 'Saint Vincent and the Grenadines', 'hustle' ),
+			'WS' => __( 'Samoa', 'hustle' ),
+			'SM' => __( 'San Marino', 'hustle' ),
+			'ST' => __( 'Sao Tome and Principe', 'hustle' ),
+			'SA' => __( 'Saudi Arabia', 'hustle' ),
+			'SN' => __( 'Senegal', 'hustle' ),
+			'CS' => __( 'Serbia', 'hustle' ),
+			'SC' => __( 'Seychelles', 'hustle' ),
+			'SL' => __( 'Sierra Leone', 'hustle' ),
+			'SG' => __( 'Singapore', 'hustle' ),
+			'MF' => __( 'Sint Maarten', 'hustle' ),
+			'SK' => __( 'Slovakia', 'hustle' ),
+			'SI' => __( 'Slovenia', 'hustle' ),
+			'SB' => __( 'Solomon Islands', 'hustle' ),
+			'SO' => __( 'Somalia', 'hustle' ),
+			'ZA' => __( 'South Africa', 'hustle' ),
+			'GS' => __( 'South Georgia and the South Sandwich Islands', 'hustle' ),
+			'ES' => __( 'Spain', 'hustle' ),
+			'LK' => __( 'Sri Lanka', 'hustle' ),
+			'XX' => __( 'Stateless Persons', 'hustle' ),
+			'SD' => __( 'Sudan', 'hustle' ),
+			'SD' => __( 'Sudan, South', 'hustle' ),
+			'SR' => __( 'Suriname', 'hustle' ),
+			'SJ' => __( 'Svalbard and Jan Mayen', 'hustle' ),
+			'SZ' => __( 'Swaziland', 'hustle' ),
+			'SE' => __( 'Sweden', 'hustle' ),
+			'CH' => __( 'Switzerland', 'hustle' ),
+			'SY' => __( 'Syria', 'hustle' ),
+			'TW' => __( 'Taiwan, Republic of China', 'hustle' ),
+			'TJ' => __( 'Tajikistan', 'hustle' ),
+			'TZ' => __( 'Tanzania', 'hustle' ),
+			'TH' => __( 'Thailand', 'hustle' ),
+			'TG' => __( 'Togo', 'hustle' ),
+			'TK' => __( 'Tokelau', 'hustle' ),
+			'TO' => __( 'Tonga', 'hustle' ),
+			'TT' => __( 'Trinidad and Tobago', 'hustle' ),
+			'TN' => __( 'Tunisia', 'hustle' ),
+			'TR' => __( 'Turkey', 'hustle' ),
+			'TM' => __( 'Turkmenistan', 'hustle' ),
+			'TC' => __( 'Turks and Caicos Islands', 'hustle' ),
+			'TV' => __( 'Tuvalu', 'hustle' ),
+			'UG' => __( 'Uganda', 'hustle' ),
+			'UA' => __( 'Ukraine', 'hustle' ),
+			'AE' => __( 'United Arab Emirates', 'hustle' ),
+			'GB' => __( 'United Kingdom', 'hustle' ),
+			'US' => __( 'United States of America (USA)', 'hustle' ),
+			'UM' => __( 'US Minor Outlying Islands', 'hustle' ),
+			'UY' => __( 'Uruguay', 'hustle' ),
+			'UZ' => __( 'Uzbekistan', 'hustle' ),
+			'VU' => __( 'Vanuatu', 'hustle' ),
+			'VA' => __( 'Vatican City', 'hustle' ),
+			'VE' => __( 'Venezuela', 'hustle' ),
+			'VN' => __( 'Vietnam', 'hustle' ),
+			'VG' => __( 'Virgin Islands, British', 'hustle' ),
+			'VI' => __( 'Virgin Islands, U.S.', 'hustle' ),
+			'WF' => __( 'Wallis And Futuna', 'hustle' ),
+			'EH' => __( 'Western Sahara', 'hustle' ),
+			'YE' => __( 'Yemen', 'hustle' ),
+			'ZM' => __( 'Zambia', 'hustle' ),
+			'ZW' => __( 'Zimbabwe', 'hustle' ),
+		);
+
+		/**
+		 * Returns a list with countries
+		 * Must be an associative array where the key is the country code
+		 * and its value is its display name.
+		 */
+		return apply_filters( 'opt_in-country-list', $countries );
 	}
 }

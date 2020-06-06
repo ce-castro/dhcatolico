@@ -288,6 +288,29 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 
 				$social_icons = $content->social_icons;
 
+				/**
+				 * Filters the icons to be shown.
+				 * Here you can add custom icons to be printed. It only works for networks
+				 * using custom links (non-native ones), and without counters.
+				 * The icon and visual attributes must be handled via custom CSS.
+				 *
+				 * @since 4.1.2
+				 *
+				 * @param array $social_icons {
+				 *     Selected social networks for the module.
+				 *     Contains an array for each platform. The platform's slug is the key of its array.
+				 *     The array for each platform must contain:
+				 *
+				 *     @type string 'platform' The network's slug. Same as the array key. Lowercase, no spaces nor special chars.
+				 *     @type string 'label'    The network's display name.
+				 *     @type string 'type'     click|native Whether the counter would be retrieved from clicks or an API. Use 'click'.
+				 *     @type string 'link'     The URL to which the user will go when clicking the icon. Required if a sharing
+				 *                             endpoint isn't especified in the filter @see hustle_native_share_enpoints.
+				 *     @type int    'counter'  The default number for the counter. This will be static, it won't increase for now.
+				 * }
+				 */
+				$social_icons = apply_filters( 'hustle_social_sharing_get_selected_networks', $social_icons, $module );
+
 				// phpcs:disable Generic.WhiteSpace.ScopeIndent.IncorrectExact
 				// Extra indentation to mimic html tree.
 				if ( ! empty( $social_icons ) ) {

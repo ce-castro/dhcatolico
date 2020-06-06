@@ -1,6 +1,8 @@
 <?php
 
-if( class_exists("Opt_In_Infusionsoft_Api") ) return;
+if ( class_exists( 'Opt_In_Infusionsoft_Api' ) ) {
+	return;
+}
 
 class Opt_In_Infusionsoft_Api {
 
@@ -35,14 +37,14 @@ class Opt_In_Infusionsoft_Api {
 	 * @param $api_key
 	 * @param $app_name
 	 */
-	public function __construct( $api_key, $app_name ){
-		$this->_api_key = $api_key;
+	public function __construct( $api_key, $app_name ) {
+		$this->_api_key  = $api_key;
 		$this->_app_name = $app_name;
-		return  $this;
+		return $this;
 	}
 
 	public function set_method( $method_name ) {
-		$xml = '<?xml version="1.0" encoding="UTF-8"?><methodCall></methodCall>';
+		$xml       = '<?xml version="1.0" encoding="UTF-8"?><methodCall></methodCall>';
 		$this->xml = new SimpleXMLElement( $xml );
 		$this->xml->addChild( 'methodName', $method_name );
 		$this->params = $this->xml->addChild( 'params' );
@@ -144,11 +146,11 @@ class Opt_In_Infusionsoft_Api {
 		}
 
 		$builtin_custom_fields = $this->builtin_custom_fields();
-		$extra_custom_fields = array();
+		$extra_custom_fields   = array();
 		foreach ( $res->get_value()->data->value as $custom_field ) {
 			foreach ( $custom_field->struct->member as $info ) {
-				if ( 'Name' === (string)$info->name ) {
-					$extra_custom_fields[] = (string)$info->value;
+				if ( 'Name' === (string) $info->name ) {
+					$extra_custom_fields[] = (string) $info->value;
 				}
 			}
 		}
@@ -191,7 +193,7 @@ class Opt_In_Infusionsoft_Api {
 			return $headers;
 		}
 		$cf_group_id = array_search( 'Custom Fields', $headers );
-		$header_id = false !== $cf_group_id ? $cf_group_id : array_keys( $headers )[0];
+		$header_id   = false !== $cf_group_id ? $cf_group_id : array_keys( $headers )[0];
 		$this->set_method( 'DataService.addCustomField' );
 		$this->set_param( 'Contact' );
 		$this->set_param( $name );
@@ -209,15 +211,20 @@ class Opt_In_Infusionsoft_Api {
 	/**
 	 * Add new contact to infusionsoft and return contact ID on success or WP_Error.
 	 *
-	 * @param array $contact			An array of contact details.
+	 * @param array $contact            An array of contact details.
 	 **/
 	public function add_contact( $contact ) {
 		if ( false === $this->email_exist( $contact['Email'] ) ) {
-			$this->optInEmail( $contact['Email'] ); //First optin the email
+			$this->optInEmail( $contact['Email'] ); // First optin the email
 
 			$this->set_method( 'ContactService.add' );
 
+			// According to their documentations custom fields should be prefixed with "_".
 			foreach ( $contact as $key => $value ) {
+				if ( ! in_array( $key, $this->builtin_custom_fields(), true ) ) {
+					$key = '_' . $key;
+				}
+
 				$this->set_member( $key, $value );
 			}
 
@@ -247,11 +254,10 @@ class Opt_In_Infusionsoft_Api {
 	 *
 	 * @param array $contact Array of contact details to be updated.
 	 * @return integer|WP_Error Contact ID if everything went well, WP_Error otherwise.
-	 *
 	 */
 	public function update_contact( $contact ) {
 
-		$this->optInEmail( $contact['Email'] ); //First optin the email
+		$this->optInEmail( $contact['Email'] ); // First optin the email
 
 		$contact_id = $this->get_contact_id( $contact['Email'] );
 
@@ -340,7 +346,7 @@ class Opt_In_Infusionsoft_Api {
 	 * @param $tag_id
 	 * @return Opt_In_Infusionsoft_XML_Res|WP_Error
 	 */
-	public function add_tag_to_contact( $contact_id, $tag_id ){
+	public function add_tag_to_contact( $contact_id, $tag_id ) {
 		$xml = "<?xml version='1.0' encoding='UTF-8'?>
 				<methodCall>
 				  <methodName>ContactService.addToGroup</methodName>
@@ -365,16 +371,17 @@ class Opt_In_Infusionsoft_Api {
 
 		$res = $this->_request( $xml );
 
-		if( is_wp_error( $res ) )
+		if ( is_wp_error( $res ) ) {
 			return $res;
+		}
 
 		return $res->get_value();
 
 	}
 
-	public function get_lists(){
+	public function get_lists() {
 		$page = 0;
-		$xml = "<?xml version='1.0' encoding='UTF-8'?>
+		$xml  = "<?xml version='1.0' encoding='UTF-8'?>
 				<methodCall>
 				  <methodName>DataService.query</methodName>
 				  <params>
@@ -421,8 +428,9 @@ class Opt_In_Infusionsoft_Api {
 
 		$res = $this->_request( $xml );
 
-		if( is_wp_error( $res ) )
+		if ( is_wp_error( $res ) ) {
 			return $res;
+		}
 
 		return $res->get_tags_list();
 	}
@@ -433,38 +441,41 @@ class Opt_In_Infusionsoft_Api {
 	 * @param $query_str
 	 * @return Opt_In_Infusionsoft_XML_Res|WP_Error
 	 */
-	private function _request( $query_str ){
+	private function _request( $query_str ) {
 		$url = esc_url_raw( 'https://' . $this->_app_name . '.infusionsoft.com/api/xmlrpc' );
 
 		$headers = array(
-			"Content-Type" =>  "text/xml",
-			"Accept-Charset" => "UTF-8,ISO-8859-1,US-ASCII",
+			'Content-Type'   => 'text/xml',
+			'Accept-Charset' => 'UTF-8,ISO-8859-1,US-ASCII',
 		);
 
-		$res = wp_remote_post($url, array(
-			'sslverify'  => false,
-			"headers" => $headers,
-			"body" => $query_str
-		));
+		$res = wp_remote_post(
+			$url,
+			array(
+				'sslverify' => false,
+				'headers'   => $headers,
+				'body'      => $query_str,
+			)
+		);
 
-		$utils = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request = $url;
+		$utils                      = Hustle_Provider_Utils::get_instance();
+		$utils->_last_url_request   = $url;
 		$utils->_last_data_received = $res;
-		$utils->_last_data_sent = $query_str;
+		$utils->_last_data_sent     = $query_str;
 
-		$code = wp_remote_retrieve_response_code( $res );
+		$code    = wp_remote_retrieve_response_code( $res );
 		$message = wp_remote_retrieve_response_message( $res );
-		$err = new WP_Error();
+		$err     = new WP_Error();
 
-		if( $code < 204 ){
-			$xml = simplexml_load_string( wp_remote_retrieve_body( $res ), "Opt_In_Infusionsoft_XML_Res" );
+		if ( $code < 204 ) {
+			$xml = simplexml_load_string( wp_remote_retrieve_body( $res ), 'Opt_In_Infusionsoft_XML_Res' );
 
-			if( empty( $xml ) ){
-				$err->add("Invalid_app_name", __("Invalid app name, please check app name and try again", 'hustle' ) );
+			if ( empty( $xml ) ) {
+				$err->add( 'Invalid_app_name', __( 'Invalid app name, please check app name and try again', 'hustle' ) );
 				return $err;
 			}
 
-			if( $xml->is_faulty() ) {
+			if ( $xml->is_faulty() ) {
 				return $xml->get_fault();
 			}
 
@@ -476,7 +487,7 @@ class Opt_In_Infusionsoft_Api {
 	}
 }
 
-class Opt_In_Infusionsoft_XML_Res extends  SimpleXMLElement{
+class Opt_In_Infusionsoft_XML_Res extends  SimpleXMLElement {
 
 	/**
 	 * Returns value from xml like the template
@@ -490,7 +501,7 @@ class Opt_In_Infusionsoft_XML_Res extends  SimpleXMLElement{
 	 *
 	 * @return mixed
 	 */
-	public function get_value( $xml_structure = '' ){
+	public function get_value( $xml_structure = '' ) {
 		$value = reset( $this->params->param->value );
 
 		if ( ! empty( $xml_structure ) ) {
@@ -512,31 +523,30 @@ class Opt_In_Infusionsoft_XML_Res extends  SimpleXMLElement{
 	 *
 	 * @return array
 	 */
-	public function get_tags_list(){
+	public function get_tags_list() {
 		$lists = array();
 		$count = count( $this->get_value()->data->value );
 
-		for( $i = 0; $i < $count; $i++ ){
-			$list = $this->get_value()->data->value[$i];
+		for ( $i = 0; $i < $count; $i++ ) {
+			$list  = $this->get_value()->data->value[ $i ];
 			$label = (string) $list->struct->member[0]->value;
-			if ( !empty( $label ) ) {
-				$id = (int) reset( $list->struct->member[1]->value );
+			if ( ! empty( $label ) ) {
+				$id           = (int) reset( $list->struct->member[1]->value );
 				$lists[ $id ] = $label;
 			}
-
 		}
 
 		return $lists;
 	}
 
-	public function response_to_array(){
+	public function response_to_array() {
 		$array = array();
 
-		foreach( $this->get_value()->data->value as $list ) {
-			foreach( $list->struct->member as $info ) {
-				if ( 'Name' === (string)$info->name ) {
-					$label = (string)$info->value;
-				} else if ( 'Id' === (string)$info->name ) {
+		foreach ( $this->get_value()->data->value as $list ) {
+			foreach ( $list->struct->member as $info ) {
+				if ( 'Name' === (string) $info->name ) {
+					$label = (string) $info->value;
+				} elseif ( 'Id' === (string) $info->name ) {
 					$id = (int) reset( $info->value );
 				}
 				if ( isset( $label ) && isset( $id ) ) {
@@ -555,7 +565,7 @@ class Opt_In_Infusionsoft_XML_Res extends  SimpleXMLElement{
 	 *
 	 * @return bool
 	 */
-	public function is_faulty(){
+	public function is_faulty() {
 		return isset( $this->fault );
 	}
 
@@ -564,11 +574,13 @@ class Opt_In_Infusionsoft_XML_Res extends  SimpleXMLElement{
 	 *
 	 * @return bool|WP_Error
 	 */
-	public function get_fault(){
-		if( !$this->is_faulty() ) return false;
+	public function get_fault() {
+		if ( ! $this->is_faulty() ) {
+			return false;
+		}
 
 		$err = new WP_Error();
-		$err->add( (int) $this->fault->value->struct->member[0]->value, (string) $this->fault->value->struct->member[1]->value  );
+		$err->add( (int) $this->fault->value->struct->member[0]->value, (string) $this->fault->value->struct->member[1]->value );
 		return $err;
 	}
 }

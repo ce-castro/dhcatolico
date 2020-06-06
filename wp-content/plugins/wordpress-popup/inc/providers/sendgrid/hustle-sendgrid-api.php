@@ -35,11 +35,11 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 			}
 
 			$args = array(
-				'headers' => array(
+				'headers'    => array(
 					'Authorization' => 'Bearer ' . $api_key,
 				),
 				'decompress' => false,
-				'timeout' => 10,
+				'timeout'    => 10,
 			);
 
 			return $args;
@@ -92,7 +92,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 
 			$url = $this->sendgrid_url . '/recipients';
 
-			$req_body = wp_json_encode( array( $data ) );
+			$req_body     = wp_json_encode( array( $data ) );
 			$args['body'] = $req_body;
 
 			$response = $this->request( $url, $args, 'POST' );
@@ -133,8 +133,8 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 
 			$url = $this->sendgrid_url . '/recipients';
 
-			$req_body = wp_json_encode( array( $data ) );
-			$args['body'] 	= $req_body;
+			$req_body       = wp_json_encode( array( $data ) );
+			$args['body']   = $req_body;
 			$args['method'] = 'PATCH';
 
 			$response = $this->request( $url, $args );
@@ -174,7 +174,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 				return false;
 			}
 
-			$url = $this->sendgrid_url . '/lists/'. $list_id . '/recipients/' . $recipient_id;
+			$url = $this->sendgrid_url . '/lists/' . $list_id . '/recipients/' . $recipient_id;
 
 			$response = $this->request( $url, $args, 'POST' );
 
@@ -206,7 +206,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 			$recipient_id = $this->add_recipient( $data );
 			if ( ! $recipient_id ) {
 				$missing_fields = $this->get_non_existent_fields( $data );
-				$error_message = empty( $missing_fields ) ?
+				$error_message  = empty( $missing_fields ) ?
 					__( 'The recipient could not be created. Check if your settings are correct.', 'hustle' ) :
 					sprintf( __( 'The recipient could not be created. Please make sure these fields exist in your Sendgrid account: %s.', 'hustle' ), implode( ', ', $missing_fields ) );
 				return new WP_Error( 'subscribe_error', $error_message );
@@ -225,7 +225,6 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		 *
 		 * @param string $email
 		 * @return boolean true if the given email already in use otherwise false.
-		 *
 		 **/
 		public function email_exists( $email, $list_id ) {
 			$args = $this->get_headers();
@@ -253,12 +252,12 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 
 		}
 
-        /**
-         * Unsets the fields that don't exist at Sendgrid to prevent subscription errors.
-         *
-         * @param array $data Submitted data
+		/**
+		 * Unsets the fields that don't exist at Sendgrid to prevent subscription errors.
+		 *
+		 * @param array $data Submitted data
 		 * @return array
-         */
+		 */
 		private function get_non_existent_fields( $data ) {
 
 			$args = $this->get_headers();
@@ -268,17 +267,17 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 			}
 
 			// Get reserved fields
-			$reserved_fields_url = $this->sendgrid_url . '/reserved_fields';
+			$reserved_fields_url      = $this->sendgrid_url . '/reserved_fields';
 			$reserved_fields_response = $this->request( $reserved_fields_url, $args );
-			$reserved_fields = json_decode( $reserved_fields_response['body'], true );
+			$reserved_fields          = json_decode( $reserved_fields_response['body'], true );
 
 			// Get custom fields
-			$custom_fields_url = $this->sendgrid_url . '/custom_fields';
+			$custom_fields_url      = $this->sendgrid_url . '/custom_fields';
 			$custom_fields_response = $this->request( $custom_fields_url, $args );
-			$custom_fields = json_decode( $custom_fields_response['body'], true );
+			$custom_fields          = json_decode( $custom_fields_response['body'], true );
 
 			$existing_reserved_fields = isset( $reserved_fields['reserved_fields'] ) ? $reserved_fields['reserved_fields'] : array();
-			$existing_custom_fields = isset( $custom_fields['custom_fields'] ) ? $custom_fields['custom_fields'] : array();
+			$existing_custom_fields   = isset( $custom_fields['custom_fields'] ) ? $custom_fields['custom_fields'] : array();
 
 			$merged_array = array_merge( $existing_custom_fields, $existing_reserved_fields );
 
@@ -298,30 +297,32 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 			return $non_existent_fields;
 		}
 
-        /**
-         * Add custom fields
-         *
-         * @param array $fields
-         */
+		/**
+		 * Add custom fields
+		 *
+		 * @param array $fields
+		 */
 		public function add_custom_fields( $fields ) {
 			foreach ( $fields as $field ) {
 				$type = strtolower( $field['type'] );
-				if ( !in_array( $type, array( 'text', 'number', 'date' ), true ) ) {
+				if ( ! in_array( $type, array( 'text', 'number', 'date' ), true ) ) {
 					$type = 'text';
 				}
-				$this->add_custom_field( array(
-					"name"	=> strtolower( $field['name'] ),
-					"type"  => $type,
-				) );
+				$this->add_custom_field(
+					array(
+						'name' => strtolower( $field['name'] ),
+						'type' => $type,
+					)
+				);
 			}
 		}
 
-        /**
-         * Add custom field
-         *
-         * @param array $field_data (name, type)
-         */
-        private function add_custom_field( $field_data ) {
+		/**
+		 * Add custom field
+		 *
+		 * @param array $field_data (name, type)
+		 */
+		private function add_custom_field( $field_data ) {
 
 			$args = $this->get_headers();
 
@@ -329,8 +330,8 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 				return false;
 			}
 
-			$url = $this->sendgrid_url . '/custom_fields';
-			$req_body = wp_json_encode( $field_data );
+			$url          = $this->sendgrid_url . '/custom_fields';
+			$req_body     = wp_json_encode( $field_data );
 			$args['body'] = $req_body;
 
 			$response = $this->request( $url, $args, 'POST' );
@@ -348,20 +349,20 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		 * Request
 		 *
 		 * @param string $url
-		 * @param array $args
+		 * @param array  $args
 		 * @param string $method GET|POST
 		 * @return array|WP_Error
 		 */
 		private function request( $url, $args, $method = 'GET' ) {
-			if ( empty( $args['method'] ) && in_array( $method, [ 'GET', 'POST' ], true ) ) {
+			if ( empty( $args['method'] ) && in_array( $method, array( 'GET', 'POST' ), true ) ) {
 				$args['method'] = $method;
 			}
 
 			$response = wp_remote_request( $url, $args );
 
-			$utils = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request = $url;
-			$utils->_last_data_sent = $args;
+			$utils                      = Hustle_Provider_Utils::get_instance();
+			$utils->_last_url_request   = $url;
+			$utils->_last_data_sent     = $args;
 			$utils->_last_data_received = $response;
 
 			return $response;
@@ -369,9 +370,9 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 
 		public function get_reserved_fields_name() {
 			return array(
-				'email' => '',
+				'email'      => '',
 				'first_name' => '',
-				'last_name' => '',
+				'last_name'  => '',
 			);
 		}
 

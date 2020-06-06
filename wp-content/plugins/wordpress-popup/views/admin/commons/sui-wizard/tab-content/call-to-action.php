@@ -1,7 +1,14 @@
 <?php
+/**
+ * CTA section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 ob_start();
 
-require self::$plugin_path . 'assets/css/sui-editor.min.css';
+require Opt_In::$plugin_path . 'assets/css/sui-editor.min.css';
 $editor_css = ob_get_clean();
 $editor_css = '<style>' . $editor_css . '</style>';
 ?>
@@ -10,6 +17,7 @@ $editor_css = '<style>' . $editor_css . '</style>';
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Call to Action', 'hustle' ); ?></span>
+		<?php /* translators: module type in small caps and in singular */ ?>
 		<span class="sui-description"><?php printf( esc_html__( 'Add a call to action button on your %s to take your visitors to another web page on your site or any other site.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 	</div>
 
@@ -20,13 +28,15 @@ $editor_css = '<style>' . $editor_css . '</style>';
 			<label for="hustle-show-cta" class="sui-toggle hustle-toggle-with-container" data-toggle-on="show-cta">
 				<input type="checkbox"
 					id="hustle-show-cta"
+					aria-labelledby="hustle-show-cta-label"
 					data-attribute="show_cta"
 					<?php checked( $settings['show_cta'], '1' ); ?>
 				/>
 				<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+				<span id="hustle-show-cta-label" class="sui-toggle-label"><?php esc_html_e( 'Add Call to Action', 'hustle' ); ?></span>
 			</label>
 
-			<label for="hustle-show-cta"><?php esc_html_e( 'Add Call to Action', 'hustle' ); ?></label>
 
 			<div class="sui-border-frame sui-toggle-content" data-toggle-content="show-cta">
 

@@ -1,6 +1,17 @@
 <?php
+/**
+ * Main footer wrapper.
+ *
+ * @uses ./navigation
+ * @uses ./social
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $hide_footer = false;
-$footer_text = sprintf( __( 'Made with %s by WPMU DEV', 'hustle' ), ' <i class="sui-icon-heart"></i>' );
+/* translators: heart icon */
+$footer_text = sprintf( __( 'Made with %s by WPMU DEV', 'hustle' ), ' <span class="sui-icon-heart" aria-hidden="true"></span>' );
 
 // TODO: Check if the user is member to apply these filters.
 $hide_footer = apply_filters( 'wpmudev_branding_change_footer', $hide_footer );
@@ -35,7 +46,7 @@ if ( Opt_In_Utils::_is_free() && ! empty( $is_large ) && ! $hide_footer ) : ?>
 						target="_blank"
 						class="sui-button sui-button-ghost"
 					>
-						<?php esc_html_e( 'View features', 'hustle' ); ?>&nbsp;&nbsp;&nbsp;<i aria-hidden="true" class="sui-icon-arrow-right"></i>
+						<?php esc_html_e( 'View features', 'hustle' ); ?>&nbsp;&nbsp;&nbsp;<span aria-hidden="true" class="sui-icon-arrow-right"></span>
 					</a>
 
 				</div>
@@ -61,7 +72,7 @@ if ( Opt_In_Utils::_is_free() && ! empty( $is_large ) && ! $hide_footer ) : ?>
 						target="_blank"
 						class="sui-button sui-button-ghost"
 					>
-						<?php esc_html_e( 'View features', 'hustle' ); ?>&nbsp;&nbsp;&nbsp;<i aria-hidden="true" class="sui-icon-arrow-right"></i>
+						<?php esc_html_e( 'View features', 'hustle' ); ?>&nbsp;&nbsp;&nbsp;<span aria-hidden="true" class="sui-icon-arrow-right"></span>
 					</a>
 
 				</div>
@@ -87,7 +98,7 @@ if ( Opt_In_Utils::_is_free() && ! empty( $is_large ) && ! $hide_footer ) : ?>
 						target="_blank"
 						class="sui-button sui-button-ghost"
 					>
-						<?php esc_html_e( 'View features', 'hustle' ); ?>&nbsp;&nbsp;&nbsp;<i aria-hidden="true" class="sui-icon-arrow-right"></i>
+						<?php esc_html_e( 'View features', 'hustle' ); ?>&nbsp;&nbsp;&nbsp;<span aria-hidden="true" class="sui-icon-arrow-right"></span>
 					</a>
 
 				</div>
@@ -124,14 +135,14 @@ if ( Opt_In_Utils::_is_free() && ! empty( $is_large ) && ! $hide_footer ) : ?>
 
 <?php endif; ?>
 
-<div class="sui-footer"><?php echo $footer_text; // wpcs xss ok. ?></div>
+<div class="sui-footer"><?php echo $footer_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 
 <?php
 if ( ! $hide_footer ) {
-	// FOOTER: Navigation
-	self::static_render( 'admin/footer/navigation' );
-	
-	// FOOTER: Social
-	self::static_render( 'admin/footer/social' );
+	// FOOTER: Navigation.
+	$this->render( 'admin/footer/navigation' );
+
+	// FOOTER: Social.
+	$this->render( 'admin/footer/social' );
 }
 ?>

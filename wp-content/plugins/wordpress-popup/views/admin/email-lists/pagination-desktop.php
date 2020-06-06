@@ -1,31 +1,43 @@
 <?php
-/** @var $admin Hustle_Entries_Admin */
-$count = $admin->filtered_total_entries();
-$is_filter_enabled = $admin->is_filter_box_enabled();
-$date_range = '';
-$date_created = isset( $admin->filters['date_created'] ) ? $admin->filters['date_created'] : '';
+/**
+ * Title section.
+ *
+ * @var Hustle_Layout_Helper $this
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+$total = $this->admin->filtered_total_entries();
+$is_filter_enabled = $this->admin->is_filter_box_enabled();
+$date_range        = '';
+$date_created      = isset( $this->admin->filters['date_created'] ) ? $this->admin->filters['date_created'] : '';
 
 if ( is_array( $date_created ) && isset( $date_created[0] ) && isset( $date_created[1] ) ) {
-	$date_created[0] = date( 'm/d/Y', strtotime($date_created[0]) );
-	$date_created[1] = date( 'm/d/Y', strtotime($date_created[1]) );
-	$date_range = implode(' - ', $date_created);
+	$date_created[0] = date( 'm/d/Y', strtotime( $date_created[0] ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
+	$date_created[1] = date( 'm/d/Y', strtotime( $date_created[1] ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
+	$date_range      = implode( ' - ', $date_created );
 }
 
-$search_email = isset( $admin->filters['search_email'] ) ? $admin->filters['search_email'] : '';
-$order_by = isset( $admin->order['order_by'] ) ? $admin->order['order_by'] : '';
+$search_email = isset( $this->admin->filters['search_email'] ) ? $this->admin->filters['search_email'] : '';
+$order_by     = isset( $this->admin->order['order_by'] ) ? $this->admin->order['order_by'] : '';
 
 $order_by_array = array(
-	'entries.entry_id' => esc_html__( 'Id', 'hustle' ),
+	'entries.entry_id'     => esc_html__( 'Id', 'hustle' ),
 	'entries.date_created' => esc_html__( 'Date submitted', 'hustle' ),
 );
 ?>
 
-<div class="hui-box-actions<?php if ( isset( $actions_class ) ) echo ' ' . esc_attr( $actions_class ); ?>">
+<div class="hui-box-actions
+<?php
+if ( isset( $actions_class ) ) {
+	echo ' ' . esc_attr( $actions_class );}
+?>
+">
 
 	<div class="hui-actions-bar">
 
-		<?php // ELEMENT: Bulk Actions ?>
-
+		<?php // ELEMENT: Bulk Actions. ?>
 		<form method="post" class="hustle-bulk-actions-container hui-bulk-actions">
 
 			<select
@@ -54,25 +66,22 @@ $order_by_array = array(
 
 		</form>
 
-		<?php
-		// ELEMENT: Pagination (Desktop) ?>
+		<?php // ELEMENT: Pagination (Desktop). ?>
 		<div class="hui-pagination hui-pagination-desktop">
 
 			<?php
-			$limit = $admin->get_per_page();
-			$page = intval( filter_input( INPUT_GET, 'paged', FILTER_VALIDATE_INT ) ); // phpcs:ignore
+			$entries_per_page = $this->admin->get_per_page();
 
 			$this->render(
 				'admin/commons/pagination',
 				array(
-					'count' => $count,
-					'limit' => $limit,
-					'page' => $page,
-					'show' => ( $count > $limit ),
+					'total' => $total,
+					'entries_per_page' => $entries_per_page,
 					'filterclass' => 'hustle-open-inline-filter',
-					'filter' => array(),
+					'filter'      => array(),
 				)
-			); ?>
+			);
+			?>
 
 		</div>
 
@@ -83,8 +92,8 @@ $order_by_array = array(
 		<form method="get">
 
 			<input type="hidden" name="page" value="hustle_entries">
-			<input type="hidden" name="module_type" value="<?php echo esc_attr( $admin->get_module_type() ); ?>">
-			<input type="hidden" name="module_id" value="<?php echo esc_attr( $admin->get_module_id() ); ?>">
+			<input type="hidden" name="module_type" value="<?php echo esc_attr( $this->admin->get_module_type() ); ?>">
+			<input type="hidden" name="module_id" value="<?php echo esc_attr( $this->admin->get_module_id() ); ?>">
 
 			<div class="sui-row">
 
@@ -98,7 +107,7 @@ $order_by_array = array(
 								placeholder="<?php esc_html_e( 'E.g. gmail', 'hustle' ); ?>"
 								class="sui-form-control"
 								value="<?php echo esc_attr( $search_email ); ?>" />
-							<i class="sui-icon-magnifying-glass-search" aria-hidden="true"></i>
+							<span class="sui-icon-magnifying-glass-search" aria-hidden="true"></span>
 						</div>
 					</div>
 
@@ -126,7 +135,7 @@ $order_by_array = array(
 					<div class="sui-form-field">
 						<label class="sui-label"><?php esc_html_e( 'Conversion date range', 'hustle' ); ?></label>
 						<div class="sui-date">
-							<i class="sui-icon-calendar" aria-hidden="true"></i>
+							<span class="sui-icon-calendar" aria-hidden="true"></span>
 							<input type="text"
 								name="date_range"
 								value="<?php echo esc_attr( $date_range ); ?>"
@@ -156,10 +165,11 @@ $order_by_array = array(
 	</div>
 
 	<?php
-	$get_order_by = filter_input(INPUT_GET, 'order_by', FILTER_SANITIZE_STRING );
-	$ordered = !is_null( $get_order_by ) && key_exists( $get_order_by, $order_by_array );
+	$get_order_by = filter_input( INPUT_GET, 'order_by', FILTER_SANITIZE_STRING );
+	$ordered      = ! is_null( $get_order_by ) && key_exists( $get_order_by, $order_by_array );
 
-	if ( $ordered || $search_email || $date_range ) { ?>
+	if ( $ordered || $search_email || $date_range ) {
+		?>
 
 		<div class="sui-pagination-filters-list">
 

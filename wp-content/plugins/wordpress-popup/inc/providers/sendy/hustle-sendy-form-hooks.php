@@ -20,7 +20,7 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
-		$module_id = $this->module_id;
+		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
 		/**
@@ -43,25 +43,25 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$submitted_data = $this->check_legacy( $submitted_data );
 
 			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
-			$api = $addon->get_api( $global_multi_id );
+			$api             = $addon->get_api( $global_multi_id );
 
 			$first_name = $this->get_value( $submitted_data, 'first_name' );
-			$last_name = $this->get_value( $submitted_data, 'last_name' );
-			$email = $this->get_value( $submitted_data, 'email' );
-			$name = $this->combine_name_parts( $first_name, $last_name );
-			$_data = array(
-				'name'      => $name,
-				'email'     => $email,
+			$last_name  = $this->get_value( $submitted_data, 'last_name' );
+			$email      = $this->get_value( $submitted_data, 'email' );
+			$name       = $this->combine_name_parts( $first_name, $last_name );
+			$_data      = array(
+				'name'  => $name,
+				'email' => $email,
 			);
 
 			// Add extra fields
 			$extra_fields = array_diff_key(
 				$submitted_data,
 				array(
-					'email' => '',
+					'email'      => '',
 					'first_name' => '',
-					'last_name' => '',
-					'gdpr' => '',
+					'last_name'  => '',
+					'gdpr'       => '',
 				)
 			);
 
@@ -71,7 +71,7 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$_data = array_merge( $_data, $extra_fields );
 			}
 
-			$_data['gdpr'] = ( isset( $submitted_data['gdpr'] ) && 'on' === $submitted_data['gdpr'] ? "true" : '' );
+			$_data['gdpr'] = ( isset( $submitted_data['gdpr'] ) && 'on' === $submitted_data['gdpr'] ? 'true' : '' );
 
 			$_data = apply_filters( 'hustly_sendy_subscribe_api_data', $_data );
 
@@ -85,7 +85,8 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$entry_fields = $this->exception( $e );
 		}
 
-		return apply_filters( 'hustle_provider_' . $addon->get_slug() . '_entry_fields',
+		return apply_filters(
+			'hustle_provider_' . $addon->get_slug() . '_entry_fields',
 			$entry_fields,
 			$module_id,
 			$submitted_data,
@@ -102,8 +103,8 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			array(
 				'name'  => 'status',
 				'value' => array(
-					'is_sent'       => $status,
-					'description'   => $message,
+					'is_sent'     => $status,
+					'description' => $message,
 				),
 			),
 		);
@@ -129,11 +130,11 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
 
-		$is_success 				= true;
-		$module_id                	= $this->module_id;
-		$form_settings_instance 	= $this->form_settings_instance;
-		$addon 						= $this->addon;
-		$addon_setting_values 		= $form_settings_instance->get_form_settings_values();
+		$is_success             = true;
+		$module_id              = $this->module_id;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon                  = $this->addon;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
 
 		if ( empty( $submitted_data['email'] ) ) {
 			return __( 'Required Field "email" was not filled by the user.', 'hustle' );
@@ -157,13 +158,13 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$form_settings_instance
 			);
 
-			//triggers exception if not found.
-			$global_multi_id 	= $addon_setting_values['selected_global_multi_id'];
-			$api 				= $addon->get_api( $global_multi_id );
-			$api_response 		= $api->subscriber_status( $submitted_data['email'] );
-			$existing_member	= $api_response->get_error_message();
+			// triggers exception if not found.
+			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
+			$api             = $addon->get_api( $global_multi_id );
+			$api_response    = $api->subscriber_status( $submitted_data['email'] );
+			$existing_member = $api_response->get_error_message();
 
-			if ( 'Subscribed' === $existing_member ){
+			if ( 'Subscribed' === $existing_member ) {
 				$is_success = self::ALREADY_SUBSCRIBED_ERROR;
 			}
 		}

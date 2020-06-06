@@ -1,7 +1,19 @@
 <?php
+/**
+ * Data tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $settings = Hustle_Settings_Admin::get_data_settings();
 ?>
-<div id="data-box" class="sui-box hustle-settings-tab-data" data-tab="data" <?php if ( $section && 'data' !== $section ) echo 'style="display: none;"'; ?>>
+<div id="data-box" class="sui-box hustle-settings-tab-data" data-tab="data"
+<?php
+if ( $section && 'data' !== $section ) {
+	echo 'style="display: none;"';}
+?>
+>
 
 
 	<div class="sui-box-header">
@@ -11,15 +23,17 @@ $settings = Hustle_Settings_Admin::get_data_settings();
 	<form id="hustle-data-settings-form" class="sui-box-body">
 
 		<?php
-		// SECTION: Uninstallation
+		// SECTION: Uninstallation.
 		$this->render(
 			'admin/settings/data/uninstallation-settings',
 			array( 'settings' => $settings )
-		); ?>
+		);
+		?>
 
 		<?php
-		// SECTION: Reset
-		$this->render( 'admin/settings/data/reset-data-settings' ); ?>
+		// SECTION: Reset.
+		$this->render( 'admin/settings/data/reset-data-settings' );
+		?>
 
 	</form>
 
@@ -33,7 +47,7 @@ $settings = Hustle_Settings_Admin::get_data_settings();
 					data-target="data"
 			>
 				<span class="sui-loading-text"><?php esc_html_e( 'Save Settings', 'hustle' ); ?></span>
-				<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 
 

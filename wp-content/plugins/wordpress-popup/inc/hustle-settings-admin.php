@@ -1,17 +1,17 @@
 <?php
 /**
  * Class Hustle_Settings_Admin
- *
  */
 class Hustle_Settings_Admin {
 
 	/**
 	 * Key of the Hustle's settings in wp_options.
+	 *
 	 * @since 4.0
 	 */
 	const SETTINGS_OPTION_KEY = 'hustle_settings';
 
-	const DISMISSED_USER_META = 'hustle_dismissed_notifications';
+	// const DISMISSED_USER_META = 'hustle_dismissed_notifications';
 
 	/**
 	 * Gets the saved or default global unsubscription messages.
@@ -25,15 +25,15 @@ class Hustle_Settings_Admin {
 
 		// Default unsubscription messages
 		$default = array(
-			'enabled' => '0',
-			'get_lists_button_text' => __( 'Get Lists', 'hustle' ),
-			'submit_button_text' => __( 'Unsubscribe!', 'hustle' ),
-			'invalid_email' => __( 'Please enter a valid email address.', 'hustle' ),
-			'email_not_found' => __( "Looks like you're not in our list!", 'hustle' ),
-			'invalid_data' => __( "The unsubscription data doesn't seem to be correct.", 'hustle' ),
-			'email_submitted' => __( 'Please check your email to confirm your unsubscription.', 'hustle' ),
+			'enabled'                   => '0',
+			'get_lists_button_text'     => __( 'Get Lists', 'hustle' ),
+			'submit_button_text'        => __( 'Unsubscribe!', 'hustle' ),
+			'invalid_email'             => __( 'Please enter a valid email address.', 'hustle' ),
+			'email_not_found'           => __( "Looks like you're not in our list!", 'hustle' ),
+			'invalid_data'              => __( "The unsubscription data doesn't seem to be correct.", 'hustle' ),
+			'email_submitted'           => __( 'Please check your email to confirm your unsubscription.', 'hustle' ),
 			'successful_unsubscription' => __( "You've been successfully unsubscribed.", 'hustle' ),
-			'email_not_processed' => __( 'Something went wrong submitting the email. Please make sure a list is selected, and your install is able to send emails.', 'hustle' ),
+			'email_not_processed'       => __( 'Something went wrong submitting the email. Please make sure a list is selected, and your install is able to send emails.', 'hustle' ),
 		);
 
 		$messages = $default;
@@ -78,9 +78,9 @@ class Hustle_Settings_Admin {
 		);
 
 		$default_email_settings = array(
-			'enabled' => '0',
+			'enabled'       => '0',
 			'email_subject' => __( 'Unsubscribe', 'hustle' ),
-			'email_body' => $default_email_body,
+			'email_body'    => $default_email_body,
 		);
 
 		$settings = self::get_hustle_settings( 'unsubscribe' );
@@ -92,7 +92,7 @@ class Hustle_Settings_Admin {
 		$stored_email_settings = array();
 		if ( ! empty( $saved_settings ) ) {
 			$saved_settings['email_body'] = isset( $saved_settings['email_body'] ) ? json_decode( $saved_settings['email_body'] ) : '';
-			$stored_email_settings = stripslashes_deep( $saved_settings );
+			$stored_email_settings        = stripslashes_deep( $saved_settings );
 		}
 
 		$email_settings = array_merge( $default_email_settings, $stored_email_settings );
@@ -110,7 +110,7 @@ class Hustle_Settings_Admin {
 	 */
 	public static function get_per_page( $type ) {
 		$general_settings = self::get_general_settings();
-		$limit = isset( $general_settings[ $type . '_pagination'] ) ? (int) $general_settings[ $type . '_pagination'] : 0;
+		$limit            = isset( $general_settings[ $type . '_pagination' ] ) ? (int) $general_settings[ $type . '_pagination' ] : 0;
 		if ( 1 > $limit ) {
 			$limit = 1;
 		}
@@ -127,34 +127,34 @@ class Hustle_Settings_Admin {
 	public static function get_general_settings() {
 
 		$default_settings = array(
-			'module_pagination' => 10,
-			'submission_pagination' => 10,
-			'sender_email_name' => get_bloginfo( 'name' ),
-			'sender_email_address' => get_option( 'admin_email', '' ),
-			'published_popup_on_dashboard' => '1',
-			'draft_popup_on_dashboard' => '1',
-			'published_slidein_on_dashboard' => '1',
-			'draft_slidein_on_dashboard' => '1',
-			'published_embedded_on_dashboard' => '1',
-			'draft_embedded_on_dashboard' => '1',
-			'debug_enabled' => '0',
+			'module_pagination'                     => 10,
+			'submission_pagination'                 => 10,
+			'sender_email_name'                     => get_bloginfo( 'name' ),
+			'sender_email_address'                  => get_option( 'admin_email', '' ),
+			'published_popup_on_dashboard'          => '1',
+			'draft_popup_on_dashboard'              => '1',
+			'published_slidein_on_dashboard'        => '1',
+			'draft_slidein_on_dashboard'            => '1',
+			'published_embedded_on_dashboard'       => '1',
+			'draft_embedded_on_dashboard'           => '1',
+			'debug_enabled'                         => '0',
 			// Dashboard settings
-			'popup_on_dashboard' => 5,
-			'published_popup_on_dashboard' => '1',
-			'draft_popup_on_dashboard' => '1',
-			'slidein_on_dashboard' => 5,
-			'published_slidein_on_dashboard' => '1',
-			'draft_slidein_on_dashboard' => '1',
-			'social_sharing_on_dashboard' => 5,
+			'popup_on_dashboard'                    => 5,
+			'published_popup_on_dashboard'          => '1',
+			'draft_popup_on_dashboard'              => '1',
+			'slidein_on_dashboard'                  => 5,
+			'published_slidein_on_dashboard'        => '1',
+			'draft_slidein_on_dashboard'            => '1',
+			'social_sharing_on_dashboard'           => 5,
 			'published_social_sharing_on_dashboard' => '1',
-			'draft_social_sharing_on_dashboard' => '1',
-			'embedded_on_dashboard' => 5,
-			'published_embedded_on_dashboard' => '1',
-			'draft_embedded_on_dashboard' => '1',
+			'draft_social_sharing_on_dashboard'     => '1',
+			'embedded_on_dashboard'                 => 5,
+			'published_embedded_on_dashboard'       => '1',
+			'draft_embedded_on_dashboard'           => '1',
 		);
 
 		$general_settings = $default_settings;
-		$saved_settings = self::get_hustle_settings( 'general' );
+		$saved_settings   = self::get_hustle_settings( 'general' );
 
 		// If we have settings already stored in "general".
 		if ( ! empty( $saved_settings ) ) {
@@ -186,7 +186,7 @@ class Hustle_Settings_Admin {
 
 			if ( ! empty( $old_emails_settings ) ) {
 
-				$saved_settings = [];
+				$saved_settings = array();
 
 				if ( ! empty( $old_emails_settings['sender_email_name'] ) ) {
 					$saved_settings['sender_email_name'] = $old_emails_settings['sender_email_name'];
@@ -212,10 +212,10 @@ class Hustle_Settings_Admin {
 	public static function get_permissions_settings() {
 
 		$defaults = array(
-			'create'            => [],
-			'edit_integrations' => [],
-			'access_emails'     => [],
-			'edit_settings'     => [],
+			'create'            => array(),
+			'edit_integrations' => array(),
+			'access_emails'     => array(),
+			'edit_settings'     => array(),
 		);
 
 		$settings = self::get_hustle_settings( 'permissions' );
@@ -239,19 +239,19 @@ class Hustle_Settings_Admin {
 
 		$default = array(
 			// V2 Checkbox
-			'v2_checkbox_site_key' => '',
-			'v2_checkbox_secret_key' => '',
+			'v2_checkbox_site_key'    => '',
+			'v2_checkbox_secret_key'  => '',
 			// V2 Invisible
-			'v2_invisible_site_key' => '',
+			'v2_invisible_site_key'   => '',
 			'v2_invisible_secret_key' => '',
 			// V3 Recaptcha
-			'v3_recaptcha_site_key' => '',
+			'v3_recaptcha_site_key'   => '',
 			'v3_recaptcha_secret_key' => '',
-			'language' => 'automatic',
+			'language'                => 'automatic',
 		);
 
 		$recaptcha_settings = $default;
-		$saved_settings = self::get_hustle_settings( 'recaptcha' );
+		$saved_settings     = self::get_hustle_settings( 'recaptcha' );
 
 		// Use the standard 4.0.2 recapatcha keys (v2 recaptchas) with the new 4.0.3 keys if not set.
 		if ( ! isset( $saved_settings['v2_checkbox_site_key'] ) && ! empty( $saved_settings['sitekey'] ) ) {
@@ -277,14 +277,14 @@ class Hustle_Settings_Admin {
 	public static function get_available_recaptcha_versions() {
 
 		$available_recaptchas = array();
-		$settings = self::get_recaptcha_settings();
-		$recaptcha_versions = array(
+		$settings             = self::get_recaptcha_settings();
+		$recaptcha_versions   = array(
 			'v2_checkbox',
 			'v2_invisible',
 			'v3_recaptcha',
 		);
 
-		foreach( $recaptcha_versions as $version ) {
+		foreach ( $recaptcha_versions as $version ) {
 
 			// If this versions has the Site key and Secret key stored, it's available to use.
 			if ( ! empty( $settings[ $version . '_site_key' ] ) && ! empty( $settings[ $version . '_secret_key' ] ) ) {
@@ -303,7 +303,7 @@ class Hustle_Settings_Admin {
 	 */
 	public static function get_top_metrics_settings() {
 
-		$defaults = [ 'average_conversion_rate', 'total_conversions', 'most_conversions' ];
+		$defaults        = array( 'average_conversion_rate', 'total_conversions', 'most_conversions' );
 		$stored_settings = self::get_hustle_settings( 'top_metrics' );
 
 		// Use defaults if empty
@@ -324,9 +324,9 @@ class Hustle_Settings_Admin {
 
 		$defaults = array(
 			'title'   => '',
-			'role'    => [],
+			'role'    => array(),
 			'enabled' => '0',
-			'modules' => [],
+			'modules' => array(),
 		);
 
 		$stored_settings = self::get_hustle_settings( 'analytics' );
@@ -351,20 +351,20 @@ class Hustle_Settings_Admin {
 	 */
 	public static function get_privacy_settings() {
 		$defaults = array(
-			'ip_tracking'						=> 'on',
-			'retain_sub_on_erasure'				=> '1',
+			'ip_tracking'                       => 'on',
+			'retain_sub_on_erasure'             => '1',
 
-			'retain_submission_forever'			=> '1',
-			'submissions_retention_number'		=> 30,
-			'submissions_retention_number_unit'	=> 'days',
+			'retain_submission_forever'         => '1',
+			'submissions_retention_number'      => 30,
+			'submissions_retention_number_unit' => 'days',
 
-			'retain_ip_forever'					=> '1',
-			'ip_retention_number'				=> 30,
-			'ip_retention_number_unit'			=> 'days',
+			'retain_ip_forever'                 => '1',
+			'ip_retention_number'               => 30,
+			'ip_retention_number_unit'          => 'days',
 
-			'retain_tracking_forever'			=> '1',
-			'tracking_retention_number'			=> 30,
-			'tracking_retention_number_unit'	=> 'days',
+			'retain_tracking_forever'           => '1',
+			'tracking_retention_number'         => 30,
+			'tracking_retention_number_unit'    => 'days',
 		);
 
 		$stored = self::get_hustle_settings( 'privacy' );
@@ -444,44 +444,6 @@ class Hustle_Settings_Admin {
 	}
 
 	/**
-	 * Add a notification to the dismissed list.
-	 *
-	 * @since 4.0
-	 *
-	 * @param string $notification_name
-	 */
-	public static function add_dismissed_notification( $notification_name ) {
-
-		$dismissed = get_user_meta( get_current_user_id(), self::DISMISSED_USER_META, true );
-
-		if ( is_array( $dismissed ) ) {
-			if ( in_array( $notification_name, $dismissed, true ) ) {
-				return;
-			}
-			$dismissed[] = $notification_name;
-
-		} else {
-			$dismissed = array( $notification_name );
-		}
-
-		update_user_meta( get_current_user_id(), self::DISMISSED_USER_META, $dismissed );
-	}
-
-	/**
-	 * Check if the given notification was dismissed.
-	 *
-	 * @since 4.0
-	 *
-	 * @param string $notification_name
-	 * @return bool
-	 */
-	public static function was_notification_dismissed( $notification_name ) {
-		$dismissed = get_user_meta( get_current_user_id(), self::DISMISSED_USER_META, true );
-
-		return ( is_array( $dismissed ) && in_array( $notification_name, $dismissed, true ) );
-    }
-
-	/**
 	 * Delete an existing custom palette.
 	 *
 	 * @since 4.0.3
@@ -507,10 +469,10 @@ class Hustle_Settings_Admin {
 	 * Do the actual saving of a custom palette.
 	 * The passed array should be like:
 	 * array(
-	 * 		'slug'		=> { string }, // Required when updating an existing palette. Omit it when creating a new one.
-	 *		'name'		=> { string }, // The display name. Can be omitted when updating an existing one.
-	 *		'palette'	=> { array() } // The actual palette's colors
-	  * )
+	 *      'slug'      => { string }, // Required when updating an existing palette. Omit it when creating a new one.
+	 *      'name'      => { string }, // The display name. Can be omitted when updating an existing one.
+	 *      'palette'   => { array() } // The actual palette's colors
+	 * )
 	 *
 	 * @since 4.0.3
 	 * @param array $palette_data
@@ -523,7 +485,7 @@ class Hustle_Settings_Admin {
 		if ( isset( $palette_data['slug'] ) && isset( $stored_palettes[ $palette_data['slug'] ] ) ) {
 
 			// Update existing palette.
-			$id = $palette_data['slug'];
+			$id           = $palette_data['slug'];
 			$palette_data = array_merge( $stored_palettes[ $id ], $palette_data );
 
 		} else {
@@ -531,7 +493,7 @@ class Hustle_Settings_Admin {
 			$id = uniqid( '', true );
 
 			// Change the id until it's unique.
-			while( isset( $stored_palettes[ $id ] ) ) {
+			while ( isset( $stored_palettes[ $id ] ) ) {
 				$id = uniqid( '', true );
 			}
 

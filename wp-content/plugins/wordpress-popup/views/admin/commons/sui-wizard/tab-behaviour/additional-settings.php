@@ -1,7 +1,17 @@
+<?php
+/**
+ * Additional settings section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Additional Settings', 'hustle' ); ?></span>
+		<?php /* translators: module type in small caps and in singular */ ?>
 		<span class="sui-description"><?php printf( esc_html__( 'These settings will add some extra control on your %s.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 	</div>
 
@@ -15,6 +25,7 @@
 
 				<label class="sui-settings-label"><?php esc_html_e( 'Page scrolling', 'hustle' ); ?></label>
 
+				<?php /* translators: module type in small caps and in singular */ ?>
 				<span class="sui-description"><?php printf( esc_html__( 'Choose whether to enable page scrolling in the background while the %s is visible to the users.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 				<div class="sui-side-tabs" style="margin-top: 10px;">
@@ -61,6 +72,7 @@
 
 				<label class="sui-settings-label"><?php esc_html_e( 'Visibility after opt-in', 'hustle' ); ?></label>
 
+				<?php /* translators: module type in small caps and in singular */ ?>
 				<span class="sui-description" style="margin-bottom: 10px;"><?php printf( esc_html__( "Choose the %s visibility once a visitor has opted-in Hustle's form.", 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 				<select data-attribute="hide_after_subscription">
@@ -84,7 +96,8 @@
 
 			<label class="sui-settings-label"><?php esc_html_e( 'Visibility after CTA conversion', 'hustle' ); ?></label>
 
-			<span class="sui-description" style="margin-bottom: 10px;"><?php printf( esc_html__( "Choose the %s visibility once a visitor has clicked on the CTA button.", 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+			<?php /* translators: module type in small caps and in singular */ ?>
+			<span class="sui-description" style="margin-bottom: 10px;"><?php printf( esc_html__( 'Choose the %s visibility once a visitor has clicked on the CTA button.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 			<select data-attribute="hide_after_cta">
 				<option value="keep_show" <?php selected( $settings['hide_after_cta'], 'keep_show' ); ?>><?php esc_html_e( 'Keep showing this module', 'hustle' ); ?></option>
@@ -111,6 +124,7 @@
 						<?php if ( 'embedded' !== $module_type ) { ?>
 							<option value="close"
 								<?php selected( $settings['on_submit'], 'close' ); ?>>
+								<?php /* translators: module type in small caps and in singular */ ?>
 								<?php printf( esc_html__( 'Close the %s', 'hustle' ), esc_html( $smallcaps_singular ) ); ?>
 							</option>
 						<?php } ?>

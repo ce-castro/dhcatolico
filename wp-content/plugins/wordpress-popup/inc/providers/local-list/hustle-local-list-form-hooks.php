@@ -19,7 +19,7 @@ class Hustle_Local_List_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
 		$is_success = true;
 
-		$module_id                = $this->module_id;
+		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
 		if ( ! $allow_subscribed ) {
@@ -96,62 +96,62 @@ class Hustle_Local_List_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * @param array $submitted_data
 	 * @return array
 	 */
-	//public function add_entry_fields( $submitted_data ) {
+	// public function add_entry_fields( $submitted_data ) {
 
-	//	$module_id = $this->module_id;
-	//	$form_settings_instance = $this->form_settings_instance;
+	// $module_id = $this->module_id;
+	// $form_settings_instance = $this->form_settings_instance;
 
-	//	/**
-	//	 * @since 4.0
-	//	 */
-	//	$submitted_data = apply_filters( 'hustle_provider_' . $this->addon->get_slug() . '_form_submitted_data', $submitted_data, $module_id, $form_settings_instance );
+	// **
+	// * @since 4.0
+	// */
+	// $submitted_data = apply_filters( 'hustle_provider_' . $this->addon->get_slug() . '_form_submitted_data', $submitted_data, $module_id, $form_settings_instance );
 
-	//	$addon_setting_values = $form_settings_instance->get_form_settings_values();
+	// $addon_setting_values = $form_settings_instance->get_form_settings_values();
 
-	//	try {
-	//		if ( empty( $submitted_data['email'] ) ) {
-	//			throw new Exception( __('Required Field "email" was not filled by the user.', 'hustle' ) );
-	//		}
+	// try {
+	// if ( empty( $submitted_data['email'] ) ) {
+	// throw new Exception( __('Required Field "email" was not filled by the user.', 'hustle' ) );
+	// }
 
-	//		$submitted_data = $this->check_legacy( $submitted_data );
+	// $submitted_data = $this->check_legacy( $submitted_data );
 
-	//		$module = Hustle_Module_Model::instance()->get( $module_id );
+	// $module = Hustle_Module_Model::instance()->get( $module_id );
 
-	//		$local_subscription_data = wp_parse_args( $submitted_data, array(
-	//			'module_type' => $module->module_type,
-	//			'time' => current_time( 'timestamp' ),
-	//		) );
+	// $local_subscription_data = wp_parse_args( $submitted_data, array(
+	// 'module_type' => $module->module_type,
+	// 'time' => current_time( 'timestamp' ),
+	// ) );
 
-	//		$res = $module->add_local_subscription( $local_subscription_data );
+	// $res = $module->add_local_subscription( $local_subscription_data );
 
-	//		if ( is_wp_error( $res ) ) {
-	//			$entry_fields = array(
-	//				array(
-	//					'name'  => 'status',
-	//					'value' => array(
-	//						'is_sent'       => false,
-	//						'description'   => $res->get_error_message(),
-	//					),
-	//				),
-	//			);
-	//		} else {
+	// if ( is_wp_error( $res ) ) {
+	// $entry_fields = array(
+	// array(
+	// 'name'  => 'status',
+	// 'value' => array(
+	// 'is_sent'       => false,
+	// 'description'   => $res->get_error_message(),
+	// ),
+	// ),
+	// );
+	// } else {
 
-	//			$entry_fields = array(
-	//				array(
-	//					'name'  => 'status',
-	//					'value' => array(
-	//						'is_sent'       => true,
-	//						'description'   => __( 'Successfully added or updated member on Local list', 'hustle' ),
-	//					),
-	//				),
-	//			);
-	//		}
+	// $entry_fields = array(
+	// array(
+	// 'name'  => 'status',
+	// 'value' => array(
+	// 'is_sent'       => true,
+	// 'description'   => __( 'Successfully added or updated member on Local list', 'hustle' ),
+	// ),
+	// ),
+	// );
+	// }
 
-	//	} catch ( Exception $e ) {
-	//		$entry_fields = $this->exception( $e );
-	//	}
+	// } catch ( Exception $e ) {
+	// $entry_fields = $this->exception( $e );
+	// }
 
-	//	return $entry_fields;
-	//}
+	// return $entry_fields;
+	// }
 
 }

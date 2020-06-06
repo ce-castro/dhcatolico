@@ -5,69 +5,69 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 	require_once 'hustle-hubspot-api.php';
 
 	/**
- * Class Hustle_HubSpot
- */
+	 * Class Hustle_HubSpot
+	 */
 	class Hustle_HubSpot extends Hustle_Provider_Abstract {
 		const SLUG = 'hubspot';
-		//const NAME = "HubSpot";
+		// const NAME = "HubSpot";
 
 		/**
-	 * Provider Instance
-	 *
-	 * @since 3.0.5
-	 *
-	 * @var self|null
-	 */
+		 * Provider Instance
+		 *
+		 * @since 3.0.5
+		 *
+		 * @var self|null
+		 */
 		protected static $_instance = null;
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_slug 				   = 'hubspot';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_slug = 'hubspot';
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_version				   = '1.0';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_version = '1.0';
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_class				   = __CLASS__;
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_class = __CLASS__;
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_title                  = 'HubSpot';
-
-	/**
-	 * @since 4.0
-	 * @var boolean
-	 */
-	protected $is_multi_on_global 			= false;
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_title = 'HubSpot';
 
 		/**
-	 * Class name of form settings
-	 *
-	 * @var string
-	 */
+		 * @since 4.0
+		 * @var boolean
+		 */
+		protected $is_multi_on_global = false;
+
+		/**
+		 * Class name of form settings
+		 *
+		 * @var string
+		 */
 		protected $_form_settings = 'Hustle_HubSpot_Form_Settings';
 
 		/**
-	 * Class name of form hooks
-	 *
-	 * @since 4.0
-	 * @var string
-	 */
+		 * Class name of form hooks
+		 *
+		 * @since 4.0
+		 * @var string
+		 */
 		protected $_form_hooks = 'Hustle_HubSpot_Form_Hooks';
 
-	/**
-	 * Provider constructor.
-	 */
+		/**
+		 * Provider constructor.
+		 */
 		public function __construct() {
 			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
 			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
@@ -76,11 +76,11 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 			$hustle_hubpost = new Hustle_HubSpot_Api();
 		}
 
-	/**
-	 * Get Instance
-	 *
-	 * @return self|null
-	 */
+		/**
+		 * Get Instance
+		 *
+		 * @return self|null
+		 */
 		public static function get_instance() {
 			if ( is_null( self::$_instance ) ) {
 				self::$_instance = new self();
@@ -89,22 +89,22 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 			return self::$_instance;
 		}
 
-	/**
-	 * Check if the settings are completed
-	 *
-	 * @since 4.0
-	 * @return boolean
-	 */
+		/**
+		 * Check if the settings are completed
+		 *
+		 * @since 4.0
+		 * @return boolean
+		 */
 		protected function settings_are_completed( $multi_id = '' ) {
-			$api = $this->api();
+			$api          = $this->api();
 			$is_authorize = $api && ! $api->is_error && $api->is_authorized();
 
 			return $is_authorize;
 		}
 
 		/**
-	 * @return bool|Hustle_HubSpot_Api
-	 */
+		 * @return bool|Hustle_HubSpot_Api
+		 */
 		public function api() {
 			return self::static_api();
 		}
@@ -119,12 +119,12 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		}
 
 		/**
-	 * Get the wizard callbacks for the global settings.
-	 *
-	 * @since 4.0
-	 *
-	 * @return array
-	 */
+		 * Get the wizard callbacks for the global settings.
+		 *
+		 * @since 4.0
+		 *
+		 * @return array
+		 */
 		public function settings_wizards() {
 			return array(
 				array(
@@ -207,18 +207,18 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 				$step_html .= Hustle_Provider_Utils::get_html_for_options(
 					array(
 						array(
-							'type'	=> 'notice',
+							'type'  => 'notice',
 							'value' => sprintf( __( 'You are connected to %s', 'hustle' ), $account ),
-							'class'	=> 'sui-notice-success',
-						)
+							'class' => 'sui-notice-success',
+						),
 					)
 				);
 
 			}
 
 			$response = array(
-				'html'       => $step_html,
-				'buttons'    => $buttons,
+				'html'    => $step_html,
+				'buttons' => $buttons,
 			);
 
 			return $response;
@@ -258,8 +258,8 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		}
 
 		public function add_custom_fields( $fields ) {
-			$api 	= $this->api();
-			$error 	= false;
+			$api   = $this->api();
+			$error = false;
 
 			if ( $api && ! $api->is_error ) {
 				// Get the existing fields
@@ -267,7 +267,7 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 
 				$new_fields = array();
 				foreach ( $fields as $field ) {
-					if ( !isset( $props[ $field['name'] ] ) ) {
+					if ( ! isset( $props[ $field['name'] ] ) ) {
 						$new_fields[] = $field;
 					}
 				}
@@ -275,28 +275,28 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 				foreach ( $new_fields as $field ) {
 					// Add the new field as property
 					$property = array(
-						'name' => $field['name'],
-						'label' => $field['label'],
-						'type' => 'text' === $field['type'] ? 'string' : $field['type'],
+						'name'      => $field['name'],
+						'label'     => $field['label'],
+						'type'      => 'text' === $field['type'] ? 'string' : $field['type'],
 						'fieldType' => $field['type'],
 						'groupName' => 'contactinformation',
 					);
 
-					if ( !$api->add_property( $property ) ) {
+					if ( ! $api->add_property( $property ) ) {
 						$error = true;
 					}
 				}
 			}
 
-			if ( !$error ) {
+			if ( ! $error ) {
 				return array(
 					'success' => true,
-					'field' => $fields,
+					'field'   => $fields,
 				);
 			} else {
 				return array(
 					'error' => true,
-					'code' => 'cannot_create_custom_field',
+					'code'  => 'cannot_create_custom_field',
 				);
 			}
 		}
@@ -309,16 +309,16 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 */
 		private function save_account_details() {
 
-			$api = $this->api();
+			$api             = $this->api();
 			$account_details = $api->get_access_token_information();
-			$account_data = array();
+			$account_data    = array();
 
 			if ( isset( $account_details->response ) && 400 <= $account_details->response['code'] ) {
 				Hustle_Providers_Utils::maybe_log( $this->_title, __METHOD__, $account_details->response['code'], $account_details['response']['message'] );
 
 			} else {
 				$account_data = array(
-					'user' => $account_details->user,
+					'user'       => $account_details->user,
 					'hub_domain' => $account_details->hub_domain,
 				);
 
@@ -336,10 +336,10 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 */
 		public function process_external_redirect() {
 
-			$status = filter_input( INPUT_GET, 'status', FILTER_SANITIZE_STRING );
+			$status   = filter_input( INPUT_GET, 'status', FILTER_SANITIZE_STRING );
 			$response = array();
 
-			$api = $this->api();
+			$api           = $this->api();
 			$is_authorized = $api && ! $api->is_error && $api->is_authorized();
 
 			// API Auth was successful.
@@ -355,9 +355,9 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 					if ( $activated ) {
 
 						$response = array(
-							'action'	=> 'notification',
-							'status'	=> 'success',
-							'message'	=> sprintf( esc_html__( "%s successfully connected.", 'hustle' ), '<strong>' . $this->_title . '</strong>' ),
+							'action'  => 'notification',
+							'status'  => 'success',
+							'message' => sprintf( esc_html__( '%s successfully connected.', 'hustle' ), '<strong>' . $this->_title . '</strong>' ),
 						);
 
 						$this->save_account_details();
@@ -365,19 +365,18 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 					} else { // Provider couldn't be activated.
 
 						$response = array(
-							'action'	=> 'notification',
-							'status'	=> 'error',
-							'message'	=> $providers_instance->get_last_error_message(),
+							'action'  => 'notification',
+							'status'  => 'error',
+							'message' => $providers_instance->get_last_error_message(),
 						);
 					}
 				}
-
 			} else { // API Auth failed.
 
 				$response = array(
-					'action'	=> 'notification',
-					'status'	=> 'error',
-					'message'	=> sprintf( esc_html__( 'Authentication failed! Please check your %s credentials and try again.', 'hustle' ), $this->_title ),
+					'action'  => 'notification',
+					'status'  => 'error',
+					'message' => sprintf( esc_html__( 'Authentication failed! Please check your %s credentials and try again.', 'hustle' ), $this->_title ),
 				);
 
 			}

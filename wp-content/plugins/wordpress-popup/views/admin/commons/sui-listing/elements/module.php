@@ -1,23 +1,86 @@
+<?php
+/**
+ * Displays the tracking charts in the listing page.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+$module_tag_class = $module->active ? ' sui-tag-blue' : '';
+$tooltip_message  = '';
+$schedule_icon    = '';
+$is_scheduled     = false;
+
+// Let's handle the icons and messages for the Schedule settings.
+// Social sharing modules don't have schedules. And drafted modules disregard it.
+if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
+
+	$settings       = $module->get_settings();
+	$settings_array = $settings->to_array();
+	$schedule       = $settings_array['schedule'];
+	$is_scheduled   = '1' === $settings_array['is_schedule'];
+
+	// If a schedule isn't set for the module, no need to add schedule icons.
+	if ( $is_scheduled ) {
+
+		$schedule_icon = '<span class="sui-icon-clock sui-sm" aria-hidden="true"></span>';
+
+		/* translators: module type capitalized and in singular */
+		$tooltip_message = sprintf( __( "%s schedule has not started, so your visitors can't see it yet.", 'hustle' ), $capitalize_singular );
+
+		$module_tag_class .= ' hui-tag-scheduled sui-tooltip sui-tooltip-constrained sui-tooltip-top-left-mobile';
+
+		// Notify the admin that the module won't be shown again because of the schedule.
+		if ( ! $settings->will_be_shown_again() ) {
+
+			$module_tag_class .= ' hui-scheduled-error';
+
+			/* translators: 1. module type capitalized and in singular, 2. module type in lowercase and in singular. */
+			$tooltip_message = sprintf(
+				__( "%1\$s schedule is over and your visitors can't see this %2\$s anymore.", 'hustle' ),
+				$capitalize_singular,
+				$smallcaps_singular
+			);
+
+			// Notify the admin that this module is currently being displayed according to the schedule.
+		} elseif ( $settings->is_currently_scheduled() ) {
+
+			$module_tag_class .= ' hui-scheduled-success';
+
+			$tooltip_message = sprintf(
+				/* translators: 1. module type capitalized and in singular, 2. module type in lowercase and in singular. */
+				__( '%1$s schedule is active now and the %2$s is visible to your visitors.', 'hustle' ),
+				$capitalize_singular,
+				$smallcaps_singular
+			);
+		}
+	}
+}
+
+?>
 <div class="sui-accordion-item">
 
 	<?php
-	$module_id = $module->module_id;
-	$can_edit = Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module_id );
+	$module_id       = $module->module_id;
+	$can_edit        = Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module_id );
 	$last_entry_time = Opt_In_Utils::get_latest_conversion_time_by_module_id( $module_id );
-	if ( isset( $_GET['view-stats'] ) && intval( $module_id ) === intval( $_GET['view-stats'] ) ) { // WPCS CSRF: ok.
+	$view_stats      = filter_input( INPUT_GET, 'view_stats', FILTER_VALIDATE_INT );
+
+	if ( $view_stats && intval( $module_id ) === $view_stats ) {
 		$display_chart_class = ' hustle-display-chart hustle-scroll-to';
 	} else {
 		$display_chart_class = '';
 	}
 
-	// START: Item header ?>
+	// START: Item header.
+	?>
 	<div
 		class="sui-accordion-item-header<?php echo esc_attr( $display_chart_class ); ?>"
 		data-id="<?php echo esc_attr( $module->id ); ?>"
 		data-nonce="<?php echo esc_attr( wp_create_nonce( 'module_get_tracking_data' . $module->id ) ); ?>"
 	>
 
-		<div class="sui-accordion-item-title sui-trim-title">
+		<div class="sui-accordion-item-title <?php $is_scheduled ? '' : 'sui-trim-title'; ?>">
 
 			<label for="hustle-module-<?php echo esc_html( $module_id ); ?>" class="sui-checkbox sui-accordion-item-action">
 				<input
@@ -32,14 +95,45 @@
 
 			<span class="sui-trim-text"><?php echo esc_html( $module->module_name ); ?></span>
 
+			<!--
+				NOTE: Use "hui-tag-scheduled" class on "sui-tag" element when a module has been scheduled.
+				In addition to that, have in mind the following changes too:
+
+				1. When using "hui-tag-scheduled" you must also include icon markup as follows:
+					<span class="sui-icon-clock sui-sm" aria-hidden="true"></span>
+
+				2. When module schedule is currently active, include "hui-scheduled-success" class
+					on "sui-tag" to paint icon green.
+
+				3. When module schedule is over, include "hui-scheduled-error" class on "sui-tag"
+					to paint icon red.
+			-->
 			<span
-				class="sui-tag<?php echo $module->active ? ' sui-tag-blue' : ''; ?>"
+				class="sui-tag<?php echo esc_attr( $module_tag_class ); ?>"
 				data-status="<?php echo $module->active ? 'published' : 'draft'; ?>"
-				data-draft="<?php esc_html_e( 'Draft', 'hustle' ); ?>"
-				data-publish="<?php esc_html_e( 'Published', 'hustle' ); ?>"
+				<?php echo ! empty( $tooltip_message ) ? 'data-tooltip="' . esc_html( $tooltip_message ) . '"' : ''; ?>
 			>
-				<?php $module->active ? esc_html_e( 'Published', 'hustle' ) : esc_html_e( 'Draft', 'hustle' ); ?>
+
+				<span class="hustle-toggle-status-button-description<?php echo $module->active ? ' sui-hidden' : ''; ?>">
+					<?php esc_html_e( 'Draft', 'hustle' ); ?>
+				</span>
+
+				<span class="hustle-toggle-status-button-description<?php echo $module->active ? '' : ' sui-hidden'; ?>">
+					<?php esc_html_e( 'Published', 'hustle' ); ?>
+					<?php echo $schedule_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</span>
+
 			</span>
+
+			<!---
+				NOTE: Show this tag ONLY when analytics is disabled.
+			--->
+			<?php
+			$analytics = Hustle_Settings_Admin::get_dashboard_analytics_settings();
+			if ( '1' === $analytics['enabled'] && ! in_array( $module->module_type, $analytics['modules'], true ) ) :
+				?>
+				<span class="sui-tag sui-tag-disabled"><?php esc_html_e( 'Analytics Disabled', 'hustle' ); ?></span>
+			<?php endif; ?>
 
 		</div>
 
@@ -55,14 +149,14 @@
 					href="<?php echo esc_url( $module->decorated->get_edit_url() ); ?>"
 					class="sui-button sui-button-ghost sui-accordion-item-action sui-desktop-visible"
 				>
-					<i class="sui-icon-pencil" aria-hidden="true"></i> <?php esc_attr_e( 'Edit', 'hustle' ); ?>
+					<span class="sui-icon-pencil" aria-hidden="true"></span> <?php esc_attr_e( 'Edit', 'hustle' ); ?>
 				</a>
 
 				<a
 					href="<?php echo esc_url( $module->decorated->get_edit_url() ); ?>"
 					class="sui-button-icon sui-accordion-item-action sui-mobile-visible"
 				>
-					<i class="sui-icon-pencil" aria-hidden="true"></i>
+					<span class="sui-icon-pencil" aria-hidden="true"></span>
 					<span class="sui-screen-reader-text"><?php esc_attr_e( 'Edit', 'hustle' ); ?></span>
 				</a>
 			<?php } ?>
@@ -70,22 +164,23 @@
 			<div class="sui-dropdown sui-accordion-item-action">
 
 				<?php
-				// ELEMENT: Actions
-				self::static_render(
+				// ELEMENT: Actions.
+				$this->render(
 					'admin/commons/sui-listing/elements/actions',
 					array(
-						'module' => $module,
-						'smallcaps_singular'   => $smallcaps_singular,
-						'capitalize_singular'	=> $capitalize_singular,
-						'capability' => $capability,
-						'can_create' => $can_create,
+						'module'              => $module,
+						'smallcaps_singular'  => $smallcaps_singular,
+						'capitalize_singular' => $capitalize_singular,
+						'capability'          => $capability,
+						'can_create'          => $can_create,
 					)
-				); ?>
+				);
+				?>
 
 			</div>
 
 			<button class="sui-button-icon sui-accordion-open-indicator">
-				<i class="sui-icon-chevron-down" aria-hidden="true"></i>
+				<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 				<span class="sui-screen-reader-text"><?php esc_html_e( 'View module stats', 'hustle' ); ?></span>
 			</button>
 
@@ -97,24 +192,24 @@
 	<div class="sui-accordion-item-body">
 
 		<?php
-			$render_arguments = [
+			$render_arguments = array(
 				'module'                   => $module,
 				'total_module_views'       => 0,
 				'total_module_conversions' => 0,
 				'tracking_types'           => $tracking_types,
 				'last_entry_time'          => esc_html__( 'Never', 'hustle' ),
 				'rate'                     => 0,
-			];
+			);
 
 			// ELEMENT: Tracking data.
-			self::static_render(
+			$this->render(
 				'admin/commons/sui-listing/elements/tracking-data',
-				[
+				array(
 					'render_arguments' => $render_arguments,
 					'multiple_charts'  => false,
-				]
+				)
 			);
-		?>
+			?>
 
 	</div>
 

@@ -20,7 +20,7 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
-		$module_id = $this->module_id;
+		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
 		$response = array(
@@ -28,7 +28,7 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 			'description'   => '',
 			'data_sent'     => '',
 			'data_received' => '',
-			'url_request'   =>  '',
+			'url_request'   => '',
 		);
 
 		/**
@@ -38,7 +38,7 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 		 *
 		 * @param array                                    $submitted_data
 		 * @param int                                      $module_id                current module_id
-		 * @param Hustle_InfusionSoft_Form_Settings 	   $form_settings_instance
+		 * @param Hustle_InfusionSoft_Form_Settings        $form_settings_instance
 		 */
 		$submitted_data = apply_filters(
 			'hustle_provider_infusionsoft_form_submitted_data',
@@ -48,15 +48,15 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 		);
 
 		$addon_setting_values = $form_settings_instance->get_form_settings_values();
-		
+
 		$tags = $addon_setting_values['list_name'];
 
 		try {
-			$addon = $this->addon;
+			$addon           = $this->addon;
 			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
-			$api_key = $addon->get_setting( 'api_key', '', $global_multi_id );
-			$account_name = $addon->get_setting( 'account_name', '', $addon_setting_values['selected_global_multi_id'] );
-			$api = Hustle_Infusion_Soft::api( $api_key, $account_name );
+			$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
+			$account_name    = $addon->get_setting( 'account_name', '', $addon_setting_values['selected_global_multi_id'] );
+			$api             = Hustle_Infusion_Soft::api( $api_key, $account_name );
 
 			if ( empty( $submitted_data['email'] ) ) {
 				throw new Exception( __( 'Required Field "email" was not filled by the user.', 'hustle' ) );
@@ -73,32 +73,35 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 			if ( isset( $submitted_data['last_name'] ) ) {
 				$submitted_data['LastName'] = $submitted_data['last_name'];
 			}
-			$submitted_data = array_diff_key( $submitted_data, array(
-				'email'      => '',
-				'first_name' => '',
-				'last_name'  => '',
-			) );
+			$submitted_data = array_diff_key(
+				$submitted_data,
+				array(
+					'email'      => '',
+					'first_name' => '',
+					'last_name'  => '',
+				)
+			);
 
 			$module = Hustle_Module_Model::instance()->get( $module_id );
 			if ( is_wp_error( $module ) ) {
 				throw new Exception( $module->get_error_message() );
 			}
 
-			$utils = Hustle_Provider_Utils::get_instance();
+			$utils         = Hustle_Provider_Utils::get_instance();
 			$custom_fields = $api->get_custom_fields();
 
 			// If there were errors when connecting to the api.
 			if ( isset( $custom_fields->errors ) ) {
 
 				$response = array(
-					'is_sent'       => false,
-					'description'   => '',
+					'is_sent'     => false,
+					'description' => '',
 				);
 
 			} else { // If there weren't errors.
- 
+
 				$extra_custom_fields = array_diff_key( $submitted_data, array_fill_keys( $custom_fields, 1 ) );
-				$found_extra = array();
+				$found_extra         = array();
 
 				if ( ! empty( $extra_custom_fields ) ) {
 
@@ -109,30 +112,34 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 
 						if ( in_array( $name_from_key, $custom_fields, true ) ) {
 							$submitted_data[ $name_from_key ] = $value;
-							
+
 						} else {
-							//$res = $api->add_custom_field( $key );
-							//if ( is_wp_error( $res ) ) {
-							//	$err = $res;
-							//}
+							// $res = $api->add_custom_field( $key );
+							// if ( is_wp_error( $res ) ) {
+							// $err = $res;
+							// }
 							$found_extra[ $name_from_key ] = $value;
 						}
 						unset( $submitted_data[ $key ] );
 					}
 
+					// phpcs:disable
 					// Add new custom fields.
-					if ( ! empty( $found_extra ) ) {
+					// if ( ! empty( $found_extra ) ) {
 						// DON'T ADD CUSTOM FIELD SUPPORT YET.
 						// We weren't supporting it before, so let's do the upgrade to REST and then
 						// add the support once it's implemented on Infusionsoft's REST side.
-	
-						//foreach( $found_extra as $name => $value ) {
-						//	$api->add_custom_field( $name );
-						//}
-	
-						$message = __( "The contact was subscribed but these custom fields couldn't be added: ", 'hustle' ) . implode( ', ', array_keys( $found_extra ) );
-						throw new Exception( $message );
-					}
+
+						// foreach( $found_extra as $name => $value ) {
+						// $api->add_custom_field( $name );
+						// }
+
+						// Because we don't add custom fields yet, this Exception
+						// would stop adding the member.
+						// $message = __( "The contact was subscribed but these custom fields couldn't be added: ", 'hustle' ) . implode( ', ', array_keys( $found_extra ) );
+						// throw new Exception( $message );
+					// }
+					// phpcs:enable
 				}
 
 				/**
@@ -144,14 +151,15 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 				 * @param array  $submitted_data
 				 * @param object $form_settings_instance
 				 */
-				do_action( 'hustle_provider_infusionsoft_before_add_subscriber',
+				do_action(
+					'hustle_provider_infusionsoft_before_add_subscriber',
 					$module_id,
 					$submitted_data,
 					$form_settings_instance
 				);
 
 				$email_exists = $api->email_exist( $submitted_data['Email'] );
-	
+
 				if ( $email_exists ) {
 					$contact_id = $api->update_contact( $submitted_data );
 				} else {
@@ -168,7 +176,8 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 				 * @param mixed  $contact_id
 				 * @param object $form_settings_instance
 				 */
-				do_action( 'hustle_provider_infusionsoft_after_add_subscriber',
+				do_action(
+					'hustle_provider_infusionsoft_after_add_subscriber',
 					$module_id,
 					$submitted_data,
 					$contact_id,
@@ -179,7 +188,7 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 					throw new Exception( $contact_id->get_error_message() );
 				}
 
-				$tag_id = ! empty( $addon_setting_values['list_id'] ) ? $addon_setting_values['list_id'] : null;
+				$tag_id  = ! empty( $addon_setting_values['list_id'] ) ? $addon_setting_values['list_id'] : null;
 				$tag_res = $api->add_tag_to_contact( $contact_id, $tag_id );
 
 				if ( is_wp_error( $tag_res ) ) {
@@ -194,14 +203,13 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 				$response = array(
 					'is_sent'       => true,
 					'description'   => __( 'Successfully added or updated member on Infusionsoft list', 'hustle' ),
-					'tags_names'	=> $tags,
+					'tags_names'    => $tags,
 					'data_sent'     => $utils->get_last_data_sent(),
 					'data_received' => $utils->get_last_data_received(),
 					'url_request'   => $utils->get_last_url_request(),
 				);
 
 			}
-
 		} catch ( Exception $e ) {
 			$entry_fields = $this->exception( $e );
 		}
@@ -215,7 +223,8 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 			);
 		}
 
-		return apply_filters( 'hustle_provider_infusionsoft_entry_fields',
+		return apply_filters(
+			'hustle_provider_infusionsoft_entry_fields',
 			$entry_fields,
 			$module_id,
 			$submitted_data,
@@ -233,16 +242,15 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
 
-		$is_success 				= true;
-		$module_id                	= $this->module_id;
-		$form_settings_instance 	= $this->form_settings_instance;
-		$addon 						= $this->addon;
-		$addon_setting_values 		= $form_settings_instance->get_form_settings_values();
+		$is_success             = true;
+		$module_id              = $this->module_id;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon                  = $this->addon;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
 
 		if ( empty( $submitted_data['email'] ) ) {
 			return __( 'Required Field "email" was not filled by the user.', 'hustle' );
 		}
-
 
 		if ( ! $allow_subscribed ) {
 
@@ -262,15 +270,16 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 				$form_settings_instance
 			);
 
-			//triggers exception if not found.
-			$global_multi_id 	= $addon_setting_values['selected_global_multi_id'];
-			$api_key 			= $addon->get_setting( 'api_key', '', $global_multi_id );
-			$account_name 		= $addon->get_setting( 'account_name', '', $addon_setting_values['selected_global_multi_id'] );
-			$api 				= Hustle_Infusion_Soft::api( $api_key, $account_name );
-			$existing_member 	= $this->get_subscriber( $api, $submitted_data['email'] );
+			// triggers exception if not found.
+			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
+			$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
+			$account_name    = $addon->get_setting( 'account_name', '', $addon_setting_values['selected_global_multi_id'] );
+			$api             = Hustle_Infusion_Soft::api( $api_key, $account_name );
+			$existing_member = $this->get_subscriber( $api, $submitted_data['email'] );
 
-			if ( $existing_member )
+			if ( $existing_member ) {
 				$is_success = self::ALREADY_SUBSCRIBED_ERROR;
+			}
 		}
 
 		/**
@@ -314,13 +323,13 @@ class Hustle_InfusionSoft_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param 	object 	$api
-	 * @param 	mixed  	$data
-	 * @return  mixed 	array/object API response on queried subscriber
+	 * @param   object $api
+	 * @param   mixed  $data
+	 * @return  mixed   array/object API response on queried subscriber
 	 */
-	protected function get_subscriber( $api, $data ){
+	protected function get_subscriber( $api, $data ) {
 
-		if( empty ( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ){
+		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ) {
 			$this->_subscriber[ md5( $data ) ] = $api->email_exist( $data );
 		}
 

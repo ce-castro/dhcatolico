@@ -13,7 +13,7 @@ if ( ! class_exists( 'Hustle_Slidein_Admin' ) ) :
 
 			$this->page_title = Opt_In_Utils::get_module_type_display_name( $this->module_type, true, true );
 
-			$this->page_template_path = '/admin/slidein/listing';
+			$this->page_template_path      = '/admin/slidein/listing';
 			$this->page_edit_template_path = '/admin/slidein/wizard';
 		}
 	}

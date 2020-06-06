@@ -1,85 +1,104 @@
-<div
-	id="hustle-dialog-migrate--aweber"
-	class="sui-dialog sui-dialog-alt sui-dialog-sm"
-	aria-hidden="true"
-	tabindex="-1"
->
+<?php
+/**
+ * Modal for when migrating Aweber.
+ *
+ * @package Hustle
+ * @since 4.1.1
+ */
 
-	<div class="sui-dialog-overlay sui-fade-out" data-a11y-dialog-hide="hustle-dialog--remove-active-integration"></div>
+$aweber = Hustle_Aweber::get_instance();
+?>
+
+<div class="sui-modal sui-modal-sm">
 
 	<div
-		class="sui-dialog-content sui-bounce-out"
-		aria-labelledby="dialogTitle"
-		aria-describedby="dialogDescription"
 		role="dialog"
+		id="hustle-dialog-migrate--aweber"
+		class="sui-modal-content"
+		aria-modal="true"
+		aria-labelledby="hustle-dialog-migrate--aweber-title"
+		aria-describedby="hustle-dialog-migrate--aweber-description"
 	>
 
-		<div class="sui-box" role="document">
+		<div class="sui-box">
 
-			<div class="sui-box-header sui-dialog-with-image sui-block-content-center">
-				<?php $aweber = Hustle_Aweber::get_instance(); ?>
-				<div class="sui-dialog-image" aria-hidden="true">
-					<img src="<?php echo esc_url( $aweber->get_logo_2x() ); ?>" alt="" class="sui-image sui-image-center">
-				</div>
-				<h3 id="dialogTitle" class="sui-box-title"><?php esc_html_e( 'Migrate Aweber', 'hustle' ); ?></h3>
+			<div class="sui-box-header sui-content-center sui-flatten sui-spacing-top--60">
 
-				<button class="sui-dialog-close" data-a11y-dialog-hide="hustle-dialog--remove-active-integration">
+				<button class="sui-button-icon sui-button-float--right" data-modal-close>
+					<i class="sui-icon-close sui-md" aria-hidden="true"></i>
 					<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog window', 'hustle' ); ?></span>
 				</button>
 
+				<figure class="sui-box-logo" aria-hidden="true">
+					<img src="<?php echo esc_url( $aweber->get_logo_2x() ); ?>" alt="Aweber " />
+				</figure>
+
+				<h3 id="hustle-dialog-migrate--aweber-title" class="sui-box-title sui-lg"><?php esc_html_e( 'Migrate Aweber', 'hustle' ); ?></h3>
+
+				<?php /* translators: 1. opening 'b' tag, 2. closing 'b' tag */ ?>
+				<p id="hustle-dialog-migrate--aweber-description" class="sui-description"><?php printf( esc_html__( 'Click on the %1$s"Get authorization code"%2$s link to generate your authorization code and paste it below to re-authenticate your Aweber integration via oAuth 2.0.', 'hustle' ), '<b>', '</b>' ); ?></p>
+
 			</div>
 
-			<div class="sui-box-body sui-box-body-slim sui-block-content-center">
+			<form class="sui-box-body sui-content-center sui-spacing-top--20">
 
-				<p class="sui-description">
-					<?php printf( esc_html__( "Click on the %s\"Get authorization code\"%s link to generate your authorization code and paste it below to re-authenticate your Aweber integration via oAuth 2.0.", 'hustle' ), '<b>', '</b>' ); ?>
-				</p>
-				<form>
-					<div class="sui-form-field">
-						<label for="reuth-aweber" id="label-reuth-aweber" class="sui-label">
-							<?php esc_html_e( 'Authorization code', 'hustle' ); ?>
-							<span class="sui-label-note">
-								<?php
-								$api = $aweber->get_api();
-								$auth_url = $api->get_authorization_uri( 0, true, Hustle_Module_Admin::INTEGRATIONS_PAGE );
-								if( $auth_url ): ?>
-									<a
-									class="hustle-aweber-migrate-link"
-									href="<?php echo esc_url( $auth_url ); ?>"
-									data-id=""
-									target="_blank"
-									>
-										<?php esc_html_e( 'Get authorization code', 'hustle' ); ?>
-									</a>
-								<?php endif; ?>
-							</span>
-						</label>
-						<input
-							placeholder="<?php printf( esc_html__( 'Enter authorization code here', 'hustle' ) ); ?>"
-							id="reuth-aweber"
-							class="sui-form-control"
-							aria-labelledby="label-reuth-aweber"
-							aria-describedby="error-unique-id description-unique-id"
-							name="api_key"
-						/>
-						<span class="sui-error-message sui-hidden"><?php esc_html_e( 'Please enter a valid Aweber authorization code', 'hustle' ); ?></span>
+				<div class="sui-form-field">
 
-					</div>
-				</form>
-			</div>
-			<div class="sui-box-footer sui-box-footer-right">
+					<label for="reuth-aweber" id="label-reuth-aweber" class="sui-label">
+
+						<?php esc_html_e( 'Authorization code', 'hustle' ); ?>
+
+						<?php
+						$api      = $aweber->get_api();
+						$auth_url = $api->get_authorization_uri( 0, true, Hustle_Module_Admin::INTEGRATIONS_PAGE );
+
+						if ( $auth_url ) :
+						?>
+
+							<a
+								href="<?php echo esc_url( $auth_url ); ?>"
+								target="_blank"
+								class="sui-label-link hustle-aweber-migrate-link"
+								style="color: #17A8E3;"
+								data-id=""
+							>
+								<?php esc_html_e( 'Get authorization code', 'hustle' ); ?>
+							</a>
+
+						<?php endif; ?>
+
+					</label>
+
+					<input
+						id="reuth-aweber"
+						name="api_key"
+						placeholder="<?php printf( esc_html__( 'Enter authorization code here', 'hustle' ) ); ?>"
+						class="sui-form-control"
+						aria-labelledby="label-reuth-aweber"
+						aria-describedby="error-reuth-aweber"
+					/>
+
+					<span id="error-reuth-aweber" class="sui-error-message sui-hidden"><?php esc_html_e( 'Please enter a valid Aweber authorization code', 'hustle' ); ?></span>
+
+				</div>
+
+			</form>
+
+			<div class="sui-box-footer sui-flatten sui-content-center">
+
 				<a
-				id="integration-migrate"
-				class="hustle-aweber-migrate sui-button"
-				href="#"
-				data-id=""
-				data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_provider_action' ) ); ?>" >
-					<span class="sui-loading-text">
-						<?php esc_html_e( 'Re-Authenticate', 'hustle' ); ?>
-					</span>
-					<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+					href="#"
+					id="integration-migrate"
+					class="hustle-aweber-migrate sui-button"
+					data-id=""
+					data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_provider_action' ) ); ?>"
+				>
+					<span class="sui-loading-text"><?php esc_html_e( 'Re-Authenticate', 'hustle' ); ?></span>
+					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 				</a>
+
 			</div>
+
 		</div>
 
 	</div>

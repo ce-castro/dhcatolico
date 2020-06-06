@@ -25,7 +25,7 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @var array
 	 */
-	private $_endpoint = "https://madmimi.com/api/v3/";
+	private $_endpoint = 'https://madmimi.com/api/v3/';
 
 	/**
 	 * Instances of madmimi
@@ -51,7 +51,6 @@ class Hustle_Mad_Mimi_Api {
 	 * initate the class and maitain instances
 	 *
 	 * @param $api_key
-	 *
 	 */
 	private function __construct( $user_name, $api_key ) {
 		if ( ! $api_key || ! $user_name ) {
@@ -87,15 +86,15 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @param string $verb
 	 * @param string $action rest action
-	 * @param array $args
+	 * @param array  $args
 	 * @return object|WP_Error
 	 */
-	private function _request( $verb = "GET", $action, $args = array() ){
+	private function _request( $verb = 'GET', $action, $args = array() ) {
 
 		// Adding extra user agent for wp remote request
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
-		$url 		= esc_url( trailingslashit( $this->_endpoint ) . $action );
+		$url = esc_url( trailingslashit( $this->_endpoint ) . $action );
 
 		/**
 		 * Filter madmimi url to be used on sending api request
@@ -110,14 +109,15 @@ class Hustle_Mad_Mimi_Api {
 
 		$url = add_query_arg(
 			array(
-				'api_key' 	=> $this->_api_key,
-    			'username' 	=> rawurlencode( $this->_user_name ),
-			), $url
+				'api_key'  => $this->_api_key,
+				'username' => rawurlencode( $this->_user_name ),
+			),
+			$url
 		);
 
-		$headers      = array(
-			'Accept'		=> 'application/json',
-			'Content-Type'	=> 'application/json'
+		$headers = array(
+			'Accept'       => 'application/json',
+			'Content-Type' => 'application/json',
 		);
 		/**
 		 * Filter madmimi headers to sent on api request
@@ -155,12 +155,12 @@ class Hustle_Mad_Mimi_Api {
 			$_args['body'] = wp_json_encode( $args );
 		}
 
-		$res         = wp_remote_request( $url, $_args );
+		$res = wp_remote_request( $url, $_args );
 
-		//logging data
-		$utils = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request = $url;
-		$utils->_last_data_sent = $args;
+		// logging data
+		$utils                      = Hustle_Provider_Utils::get_instance();
+		$utils->_last_url_request   = $url;
+		$utils->_last_data_sent     = $args;
 		$utils->_last_data_received = $res;
 
 		$wp_response = $res;
@@ -226,7 +226,7 @@ class Hustle_Mad_Mimi_Api {
 	 * @return string
 	 */
 	public function filter_user_agent( $user_agent ) {
-		$user_agent .=' HustleMadMimi/' . self::HUSTLE_PROVIDER_MADMIMI_VERSION;
+		$user_agent .= ' HustleMadMimi/' . self::HUSTLE_PROVIDER_MADMIMI_VERSION;
 
 		/**
 		 * Filter user agent to be used by madmimi api
@@ -244,33 +244,33 @@ class Hustle_Mad_Mimi_Api {
 	 * Sends rest GET request
 	 *
 	 * @param $action
-	 * @param array $args
+	 * @param array  $args
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _get( $action, $args = array() ){
-		return $this->_request( "GET", $action, $args );
+	private function _get( $action, $args = array() ) {
+		return $this->_request( 'GET', $action, $args );
 	}
 
 	/**
 	 * Sends rest POST request
 	 *
 	 * @param $action
-	 * @param array $args
+	 * @param array  $args
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _post( $action, $args = array()  ){
-		return $this->_request( "POST", $action, $args );
+	private function _post( $action, $args = array() ) {
+		return $this->_request( 'POST', $action, $args );
 	}
 
 	/**
 	 * Sends rest PUT request
 	 *
 	 * @param $action
-	 * @param array $args
+	 * @param array  $args
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _put( $action, $args = array()  ){
-		return $this->_request( "PUT", $action, $args );
+	private function _put( $action, $args = array() ) {
+		return $this->_request( 'PUT', $action, $args );
 	}
 
 	/**
@@ -278,8 +278,8 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @return array|WP_Error
 	 */
-	public function get_lists( $data = array() ){
-		return $this->_get( "subscriberLists", $data );
+	public function get_lists( $data = array() ) {
+		return $this->_get( 'subscriberLists', $data );
 	}
 
 	/**
@@ -287,8 +287,8 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @return array|WP_Error
 	 */
-	public function get_subscriber( $data = array() ){
-		return $this->_get( "subscribers", $data );
+	public function get_subscriber( $data = array() ) {
+		return $this->_get( 'subscribers', $data );
 	}
 
 	/**
@@ -297,9 +297,9 @@ class Hustle_Mad_Mimi_Api {
 	 * @param $data
 	 * @return array|mixed|object|WP_Error
 	 */
-	public function subscribe( $list, array $data ){
-		$res = $this->_post( "subscribers", $data );
-		if( isset( $res->subscriber->id ) ){
+	public function subscribe( $list, array $data ) {
+		$res = $this->_post( 'subscribers', $data );
+		if ( isset( $res->subscriber->id ) ) {
 			$id = $res->subscriber->id;
 			$this->update_subscriber_list( $id, array( $list ) );
 		}
@@ -312,12 +312,12 @@ class Hustle_Mad_Mimi_Api {
 	 * @param $data
 	 * @return array|mixed|object|WP_Error
 	 */
-	public function update_subscriber( $id, array $data, $list = array() ){
+	public function update_subscriber( $id, array $data, $list = array() ) {
 
-		$action = "subscribers/" . $id;
-		$res =  $this->_put( $action, $data );
+		$action = 'subscribers/' . $id;
+		$res    = $this->_put( $action, $data );
 
-		if( ! empty( $list && isset( $res->subscriber->id ) ) ){
+		if ( ! empty( $list && isset( $res->subscriber->id ) ) ) {
 			$id = $res->subscriber->id;
 			$this->update_subscriber_list( $id, $list );
 		}
@@ -331,9 +331,9 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @return array
 	 */
-	public function update_subscriber_list( $id, $list ){
+	public function update_subscriber_list( $id, $list ) {
 		$res = $this->_put( 'subscribers/' . $id . '/memberships/', array( 'add' => $list ), false );
-		if( isset( $res->subscriber->id ) ){
+		if ( isset( $res->subscriber->id ) ) {
 			$id = $res->subscriber->id;
 			$this->update_subscriber_list( $id, $list );
 		}

@@ -1,7 +1,14 @@
 <?php
+/**
+ * Main content section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 ob_start();
 
-require self::$plugin_path . 'assets/css/sui-editor.min.css';
+require Opt_In::$plugin_path . 'assets/css/sui-editor.min.css';
 $editor_css = ob_get_clean();
 $editor_css = '<style>' . $editor_css . '</style>';
 ?>

@@ -2,80 +2,80 @@
 if ( ! class_exists( 'Hustle_Mautic' ) ) :
 
 	/**
- * Mautic Integration
- *
- * @class Hustle_Mautic
- * @version 1.0.0
- **/
+	 * Mautic Integration
+	 *
+	 * @class Hustle_Mautic
+	 * @version 1.0.0
+	 **/
 	class Hustle_Mautic extends Hustle_Provider_Abstract {
 
 		const SLUG = 'mautic';
 
 		/**
-	 * Provider Instance
-	 *
-	 * @since 3.0.5
-	 *
-	 * @var self|null
-	 */
-		protected static $_instance 	   = null;
+		 * Provider Instance
+		 *
+		 * @since 3.0.5
+		 *
+		 * @var self|null
+		 */
+		protected static $_instance = null;
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		public static $_min_php_version    = '5.3';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		public static $_min_php_version = '5.3';
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_slug 				   = 'mautic';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_slug = 'mautic';
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_version				   = '1.0';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_version = '1.0';
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_class				   = __CLASS__;
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_class = __CLASS__;
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_title                  = 'Mautic';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_title = 'Mautic';
 
 		/**
-	 * Class name of form settings
-	 *
-	 * @var string
-	 */
+		 * Class name of form settings
+		 *
+		 * @var string
+		 */
 		protected $_form_settings = 'Hustle_Mautic_Form_Settings';
 
-	/**
-	 * Class name of form hooks
-	 *
-	 * @since 4.0
-	 * @var string
-	 */
+		/**
+		 * Class name of form hooks
+		 *
+		 * @since 4.0
+		 * @var string
+		 */
 		protected $_form_hooks = 'Hustle_Mautic_Form_Hooks';
 
-	/**
-	 * Array of options which should exist for confirming that settings are completed
-	 *
-	 * @since 4.0
-	 * @var array
-	 */
-	protected $_completion_options = array( 'url', 'username', 'password' );
+		/**
+		 * Array of options which should exist for confirming that settings are completed
+		 *
+		 * @since 4.0
+		 * @var array
+		 */
+		protected $_completion_options = array( 'url', 'username', 'password' );
 
 		/**
-	 * Provider constructor.
-	 */
+		 * Provider constructor.
+		 */
 		public function __construct() {
 			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
 			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
@@ -86,10 +86,10 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 		}
 
 		/**
-	 * Get Instance
-	 *
-	 * @return self|null
-	 */
+		 * Get Instance
+		 *
+		 * @return self|null
+		 */
 		public static function get_instance() {
 			if ( is_null( self::$_instance ) ) {
 				self::$_instance = new self();
@@ -99,12 +99,12 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 		}
 
 		/**
-	 * Get the wizard callbacks for the global settings.
-	 *
-	 * @since 4.0
-	 *
-	 * @return array
-	 */
+		 * Get the wizard callbacks for the global settings.
+		 *
+		 * @since 4.0
+		 *
+		 * @return array
+		 */
 		public function settings_wizards() {
 			return array(
 				array(
@@ -126,49 +126,49 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 		}
 
 		/**
-	 * Configure Global settings.
-	 *
-	 * @since 4.0
-	 *
-	 * @param array $submitted_data
-	 * @return array
-	 */
+		 * Configure Global settings.
+		 *
+		 * @since 4.0
+		 *
+		 * @param array $submitted_data
+		 * @return array
+		 */
 		public function configure_credentials( $submitted_data ) {
-			$has_errors = false;
-			$default_data = array(
-				'url' => '',
+			$has_errors      = false;
+			$default_data    = array(
+				'url'      => '',
 				'username' => '',
 				'password' => '',
-				'name' => '',
+				'name'     => '',
 			);
-			$current_data = $this->get_current_data( $default_data, $submitted_data );
-			$is_submit = isset( $submitted_data['url'] ) && isset( $submitted_data['username'] )
+			$current_data    = $this->get_current_data( $default_data, $submitted_data );
+			$is_submit       = isset( $submitted_data['url'] ) && isset( $submitted_data['username'] )
 				&& isset( $submitted_data['password'] );
 			$global_multi_id = $this->get_global_multi_id( $submitted_data );
 
 			$app_url_valid = $api_username_valid = $api_password_valid = true;
 			if ( $is_submit ) {
 
-				$app_url_valid = ! empty( trim( $current_data['url'] ) );
+				$app_url_valid      = ! empty( trim( $current_data['url'] ) );
 				$api_username_valid = ! empty( trim( $current_data['username'] ) )
-				                      && sanitize_email( $current_data['username'] ) === $current_data['username'];
+									  && sanitize_email( $current_data['username'] ) === $current_data['username'];
 				$api_password_valid = ! empty( trim( $current_data['password'] ) );
-				$api_key_validated = $app_url_valid
-				                     && $api_username_valid
-				                     && $api_password_valid
-				                     && $this->validate_credentials( $submitted_data['url'], $submitted_data['username'], $submitted_data['password'] );
+				$api_key_validated  = $app_url_valid
+									 && $api_username_valid
+									 && $api_password_valid
+									 && $this->validate_credentials( $submitted_data['url'], $submitted_data['username'], $submitted_data['password'] );
 				if ( ! $api_key_validated ) {
 					$error_message = $this->provider_connection_falied();
 					$app_url_valid = $api_username_valid = $api_password_valid = false;
-					$has_errors = true;
+					$has_errors    = true;
 				}
 
 				if ( ! $has_errors ) {
 					$settings_to_save = array(
-						'url' => $current_data['url'],
+						'url'      => $current_data['url'],
 						'username' => $current_data['username'],
 						'password' => $current_data['password'],
-						'name' => $current_data['name'],
+						'name'     => $current_data['name'],
 					);
 					// If not active, activate it.
 					// TODO: Wrap this in a friendlier method
@@ -177,7 +177,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
-						$has_errors = true;
+						$has_errors    = true;
 					}
 				}
 
@@ -211,7 +211,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 							'for'   => 'url',
 							'value' => __( 'Installation URL', 'hustle' ),
 						),
-						'url' => array(
+						'url'   => array(
 							'type'        => 'url',
 							'name'        => 'url',
 							'value'       => $current_data['url'],
@@ -230,7 +230,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 					'type'     => 'wrapper',
 					'class'    => $api_username_valid ? '' : 'sui-form-field-error',
 					'elements' => array(
-						'label' => array(
+						'label'    => array(
 							'type'  => 'label',
 							'for'   => 'username',
 							'value' => __( 'Login Email', 'hustle' ),
@@ -243,7 +243,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 							'id'          => 'username',
 							'icon'        => 'mail',
 						),
-						'error' => array(
+						'error'    => array(
 							'type'  => 'error',
 							'class' => $api_username_valid ? 'sui-hidden' : '',
 							'value' => __( 'Please enter a valid Mautic login email', 'hustle' ),
@@ -254,7 +254,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 					'type'     => 'wrapper',
 					'class'    => $api_password_valid ? '' : 'sui-form-field-error',
 					'elements' => array(
-						'label' => array(
+						'label'    => array(
 							'type'  => 'label',
 							'for'   => 'password',
 							'value' => __( 'Login Password', 'hustle' ),
@@ -267,7 +267,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 							'id'          => 'password',
 							'icon'        => 'eye-hide',
 						),
-						'error' => array(
+						'error'    => array(
 							'type'  => 'error',
 							'class' => $api_password_valid ? 'sui-hidden' : '',
 							'value' => __( 'Please enter a valid Mautic login password', 'hustle' ),
@@ -278,12 +278,12 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 					'type'     => 'wrapper',
 					'style'    => 'margin-bottom: 0;',
 					'elements' => array(
-						'label' => array(
+						'label'   => array(
 							'type'  => 'label',
 							'for'   => 'instance-name-input',
 							'value' => __( 'Identifier', 'hustle' ),
 						),
-						'name' => array(
+						'name'    => array(
 							'type'        => 'text',
 							'name'        => 'name',
 							'value'       => $current_data['name'],
@@ -294,7 +294,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 							'type'  => 'description',
 							'value' => __( 'Helps to distinguish your integrations if you have connected to the multiple accounts of this integration.', 'hustle' ),
 						),
-					)
+					),
 				),
 			);
 
@@ -322,7 +322,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 							true
 						),
 					),
-					'save' => array(
+					'save'       => array(
 						'markup' => Hustle_Provider_Utils::get_provider_button_markup(
 							__( 'Save', 'hustle' ),
 							'',
@@ -346,24 +346,24 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 			}
 
 			$response = array(
-			'html'       => $step_html,
-			'buttons'    => $buttons,
-			'has_errors' => $has_errors,
+				'html'       => $step_html,
+				'buttons'    => $buttons,
+				'has_errors' => $has_errors,
 			);
 
 			return $response;
 		}
 
 		/**
-	 * Validate the provided credentials.
-	 *
-	 * @since 4.0
-	 *
-	 * @param string $url
-	 * @param string $username
-	 * @param string $password
-	 * @return bool
-	 */
+		 * Validate the provided credentials.
+		 *
+		 * @since 4.0
+		 *
+		 * @param string $url
+		 * @param string $username
+		 * @param string $password
+		 * @return bool
+		 */
 		private function validate_credentials( $url, $username, $password ) {
 			if ( empty( $url ) || empty( $username ) || empty( $password ) ) {
 				return false;
@@ -379,7 +379,6 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 					Hustle_Provider_Utils::maybe_log( __METHOD__, __( 'Invalid Mautic API credentials.', 'hustle' ) );
 					return false;
 				}
-
 			} catch ( Exception $e ) {
 				Hustle_Provider_Utils::maybe_log( __METHOD__, $e->getMessage() );
 				return false;
@@ -406,7 +405,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 				if ( is_array( $custom_fields ) ) {
 					foreach ( $custom_fields as $custom_field ) {
 						if ( $label === $custom_field->label ) {
-							$exist = true;
+							$exist         = true;
 							$field['name'] = $custom_field->alias;
 						} elseif ( $custom_field->alias === $alias ) {
 							$exist = true;
@@ -416,9 +415,9 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 
 				if ( false === $exist ) {
 					$custom_field = array(
-					'label' => $label,
-					'alias' => $alias,
-					'type' 	=> ( 'email' === $field['type'] || 'name' === $field['type'] || 'address' === $field['type'] || 'phone' === $field['type'] ) ? 'text' : $field['type'],
+						'label' => $label,
+						'alias' => $alias,
+						'type'  => ( 'email' === $field['type'] || 'name' === $field['type'] || 'address' === $field['type'] || 'phone' === $field['type'] ) ? 'text' : $field['type'],
 					);
 
 					$exist = $api->add_custom_field( $custom_field );
@@ -428,13 +427,13 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 			if ( $exist ) {
 				return array(
 					'success' => true,
-					'field' => $fields,
+					'field'   => $fields,
 				);
 			}
 
 			return array(
 				'error' => true,
-				'code' => '',
+				'code'  => '',
 			);
 		}
 	}

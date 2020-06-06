@@ -1,3 +1,12 @@
+<?php
+/**
+ * Form fields section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -12,7 +21,7 @@
 			<div class="sui-box-builder-header">
 
 				<button class="sui-button sui-button-purple hustle-optin-field--add">
-					<i class="sui-icon-plus" aria-hidden="true"></i> <?php esc_html_e( 'Insert Field', 'hustle' ); ?>
+					<span class="sui-icon-plus" aria-hidden="true"></span> <?php esc_html_e( 'Insert Field', 'hustle' ); ?>
 				</button>
 
 			</div>
@@ -22,7 +31,7 @@
 				<div id="hustle-form-fields-container" class="sui-builder-fields"></div>
 
 				<button class="sui-button sui-button-dashed hustle-optin-field--add">
-					<i class="sui-icon-plus" aria-hidden="true"></i> <?php esc_html_e( 'Insert Field', 'hustle' ); ?>
+					<span class="sui-icon-plus" aria-hidden="true"></span> <?php esc_html_e( 'Insert Field', 'hustle' ); ?>
 				</button>
 
 			</div>
@@ -33,7 +42,7 @@
 
 					<div class="sui-builder-field-label">
 
-						<i class="sui-icon-send" aria-hidden="true"></i>
+						<span class="sui-icon-send" aria-hidden="true"></span>
 
 						<span class="hustle-field-label"><?php esc_html_e( 'Submit', 'hustle' ); ?></span>
 
@@ -42,13 +51,13 @@
 					<div class="sui-dropdown">
 
 						<button class="sui-button-icon sui-dropdown-anchor">
-							<i class="sui-icon-widget-settings-config" aria-hidden="true"></i>
+							<span class="sui-icon-widget-settings-config" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Submit settings', 'hustle' ); ?></span>
 						</button>
 
 						<ul>
 							<li><button class="hustle-optin-field--edit">
-								<i class="sui-icon-pencil" aria-hidden="true"></i> <?php esc_html_e( 'Edit Field', 'hustle' ); ?>
+								<span class="sui-icon-pencil" aria-hidden="true"></span> <?php esc_html_e( 'Edit Field', 'hustle' ); ?>
 							</button></li>
 						</ul>
 
@@ -60,7 +69,7 @@
 
 					<div class="sui-builder-field-label">
 
-						<i class="sui-icon-gdpr" aria-hidden="true"></i>
+						<span class="sui-icon-gdpr" aria-hidden="true"></span>
 
 						<span class="hustle-field-label"><?php esc_html_e( 'GDPR', 'hustle' ); ?></span>
 
@@ -69,16 +78,16 @@
 					<div class="sui-dropdown">
 
 						<button class="sui-button-icon sui-dropdown-anchor">
-							<i class="sui-icon-widget-settings-config" aria-hidden="true"></i>
+							<span class="sui-icon-widget-settings-config" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'GDPR settings', 'hustle' ); ?></span>
 						</button>
 
 						<ul>
 							<li><button class="hustle-optin-field--edit">
-								<i class="sui-icon-pencil" aria-hidden="true"></i> <?php esc_html_e( 'Edit Field', 'hustle' ); ?>
+								<span class="sui-icon-pencil" aria-hidden="true"></span> <?php esc_html_e( 'Edit Field', 'hustle' ); ?>
 							</button></li>
 							<li><button class="hustle-optin-field--delete">
-								<i class="sui-icon-trash" aria-hidden="true"></i> <?php esc_html_e( 'Delete', 'hustle' ); ?>
+								<span class="sui-icon-trash" aria-hidden="true"></span> <?php esc_html_e( 'Delete', 'hustle' ); ?>
 							</button></li>
 						</ul>
 
@@ -90,7 +99,7 @@
 
 					<div class="sui-builder-field-label">
 
-						<i class="sui-icon-recaptcha" aria-hidden="true"></i>
+						<span class="sui-icon-recaptcha" aria-hidden="true"></span>
 
 						<span class="hustle-field-label"><?php esc_html_e( 'reCaptcha', 'hustle' ); ?></span>
 
@@ -99,16 +108,16 @@
 					<div class="sui-dropdown">
 
 						<button class="sui-button-icon sui-dropdown-anchor">
-							<i class="sui-icon-widget-settings-config" aria-hidden="true"></i>
+							<span class="sui-icon-widget-settings-config" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'reCaptcha settings', 'hustle' ); ?></span>
 						</button>
 
 						<ul>
 							<li><button class="hustle-optin-field--edit">
-								<i class="sui-icon-pencil" aria-hidden="true"></i> <?php esc_html_e( 'Edit Field', 'hustle' ); ?>
+								<span class="sui-icon-pencil" aria-hidden="true"></span> <?php esc_html_e( 'Edit Field', 'hustle' ); ?>
 							</button></li>
 							<li><button class="hustle-optin-field--delete">
-								<i class="sui-icon-trash" aria-hidden="true"></i> <?php esc_html_e( 'Delete', 'hustle' ); ?>
+								<span class="sui-icon-trash" aria-hidden="true"></span> <?php esc_html_e( 'Delete', 'hustle' ); ?>
 							</button></li>
 						</ul>
 

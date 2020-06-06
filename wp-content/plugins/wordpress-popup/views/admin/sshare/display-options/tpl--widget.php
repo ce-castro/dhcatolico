@@ -1,3 +1,12 @@
+<?php
+/**
+ * Widget display type section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -18,15 +27,17 @@
 					name="widget_enabled"
 					data-attribute="widget_enabled"
 					id="hustle-settings--widget-enable"
+					aria-labelledby="hustle-settings--widget-enable-label"
 					<?php checked( $is_widget_enabled, '1' ); ?>
 				/>
-				<span class="sui-toggle-slider"></span>
+				<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+				<span id="hustle-settings--widget-enable-label" class="sui-toggle-label"><?php esc_html_e( 'Enable widget module', 'hustle' ); ?></span>
 			</label>
 
-			<label for="hustle-settings--widget-enable"><?php esc_html_e( 'Enable widget module', 'hustle' ); ?></label>
-
 			<div class="sui-toggle-content" data-toggle-content="widget-enabled">
-				<span class="sui-description"><?php printf( esc_html__( 'Enabling this will add a new widget named "Hustle" under the Available Widgets list. You can go to %1$sAppearance > %2$s%3$s and configure this widget to show your social bar in the sidebars.', 'hustle' ), '<strong>', '<a href="' . esc_url( admin_url( 'widgets.php' ) ) . '">Widgets</a>', '</strong>' ); ?></span>
+				<?php /* translators: 1. opening 'strong' tags, 2. opening 'a' tag to the widgets page, 3. closing 'a' and 'strong' tags */ ?>
+				<span class="sui-description"><?php printf( esc_html__( 'Enabling this will add a new widget named "Hustle" under the Available Widgets list. You can go to %1$sAppearance > %2$sWidgets%3$s and configure this widget to show your social bar in the sidebars.', 'hustle' ), '<strong>', '<a href="' . esc_url( admin_url( 'widgets.php' ) ) . '">', '</a></strong>' ); ?></span>
 			</div>
 
 		</div>

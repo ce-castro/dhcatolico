@@ -87,8 +87,8 @@ class Hustle_Settings_Admin_Ajax {
 		/**
 		 * From Tracking
 		 */
-		$range = filter_input( INPUT_POST, 'range', FILTER_SANITIZE_STRING );
-		$tracking = Hustle_Tracking_Model::get_instance();
+		$range                = filter_input( INPUT_POST, 'range', FILTER_SANITIZE_STRING );
+		$tracking             = Hustle_Tracking_Model::get_instance();
 		$hustle_entries_admin = new Hustle_Entry_Model();
 
 		if ( 'all' === $range ) {
@@ -100,10 +100,10 @@ class Hustle_Settings_Admin_Ajax {
 			$values = filter_input( INPUT_POST, 'ips', FILTER_SANITIZE_STRING );
 			if ( ! empty( $values ) ) {
 				$values = preg_replace( '/ /', '', $values );
-				$r = preg_split( '/[\r\n]/', $values );
-				$ios = array();
+				$r      = preg_split( '/[\r\n]/', $values );
+				$ios    = array();
 				foreach ( $r as $one ) {
-					$is_valid = ( filter_var( $one, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ||  filter_var( $one, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) );
+					$is_valid = ( filter_var( $one, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) || filter_var( $one, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) );
 
 					if ( $is_valid ) {
 						$ips[] = $one;
@@ -132,7 +132,7 @@ class Hustle_Settings_Admin_Ajax {
 			}
 		}
 
-		wp_send_json_success( [ 'message' => $message ] );
+		wp_send_json_success( array( 'message' => $message ) );
 	}
 
 	/**
@@ -143,23 +143,23 @@ class Hustle_Settings_Admin_Ajax {
 	public function save_privacy_settings() {
 
 		$filter_args = array(
-			'ip_tracking'						=> FILTER_SANITIZE_STRING,
+			'ip_tracking'                       => FILTER_SANITIZE_STRING,
 			// Account erasure request
-			'retain_sub_on_erasure'				=> FILTER_SANITIZE_STRING,
+			'retain_sub_on_erasure'             => FILTER_SANITIZE_STRING,
 			// Submissions retention
-			'retain_submission_forever'			=> FILTER_SANITIZE_STRING,
-			'submissions_retention_number'		=> FILTER_SANITIZE_NUMBER_INT,
-			'submissions_retention_number_unit'	=> FILTER_SANITIZE_STRING,
+			'retain_submission_forever'         => FILTER_SANITIZE_STRING,
+			'submissions_retention_number'      => FILTER_SANITIZE_NUMBER_INT,
+			'submissions_retention_number_unit' => FILTER_SANITIZE_STRING,
 			// IPs retention
-			'retain_ip_forever'					=> FILTER_SANITIZE_STRING,
-			'ip_retention_number'				=> FILTER_SANITIZE_NUMBER_INT,
-			'ip_retention_number_unit'			=> FILTER_SANITIZE_STRING,
+			'retain_ip_forever'                 => FILTER_SANITIZE_STRING,
+			'ip_retention_number'               => FILTER_SANITIZE_NUMBER_INT,
+			'ip_retention_number_unit'          => FILTER_SANITIZE_STRING,
 			// Tracking retention
-			'retain_tracking_forever'			=> FILTER_SANITIZE_STRING,
-			'tracking_retention_number'			=> FILTER_SANITIZE_NUMBER_INT,
-			'tracking_retention_number_unit'	=> FILTER_SANITIZE_STRING,
+			'retain_tracking_forever'           => FILTER_SANITIZE_STRING,
+			'tracking_retention_number'         => FILTER_SANITIZE_NUMBER_INT,
+			'tracking_retention_number_unit'    => FILTER_SANITIZE_STRING,
 		);
-		$data = filter_input_array( INPUT_POST, $filter_args, false );
+		$data        = filter_input_array( INPUT_POST, $filter_args, false );
 
 		$stored_settings = Hustle_Settings_Admin::get_privacy_settings();
 
@@ -193,16 +193,18 @@ class Hustle_Settings_Admin_Ajax {
 	 */
 	private function save_top_metrics_settings() {
 		$data    = filter_input( INPUT_POST, 'metrics', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
-		$metrics = ! empty( $data ) ? array_filter( $data ) : [];
+		$metrics = ! empty( $data ) ? array_filter( $data ) : array();
 
 		// Only 3 metrics can be selected. No more.
 		if ( 3 < count( $metrics ) ) {
-			wp_send_json_error( array(
-				'notification' => array(
-					'status'  => 'error',
-					'message' => esc_html__( "You can't select more than 3 metrics.", 'hustle' ),
-				),
-			));
+			wp_send_json_error(
+				array(
+					'notification' => array(
+						'status'  => 'error',
+						'message' => esc_html__( "You can't select more than 3 metrics.", 'hustle' ),
+					),
+				)
+			);
 		}
 
 		$allowed_metric_keys = array(
@@ -236,18 +238,18 @@ class Hustle_Settings_Admin_Ajax {
 
 		$settings_to_save = array(
 			// V2 Checkbox
-			'v2_checkbox_site_key' => '',
-			'v2_checkbox_secret_key' => '',
+			'v2_checkbox_site_key'    => '',
+			'v2_checkbox_secret_key'  => '',
 			// V2 Invisible
-			'v2_invisible_site_key' => '',
+			'v2_invisible_site_key'   => '',
 			'v2_invisible_secret_key' => '',
 			// V3 Recaptcha
-			'v3_recaptcha_site_key' => '',
+			'v3_recaptcha_site_key'   => '',
 			'v3_recaptcha_secret_key' => '',
-			'language' => 'automatic',
+			'language'                => 'automatic',
 		);
 
-		foreach( $settings_to_save as $key => $value ) {
+		foreach ( $settings_to_save as $key => $value ) {
 			$incoming_setting = filter_input( INPUT_POST, $key, FILTER_SANITIZE_STRING );
 
 			if ( $incoming_setting ) {
@@ -257,17 +259,19 @@ class Hustle_Settings_Admin_Ajax {
 
 		// Keep these keys stored in case the user rolls back to before 4.0.3.
 		$settings_to_save['sitekey'] = $settings_to_save['v2_checkbox_site_key'];
-		$settings_to_save['secret'] = $settings_to_save['v2_checkbox_secret_key'];
+		$settings_to_save['secret']  = $settings_to_save['v2_checkbox_secret_key'];
 
 		Hustle_Settings_Admin::update_hustle_settings( $settings_to_save, 'recaptcha' );
 
-		wp_send_json_success( array(
-			'notification' => array(
-				'status' => 'success',
-				'message' => esc_html__( "reCAPTCHA configured successfully. You can now add reCAPTCHA field to your opt-in forms where you want the reCAPTCHA to appear.", 'hustle' ),
-			),
-			'callback' => 'actionSaveRecaptcha',
-		) );
+		wp_send_json_success(
+			array(
+				'notification' => array(
+					'status'  => 'success',
+					'message' => esc_html__( 'reCAPTCHA configured successfully. You can now add reCAPTCHA field to your opt-in forms where you want the reCAPTCHA to appear.', 'hustle' ),
+				),
+				'callback'     => 'actionSaveRecaptcha',
+			)
+		);
 	}
 
 	/**
@@ -288,7 +292,7 @@ class Hustle_Settings_Admin_Ajax {
 
 		Hustle_Settings_Admin::update_hustle_settings( $value, 'accessibility' );
 
-		wp_send_json_success( [ 'url' => true ] );
+		wp_send_json_success( array( 'url' => true ) );
 	}
 
 	/**
@@ -298,33 +302,33 @@ class Hustle_Settings_Admin_Ajax {
 	 */
 	private function save_unsubscribe_settings() {
 
-		$data = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-		$email_body = wp_json_encode( $data['email_message'] );
+		$data           = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$email_body     = wp_json_encode( $data['email_message'] );
 		$sanitized_data = Opt_In_Utils::validate_and_sanitize_fields( $data );
 
 		// Save the messages to be displayed in the unsubscription process.
 		$messages_data = array(
-			'enabled' => isset( $sanitized_data['messages_enabled'] ) ? $sanitized_data['messages_enabled'] : '0',
-			'get_lists_button_text' => $sanitized_data['get_lists_button_text'],
-			'submit_button_text' => $sanitized_data['submit_button_text'],
-			'invalid_email' => $sanitized_data['invalid_email'],
-			'email_not_found' => $sanitized_data['email_not_found'],
-			'invalid_data' => $sanitized_data['invalid_data'],
-			'email_submitted' => $sanitized_data['email_submitted'],
+			'enabled'                   => isset( $sanitized_data['messages_enabled'] ) ? $sanitized_data['messages_enabled'] : '0',
+			'get_lists_button_text'     => $sanitized_data['get_lists_button_text'],
+			'submit_button_text'        => $sanitized_data['submit_button_text'],
+			'invalid_email'             => $sanitized_data['invalid_email'],
+			'email_not_found'           => $sanitized_data['email_not_found'],
+			'invalid_data'              => $sanitized_data['invalid_data'],
+			'email_submitted'           => $sanitized_data['email_submitted'],
 			'successful_unsubscription' => $sanitized_data['successful_unsubscription'],
-			'email_not_processed' => $sanitized_data['email_not_processed'],
+			'email_not_processed'       => $sanitized_data['email_not_processed'],
 		);
 
 		// Save the unsubscription email settings.
 		$email_data = array(
-			'enabled' => isset( $sanitized_data['email_enabled'] ) ? $sanitized_data['email_enabled'] : '0',
+			'enabled'       => isset( $sanitized_data['email_enabled'] ) ? $sanitized_data['email_enabled'] : '0',
 			'email_subject' => $sanitized_data['email_subject'],
-			'email_body' => $email_body,
+			'email_body'    => $email_body,
 		);
 
 		$value = array(
 			'messages' => $messages_data,
-			'email' => $email_data,
+			'email'    => $email_data,
 		);
 		Hustle_Settings_Admin::update_hustle_settings( $value, 'unsubscribe' );
 
@@ -403,12 +407,14 @@ class Hustle_Settings_Admin_Ajax {
 		}
 
 		// The action is not listed. No one should land here if following the regular plugin's paths.
-		wp_send_json_error([
-			'notification' => [
-				'status'  => 'error',
-				'message' => esc_html__( "The action you're trying to perform was not found.", 'hustle' ),
-			],
-		]);
+		wp_send_json_error(
+			array(
+				'notification' => array(
+					'status'  => 'error',
+					'message' => esc_html__( "The action you're trying to perform was not found.", 'hustle' ),
+				),
+			)
+		);
 	}
 
 
@@ -421,7 +427,7 @@ class Hustle_Settings_Admin_Ajax {
 
 		// Handle per module roles. We'll go with per permission next.
 		$current_modules_ids = filter_input( INPUT_POST, 'modules_ids', FILTER_SANITIZE_STRING );
-		$modules_ids         = empty( $current_modules_ids ) ? [] : explode( ',', $current_modules_ids );
+		$modules_ids         = empty( $current_modules_ids ) ? array() : explode( ',', $current_modules_ids );
 
 		if ( ! empty( $modules_ids ) ) {
 			$modules_roles = filter_input( INPUT_POST, 'modules', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
@@ -431,17 +437,17 @@ class Hustle_Settings_Admin_Ajax {
 				$module = Hustle_Module_Model::instance()->get( $module_id );
 				if ( ! is_wp_error( $module ) ) {
 
-					$selected_roles = isset( $modules_roles[ $module_id ] ) ? $modules_roles[ $module_id ] : [];
+					$selected_roles = isset( $modules_roles[ $module_id ] ) ? $modules_roles[ $module_id ] : array();
 					$module->update_edit_roles( $selected_roles );
 				}
 			}
 		}
 
 		// Handling per permissions roles here.
-		$filter         = [
+		$filter         = array(
 			'filter' => FILTER_SANITIZE_STRING,
 			'flags'  => FILTER_REQUIRE_ARRAY,
-		];
+		);
 		$filter_options = array(
 			'create'            => $filter,
 			'edit_integrations' => $filter,
@@ -469,8 +475,8 @@ class Hustle_Settings_Admin_Ajax {
 
 			if ( ! is_array( $selected_roles ) ) {
 				// The filter failed. No roles were selected.
-				$incoming[ $capability ] = [];
-				$selected_roles          = [];
+				$incoming[ $capability ] = array();
+				$selected_roles          = array();
 
 			} else {
 
@@ -583,8 +589,8 @@ class Hustle_Settings_Admin_Ajax {
 			$filtered_data = filter_input_array( INPUT_POST, $filter_args );
 
 			// Use defaults if the filter fails or the value isn't set.
-			$modules        = ! empty( $filtered_data['modules'] ) ? array_filter( $filtered_data['modules'] ) : [];
-			$selected_roles = ! empty( $filtered_data['role'] ) ? $filtered_data['role'] : [];
+			$modules        = ! empty( $filtered_data['modules'] ) ? array_filter( $filtered_data['modules'] ) : array();
+			$selected_roles = ! empty( $filtered_data['role'] ) ? $filtered_data['role'] : array();
 			$title          = is_string( $filtered_data['title'] ) ? $filtered_data['title'] : '';
 
 			$value = array(
@@ -624,7 +630,7 @@ class Hustle_Settings_Admin_Ajax {
 		if ( ! $reload ) {
 			wp_send_json_success();
 		} else {
-			wp_send_json_success( [ 'url' => true ] );
+			wp_send_json_success( array( 'url' => true ) );
 		}
 	}
 
@@ -639,7 +645,7 @@ class Hustle_Settings_Admin_Ajax {
 		Opt_In_Utils::is_user_allowed_ajax( 'hustle_edit_settings' );
 
 		$palette_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_STRING );
-		$action = filter_input( INPUT_POST, 'hustleAction', FILTER_SANITIZE_STRING );
+		$action     = filter_input( INPUT_POST, 'hustleAction', FILTER_SANITIZE_STRING );
 
 		$args = array(
 			'page'    => Hustle_Module_Admin::SETTINGS_PAGE,
@@ -689,8 +695,8 @@ class Hustle_Settings_Admin_Ajax {
 
 		if ( $palette_slug ) { // Editing an existing palette.
 
-			$palette_name = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
-			$palette_array = Hustle_Module_Model::get_palette_array( $palette_slug );
+			$palette_name          = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
+			$palette_array         = Hustle_Meta_Base_Design::get_palette_array( $palette_slug );
 			$palette_array['slug'] = $palette_slug;
 			$palette_array['name'] = $palette_name;
 
@@ -698,19 +704,19 @@ class Hustle_Settings_Admin_Ajax {
 
 		} else { // Creating a new palette.
 
-			$callback = 'actionGoToSecondStep';
+			$callback    = 'actionGoToSecondStep';
 			$base_source = filter_input( INPUT_POST, 'base_source', FILTER_SANITIZE_STRING );
 
 			if ( 'palette' === $base_source ) {
 				// Use an existing palette as the base.
-				$palette = filter_input( INPUT_POST, 'base_palette', FILTER_SANITIZE_STRING );
-				$palette_array = Hustle_Module_Model::get_palette_array( $palette );
+				$palette       = filter_input( INPUT_POST, 'base_palette', FILTER_SANITIZE_STRING );
+				$palette_array = Hustle_Meta_Base_Design::get_palette_array( $palette );
 
 			} else {
 				// Use a module's palette as the base.
 
 				$fallback_palette_name = filter_input( INPUT_POST, 'fallback_palette', FILTER_SANITIZE_STRING );
-				$fallback_palette = Hustle_Module_Model::get_palette_array( $fallback_palette_name );
+				$fallback_palette      = Hustle_Meta_Base_Design::get_palette_array( $fallback_palette_name );
 
 				$module_id = filter_input( INPUT_POST, 'module_id', FILTER_SANITIZE_STRING );
 
@@ -722,23 +728,24 @@ class Hustle_Settings_Admin_Ajax {
 				} else {
 					$design = $module->get_design()->to_array();
 
-					//remove option color keys from info modules.
-					if( 'informational' === $module->module_mode ) {
-						$info = Hustle_Module_Model::get_palette_array( 'info-module' );
+					// remove option color keys from info modules.
+					if ( 'informational' === $module->module_mode ) {
+						$info   = Hustle_Meta_Base_Design::get_palette_array( 'info-module' );
 						$design = array_diff_key( $design, $info );
 					}
 
 					$module_palette = array_intersect_key( $design, $fallback_palette );
-					$palette_array = array_merge( $fallback_palette, $module_palette );
+					$palette_array  = array_merge( $fallback_palette, $module_palette );
 				}
-
 			}
 		}
 
-		wp_send_json_success( array(
-			'callback' => $callback,
-			'palette_data' => $palette_array,
-		) );
+		wp_send_json_success(
+			array(
+				'callback'     => $callback,
+				'palette_data' => $palette_array,
+			)
+		);
 	}
 
 	/**
@@ -752,7 +759,7 @@ class Hustle_Settings_Admin_Ajax {
 		$palette_name = filter_input( INPUT_POST, 'palette_name', FILTER_SANITIZE_STRING );
 
 		// Remove non-palette data.
-		$palette_colors = array_intersect_key( $_POST, Hustle_Module_Model::get_palette_array( 'gray_slate' ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$palette_colors = array_intersect_key( $_POST, Hustle_Meta_Base_Design::get_palette_array( 'gray_slate' ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 
 		$palette_data = array( 'palette' => $palette_colors );
 

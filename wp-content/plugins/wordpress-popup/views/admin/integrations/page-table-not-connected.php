@@ -1,15 +1,26 @@
+<?php
+/**
+ * List of the providers that aren't globally connected.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <table class="sui-table hui-table--apps">
 
 	<tbody>
 
 		<?php foreach ( $providers as $provider ) : ?>
 
-			<?php self::static_render(
+			<?php
+			$this->render(
 				'admin/integrations/integration-row',
 				array(
-					'provider' => $provider
+					'provider' => $provider,
 				)
-			); ?>
+			);
+			?>
 
 		<?php endforeach; ?>
 

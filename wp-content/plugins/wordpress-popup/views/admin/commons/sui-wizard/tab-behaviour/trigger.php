@@ -1,7 +1,18 @@
+<?php
+/**
+ * Triggers section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
+		<?php /* translators: module type capitalized and in singular */ ?>
 		<span class="sui-settings-label"><?php printf( esc_html__( '%s Trigger', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
+		<?php /* translators: module type in small caps and in singular */ ?>
 		<span class="sui-description"><?php printf( esc_html__( '%s can be triggered after a certain amount of Time, when the user Scrolls past an element, on Click, if the user tries to Leave or if we detect AdBlock.', 'hustle' ), esc_html( $capitalize_plural ) ); ?></span>
 	</div>
 
@@ -83,7 +94,9 @@
 				<?php // TRIGGER: Time. ?>
 				<div class="sui-tab-content" data-tab-content="trigger-time">
 
+					<?php /* translators: module type in small caps and in singular */ ?>
 					<label class="sui-settings-label"><?php printf( esc_html__( 'Show %s on page load', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></label>
+					<?php /* translators: module type capitalized and in singular */ ?>
 					<span class="sui-description"><?php printf( esc_html__( '%s will be shown as soon as page is loaded. If you want to add some delay, use the option below:', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 
 					<div class="sui-border-frame">
@@ -155,11 +168,12 @@
 							<span><?php esc_html_e( 'After the amount of page scroll', 'hustle' ); ?></span>
 						</label>
 
+						<?php /* translators: module type capitalized and in singular */ ?>
 						<span class="sui-description sui-checkbox-description"><?php printf( esc_html__( '%s will be shown as the page has been scrolled by certain percentage.', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 
 						<div id="hustle-on-scroll--scrolled-toggle-wrapper" class="sui-border-frame{{ ( 'scrolled' !== triggers.on_scroll ) ? ' sui-hidden' : '' }}"
 							style="margin-left: 26px;">
-
+							<?php /* translators: module type in small caps and in singular */ ?>
 							<label class="sui-label"><?php printf( esc_html__( 'Scroll &#37; to trigger the %s (anything between 0 - 100&#37;)', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></label>
 
 							<input type="number"
@@ -191,6 +205,7 @@
 							<span><?php esc_html_e( 'After the passed selector', 'hustle' ); ?></span>
 						</label>
 
+						<?php /* translators: module type capitalized and in singular */ ?>
 						<span class="sui-description sui-checkbox-description"><?php printf( esc_html__( '%s will be shown as the user has passed a CSS selector', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 
 						<div id="hustle-on-scroll--selector-toggle-wrapper" class="sui-border-frame <?php echo 'selector' !== $triggers['on_scroll'] ? 'sui-hidden' : ''; ?>"
@@ -225,26 +240,31 @@
 								id="hustle-trigger-click--selector"
 								name="trigger_on_click_selector"
 								data-attribute="triggers.enable_on_click_element"
+								aria-labelledby="hustle-trigger-click--selector-label"
+								aria-describedby="hustle-trigger-click--selector-description"
 								<?php checked( $triggers['enable_on_click_element'], '1' ); ?>
 							/>
-							<span class="sui-toggle-slider"></span>
+							<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+							<span id="hustle-trigger-click--selector-label" class="sui-toggle-label"><?php esc_html_e( 'Click on existing element', 'hustle' ); ?></span>
+
+							<?php /* translators: module type capitalized and in singular */ ?>
+							<span id="hustle-trigger-click--selector-description" class="sui-description"><?php printf( esc_html__( 'Trigger your %s when a user clicks on an existing HTML element(s).', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 						</label>
-
-						<label for="hustle-trigger-click--selector"><?php esc_html_e( 'Click on existing element', 'hustle' ); ?></label>
-
-						<span class="sui-description sui-toggle-description" style="margin-top: 0;"><?php printf( esc_html__( '%s will be shown when a user clicks on an existing HTML element.', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 
 						<div class="sui-border-frame sui-toggle-content" data-toggle-content="trigger-click-selector">
 
-							<label class="sui-label"><?php esc_html_e( 'CSS selector', 'hustle' ); ?></label>
+							<label class="sui-label"><?php esc_html_e( 'CSS selector(s)', 'hustle' ); ?></label>
 
 							<input type="text"
-								placeholder="<?php esc_attr_e( 'Enter selector Class or Id', 'hustle' ); ?>"
+								placeholder="<?php esc_attr_e( 'For example .element-class, #element-id', 'hustle' ); ?>"
 								value="<?php echo esc_attr( $triggers['on_click_element'] ); ?>"
 								class="sui-form-control"
 								name="trigger_on_click_element"
 								data-attribute="triggers.on_click_element" />
 
+								<?php /* translators: module type in smallcaps and in singular */ ?>
+							<p class="sui-description"><?php printf( esc_html__( 'You can add multiple selectors separated by a comma to trigger your %s from multiple elements.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
 						</div>
 
 					</div>
@@ -257,14 +277,17 @@
 								id="hustle-trigger-click--shortcode"
 								name="trigger_on_click_shortcode"
 								data-attribute="triggers.enable_on_click_shortcode"
+								aria-labelledby="hustle-trigger-click--shortcode-label"
+								aria-describedby="hustle-trigger-click--shortcode-description"
 								<?php checked( $triggers['enable_on_click_shortcode'], '1' ); ?>
 							/>
-							<span class="sui-toggle-slider"></span>
+							<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+							<span id="hustle-trigger-click--shortcode-label" class="sui-toggle-label"><?php esc_html_e( 'Render a new button', 'hustle' ); ?></span>
+
+							<?php /* translators: module type in small caps and in singular */ ?>
+							<span id="hustle-trigger-click--shortcode-description" class="sui-description" style="margin-top: 0;"><?php printf( esc_html__( 'You can render a new button which will tigger the %s using the shortcode.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 						</label>
-
-						<label for="hustle-trigger-click--shortcode"><?php esc_html_e( 'Render a new button', 'hustle' ); ?></label>
-
-						<span class="sui-description sui-toggle-description" style="margin-top: 0;"><?php printf( esc_html__( 'You can render a new button which will tigger the %s using the shortcode.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 						<div class="sui-border-frame sui-toggle-content" data-toggle-content="trigger-click-shortcode">
 
@@ -276,7 +299,7 @@
 									value='[wd_hustle id="<?php echo esc_attr( $shortcode_id ); ?>" type="<?php echo esc_attr( $module_type ); ?>"]<?php esc_attr_e( 'Click', 'hustle' ); ?>[/wd_hustle]'
 									readonly="readonly">
 								<button class="sui-button-icon hustle-copy-shortcode-button">
-									<i aria-hidden="true" class="sui-icon-copy"></i>
+									<span aria-hidden="true" class="sui-icon-copy"></span>
 									<span class="sui-screen-reader-text"><?php esc_html_e( 'Copy shortcode', 'hustle' ); ?></span>
 								</button>
 							</div>
@@ -299,14 +322,17 @@
 								id="hustle-trigger-exit--session"
 								name="trigger_on_exit_intent_per_session"
 								data-attribute="triggers.on_exit_intent_per_session"
+								aria-labelledby="hustle-trigger-exit--session-label"
+								aria-describedby="hustle-trigger-exit--session-description"
 								<?php checked( $triggers['on_exit_intent_per_session'], '1' ); ?>
 							/>
-							<span class="sui-toggle-slider"></span>
+							<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+							<span id="hustle-trigger-exit--session-label" class="sui-toggle-label"><?php esc_html_e( 'Trigger once per session', 'hustle' ); ?></span>
+
+							<?php /* translators: module type in small caps and in singular */ ?>
+							<span id="hustle-trigger-exit--session-description" class="sui-description" style="margin-top: 0;"><?php printf( esc_html__( 'Enabling this will trigger the %s only for the first time user tries to leave your website in a session.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 						</label>
-
-						<label for="hustle-trigger-exit--session"><?php esc_html_e( 'Trigger once per session', 'hustle' ); ?></label>
-
-						<span class="sui-description sui-toggle-description" style="margin-top: 0;"><?php printf( esc_html__( 'Enabling this will trigger the %s only for the first time user tries to leave your website in a session.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 					</div>
 
@@ -318,14 +344,17 @@
 								id="hustle-trigger-exit--delay"
 								name="trigger_on_exit_intent_delayed"
 								data-attribute="triggers.on_exit_intent_delayed"
+								aria-labelledby="hustle-trigger-exit--delay-label"
+								aria-describedby="hustle-trigger-exit--delay-description"
 								<?php checked( $triggers['on_exit_intent_delayed'], '1' ); ?>
 							/>
-							<span class="sui-toggle-slider"></span>
+							<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+							<span id="hustle-trigger-exit--delay-label" class="sui-toggle-label"><?php esc_html_e( 'Add delay', 'hustle' ); ?></span>
+
+							<?php /* translators: module type in small caps and in singular */ ?>
+							<span id="hustle-trigger-exit--delay-description" class="sui-description" style="margin-top: 0;"><?php printf( esc_html__( 'This will delay the appearance of the %s after the user attempts to exit.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 						</label>
-
-						<label for="hustle-trigger-exit--delay"><?php esc_html_e( 'Add delay', 'hustle' ); ?></label>
-
-						<span class="sui-description sui-toggle-description" style="margin-top: 0;"><?php printf( esc_html__( 'This will delay the appearance of the %s after the user attempts to exit.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 						<div class="sui-border-frame sui-toggle-content" data-toggle-content="trigger-exit-delay">
 
@@ -336,7 +365,7 @@
 								<div class="sui-col-md-6">
 
 									<input type="number"
-										value="<?php echo esc_attr( $triggers['on_exit_intent_delayed_time']); ?>"
+										value="<?php echo esc_attr( $triggers['on_exit_intent_delayed_time'] ); ?>"
 										min="0"
 										class="sui-form-control"
 										name="trigger_on_exit_intent_delayed_time"
@@ -388,14 +417,17 @@
 								id="hustle-trigger-adblock"
 								name="trigger_on_adblock"
 								data-attribute="triggers.on_adblock"
+								aria-labelledby="hustle-trigger-adblock-label"
+								aria-describedby="hustle-trigger-adblock-description"
 								<?php checked( $triggers['on_adblock'], '1' ); ?>
 							/>
-							<span class="sui-toggle-slider"></span>
+							<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+							<span id="hustle-trigger-adblock-label" class="sui-toggle-label"><?php esc_html_e( 'Trigger when adblock is detected', 'hustle' ); ?></span>
+
+							<?php /* translators: module type in small caps and in singular */ ?>
+							<span id="hustle-trigger-adblock-description" class="sui-description" style="margin-top: 0;"><?php printf( esc_html__( 'Enabling this will trigger the %s everytime an AdBlock is detected in your visitor’s browser.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 						</label>
-
-						<label for="hustle-trigger-adblock"><?php esc_html_e( 'Trigger when adblock is detected', 'hustle' ); ?></label>
-
-						<span class="sui-description sui-toggle-description" style="margin-top: 0;"><?php printf( esc_html__( 'Enabling this will trigger the %s everytime an AdBlock is detected in your visitor’s browser.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 					</div>
 

@@ -3,7 +3,7 @@
 Plugin Name: Smash Balloon Instagram Feed
 Plugin URI: https://smashballoon.com/instagram-feed
 Description: Display beautifully clean, customizable, and responsive Instagram feeds.
-Version: 2.4.2
+Version: 2.4.3
 Author: Smash Balloon
 Author URI: https://smashballoon.com/
 License: GPLv2 or later
@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 if ( ! defined( 'SBIVER' ) ) {
-	define( 'SBIVER', '2.4.2' );
+	define( 'SBIVER', '2.4.3' );
 }
 // Db version.
 if ( ! defined( 'SBI_DBVERSION' ) ) {
@@ -117,7 +117,8 @@ if ( function_exists( 'sb_instagram_feed_init' ) ) {
 			require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/main.php';
 			require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/class-sbi-about.php';
 
-			if ( version_compare( PHP_VERSION,  '5.3.0' ) >= 0 ) {
+			if ( version_compare( PHP_VERSION,  '5.3.0' ) >= 0
+				 && version_compare( get_bloginfo( 'version' ), '4.6' , '>=' ) ) {
 				require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/addon-functions.php';
 				require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/PluginSilentUpgrader.php';
 				require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/PluginSilentUpgraderSkin.php';
@@ -253,6 +254,18 @@ if ( function_exists( 'sb_instagram_feed_init' ) ) {
 
 		global $wp_roles;
 		$wp_roles->add_cap( 'administrator', 'manage_instagram_feed_options' );
+
+		// set usage tracking to false if fresh install.
+		$usage_tracking = sbi_get_option( 'sbi_usage_tracking', false );
+
+		if ( ! is_array( $usage_tracking ) ) {
+			$usage_tracking = array(
+				'enabled' => false,
+				'last_send' => 0
+			);
+
+			sbi_update_option( 'sbi_usage_tracking', $usage_tracking, false );
+		}
 	}
 
 	register_activation_hook( __FILE__, 'sb_instagram_activate' );

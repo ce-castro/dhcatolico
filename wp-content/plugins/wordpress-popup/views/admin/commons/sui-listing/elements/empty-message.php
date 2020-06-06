@@ -1,11 +1,23 @@
 <?php
+/**
+ * Displays the listing page view when there are not modules.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $image_1x = self::$plugin_url . 'assets/images/hustle-welcome.png';
 $image_2x = self::$plugin_url . 'assets/images/hustle-welcome@2x.png';
 ?>
 
 <div class="sui-box sui-message sui-message-lg">
 
-	<?php echo Opt_In_Utils::render_image_markup( esc_url( $image_1x ), esc_url( $image_2x ), 'sui-image' ); // WPCS: XSS ok. ?>
+
+	<?php
+	if ( ! $this->is_branding_hidden ) :
+		echo Opt_In_Utils::render_image_markup( $image_1x, $image_2x, 'sui-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	endif;
+	?>
 
 	<div class="sui-message-content">
 
@@ -26,13 +38,13 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-welcome@2x.png';
 					id="hustle-create-new-module"
 					class="sui-button sui-button-blue hustle-create-module"
 				>
-					<i class="sui-icon-plus" aria-hidden="true"></i> <?php esc_html_e( 'Create', 'hustle' ); ?>
+					<span class="sui-icon-plus" aria-hidden="true"></span> <?php esc_html_e( 'Create', 'hustle' ); ?>
 				</button>
 
 				<button
 					class="sui-button hustle-import-module-button"
 				>
-					<i class="sui-icon-upload-cloud" aria-hidden="true"></i> <?php esc_html_e( 'Import', 'hustle' ); ?>
+					<span class="sui-icon-upload-cloud" aria-hidden="true"></span> <?php esc_html_e( 'Import', 'hustle' ); ?>
 				</button>
 			</p>
 

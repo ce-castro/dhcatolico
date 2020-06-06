@@ -1,4 +1,11 @@
 <?php
+/**
+ * Reset settings on uninstal section under the "data" tab.
+ *
+ * @package Hustle
+ * @since 4.0.3
+ */
+
 $reset_settings_uninstall = '1' === $settings['reset_settings_uninstall']; ?>
 <div class="sui-box-settings-row">
 
@@ -52,13 +59,13 @@ $reset_settings_uninstall = '1' === $settings['reset_settings_uninstall']; ?>
 					<div data-tab-content="data-reset-notice">
 
 						<?php
-						$this->render(
-							'admin/elements/notice-inline',
-							[
-								'content' => array(
-									esc_html__( 'This will delete all the modules and their data - submissions, conversion data, and plugin settings when the plugin is uninstalled.', 'hustle' )
+						$this->get_html_for_options(
+							array(
+								array(
+									'type'  => 'inline_notice',
+									'value' => esc_html__( 'This will delete all the modules and their data - submissions, conversion data, and plugin settings when the plugin is uninstalled.', 'hustle' ),
 								),
-							]
+							)
 						);
 						?>
 

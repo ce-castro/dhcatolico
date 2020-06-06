@@ -25,6 +25,7 @@ class Hustle_Migration {
 
 	/**
 	 * Whether any of the modules had custom css.
+	 *
 	 * @since 4.0
 	 * @var boolean
 	 */
@@ -62,6 +63,8 @@ class Hustle_Migration {
 
 		$this->is_multisite = is_multisite();
 
+		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 10, 2 );
+
 		add_action( 'wp_ajax_hustle_migrate_tracking', array( $this, 'migrate_tracking_and_subscriptions' ) );
 
 		if ( $this->is_migration() ) {
@@ -69,6 +72,32 @@ class Hustle_Migration {
 		}
 
 		$this->migration_410 = new Hustle_410_Migration();
+	}
+
+	/**
+	 * Flags the previous version on upgrade so we can handle notices and modals.
+	 * This action runs in the old version of the plugin, not the new one.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param WP_Upgrader $upgrader_object Instance of the WP_Upgrader class.
+	 * @param array       $data Upgrade data.
+	 */
+	public function upgrader_process_complete( $upgrader_object, $data ) {
+
+		if ( 'update' === $data['action'] && 'plugin' === $data['type'] ) {
+
+			foreach ( $data['plugins'] as $plugin ) {
+
+				// Make sure our plugin is among the ones being updated.
+				if ( Opt_In::$plugin_base_file === $plugin ) {
+					update_site_option( 'hustle_previous_version', Opt_In::VERSION );
+
+					// Make the highlights modal undismissed so it's shown in the next version.
+					Hustle_Notifications::add_dismissed_notification( Hustle_Dashboard_Admin::HIGHLIGHT_MODAL_NAME );
+				}
+			}
+		}
 	}
 
 	/**
@@ -94,6 +123,17 @@ class Hustle_Migration {
 	}
 
 	/**
+	 * Get the previously installed version according to our flag.
+	 *
+	 * @since 4.2.1
+	 *
+	 * @return string|false
+	 */
+	public static function get_previous_installed_version() {
+		return get_site_option( 'hustle_previous_version', false );
+	}
+
+	/**
 	 * Check if a spesific migration is passed
 	 *
 	 * @param string $key Migration key
@@ -103,7 +143,7 @@ class Hustle_Migration {
 		$keys = get_option( 'hustle_migrations', null );
 		if ( is_null( $keys ) ) {
 			self::change_migration_options();
-			$keys = get_option( 'hustle_migrations', [] );
+			$keys = get_option( 'hustle_migrations', array() );
 		}
 
 		return in_array( $key, $keys, true );
@@ -115,7 +155,7 @@ class Hustle_Migration {
 	 * @param string $key Migration key
 	 */
 	public static function migration_passed( $key ) {
-		$keys = get_option( 'hustle_migrations', [] );
+		$keys = get_option( 'hustle_migrations', array() );
 		if ( ! in_array( $key, $keys, true ) ) {
 			$keys[] = $key;
 			update_option( 'hustle_migrations', $keys );
@@ -145,11 +185,11 @@ class Hustle_Migration {
 	 * Resave migration keys to a new format
 	 */
 	private static function change_migration_options() {
-		$keys = [
+		$keys = array(
 			'hustle_20_migrated',
 			'hustle_30_migrated',
 			'hustle_30_tracking_migrated',
-		];
+		);
 
 		foreach ( $keys as $key ) {
 			$option = get_option( $key );
@@ -209,7 +249,7 @@ class Hustle_Migration {
 		}
 
 		if ( ! $this->custom_css_migrated ) {
-			Hustle_Settings_Admin::add_dismissed_notification( 'show_review_css_after_migration_notice' );
+			Hustle_Notifications::add_dismissed_notification( 'show_review_css_after_migration_notice' );
 		}
 
 		self::migration_passed( 'hustle_30_migrated' );
@@ -238,17 +278,17 @@ class Hustle_Migration {
 	private function migrate_sshare_module( $old_module ) {
 
 		if ( ! $this->is_multisite || is_main_site( get_current_blog_id() ) ) {
-			$module = Hustle_Sshare_Model::instance()->get( $old_module->module_id );
+			$module = Hustle_SShare_Model::instance()->get( $old_module->module_id );
 			$module->save();
 
 		} else {
 
 			// The tables in multisite are no longer shared between the sites of the network.
 			// Instead, each site has its own tables, so they're empty and we should move the content there.
-			$module = Hustle_Sshare_Model::instance();
+			$module = Hustle_SShare_Model::instance();
 
-			$module->module_id = $old_module->module_id;
-			$module->active = $old_module->active;
+			$module->module_id   = $old_module->module_id;
+			$module->active      = $old_module->active;
 			$module->module_name = $old_module->module_name;
 			$module->module_type = $old_module->module_type;
 			$module->save_from_migration();
@@ -285,10 +325,10 @@ class Hustle_Migration {
 		$edit_roles = ! is_null( get_role( 'administrator' ) ) ? array( 'administrator' ) : array();
 
 		$data = array(
-			'id' => $module->id,
-			'content' => $content,
-			'design' => $design,
-			'display' => $display,
+			'id'         => $module->id,
+			'content'    => $content,
+			'design'     => $design,
+			'display'    => $display,
 			'visibility' => $visibility,
 			'edit_roles' => $edit_roles,
 		);
@@ -301,8 +341,8 @@ class Hustle_Migration {
 	 *
 	 * @since 4.0
 	 *
-	 * @param Hustle_Sshare_Model $module
-	 * @param object $old_module
+	 * @param Hustle_SShare_Model $module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_sshare_content_meta( $module, $old_module ) {
@@ -324,11 +364,11 @@ class Hustle_Migration {
 				unset( $content['social_icons']['google'] );
 			}
 
-			$platforms_with_counter_endpoint = Hustle_Sshare_Model::get_networks_counter_endpoint();
+			$platforms_with_counter_endpoint = Hustle_SShare_Model::get_networks_counter_endpoint();
 
 			$social_platforms = Opt_In_Utils::get_social_platform_names();
 
-			foreach( $content['social_icons'] as $platform => $data ) {
+			foreach ( $content['social_icons'] as $platform => $data ) {
 
 				if ( 'native' === $content['click_counter'] ) {
 					// Set to 'native' only if the platform has a native counter.
@@ -337,9 +377,9 @@ class Hustle_Migration {
 					// Applies for both 'click', '0', and 'none' click_counter.
 					$counter_type = 'click';
 				}
-				$data['platform'] = $platform;
-				$data['type'] = $counter_type;
-				$data['label'] = !empty( $social_platforms[ $platform ] ) ? $social_platforms[ $platform ] : ucfirst( $platform );
+				$data['platform']                     = $platform;
+				$data['type']                         = $counter_type;
+				$data['label']                        = ! empty( $social_platforms[ $platform ] ) ? $social_platforms[ $platform ] : ucfirst( $platform );
 				$content['social_icons'][ $platform ] = $data;
 			}
 		}
@@ -352,38 +392,38 @@ class Hustle_Migration {
 	 *
 	 * @since 4.0
 	 *
-	 * @param Hustle_Sshare_Model $module
-	 * @param object $old_module
+	 * @param Hustle_SShare_Model $module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_sshare_design_meta( $module, $old_module ) {
 
-		$design = $module->get_design()->to_array();
+		$design     = $module->get_design()->to_array();
 		$old_design = $old_module->meta['design'];
 
 		if ( $this->is_multisite ) {
 			$design = array_merge( $design, $old_module->meta['design'] );
 		}
 
-		$design['floating_customize_colors'] = $this->is_true( $old_design['customize_colors'] ) ? '1' : '0';
-		$design['floating_icon_bg_color'] = $old_design['icon_bg_color'];
-		$design['floating_icon_color'] = $old_design['icon_color'];
-		$design['floating_bg_color'] = $old_design['floating_social_bg'];
-		$design['floating_animate_icons'] = $this->is_true( $old_design['floating_social_animate_icons'] ) ? '1' : '0';
-		$design['floating_drop_shadow'] = $this->is_true( $old_design['drop_shadow'] ) ? '1' : '0';
-		$design['floating_drop_shadow_x'] = $old_design['drop_shadow_x'];
-		$design['floating_drop_shadow_y'] = $old_design['drop_shadow_y'];
-		$design['floating_drop_shadow_blur'] = $old_design['drop_shadow_blur'];
+		$design['floating_customize_colors']   = $this->is_true( $old_design['customize_colors'] ) ? '1' : '0';
+		$design['floating_icon_bg_color']      = $old_design['icon_bg_color'];
+		$design['floating_icon_color']         = $old_design['icon_color'];
+		$design['floating_bg_color']           = $old_design['floating_social_bg'];
+		$design['floating_animate_icons']      = $this->is_true( $old_design['floating_social_animate_icons'] ) ? '1' : '0';
+		$design['floating_drop_shadow']        = $this->is_true( $old_design['drop_shadow'] ) ? '1' : '0';
+		$design['floating_drop_shadow_x']      = $old_design['drop_shadow_x'];
+		$design['floating_drop_shadow_y']      = $old_design['drop_shadow_y'];
+		$design['floating_drop_shadow_blur']   = $old_design['drop_shadow_blur'];
 		$design['floating_drop_shadow_spread'] = $old_design['drop_shadow_spread'];
-		$design['floating_drop_shadow_color'] = $old_design['drop_shadow_color'];
-		$design['floating_inline_count'] = $this->is_true( $old_design['floating_inline_count'] ) ? '1' : '0';
+		$design['floating_drop_shadow_color']  = $old_design['drop_shadow_color'];
+		$design['floating_inline_count']       = $this->is_true( $old_design['floating_inline_count'] ) ? '1' : '0';
 
 		$design['widget_customize_colors'] = $this->is_true( $old_design['customize_widget_colors'] ) ? '1' : '0';
 
 		// Same keys, making sure the value type is correct. String '1'|'0'.
 		$design['widget_animate_icons'] = $this->is_true( $old_design['widget_animate_icons'] ) ? '1' : '0';
-		$design['widget_drop_shadow'] = $this->is_true( $old_design['widget_drop_shadow'] ) ? '1' : '0';
-		$design['widget_inline_count'] = $this->is_true( $old_design['widget_inline_count'] ) ? '1' : '0';
+		$design['widget_drop_shadow']   = $this->is_true( $old_design['widget_drop_shadow'] ) ? '1' : '0';
+		$design['widget_inline_count']  = $this->is_true( $old_design['widget_inline_count'] ) ? '1' : '0';
 
 		return $design;
 	}
@@ -393,50 +433,50 @@ class Hustle_Migration {
 	 *
 	 * @since 4.0
 	 *
-	 * @param Hustle_Sshare_Model $module
-	 * @param object $old_module
+	 * @param Hustle_SShare_Model $module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_sshare_display_meta( $module, $old_module ) {
 
-		$display = $this->parse_display_meta( $module, $old_module );
+		$display      = $this->parse_display_meta( $module, $old_module );
 		$old_settings = $old_module->meta['settings'];
 
 		$test_types = isset( $old_module->meta['test_types'] ) ? $old_module->meta['test_types'] : array();
 
 		if ( ! $this->is_true( $old_settings['floating_social_enabled'] ) ) {
 			$display['float_desktop_enabled'] = '0';
-			$display['float_mobile_enabled'] = '0';
+			$display['float_mobile_enabled']  = '0';
 
-		} else if ( isset( $test_types['floating_social'] ) && $this->is_true( $test_types['floating_social'] ) ) {
+		} elseif ( isset( $test_types['floating_social'] ) && $this->is_true( $test_types['floating_social'] ) ) {
 			$display['float_desktop_enabled'] = '0';
-			$display['float_mobile_enabled'] = '0';
+			$display['float_mobile_enabled']  = '0';
 		}
 
 		// We didn't differentiate 'mobile' and 'desktop' floating in 3.x,
 		// so the old settings apply to both.
 
 		// We're removing old 'content' location since it never worked.
-		$location_type = 'selector' === $old_settings['location_type'] ? 'css_selector' : 'screen';
+		$location_type                   = 'selector' === $old_settings['location_type'] ? 'css_selector' : 'screen';
 		$display['float_desktop_offset'] = $location_type;
-		$display['float_mobile_offset'] = $location_type;
+		$display['float_mobile_offset']  = $location_type;
 
 		$display['float_desktop_css_selector'] = $old_settings['location_target'];
-		$display['float_mobile_css_selector'] = $old_settings['location_target'];
+		$display['float_mobile_css_selector']  = $old_settings['location_target'];
 
 		$display['float_desktop_position'] = $old_settings['location_align_x'];
-		$display['float_mobile_position'] = $old_settings['location_align_x'];
+		$display['float_mobile_position']  = $old_settings['location_align_x'];
 
 		$display['float_desktop_position_y'] = $old_settings['location_align_y'];
-		$display['float_mobile_position_y'] = $old_settings['location_align_y'];
+		$display['float_mobile_position_y']  = $old_settings['location_align_y'];
 
-		$offset_y = 'top' === $old_settings['location_align_y'] ? $old_settings['location_top'] : $old_settings['location_bottom'];
+		$offset_y                          = 'top' === $old_settings['location_align_y'] ? $old_settings['location_top'] : $old_settings['location_bottom'];
 		$display['float_desktop_offset_y'] = $offset_y;
-		$display['float_mobile_offset_y'] = $offset_y;
+		$display['float_mobile_offset_y']  = $offset_y;
 
-		$offset_x = 'right' === $old_settings['location_align_x'] ? $old_settings['location_right'] : $old_settings['location_left'];
+		$offset_x                          = 'right' === $old_settings['location_align_x'] ? $old_settings['location_right'] : $old_settings['location_left'];
 		$display['float_desktop_offset_x'] = $offset_x;
-		$display['float_mobile_offset_x'] = $offset_x;
+		$display['float_mobile_offset_x']  = $offset_x;
 
 		return $display;
 	}
@@ -470,7 +510,7 @@ class Hustle_Migration {
 			// Modules with 'test mode' enabled should be drafts.
 			$module->active = ! $this->is_true( $old_module->test_mode ) ? $old_module->active : '0';
 
-			$module->module_id = $old_module->module_id;
+			$module->module_id   = $old_module->module_id;
 			$module->module_name = $old_module->module_name;
 			$module->module_type = $old_module->module_type;
 			$module->module_mode = $this->get_module_mode( $old_module->meta['content'] );
@@ -524,15 +564,15 @@ class Hustle_Migration {
 		$edit_roles = ! is_null( get_role( 'administrator' ) ) ? array( 'administrator' ) : array();
 
 		$data = array(
-			'id' => $module->id,
-			'content' => $content,
-			'emails' => $emails,
-			'design' => $design,
+			'id'                    => $module->id,
+			'content'               => $content,
+			'emails'                => $emails,
+			'design'                => $design,
 			'integrations_settings' => $integrations_settings,
-			'display' => $display,
-			'visibility' => $visibility,
-			'settings' => $settings,
-			'edit_roles' => $edit_roles,
+			'display'               => $display,
+			'visibility'            => $visibility,
+			'settings'              => $settings,
+			'edit_roles'            => $edit_roles,
 		);
 
 		$module->update_module( $data );
@@ -566,7 +606,7 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param Hustle_Module_Model $module
-	 * @param object $old_module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_content_meta( $module, $old_module ) {
@@ -577,7 +617,7 @@ class Hustle_Migration {
 		}
 
 		if ( ! $this->is_true( $content['has_title'] ) ) {
-			$content['title'] = '';
+			$content['title']     = '';
 			$content['sub_title'] = '';
 		}
 
@@ -596,11 +636,11 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param Hustle_Module_Model $module
-	 * @param object $old_module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_email_meta( $module, $old_module ) {
-		$emails = $module->get_emails()->to_array();
+		$emails      = $module->get_emails()->to_array();
 		$old_content = $old_module->meta['content'];
 
 		if ( ! isset( $old_content['form_elements'] ) ) {
@@ -613,14 +653,14 @@ class Hustle_Migration {
 			$old_form_fields = json_decode( $old_form_fields, true );
 		}
 
-		foreach( $old_form_fields as $name => $properties ) {
+		foreach ( $old_form_fields as $name => $properties ) {
 
-			if ( true === $old_form_fields[$name]['required'] ) {
-				$old_form_fields[$name]['required'] = 'true';
+			if ( true === $old_form_fields[ $name ]['required'] ) {
+				$old_form_fields[ $name ]['required'] = 'true';
 			}
 
-			if ( 'url' === $old_form_fields[$name]['type'] || 'email' === $old_form_fields[$name]['type'] ) {
-				$old_form_fields[$name]['validate'] = 'true';
+			if ( 'url' === $old_form_fields[ $name ]['type'] || 'email' === $old_form_fields[ $name ]['type'] ) {
+				$old_form_fields[ $name ]['validate'] = 'true';
 			}
 
 			if ( isset( $old_form_fields[ $name ]['delete'] ) ) {
@@ -636,18 +676,18 @@ class Hustle_Migration {
 		// Replace old 'f_name' by 'first_name' so we can stop doing legacy conversions along the plugin.
 		if ( isset( $old_form_fields['f_name'] ) ) {
 			$old_form_fields['f_name']['name'] = 'first_name';
-			$old_form_fields = Opt_In_Utils::replace_array_key( 'f_name', 'first_name', $old_form_fields );
+			$old_form_fields                   = Opt_In_Utils::replace_array_key( 'f_name', 'first_name', $old_form_fields );
 		}
 
 		// Replace old 'l_name' by 'last_name' so we can stop doing legacy conversions along the plugin.
 		if ( isset( $old_form_fields['l_name'] ) ) {
 			$old_form_fields['l_name']['name'] = 'last_name';
-			$old_form_fields = Opt_In_Utils::replace_array_key( 'l_name', 'last_name', $old_form_fields );
+			$old_form_fields                   = Opt_In_Utils::replace_array_key( 'l_name', 'last_name', $old_form_fields );
 		}
 
 		// Set the new recaptcha properties according to what was used in 3.x
 		if ( isset( $old_form_fields['recaptcha'] ) ) {
-			$old_form_fields['recaptcha']['recaptcha_type'] = 'full';
+			$old_form_fields['recaptcha']['recaptcha_type']  = 'full';
 			$old_form_fields['recaptcha']['recaptcha_theme'] = 'light';
 		}
 
@@ -659,13 +699,13 @@ class Hustle_Migration {
 		// Make gdpr a form field for optins.
 		if ( isset( $old_content['show_gdpr'] ) && $this->is_true( $old_content['show_gdpr'] ) ) {
 			$old_form_fields['gdpr'] = array(
-				'label' => 'gdpr',
-				'required' => 'true',
-				'css_classes' =>'',
-				'type' => 'gdpr',
-				'name' => 'gdpr',
-				'can_delete' => 'true',
-				'placeholder' => '',
+				'label'        => 'gdpr',
+				'required'     => 'true',
+				'css_classes'  => '',
+				'type'         => 'gdpr',
+				'name'         => 'gdpr',
+				'can_delete'   => 'true',
+				'placeholder'  => '',
 				'gdpr_message' => $old_content['gdpr_message'],
 			);
 		}
@@ -673,8 +713,8 @@ class Hustle_Migration {
 		$emails['form_elements'] = $module->sanitize_form_elements( $old_form_fields );
 
 		$emails['after_successful_submission'] = $old_content['after_successful_submission'];
-		$emails['success_message'] = $old_content['success_message'];
-		$emails['auto_close_success_message'] = $this->is_true( $old_content['auto_close_success_message'] ) ? '1' : '0';
+		$emails['success_message']             = $old_content['success_message'];
+		$emails['auto_close_success_message']  = $this->is_true( $old_content['auto_close_success_message'] ) ? '1' : '0';
 
 		if ( isset( $old_content['auto_close_time'] ) ) {
 			$emails['auto_close_time'] = $old_content['auto_close_time'];
@@ -699,7 +739,7 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param Hustle_Module_Model $module
-	 * @param object $old_module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_design_meta( $module, $old_module ) {
@@ -714,15 +754,15 @@ class Hustle_Migration {
 		// There's a bug in 3.x that applied customized colors even when disabled.
 		// Turning on "customize_colors" to keep the same appearance in front after migration.
 		$design['customize_colors'] = '1';
-		$design['border'] = $this->is_true( $design['border'] ) ? '1' : '0';
-		$design['drop_shadow'] = $this->is_true( $design['drop_shadow'] ) ? '1' : '0';
-		$design['customize_size'] = $this->is_true( $design['customize_size'] ) ? '1' : '0';
+		$design['border']           = $this->is_true( $design['border'] ) ? '1' : '0';
+		$design['drop_shadow']      = $this->is_true( $design['drop_shadow'] ) ? '1' : '0';
+		$design['customize_size']   = $this->is_true( $design['customize_size'] ) ? '1' : '0';
 
 		$is_optin = 'optin' === $module->module_mode;
 		if ( $is_optin ) {
 
 			// When making a module 'optin' in 3.x, the selected palette remained as the informational one.
-			if ( in_array( $design['style'], Hustle_Module_Model::get_palettes_names(), true ) ) {
+			if ( in_array( $design['style'], Hustle_Meta_Base_Design::get_palettes_names(), true ) ) {
 				$design['color_palette'] = $design['style'];
 			} else {
 				$design['color_palette'] = 'gray_slate';
@@ -732,7 +772,7 @@ class Hustle_Migration {
 				$design['optin_submit_button_static_bo'] = $design['button_border_color'];
 				$design['optin_submit_button_active_bo'] = $design['button_border_color'];
 				$design['optin_submit_button_active_bo'] = $design['button_border_color'];
-				$design['optin_submit_button_hover_bo'] = $design['button_border_color'];
+				$design['optin_submit_button_hover_bo']  = $design['button_border_color'];
 			}
 
 			// When input's borders is disabled...
@@ -744,18 +784,18 @@ class Hustle_Migration {
 
 				// Make the borders invisible in all states, except for the error one.
 				$design['optin_input_static_bo'] = $design['optin_input_static_bg'];
-				$design['optin_input_hover_bo'] = $design['optin_input_hover_bg'];
+				$design['optin_input_hover_bo']  = $design['optin_input_hover_bg'];
 				$design['optin_input_active_bo'] = $design['optin_input_active_bg'];
 
 				// And make the border's attributes match the 3.x on error one.
 				$design['form_fields_border_radius'] = '0';
 				$design['form_fields_border_weight'] = '1';
-				$design['form_fields_border_type'] = 'solid';
+				$design['form_fields_border_type']   = 'solid';
 
-			} else if ( isset( $design['form_fields_border_color'] ) ) {
+			} elseif ( isset( $design['form_fields_border_color'] ) ) {
 
 				$design['optin_input_static_bo'] = $design['form_fields_border_color'];
-				$design['optin_input_hover_bo'] = $design['form_fields_border_color'];
+				$design['optin_input_hover_bo']  = $design['form_fields_border_color'];
 				$design['optin_input_active_bo'] = $design['form_fields_border_color'];
 			}
 
@@ -788,25 +828,25 @@ class Hustle_Migration {
 				// And make the border's attributes match the 3.x on error one.
 				$design['gdpr_border_radius'] = '0';
 				$design['gdpr_border_weight'] = '2';
-				$design['gdpr_border_type'] = 'solid';
+				$design['gdpr_border_type']   = 'solid';
 
 			}
 
 			$design['optin_input_error_background'] = $design['optin_input_static_bg'];
 
-			$design['form_fields_style'] = empty( $design['form_fields_border'] ) || 'false' === $design['form_fields_border'] ? 'flat' : 'outlined';
-			$design['button_style'] = empty( $design['button_border'] ) || 'false' === $design['button_border'] ? 'flat' : 'outlined';
+			$design['form_fields_style']   = empty( $design['form_fields_border'] ) || 'false' === $design['form_fields_border'] ? 'flat' : 'outlined';
+			$design['button_style']        = empty( $design['button_border'] ) || 'false' === $design['button_border'] ? 'flat' : 'outlined';
 			$design['gdpr_checkbox_style'] = empty( $design['gdpr_border'] ) || 'false' === $design['gdpr_border'] ? 'flat' : 'outlined';
 
 		} else {
-			$design['title_color_alt'] = $design['title_color'];
+			$design['title_color_alt']    = $design['title_color'];
 			$design['subtitle_color_alt'] = $design['subtitle_color'];
 		}
 
 		if ( ! empty( trim( $design['custom_css'] ) ) ) {
 			$this->custom_css_migrated = true;
-			$new_css = $this->parse_custom_css( $design['custom_css'], $is_optin );
-			$design['custom_css'] = $new_css . ' /*' . $design['custom_css'] . '*/';
+			$new_css                   = $this->parse_custom_css( $design['custom_css'], $is_optin );
+			$design['custom_css']      = $new_css . ' /*' . $design['custom_css'] . '*/';
 		}
 
 		return $design;
@@ -819,11 +859,11 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param Hustle_Module_Model $module
-	 * @param object $old_module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function migrate_integrations( $module, $old_module ) {
-		$old_content = $old_module->meta['content'];
+		$old_content           = $old_module->meta['content'];
 		$integrations_settings = array();
 
 		if ( $this->is_true( $old_content['save_local_list'] ) ) {
@@ -840,7 +880,7 @@ class Hustle_Migration {
 
 		if ( ! empty( $old_content['email_services'] ) ) {
 
-			foreach( $old_content['email_services'] as $slug => $data ) {
+			foreach ( $old_content['email_services'] as $slug => $data ) {
 
 				$provider = Hustle_Provider_Utils::get_provider_by_slug( $slug );
 				if ( $provider instanceof Hustle_Provider_Abstract ) {
@@ -855,7 +895,7 @@ class Hustle_Migration {
 
 			$active_email_service = $old_content['active_email_service'];
 			if ( 'mailchimp' === $active_email_service ) {
-				$mailchimp_settings =  $old_content['email_services']['mailchimp'];
+				$mailchimp_settings = $old_content['email_services']['mailchimp'];
 				if ( isset( $mailchimp_settings['allow_subscribed_users'] ) && 'allow' === $mailchimp_settings['allow_subscribed_users'] ) {
 					$integrations_settings['allow_subscribed_users'] = '1';
 				}
@@ -874,13 +914,13 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param Hustle_Module_Model $module
-	 * @param object $old_module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_display_meta( $module, $old_module ) {
-		$display = $module->get_display()->to_array();
+		$display      = $module->get_display()->to_array();
 		$old_settings = $old_module->meta['settings'];
-		$test_types = isset( $old_module->meta['test_types'] ) ? $old_module->meta['test_types'] : array();
+		$test_types   = isset( $old_module->meta['test_types'] ) ? $old_module->meta['test_types'] : array();
 
 		if ( isset( $old_settings['after_content_enabled'] ) && $this->is_true( $old_settings['after_content_enabled'] ) ) {
 			if ( ! isset( $test_types['after_content'] ) || ! $this->is_true( $test_types['after_content'] ) ) {
@@ -891,14 +931,14 @@ class Hustle_Migration {
 		if ( isset( $old_settings['widget_enabled'] ) && ! $this->is_true( $old_settings['widget_enabled'] ) ) {
 			$display['widget_enabled'] = '0';
 
-		} else if ( isset( $test_types['widget'] ) && $this->is_true( $test_types['widget'] ) ) {
+		} elseif ( isset( $test_types['widget'] ) && $this->is_true( $test_types['widget'] ) ) {
 			$display['widget_enabled'] = '0';
 		}
 
 		if ( isset( $old_settings['shortcode_enabled'] ) && ! $this->is_true( $old_settings['shortcode_enabled'] ) ) {
 			$display['shortcode_enabled'] = '0';
 
-		} else if ( isset( $test_types['shortcode'] ) && $this->is_true( $test_types['shortcode'] ) ) {
+		} elseif ( isset( $test_types['shortcode'] ) && $this->is_true( $test_types['shortcode'] ) ) {
 			$display['shortcode_enabled'] = '0';
 		}
 
@@ -913,13 +953,13 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param Hustle_Module_Model $module
-	 * @param object $old_module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_settings_meta( $module, $old_module ) {
-		$settings = $module->get_settings()->to_array();
+		$settings     = $module->get_settings()->to_array();
 		$old_settings = $old_module->meta['settings'];
-		$old_content = $old_module->meta['content'];
+		$old_content  = $old_module->meta['content'];
 		if ( $this->is_multisite ) {
 			$settings = array_merge( $settings, $old_settings );
 		}
@@ -957,10 +997,10 @@ class Hustle_Migration {
 
 		if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module->module_type && isset( $old_settings['triggers'] ) ) {
 
-			//Check for click trigger.
+			// Check for click trigger.
 			if ( isset( $old_settings['triggers']['trigger'] ) && 'click' === $old_settings['triggers']['trigger'] ) {
-				$settings['triggers']['enable_on_click_shortcode'] 	= '1';
-				$settings['triggers']['enable_on_click_element'] 	= '1';
+				$settings['triggers']['enable_on_click_shortcode'] = '1';
+				$settings['triggers']['enable_on_click_element']   = '1';
 			}
 
 			// The time trigger switch was removed, so make the time to show '0' if it was turend off.
@@ -991,11 +1031,11 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param Hustle_Module_Model $module
-	 * @param object $old_module
+	 * @param object              $old_module
 	 * @return array
 	 */
 	private function parse_visibility_meta( $module, $old_module ) {
-		$conditions = $module->get_visibility()->to_array();
+		$conditions   = $module->get_visibility()->to_array();
 		$old_settings = $old_module->meta['settings'];
 
 		if ( isset( $old_settings['conditions'] ) ) {
@@ -1025,11 +1065,11 @@ class Hustle_Migration {
 			// Referrer.
 			if ( isset( $old_conditions['from_specific_ref'] ) ) {
 				$new_conditions['from_referrer']['filter_type'] = 'true';
-				$new_conditions['from_referrer']['refs'] = $old_conditions['from_specific_ref']['refs'];
+				$new_conditions['from_referrer']['refs']        = $old_conditions['from_specific_ref']['refs'];
 
 			} elseif ( isset( $old_conditions['not_from_specific_ref'] ) ) {
 				$new_conditions['from_referrer']['filter_type'] = 'false';
-				$new_conditions['from_referrer']['refs'] = $old_conditions['from_specific_ref']['refs'];
+				$new_conditions['from_referrer']['refs']        = $old_conditions['from_specific_ref']['refs'];
 			}
 
 			// Source of arrival.
@@ -1048,11 +1088,11 @@ class Hustle_Migration {
 			// On URL.
 			if ( isset( $old_conditions['on_specific_url'] ) ) {
 				$new_conditions['on_url']['filter_type'] = 'only';
-				$new_conditions['on_url']['urls'] = $old_conditions['on_specific_url']['urls'];
+				$new_conditions['on_url']['urls']        = $old_conditions['on_specific_url']['urls'];
 
 			} elseif ( isset( $old_conditions['not_on_specific_url'] ) ) {
 				$new_conditions['on_url']['filter_type'] = 'except';
-				$new_conditions['on_url']['urls'] = $old_conditions['not_on_specific_url']['urls'];
+				$new_conditions['on_url']['urls']        = $old_conditions['not_on_specific_url']['urls'];
 			}
 
 			// Visitor has commented.
@@ -1066,11 +1106,11 @@ class Hustle_Migration {
 			// Country.
 			if ( isset( $old_conditions['in_a_country'] ) ) {
 				$new_conditions['visitor_country']['filter_type'] = 'only';
-				$new_conditions['visitor_country']['countries'] = $old_conditions['in_a_country']['countries'];
+				$new_conditions['visitor_country']['countries']   = $old_conditions['in_a_country']['countries'];
 
 			} elseif ( isset( $old_conditions['not_in_a_country'] ) ) {
 				$new_conditions['visitor_country']['filter_type'] = 'except';
-				$new_conditions['visitor_country']['countries'] = $old_conditions['not_in_a_country']['countries'];
+				$new_conditions['visitor_country']['countries']   = $old_conditions['not_in_a_country']['countries'];
 			}
 
 			// 404.
@@ -1081,12 +1121,12 @@ class Hustle_Migration {
 			// Module shown less than.
 			if ( isset( $old_conditions['shown_less_than'] ) ) {
 				$new_conditions['shown_less_than']['filter_type'] = 'limited';
-				$new_conditions['shown_less_than']['less_than'] = $old_conditions['shown_less_than']['less_than'];
+				$new_conditions['shown_less_than']['less_than']   = $old_conditions['shown_less_than']['less_than'];
 			}
 
 			// Custom Post Types
 			$post_types = Opt_In_Utils::get_post_types();
-			$cpts = wp_list_pluck( $post_types, 'label', 'name' );
+			$cpts       = wp_list_pluck( $post_types, 'label', 'name' );
 			foreach ( $cpts as $slug => $label ) {
 				if ( isset( $old_conditions[ $label ] ) ) {
 					$new_conditions[ $slug ] = $old_conditions[ $label ];
@@ -1094,15 +1134,15 @@ class Hustle_Migration {
 			}
 
 			$regular_conditions_keys = array( 'pages', 'posts', 'categories', 'tags' );
-			foreach( $regular_conditions_keys as $key ) {
+			foreach ( $regular_conditions_keys as $key ) {
 				if ( isset( $old_conditions[ $key ] ) ) {
 					$new_conditions[ $key ] = $old_conditions[ $key ];
 				}
 			}
 
-			$new_visibility = array();
-			$new_visibility[ $group_id ] = $new_conditions;
-			$new_visibility[ $group_id ]['group_id'] = $group_id;
+			$new_visibility                             = array();
+			$new_visibility[ $group_id ]                = $new_conditions;
+			$new_visibility[ $group_id ]['group_id']    = $group_id;
 			$new_visibility[ $group_id ]['filter_type'] = 'any';
 
 			$visibility = array( 'conditions' => $new_visibility );
@@ -1127,16 +1167,15 @@ class Hustle_Migration {
 		$old_email_sender_settings = get_option( 'hustle_global_email_settings' );
 		if ( $old_email_sender_settings ) {
 			$current_settings['general']['sender_email_address'] = isset( $old_email_sender_settings['sender_email_address'] ) ? $old_email_sender_settings['sender_email_address'] : get_option( 'admin_email', '' );
-			$current_settings['general']['sender_email_name'] = isset( $old_email_sender_settings['sender_email_name'] ) ? $old_email_sender_settings['sender_email_name'] : get_option( 'blogname', '' );
+			$current_settings['general']['sender_email_name']    = isset( $old_email_sender_settings['sender_email_name'] ) ? $old_email_sender_settings['sender_email_name'] : get_option( 'blogname', '' );
 		}
 
 		// Unsubscription email and messages.
 		$old_unsubscription_settings = get_option( 'hustle_global_unsubscription_settings' );
 		if ( $old_unsubscription_settings ) {
 			$current_settings['unsubscribe']['messages'] = isset( $old_unsubscription_settings['messages'] ) ? $old_unsubscription_settings['messages'] : '';
-			$current_settings['unsubscribe']['email'] = isset( $old_unsubscription_settings['email'] ) ? $old_unsubscription_settings['email'] : '';
+			$current_settings['unsubscribe']['email']    = isset( $old_unsubscription_settings['email'] ) ? $old_unsubscription_settings['email'] : '';
 		}
-
 
 		update_option( 'hustle_settings', $current_settings );
 	}
@@ -1147,35 +1186,35 @@ class Hustle_Migration {
 	 * @since 4.0
 	 *
 	 * @param string $custom_css
-	 * @param bool $is_optin
+	 * @param bool   $is_optin
 	 * @return string
 	 */
 	private function parse_custom_css( $custom_css, $is_optin ) {
 
 		$replace_values = array(
-			'.wph-modal'                        => '', // Main wrapper (no need to migrate this, main wrapper "hustle-ui" it's automatically added on 4.0)
-			'.hustle-modal'                     => '.hustle-layout', // Content wrapper
-			'.wph-modal-active'                 => '.hustle-show', // Active class
-			'.hustle-modal-title'               => '.hustle-title', // Title
-			'.hustle-modal-subtitle'            => '.hustle-subtitle', // Subtitle
-			'section .hustle-modal-article'  	=> '.hustle-content',
-			'.hustle-modal-article'             => '.hustle-content',
-			'section'							=> '.hustle-content',
-			'.hustle-layout .hustle-modal-close'=> '.hustle-modal-close', // .hustle-layout (previously .hustle-modal) is no longer a parent.
-			'.hustle-modal-close .hustle-icon'  => '.hustle-button-close [class*="hustle-icon-"]', // Close button (icon)
-			'.hustle-modal-close'               => '.hustle-button-close', // Close button
-			'.hustle-modal-image'               => '.hustle-image', // Feat. image
-			'.hustle-modal-cta'                 => '.hustle-button-cta', // Call to action
-			'.hustle-modal-image_only'          => '.hustle-image-only', // Image only
-			'.hustle-modal-mobile_hidden'       => '.hustle-hide-until-sm', // Mobile hidden
-			'.hustle-modal-content' 			=> '.hustle-layout-content',
-			'.hustle-modal-footer' 				=> '.hustle-layout-footer',
+			'.wph-modal'                         => '', // Main wrapper (no need to migrate this, main wrapper "hustle-ui" it's automatically added on 4.0)
+			'.hustle-modal'                      => '.hustle-layout', // Content wrapper
+			'.wph-modal-active'                  => '.hustle-show', // Active class
+			'.hustle-modal-title'                => '.hustle-title', // Title
+			'.hustle-modal-subtitle'             => '.hustle-subtitle', // Subtitle
+			'section .hustle-modal-article'      => '.hustle-content',
+			'.hustle-modal-article'              => '.hustle-content',
+			'section'                            => '.hustle-content',
+			'.hustle-layout .hustle-modal-close' => '.hustle-modal-close', // .hustle-layout (previously .hustle-modal) is no longer a parent.
+			'.hustle-modal-close .hustle-icon'   => '.hustle-button-close [class*="hustle-icon-"]', // Close button (icon)
+			'.hustle-modal-close'                => '.hustle-button-close', // Close button
+			'.hustle-modal-image'                => '.hustle-image', // Feat. image
+			'.hustle-modal-cta'                  => '.hustle-button-cta', // Call to action
+			'.hustle-modal-image_only'           => '.hustle-image-only', // Image only
+			'.hustle-modal-mobile_hidden'        => '.hustle-hide-until-sm', // Mobile hidden
+			'.hustle-modal-content'              => '.hustle-layout-content',
+			'.hustle-modal-footer'               => '.hustle-layout-footer',
 		);
 
 		if ( $is_optin ) {
 
 			$extra_classes = array(
-				'.hustle-modal-body'               		=> '.hustle-layout-body', // Body
+				'.hustle-modal-body'                    => '.hustle-layout-body', // Body
 				'footer'                                => '.hustle-layout-form', // Form container
 				'.hustle-modal-optin_form'              => '.hustle-layout-form', // Form container
 				'.hustle-modal-optin_field'             => '.hustle-field', // Form field(s)
@@ -1188,36 +1227,36 @@ class Hustle_Migration {
 				'.hustle-modal-two'                     => '.hustle-optin--compact', // Layout 2 (Compact)
 				'.hustle-modal-three'                   => '.hustle-optin--focus-optin', // Layout 3 (Optin Focus)
 				'.hustle-modal-four'                    => '.hustle-optin--focus-content', // Layout 4 (Content Focus)
-				'.hustle-layout .hustle-modal-success'	=> '.hustle-success',
-				'.hustle-modal-success'					=> '.hustle-success',
+				'.hustle-layout .hustle-modal-success'  => '.hustle-success',
+				'.hustle-modal-success'                 => '.hustle-success',
 			);
 
 		} else {
 
 			$extra_classes = array(
-				'.hustle-layout .hustle-modal-body'      => '.hustle-layout', // Body
-				'.hustle-modal-body'      => '.hustle-layout', // Body
-				'.hustle-modal-simple'    => '.hustle-info--compact', // Simple (Compact)
-				'.hustle-modal-minimal'   => '.hustle-info--default', // Minimal (Default)
-				'.hustle-modal-cabriolet' => '.hustle-info--stacked', // Cabriolet (Stacked)
-				'.hustle-modal-header'	  => '.hustle-layout-header',
+				'.hustle-layout .hustle-modal-body' => '.hustle-layout', // Body
+				'.hustle-modal-body'                => '.hustle-layout', // Body
+				'.hustle-modal-simple'              => '.hustle-info--compact', // Simple (Compact)
+				'.hustle-modal-minimal'             => '.hustle-info--default', // Minimal (Default)
+				'.hustle-modal-cabriolet'           => '.hustle-info--stacked', // Cabriolet (Stacked)
+				'.hustle-modal-header'              => '.hustle-layout-header',
 			);
 		}
 
 		$replace_values = array_merge( $replace_values, $extra_classes );
 
-		foreach( $replace_values as $old => $new ) {
-			$custom_css = preg_replace( '/'. $old .'(?!-|[a-z])/m', $new, $custom_css );
+		foreach ( $replace_values as $old => $new ) {
+			$custom_css = preg_replace( '/' . $old . '(?!-|[a-z])/m', $new, $custom_css );
 		}
 
 		return $custom_css;
 
 	}
 
-	private function _migrate_page_shares($page_shares) {
+	private function _migrate_page_shares( $page_shares ) {
 		$ss = new Hustle_SShare_Model();
 		// floating social views
-		foreach( $page_shares as $val ) {
+		foreach ( $page_shares as $val ) {
 			$ss->id = $val->optin_id;
 			$ss->add_meta( $val->meta_key, $val->meta_value );
 		}
@@ -1226,10 +1265,12 @@ class Hustle_Migration {
 	private function finish_tracking_subscription_migration( $migrated_rows = 0 ) {
 		// Set the flag that we already migrated the tracking.
 		self::mark_tracking_migration_as_completed();
-		wp_send_json_success( array(
-			'current_meta' => 'done',
-			'migrated_rows' => $migrated_rows,
-		) );
+		wp_send_json_success(
+			array(
+				'current_meta'  => 'done',
+				'migrated_rows' => $migrated_rows,
+			)
+		);
 	}
 
 	public static function mark_tracking_migration_as_completed() {
@@ -1282,14 +1323,14 @@ class Hustle_Migration {
 
 		global $wpdb;
 		$main_site_table = $wpdb->base_prefix . Hustle_Db::TABLE_HUSTLE_MODULES_META;
-		$batch_limit = intval( apply_filters( 'hustle_migration_tracking_batch_limit', 50 ) );
+		$batch_limit     = intval( apply_filters( 'hustle_migration_tracking_batch_limit', 50 ) );
 
 		$migration_data = get_option( 'hustle_30_migration_data', array() );
 
 		// Things to get in the first run only.
 		if ( ! empty( $migration_data ) ) {
 			$blog_modules_id = $migration_data['blog_modules_id'];
-			$current_meta = $migration_data['current_meta'];
+			$current_meta    = $migration_data['current_meta'];
 
 		} else {
 
@@ -1317,12 +1358,12 @@ class Hustle_Migration {
 			}
 
 			$migration_data = array(
-				'blog_modules_id' => $blog_modules_id,
-				'current_meta' => $current_meta,
-				'total_entries' => $total_entries,
-				'migrated_rows' => 0,
+				'blog_modules_id'      => $blog_modules_id,
+				'current_meta'         => $current_meta,
+				'total_entries'        => $total_entries,
+				'migrated_rows'        => 0,
 				'percentage_per_batch' => 100 / $total_batches,
-				'migrated_percentage' => 0,
+				'migrated_percentage'  => 0,
 			);
 
 			update_option( 'hustle_30_migration_data', $migration_data );
@@ -1336,7 +1377,7 @@ class Hustle_Migration {
 			$this->finish_tracking_subscription_migration( $migrated_rows );
 		}
 
-		foreach( $metas as $meta ) {
+		foreach ( $metas as $meta ) {
 
 			$migrated_rows++;
 
@@ -1350,7 +1391,7 @@ class Hustle_Migration {
 			} elseif ( 'subscription' === $meta->meta_key ) {
 				$current_meta = $this->migrate_subscription( $meta );
 
-			} elseif( false !== stripos( $meta->meta_key, 'page_shares' ) ) {
+			} elseif ( false !== stripos( $meta->meta_key, 'page_shares' ) ) {
 				$current_meta = $this->migrate_sshare_page_counter( $meta );
 			}
 		}
@@ -1361,15 +1402,15 @@ class Hustle_Migration {
 		}
 
 		// Update last the stored data of the last batch.
-		$migration_data['current_meta'] = $current_meta;
-		$migration_data['migrated_rows'] = $migrated_rows;
+		$migration_data['current_meta']         = $current_meta;
+		$migration_data['migrated_rows']        = $migrated_rows;
 		$migration_data['migrated_percentage'] += $migration_data['percentage_per_batch'];
 		update_option( 'hustle_30_migration_data', $migration_data );
 
 		$response = array(
 			'migrated_percentage' => round( $migration_data['migrated_percentage'], 2 ),
-			'migrated_rows' => $migrated_rows,
-			'total_entries' => $migration_data['total_entries'],
+			'migrated_rows'       => $migrated_rows,
+			'total_entries'       => $migration_data['total_entries'],
 		);
 
 		wp_send_json_success( $response );
@@ -1382,8 +1423,8 @@ class Hustle_Migration {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $current_module the last module that was processed in the previous page.
-	 * @param int $current_meta the last meta that was processed in the previous page
+	 * @param int     $current_module the last module that was processed in the previous page.
+	 * @param int     $current_meta the last meta that was processed in the previous page
 	 * @param boolean $wpdb
 	 * @return array
 	 */
@@ -1394,21 +1435,21 @@ class Hustle_Migration {
 		}
 
 		$meta_keys_placeholders = implode( ', ', array_fill( 0, count( self::$tracking_meta_keys ), '%s' ) );
-		$meta_key_query = $wpdb->prepare(
+		$meta_key_query         = $wpdb->prepare(
 			"`meta_key` IN ({$meta_keys_placeholders})", // phpcs:ignore
 			self::$tracking_meta_keys
 		);
 
 		$modules_id_placeholders = implode( ', ', array_fill( 0, count( $modules_id ), '%d' ) );
-		$modules_id_query = $wpdb->prepare(
+		$modules_id_query        = $wpdb->prepare(
 			"`module_id` IN ({$modules_id_placeholders})", // phpcs:ignore
 			$modules_id
 		);
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		$query = $wpdb->prepare(
-			"SELECT *
-			FROM `". $wpdb->base_prefix ."hustle_modules_meta`
+			'SELECT *
+			FROM `' . $wpdb->base_prefix . "hustle_modules_meta`
 			WHERE `meta_id` > %d
 			AND (({$modules_id_query}
 			AND {$meta_key_query})
@@ -1491,8 +1532,8 @@ class Hustle_Migration {
 				$module_type = $this->get_module_type_by_module_id( $module_id );
 			}
 		}
-		$meta_key = $old_view->meta_key;
-		$date_created = date_i18n( 'Y-m-d H:i:s', $old_data['date'] );
+		$meta_key        = $old_view->meta_key;
+		$date_created    = date_i18n( 'Y-m-d H:i:s', $old_data['date'] );
 		$module_sub_type = null;
 
 		// Define the subtype for embeds and social sharing modules.
@@ -1528,15 +1569,15 @@ class Hustle_Migration {
 
 		$data = json_decode( $old_subscription->meta_value, true );
 
-		$date_created = date_i18n( 'Y-m-d H:i:s', $data['time'] );
-		$entry = new Hustle_Entry_Model();
+		$date_created      = date_i18n( 'Y-m-d H:i:s', $data['time'] );
+		$entry             = new Hustle_Entry_Model();
 		$entry->entry_type = $data['module_type'];
-		$entry->module_id = $old_subscription->module_id;
+		$entry->module_id  = $old_subscription->module_id;
 
 		$entry->save( $date_created );
 
 		$entry_data = array();
-		foreach( $data as $name => $value ) {
+		foreach ( $data as $name => $value ) {
 			if ( 'time' === $name ) {
 				continue;
 			}
@@ -1549,7 +1590,7 @@ class Hustle_Migration {
 			}
 			$entry_data[] = array(
 				// Remove trailing underscores. Used in 3.x when the fields' name had spaces.
-				'name' => preg_replace( '/_+$/', '', $name ),
+				'name'  => preg_replace( '/_+$/', '', $name ),
 				'value' => $value,
 			);
 		}
@@ -1569,7 +1610,7 @@ class Hustle_Migration {
 	private function migrate_sshare_page_counter( $old_counter ) {
 
 		$page_id = $old_counter->module_id;
-		$count = $old_counter->meta_value;
+		$count   = $old_counter->meta_value;
 
 		$tracking = Hustle_Tracking_Model::get_instance();
 		$tracking->save_old_migrated_sshare_page_count( $page_id, $count );
@@ -1590,12 +1631,14 @@ class Hustle_Migration {
 
 		// This should be cached as long as the query is the same in the same load.
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-		$module_type = $wpdb->get_var( $wpdb->prepare(
-			"SELECT `module_type`
-			FROM  " . Hustle_Db::modules_table() .
-			" WHERE `module_id`=%d",
-			$module_id
-		) );
+		$module_type = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT `module_type`
+			FROM  ' . Hustle_Db::modules_table() .
+				' WHERE `module_id`=%d',
+				$module_id
+			)
+		);
 		// phpcs:enable
 
 		return $module_type;

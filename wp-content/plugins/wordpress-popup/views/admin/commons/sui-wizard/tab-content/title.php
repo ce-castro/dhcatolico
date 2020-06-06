@@ -1,7 +1,17 @@
+<?php
+/**
+ * Title section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Title', 'hustle' ); ?></span>
+		<?php /* translators: module type in small caps and in singular */ ?>
 		<span class="sui-description"><?php printf( esc_html__( 'Add a title and a subtitle to your %s.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 	</div>
 
@@ -12,7 +22,7 @@
 			<label for="hustle_module_title" class="sui-label"><?php esc_html_e( 'Title (optional)', 'hustle' ); ?></label>
 			<input type="text"
 				name="title"
-				placeholder="<?php esc_html_e( "E.g. Weekly Newsletter", 'hustle' ); ?>"
+				placeholder="<?php esc_html_e( 'E.g. Weekly Newsletter', 'hustle' ); ?>"
 				value="<?php echo esc_attr( $settings['title'] ); ?>"
 				id="hustle_module_title"
 				class="sui-form-control"

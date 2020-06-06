@@ -1,3 +1,12 @@
+<?php
+/**
+ * Available integrations list wrapper.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box">
 
 	<div class="sui-box-header">

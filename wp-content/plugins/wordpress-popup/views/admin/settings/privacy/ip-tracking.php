@@ -1,4 +1,12 @@
-<?php $ip_tracking = 'on' === $settings['ip_tracking']; ?>
+<?php
+/**
+ * IP tracking row under the "privacy" tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+$ip_tracking = 'on' === $settings['ip_tracking']; ?>
 
 <fieldset class="sui-form-field">
 

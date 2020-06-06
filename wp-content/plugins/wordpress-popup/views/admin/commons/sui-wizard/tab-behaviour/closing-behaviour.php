@@ -1,7 +1,17 @@
+<?php
+/**
+ * Closing behavior section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Closing Behavior', 'hustle' ); ?></span>
+		<?php /* translators: module type in small caps and in singular */ ?>
 		<span class="sui-description"><?php printf( esc_html__( 'Choose how your %s will behave after it has been closed.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 	</div>
 
@@ -23,6 +33,7 @@
 						data-attribute="after_close_trigger"
 						<?php checked( in_array( 'click_close_icon', $settings['after_close_trigger'], true ) ); ?> />
 					<span aria-hidden="true"></span>
+					<?php /* translators: module type capitalized and in singular */ ?>
 					<span><?php printf( esc_html__( '%s closed by the visitor by clicking on “x” icon', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 				</label>
 
@@ -47,6 +58,7 @@
 							data-attribute="after_close_trigger"
 							<?php checked( in_array( 'click_outside', $settings['after_close_trigger'], true ) ); ?> />
 						<span aria-hidden="true"></span>
+						<?php /* translators: 1. module type capitalized and in singular */ ?>
 						<span><?php printf( esc_html__( '%1$s closed by clicking outisde of the %1$s', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 					</label>
 
@@ -60,6 +72,7 @@
 		<div class="sui-form-field">
 
 			<label class="sui-settings-label"><?php esc_html_e( 'Behavior', 'hustle' ); ?></label>
+			<?php /* translators: module type in small caps and in singular */ ?>
 			<span class="sui-description"><?php printf( esc_html__( 'The following behavior will be applied to your %s when closed by any of the selected methods above.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 			<div style="margin: 10px 0;">
@@ -143,6 +156,7 @@
 
 			</div>
 
+			<?php /* translators: module type capitalized and in singular */ ?>
 			<span class="sui-description"><?php printf( esc_html__( '%s will again be visible to the visitor after this much time has passed since the visitor closed it.', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 
 		</div>

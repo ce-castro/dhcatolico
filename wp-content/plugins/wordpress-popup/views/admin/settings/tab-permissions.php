@@ -1,9 +1,21 @@
 <?php
+/**
+ * Permissions tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $form_id  = 'hustle-permissions-settings-form';
 $settings = Hustle_Settings_Admin::get_permissions_settings();
 $roles    = Opt_In_Utils::get_user_roles();
 ?>
-<div id="permissions-box" class="sui-box" data-tab="permissions" <?php if ( 'permissions' !== $section ) echo 'style="display: none;"'; ?>>
+<div id="permissions-box" class="sui-box" data-tab="permissions"
+<?php
+if ( 'permissions' !== $section ) {
+	echo 'style="display: none;"';}
+?>
+>
 
 	<div class="sui-box-header">
 		<h2 class="sui-box-title"><?php esc_html_e( 'Permissions', 'hustle' ); ?></h2>
@@ -29,8 +41,8 @@ $roles    = Opt_In_Utils::get_user_roles();
 		$this->render(
 			'admin/settings/permissions/edit-modules',
 			array(
-				'roles'              => $roles,
-				'form_id'            => $form_id,
+				'roles'   => $roles,
+				'form_id' => $form_id,
 			)
 		);
 
@@ -85,13 +97,13 @@ $roles    = Opt_In_Utils::get_user_roles();
 
 		<div class="sui-actions-right">
 
-			<button 
+			<button
 				class="sui-button sui-button-blue hustle-settings-save"
 				data-form-id="<?php echo esc_attr( $form_id ); ?>"
 				data-target="permissions"
 			>
 				<span class="sui-loading-text"><?php esc_html_e( 'Save Settings', 'hustle' ); ?></span>
-				<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 
 		</div>

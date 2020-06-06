@@ -1,111 +1,117 @@
 <?php
-if ( $total < $entries_per_page ) {
+/**
+ * Displays element to paginate modules in the listing page.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+if ( $total <= $entries_per_page ) {
 	return;
 }
-$url = add_query_arg(
-	array(
-		'page' => $page,
-	),
-	get_admin_url( get_current_blog_id(), 'admin.php' )
-);
+// don't use filter_input() here, because of see Hustle_Module_Admin::maybe_remove_paged function
+$paged = ! empty( $_GET['paged'] ) ? (int) $_GET['paged'] : 1; // phpcs:ignore
+$args = [];
+if ( ! empty( $section ) ) {
+	$args['section'] = $section;
+}
+$base_url = add_query_arg( $args, remove_query_arg( 'paged' ) );
+$max = (int) ceil( $total / $entries_per_page );
+$short_pagination = 5 > $max;
 ?>
 <ul class="sui-pagination">
 <?php
-if ( 1 < $paged ) {
+/**
+ * Conditions:
+ * 1. Show this button if there are 5 pages or more.
+ * 2. Hide this button if first page is current page.
+ */
+if ( ! $short_pagination ) {
 	/**
 	 * ELEMENT: Skip to first page
-	 *
-	 * Conditions:
-	 * 1. Show this button if there are 10 pages or more.
-	 * 2. Show this button if user is on page #5 or later.
-	 *
 	 */
 	?>
 	<li class="sui-pagination--start">
-		<a href="<?php echo esc_url( $url ); ?>">
-			<i class="sui-icon-arrow-skip-start" aria-hidden="true"></i>
+		<a href="<?php echo esc_url( $base_url ); ?>" <?php disabled( $paged <= 1 ); ?>>
+			<span class="sui-icon-arrow-skip-start" aria-hidden="true"></span>
 			<span class="sui-screen-reader-text"><?php esc_html_e( 'Go to first page', 'hustle' ); ?></span>
 		</a>
 	</li>
 
-<?php
+	<?php
 	/**
-	 * ELEMENT: Go to next page
-	 *
-	 * Conditions:
-	 * 1. Show this button if there are 5 pages or more.
-	 * 2. Hide this button if first page is current page.
-	 *
+	 * ELEMENT: Go to previous page
 	 */
-	$u = add_query_arg( 'paged', $paged - 1, $url );
+	$u = add_query_arg( 'paged', $paged - 1, $base_url );
 	?>
 	<li class="sui-pagination--next">
-		<a href="<?php echo esc_url( $u ); ?>">
-			<i class="sui-icon-chevron-left" aria-hidden="true"></i>
+		<a href="<?php echo esc_url( $u ); ?>" <?php disabled( $paged <= 1 ); ?>>
+			<span class="sui-icon-chevron-left" aria-hidden="true"></span>
 			<span class="sui-screen-reader-text"><?php esc_html_e( 'Go to previous page', 'hustle' ); ?></span>
 		</a>
 	</li>
-<?php
+	<?php
 }
 
-	/**
-	 * ELEMENT: List of pages
-	 *
-	 * 1. Use "sui-active" class to determine current page.
-	 *
-	 */
-if (  $total > $entries_per_page ) {
-	$i = 1;
-	do {
-		$u = $url;
-		if ( 1 < $i ) {
-			$u = add_query_arg( 'paged', $i, $u );
-		}
+/**
+ * ELEMENT: List of pages
+ *
+ * 1. Use "sui-active" class to determine current page.
+ */
+$i = 1;
+do {
+	if ( 1 < $i ) {
+		$u = add_query_arg( 'paged', $i, $base_url );
+	} else {
+		$u = $base_url;
+	}
+	if ( ! $short_pagination && ( $paged - 2 === $i && 1 !== $i || $paged + 2 === $i && $i !== $max ) ) {
+		printf(
+			'<li><a href="%s"> ... </a></li>',
+			esc_url( $u )
+		);
+	} elseif ( $short_pagination || in_array( $i, range( $paged - 2, $paged + 2 ), true ) ) {
 		printf(
 			'<li><a class="%s" href="%s">%d</a></li>',
-			esc_attr( $paged === $i? 'sui-active' : '' ),
+			esc_attr( $paged === $i ? 'sui-active' : '' ),
 			esc_url( $u ),
-			esc_html( $i++ )
+			esc_html( $i )
 		);
-	} while ( ( $i - 1 ) * $entries_per_page < $total );
-}
+	}
+	$i++;
+} while ( $i <= $max );
 
+/**
+ * Conditions:
+ * 1. Show this button if there are 5 pages or more.
+ * 2. Hide this button if last page is current page.
+ */
+if ( ! $short_pagination ) {
 	/**
-	 * ELEMENT: Go to previous page
-	 *
-	 * Conditions:
-	 * 1. Show this button if there are 5 pages or more.
-	 * 2. Hide this button if last page is current page.
-	 *
+	 * ELEMENT: Go to next page
 	 */
-if ( $paged < $total / $entries_per_page ) {
-	$u = add_query_arg( 'paged', $paged + 1, $url );
+	$u = add_query_arg( 'paged', $paged + 1, $base_url );
 	?>
 	<li class="sui-pagination--next">
-		<a href="<?php echo esc_url( $u ); ?>">
-			<i class="sui-icon-chevron-right" aria-hidden="true"></i>
+		<a href="<?php echo esc_url( $u ); ?>" <?php disabled( $paged >= $max ); ?>>
+			<span class="sui-icon-chevron-right" aria-hidden="true"></span>
 			<span class="sui-screen-reader-text"><?php esc_html_e( 'Go to next page', 'hustle' ); ?></span>
 		</a>
 	</li>
-<?php
+	<?php
 
 	/**
 	 * ELEMENT: Skip to last page
-	 *
-	 * Conditions:
-	 * 1. Show this button if there are 10 pages or more.
-	 * 2. Hide this button if user is on page #7.
-	 *
 	 */
-	$u = add_query_arg( 'paged', ceil( $total / $entries_per_page ), $url );
+	$u = add_query_arg( 'paged', $max, $base_url );
 	?>
 	<li class="sui-pagination--end">
-		<a href="<?php echo esc_url( $u ); ?>">
-			<i class="sui-icon-arrow-skip-end" aria-hidden="true"></i>
+		<a href="<?php echo esc_url( $u ); ?>" <?php disabled( $paged >= $max ); ?>>
+			<span class="sui-icon-arrow-skip-end" aria-hidden="true"></span>
 			<span class="sui-screen-reader-text"><?php esc_html_e( 'Go to last page', 'hustle' ); ?></span>
 		</a>
 	</li>
-<?php
+	<?php
 }
 ?>
 </ul>

@@ -1,12 +1,17 @@
 <?php
 /**
+ * Social sharing wizard.
+ *
  * @var Opt_In $this
+ *
+ * @package Hustle
+ * @since 4.0.0
  */
 
-$module_type = $module->module_type;
-$module_name = $module->module_name;
+$module_type         = $module->module_type;
+$module_name         = $module->module_name;
 $appearance_settings = $module->get_design()->to_array();
-$display_settings = $module->get_display()->to_array();
+$display_settings    = $module->get_display()->to_array();
 $content_settings    = $module->get_content()->to_array();
 $visibility_settings = $module->get_visibility()->to_array();
 
@@ -15,7 +20,7 @@ $capitalize_plural   = esc_html__( 'Social Shares', 'hustle' );
 $smallcaps_singular  = esc_html__( 'social share', 'hustle' );
 $smallcaps_plural    = esc_html__( 'social shares', 'hustle' );
 
-self::static_render(
+$this->render(
 	'admin/commons/sui-wizard/wizard',
 	array(
 		'page_id'             => 'hustle-module-wizard-view',
@@ -28,7 +33,7 @@ self::static_render(
 		'capitalize_singular' => $capitalize_singular,
 		'smallcaps_singular'  => $smallcaps_singular,
 		'wizard_tabs'         => array(
-			'services'     => array(
+			'services'   => array(
 				'name'     => esc_html__( 'Services', 'hustle' ),
 				'template' => 'admin/sshare/services/template',
 				'support'  => array(
@@ -36,7 +41,7 @@ self::static_render(
 					'section'  => $section,
 				),
 			),
-			'display'     => array(
+			'display'    => array(
 				'name'     => esc_html__( 'Display Options', 'hustle' ),
 				'template' => 'admin/sshare/display-options/template',
 				'support'  => array(
@@ -45,7 +50,7 @@ self::static_render(
 					'settings'     => $display_settings,
 				),
 			),
-			'appearance'   => array(
+			'appearance' => array(
 				'name'     => esc_html__( 'Appearance', 'hustle' ),
 				'template' => 'admin/sshare/appearance/template',
 				'support'  => array(
@@ -58,7 +63,7 @@ self::static_render(
 					'module'              => $module,
 				),
 			),
-			'visibility'   => array(
+			'visibility' => array(
 				'name'     => esc_html__( 'Visibility', 'hustle' ),
 				'template' => 'admin/commons/sui-wizard/templates/tab-visibility',
 				'support'  => array(
@@ -73,8 +78,8 @@ self::static_render(
 	)
 );
 
-// Row: Platform Row template
-self::static_render( 'admin/sshare/services/platform-row', array() );
+// Row: Platform row template.
+$this->render( 'admin/sshare/services/platform-row', array() );
 
-// Row: Platform Row template
-self::static_render( 'admin/commons/sui-wizard/dialogs/add-platform-li', array() );
+// Row: Platform item template.
+$this->render( 'admin/commons/sui-wizard/dialogs/add-platform-li', array() );

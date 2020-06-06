@@ -49,7 +49,7 @@ class Hustle_GHBlock_Social_Share extends Hustle_GHBlock_Abstract {
 	 * @since 1.0 Gutenberg Addon
 	 */
 	public function load_assets() {
-		
+
 		Hustle_Module_Front::add_hui_scripts();
 
 		// Scripts
@@ -65,14 +65,14 @@ class Hustle_GHBlock_Social_Share extends Hustle_GHBlock_Abstract {
 			'hustle-block-social-share',
 			'hustle_ss_data',
 			array(
-				'modules' => $this->get_modules(),
-				'admin_url' => admin_url( 'admin.php' ),
+				'modules'       => $this->get_modules(),
+				'admin_url'     => admin_url( 'admin.php' ),
 				'shortcode_tag' => Hustle_Module_Front::SHORTCODE,
-				'nonce' => wp_create_nonce( 'hustle_gutenberg_get_module' ),
-				'l10n' => $this->localize(),
+				'nonce'         => wp_create_nonce( 'hustle_gutenberg_get_module' ),
+				'l10n'          => $this->localize(),
 			)
 		);
-		
+
 		wp_enqueue_style(
 			'hustle_icons',
 			Opt_In::$plugin_url . 'assets/hustle-ui/css/hustle-icons.min.css',
@@ -96,14 +96,14 @@ class Hustle_GHBlock_Social_Share extends Hustle_GHBlock_Abstract {
 
 	private function localize() {
 		return array(
-			'advanced' => esc_html__( 'Advanced', 'hustle' ),
+			'advanced'               => esc_html__( 'Advanced', 'hustle' ),
 			'additional_css_classes' => esc_html__( 'Additional CSS Classes', 'hustle' ),
-			'name' => esc_html__( 'Name', 'hustle' ),
-			'module' => esc_html__( 'Module', 'hustle' ),
-			'customize_module' => esc_html__( 'Customize Social Share', 'hustle' ),
-			'rendering' => esc_html__( 'Rendering...', 'hustle' ),
-			'block_name' => esc_html__( 'Social Share', 'hustle' ),
-			'block_description' => esc_html__( 'Display your Hustle Social Share module in this block.', 'hustle' ),
+			'name'                   => esc_html__( 'Name', 'hustle' ),
+			'module'                 => esc_html__( 'Module', 'hustle' ),
+			'customize_module'       => esc_html__( 'Customize Social Share', 'hustle' ),
+			'rendering'              => esc_html__( 'Rendering...', 'hustle' ),
+			'block_name'             => esc_html__( 'Social Share', 'hustle' ),
+			'block_description'      => esc_html__( 'Display your Hustle Social Share module in this block.', 'hustle' ),
 		);
 	}
 

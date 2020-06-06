@@ -1,3 +1,12 @@
+<?php
+/**
+ * Floating positioning section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-form-field">
 
 	<label for="hustle-settings--<?php echo esc_attr( $prefix ); ?>-enable" class="sui-toggle hustle-toggle-with-container" data-toggle-on="<?php echo esc_attr( $prefix ); ?>-enabled">
@@ -6,12 +15,14 @@
 			name="<?php echo esc_html( $prefix ); ?>_enabled"
 			data-attribute="<?php echo esc_html( $prefix ); ?>_enabled"
 			id="hustle-settings--<?php echo esc_html( $prefix ); ?>-enable"
+			aria-labelledby="hustle-settings--<?php echo esc_html( $prefix ); ?>-enable-label"
 			<?php checked( $settings[ $prefix . '_enabled' ], '1' ); ?>
 		/>
-		<span class="sui-toggle-slider"></span>
-	</label>
+		<span class="sui-toggle-slider" aria-hidden="true"></span>
 
-	<label for="hustle-settings--<?php echo esc_html( $prefix ); ?>-enable"><?php printf( esc_html__( 'Enable %s', 'hustle' ), esc_html( $label ) ); ?></label>
+		<?php /* translators: position label */ ?>
+		<span id="hustle-settings--<?php echo esc_html( $prefix ); ?>-enable-label" class="sui-toggle-label"><?php printf( esc_html__( 'Enable %s', 'hustle' ), esc_html( $label ) ); ?></span>
+	</label>
 
 	<div class="sui-toggle-content" data-toggle-content="<?php echo esc_attr( $prefix ); ?>-enabled">
 
@@ -47,9 +58,8 @@
 
 								<?php
 								echo Opt_In_Utils::render_image_markup( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-									esc_url( self::$plugin_url . 'assets/images/' . $position['image1x'] ),
-									esc_url( self::$plugin_url . 'assets/images/' . $position['image2x'] ),
-									''
+									self::$plugin_url . 'assets/images/' . $position['image1x'],
+									self::$plugin_url . 'assets/images/' . $position['image2x']
 								);
 								?>
 
@@ -295,7 +305,7 @@
 									id="hustle-<?php echo esc_html( $prefix ); ?>-align--left"
 									<?php checked( $settings[ $prefix . '_align' ], 'left' ); ?>
 								/>
-								<i class="sui-icon-align-left sui-md" aria-hidden="true"></i>
+								<span class="sui-icon-align-left sui-md" aria-hidden="true"></span>
 								<span class="sui-screen-reader-text"><?php esc_html_e( 'Left', 'hustle' ); ?></span>
 							</label>
 
@@ -308,7 +318,7 @@
 									id="hustle-<?php echo esc_html( $prefix ); ?>-align--center"
 									<?php checked( $settings[ $prefix . '_align' ], 'center' ); ?>
 								/>
-								<i class="sui-icon-align-center sui-md" aria-hidden="true"></i>
+								<span class="sui-icon-align-center sui-md" aria-hidden="true"></span>
 								<span class="sui-screen-reader-text"><?php esc_html_e( 'Center', 'hustle' ); ?></span>
 							</label>
 
@@ -321,7 +331,7 @@
 									id="hustle-<?php echo esc_html( $prefix ); ?>-align--right"
 									<?php checked( $settings[ $prefix . '_align' ], 'right' ); ?>
 								/>
-								<i class="sui-icon-align-right sui-md" aria-hidden="true"></i>
+								<span class="sui-icon-align-right sui-md" aria-hidden="true"></span>
 								<span class="sui-screen-reader-text"><?php esc_html_e( 'Right', 'hustle' ); ?></span>
 							</label>
 

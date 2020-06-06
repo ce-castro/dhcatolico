@@ -1,6 +1,11 @@
 <?php
 /**
+ * Embedded wizard.
+ *
  * @var Opt_In $this
+ *
+ * @package Hustle
+ * @since 4.0.0
  */
 
 $module_type         = $module->module_type;
@@ -103,7 +108,6 @@ $this->render(
 					'is_optin'            => $is_optin,
 					'is_active'           => $is_active,
 					'module_type'         => $module_type,
-					'module_name'         => $module_name,
 					'capitalize_singular' => $capitalize_singular,
 					'capitalize_plural'   => $capitalize_plural,
 					'smallcaps_singular'  => $smallcaps_singular,

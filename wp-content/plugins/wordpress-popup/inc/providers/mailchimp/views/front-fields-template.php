@@ -1,4 +1,5 @@
-<div class="hustle-form-options"<?php if ( 'hidden' === $group_type ) echo ' style="display:none;"'; ?>>
+<div class="hustle-form-options"<?php if ( 'hidden' === $group_type ) {
+	echo ' style="display:none;"';} ?>>
 
 	<input
 		type="hidden"

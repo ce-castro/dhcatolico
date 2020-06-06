@@ -1,4 +1,11 @@
 <?php
+/**
+ * Triggers section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $is_popup     = Hustle_Module_Model::POPUP_MODULE === $module_type;
 $column_class = $is_popup ? 'sui-col-md-6' : 'sui-col';
 $animation_in = $settings['animation_in'];
@@ -8,6 +15,7 @@ $animation_in = $settings['animation_in'];
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Animation Settings', 'hustle' ); ?></span>
+		<?php /* translators: module type in small caps and in singular */ ?>
 		<span class="sui-description"><?php printf( esc_html__( 'Choose how you want your %s to animate on entrance & exit.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 	</div>
 
@@ -19,6 +27,7 @@ $animation_in = $settings['animation_in'];
 
 				<div class="sui-form-field">
 
+					<?php /* translators: module type capitalized and in singular */ ?>
 					<label class="sui-label"><?php printf( esc_html__( '%s entrance animation', 'hustle' ), esc_html( $capitalize_singular ) ); ?></label>
 
 					<select class="sui-select" name="animation_in" data-attribute="animation_in">
@@ -176,6 +185,7 @@ $animation_in = $settings['animation_in'];
 
 					<div class="sui-form-field">
 
+						<?php /* translators: module type capitalized and in singular */ ?>
 						<label class="sui-label"><?php printf( esc_html__( '%s exit animation', 'hustle' ), esc_html( $capitalize_singular ) ); ?></label>
 
 						<select class="sui-select" data-attribute="animation_out">

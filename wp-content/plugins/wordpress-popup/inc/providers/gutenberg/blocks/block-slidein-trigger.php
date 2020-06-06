@@ -36,7 +36,7 @@ class Hustle_GHBlock_slidein_Trigger extends Hustle_GHBlock_Abstract {
 	 */
 	public function render_block( $properties = array() ) {
 
-		$content = isset( $properties['content'] ) ? $properties['content'] : __( 'Click here', 'hustle' );
+		$content   = isset( $properties['content'] ) ? $properties['content'] : __( 'Click here', 'hustle' );
 		$css_class = isset( $properties['css_class'] ) ? $properties['css_class'] : '';
 
 		if ( isset( $properties['id'] ) ) {
@@ -64,13 +64,13 @@ class Hustle_GHBlock_slidein_Trigger extends Hustle_GHBlock_Abstract {
 			'hustle-block-slidein-trigger',
 			'hustle_slidein_trigger_data',
 			array(
-				'wizard_page' => Hustle_Module_Admin::SLIDEIN_WIZARD_PAGE,
-				'modules' => $this->get_modules(),
-				'admin_url' => admin_url( 'admin.php' ),
-				'nonce' => wp_create_nonce( 'hustle_gutenberg_get_module' ),
+				'wizard_page'   => Hustle_Module_Admin::SLIDEIN_WIZARD_PAGE,
+				'modules'       => $this->get_modules(),
+				'admin_url'     => admin_url( 'admin.php' ),
+				'nonce'         => wp_create_nonce( 'hustle_gutenberg_get_module' ),
 				'shortcode_tag' => Hustle_Module_Front::SHORTCODE,
-				'text_domain' => 'hustle',
-				'l10n' => $this->localize(),
+				'text_domain'   => 'hustle',
+				'l10n'          => $this->localize(),
 			)
 		);
 	}
@@ -82,17 +82,17 @@ class Hustle_GHBlock_slidein_Trigger extends Hustle_GHBlock_Abstract {
 
 	private function localize() {
 		return array(
-			'module' => esc_html__( 'Module', 'hustle' ),
+			'module'                 => esc_html__( 'Module', 'hustle' ),
 			'additional_css_classes' => esc_html__( 'Additional CSS Classes', 'hustle' ),
-			'click_here' => esc_html__( 'Click here', 'hustle' ),
-			'content_here' => esc_html__( 'Add the clickable text that will trigger the module.', 'hustle' ),
-			'advanced' => esc_html__( 'Advanced', 'hustle' ),
-			'trigger_content' => esc_html__( 'Trigger Content', 'hustle' ),
-			'name' => esc_html__( 'Name', 'hustle' ),
-			'customize_module' => esc_html__( 'Customize Slidein', 'hustle' ),
-			'rendering' => esc_html__( 'Rendering...', 'hustle' ), //Unused
-			'block_name' => esc_html__( 'Slidein Trigger', 'hustle' ),
-			'block_description' => esc_html__( 'Embed the trigger button for a slidein module.', 'hustle' ),
+			'click_here'             => esc_html__( 'Click here', 'hustle' ),
+			'content_here'           => esc_html__( 'Add the clickable text that will trigger the module.', 'hustle' ),
+			'advanced'               => esc_html__( 'Advanced', 'hustle' ),
+			'trigger_content'        => esc_html__( 'Trigger Content', 'hustle' ),
+			'name'                   => esc_html__( 'Name', 'hustle' ),
+			'customize_module'       => esc_html__( 'Customize Slidein', 'hustle' ),
+			'rendering'              => esc_html__( 'Rendering...', 'hustle' ), // Unused
+			'block_name'             => esc_html__( 'Slidein Trigger', 'hustle' ),
+			'block_description'      => esc_html__( 'Embed the trigger button for a slidein module.', 'hustle' ),
 			'block_more_description' => esc_html__( 'Note: the Trigger property of the Slidein should be set to Click to embed the trigger button for the module.', 'hustle' ),
 		);
 	}

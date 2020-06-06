@@ -1,7 +1,19 @@
 <?php
+/**
+ * Privacy tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $settings = Hustle_Settings_Admin::get_privacy_settings();
 ?>
-<div id="privacy-box" class="sui-box" data-tab="privacy" <?php if ( 'privacy' !== $section ) echo 'style="display: none;"'; ?>>
+<div id="privacy-box" class="sui-box" data-tab="privacy"
+<?php
+if ( 'privacy' !== $section ) {
+	echo 'style="display: none;"';}
+?>
+>
 
 	<div class="sui-box-header">
 		<h2 class="sui-box-title"><?php esc_html_e( "Viewer's Privacy", 'hustle' ); ?></h2>
@@ -38,13 +50,13 @@ $settings = Hustle_Settings_Admin::get_privacy_settings();
 
 		<div class="sui-actions-right">
 
-			<button 
+			<button
 				class="sui-button sui-button-blue hustle-settings-save"
 				data-form-id="hustle-privacy-settings-form"
 				data-target="privacy"
 			>
 				<span class="sui-loading-text"><?php esc_html_e( 'Save Settings', 'hustle' ); ?></span>
-				<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 
 		</div>

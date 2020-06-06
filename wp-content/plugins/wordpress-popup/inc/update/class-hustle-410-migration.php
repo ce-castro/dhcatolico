@@ -1,5 +1,12 @@
 <?php
 /**
+ * File for Hustle_410_Migration class.
+ *
+ * @package Hustle
+ * @since 4.1.0
+ */
+
+/**
  * Class Hustle_410_Migration.
  *
  * This class handles the migration when going from 4.0.x to 4.1.x
@@ -41,7 +48,7 @@ class Hustle_410_Migration {
 	 * @since 4.1.0
 	 * @var array
 	 */
-	private $backup_metas = [];
+	private $backup_metas = array();
 
 	/**
 	 * Hustle_401_Migration class constructor.
@@ -52,7 +59,7 @@ class Hustle_410_Migration {
 		$this->wpdb = $wpdb;
 
 		if ( $this->is_migrating() ) {
-			add_action( 'init', [ $this, 'do_migration' ] );
+			add_action( 'init', array( $this, 'do_migration' ) );
 		}
 	}
 
@@ -112,7 +119,7 @@ class Hustle_410_Migration {
 
 		do {
 			$offset     = get_option( 'hustle_40_migration_offset', 0 );
-			$m2_modules = get_option( 'hustle_notice_stop_support_m2', [] );
+			$m2_modules = get_option( 'hustle_notice_stop_support_m2', array() );
 			$conditions = $this->get_all_hustle_module_conditions( $limit, $offset );
 
 			foreach ( $conditions as $meta ) {
@@ -127,12 +134,12 @@ class Hustle_410_Migration {
 
 					$group_id = substr( md5( wp_rand() ), 0, 10 );
 
-					$value['conditions'] = [
-						$group_id => [
+					$value['conditions'] = array(
+						$group_id => array(
 							'filter_type' => 'all',
 							'group_id'    => $group_id,
-						],
-					];
+						),
+					);
 				}
 
 				foreach ( $value['conditions'] as $group_id => $conds ) {
@@ -148,10 +155,10 @@ class Hustle_410_Migration {
 
 						// Hide on 404 page according old behavior.
 						$filter_type            = ! $count_conds ? 'except' : 'only';
-						$conds['wp_conditions'] = [
-							'wp_conditions' => [ 'is_404' ],
+						$conds['wp_conditions'] = array(
+							'wp_conditions' => array( 'is_404' ),
 							'filter_type'   => $filter_type,
-						];
+						);
 
 						// By default, we start showing modules on 404 page.
 						unset( $conds['page_404'] );
@@ -165,7 +172,7 @@ class Hustle_410_Migration {
 					// Remove 'all' values.
 					$post_types = Opt_In_Utils::get_post_types();
 					$cpts       = array_keys( $post_types );
-					$types      = array_merge( [ 'posts', 'pages', 'tags', 'categories' ], $cpts );
+					$types      = array_merge( array( 'posts', 'pages', 'tags', 'categories' ), $cpts );
 
 					foreach ( $types as $type ) {
 						if (
@@ -180,7 +187,7 @@ class Hustle_410_Migration {
 					}
 
 					// Transform condition rules according new logic.
-					$and_rules = [
+					$and_rules = array(
 						'visitor_logged_in_status',
 						'visitor_device',
 						'from_referrer',
@@ -189,7 +196,7 @@ class Hustle_410_Migration {
 						'visitor_commented',
 						'visitor_country',
 						'shown_less_than',
-					];
+					);
 
 					$or_rules = array_diff_key( $conds, array_flip( $and_rules ) );
 
@@ -199,13 +206,13 @@ class Hustle_410_Migration {
 					if ( isset( $or_rules['pages'] ) && 1 < count( $or_rules ) ) {
 						$this->add_new_group(
 							$value,
-							array_merge( $and_conds, [ 'pages' => $conds['pages'] ] )
+							array_merge( $and_conds, array( 'pages' => $conds['pages'] ) )
 						);
 						unset( $conds['pages'] );
 						unset( $or_rules['pages'] );
 					}
 
-					$post_group = array_intersect_key( $or_rules, array_flip( [ 'posts', 'tags', 'categories' ] ) );
+					$post_group = array_intersect_key( $or_rules, array_flip( array( 'posts', 'tags', 'categories' ) ) );
 					if ( ! empty( $post_group ) && count( $post_group ) < count( $or_rules ) ) {
 						$this->add_new_group( $value, array_merge( $and_conds, $post_group ) );
 
@@ -219,7 +226,7 @@ class Hustle_410_Migration {
 						}
 						$this->add_new_group(
 							$value,
-							array_merge( $and_conds, [ $name => $args ] )
+							array_merge( $and_conds, array( $name => $args ) )
 						);
 						unset( $conds[ $name ] );
 						unset( $or_rules[ $name ] );
@@ -235,8 +242,8 @@ class Hustle_410_Migration {
 				// Save transformed conditions.
 				$this->wpdb->update(
 					Hustle_Db::modules_meta_table(),
-					[ 'meta_value' => wp_json_encode( $value ) ],
-					[ 'meta_id' => $meta_id ]
+					array( 'meta_value' => wp_json_encode( $value ) ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+					array( 'meta_id' => $meta_id )
 				);
 
 				wp_cache_delete( $meta->module_id, 'hustle_module_meta' );
@@ -270,7 +277,9 @@ class Hustle_410_Migration {
 
 		$modules_table = Hustle_Db::modules_meta_table();
 
-		$results = $this->wpdb->get_results( "SELECT meta_id, module_id, meta_value FROM {$modules_table} WHERE meta_key = 'visibility' LIMIT " . intval( $limit ) . ' OFFSET ' . intval( $offset ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$query   = $this->wpdb->prepare( "SELECT meta_id, module_id, meta_value FROM {$modules_table} WHERE meta_key = 'visibility' LIMIT %d OFFSET %d", intval( $limit ), intval( $offset ) );
+		$results = $this->wpdb->get_results( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		return $results;
 	}
@@ -361,7 +370,7 @@ class Hustle_410_Migration {
 		$this->wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		// Empty the property.
-		$this->backup_metas = [];
+		$this->backup_metas = array();
 	}
 
 	/*
@@ -393,6 +402,7 @@ class Hustle_410_Migration {
 			$modules_meta_table = Hustle_Db::modules_meta_table();
 
 			// Get the meta id and module id of the modules with backups.
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$backup_sql    = $this->wpdb->prepare( "SELECT meta_id, module_id FROM {$modules_meta_table} WHERE meta_key = %s", self::VISIBILITY_BACKUP_META );
 			$backup_result = $this->wpdb->get_results( $backup_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
@@ -401,8 +411,9 @@ class Hustle_410_Migration {
 			// Delete the visibility conditions created for 4.1.x migration.
 			$modules_id_holder = implode( ', ', array_fill( 0, count( $backup_modules_id ), '%s' ) );
 
+			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$delete_sql = $this->wpdb->prepare( "DELETE FROM {$modules_meta_table} WHERE module_id IN ($modules_id_holder) AND meta_key = 'visibility'", $backup_modules_id );
-			$deleted    = $this->wpdb->query( $delete_sql );
+			$deleted    = $this->wpdb->query( $delete_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			// Check if the metas were successfully deleted.
 			if ( false === $deleted ) {
@@ -414,8 +425,9 @@ class Hustle_410_Migration {
 
 			$metas_id_holder = implode( ', ', array_fill( 0, count( $backup_metas_id ), '%s' ) );
 
+			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			$rename_sql = $this->wpdb->prepare( "UPDATE {$modules_meta_table} SET meta_key = 'visibility' WHERE meta_id IN ($metas_id_holder)", $backup_metas_id );
-			$renamed    = $this->wpdb->query( $rename_sql );
+			$renamed    = $this->wpdb->query( $rename_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			// Check if the old metas were successfully restored.
 			if ( false === $renamed ) {

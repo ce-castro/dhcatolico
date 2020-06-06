@@ -58,7 +58,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @param $password
 		 */
 		private function __construct( $base_url, $username, $password ) {
-			//final check here
+			// final check here
 			if ( ! $base_url || ! $username || ! $password ) {
 				throw new Exception( __( 'Missing required API Credentials', 'hustle' ) );
 			}
@@ -80,7 +80,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @return Hustle_Mautic_Api|null
 		 */
 		public static function get_instance( $base_url = '', $username, $password = '' ) {
-			//initial check here
+			// initial check here
 			if ( ! $username ) {
 				throw new Exception( __( 'Missing required API Credentials', 'hustle' ) );
 			}
@@ -147,11 +147,11 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 			 */
 			$url = apply_filters( 'hustle_addon_mautic_api_url', $url, $verb, $args );
 
-			$headers      = array(
+			$headers = array(
 				'Authorization' => 'Basic ' . base64_encode( $this->username . ':' . $this->password ), //phpcs:ignore
-				'Expect' => '',
-				'Accept' => 'application/json',
-				'Content-Type'	=> 'application/json'
+				'Expect'        => '',
+				'Accept'        => 'application/json',
+				'Content-Type'  => 'application/json',
 			);
 
 			/**
@@ -200,12 +200,12 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 			 */
 			$_args = apply_filters( 'hustle_addon_mautic_api_remote_request_args', $_args );
 
-			$res   = wp_remote_request( $url, $_args );
+			$res = wp_remote_request( $url, $_args );
 
-			//logging data
-			$utils = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request 	= $url;
-			$utils->_last_data_sent 	= $_args;
+			// logging data
+			$utils                      = Hustle_Provider_Utils::get_instance();
+			$utils->_last_url_request   = $url;
+			$utils->_last_data_sent     = $_args;
 			$utils->_last_data_received = $res;
 
 			$wp_response = $res;
@@ -249,7 +249,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 				if ( empty( $res ) ) {
 					$res = wp_parse_args( $body, array() );
 
-					//json-ify to make same format as json response (which is object not array)
+					// json-ify to make same format as json response (which is object not array)
 					$res = wp_json_encode( $res );
 					$res = json_decode( $res );
 				}
@@ -274,33 +274,33 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * Sends rest GET request
 		 *
 		 * @param $action
-		 * @param array $args
+		 * @param array  $args
 		 * @return array|mixed|object|WP_Error
 		 */
-		private function _get( $action, $args = array() ){
-			return $this->_request( "GET", $action, $args );
+		private function _get( $action, $args = array() ) {
+			return $this->_request( 'GET', $action, $args );
 		}
 
 		/**
 		 * Sends rest POST request
 		 *
 		 * @param $action
-		 * @param array $args
+		 * @param array  $args
 		 * @return array|mixed|object|WP_Error
 		 */
-		private function _post( $action, $args = array()  ){
-			return $this->_request( "POST", $action, $args );
+		private function _post( $action, $args = array() ) {
+			return $this->_request( 'POST', $action, $args );
 		}
 
 		/**
 		 * Sends rest PUT request
 		 *
 		 * @param $action
-		 * @param array $args
+		 * @param array  $args
 		 * @return array|mixed|object|WP_Error
 		 */
-		private function _patch( $action, $args = array()  ){
-			return $this->_request( "PATCH", $action, $args );
+		private function _patch( $action, $args = array() ) {
+			return $this->_request( 'PATCH', $action, $args );
 		}
 
 		/**
@@ -312,7 +312,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 				if ( ! empty( $segments ) && isset( $segments->lists ) ) {
 					return $segments;
 				}
-			} catch( Exception $e ) {
+			} catch ( Exception $e ) {
 				return false;
 			}
 			return false;
@@ -321,7 +321,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		/**
 		 * Add contact to Mautic installation.
 		 *
-		 * @param (associative_array) $data			An array of contact details to add.
+		 * @param (associative_array) $data         An array of contact details to add.
 		 * @return Returns contact ID on success or WP_Error.
 		 **/
 		public function add_contact( $data ) {
@@ -335,9 +335,9 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 				} else {
 					$err->add( 'subscribe_error', __( 'Something went wrong. Please try again', 'hustle' ) );
 				}
-			} catch( Exception $e ) {
+			} catch ( Exception $e ) {
 				$error = $e->getMessage();
-				$err = new WP_Error();
+				$err   = new WP_Error();
 				$err->add( 'subscribe_error', $error );
 			}
 
@@ -347,7 +347,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		/**
 		 * Add contact to Mautic installation.
 		 *
-		 * @param (associative_array) $data			An array of contact details to add.
+		 * @param (associative_array) $data         An array of contact details to add.
 		 * @return Returns contact ID on success or WP_Error.
 		 **/
 		public function update_contact( $id, $data ) {
@@ -361,9 +361,9 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 				} else {
 					$err->add( 'subscribe_error', __( 'Something went wrong. Please try again', 'hustle' ) );
 				}
-			} catch( Exception $e ) {
+			} catch ( Exception $e ) {
 				$error = $e->getMessage();
-				$err = new WP_Error();
+				$err   = new WP_Error();
 				$err->add( 'subscribe_error', $error );
 			}
 
@@ -379,17 +379,17 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		public function email_exist( $email ) {
 			$err = new WP_Error();
 			try {
-				$args = array(
+				$args       = array(
 					'search' => $email,
 					'limit'  => 1000,
 				);
-				$res = $this->_get( 'contacts', $args );
+				$res        = $this->_get( 'contacts', $args );
 				$contact_id = '';
 				if ( $res && ! empty( $res->contacts ) ) {
 					$contact_id = wp_list_pluck( $res->contacts, 'id' );
 				}
 				return ! empty( $contact_id ) ? key( $contact_id ) : false;
-			} catch( Exception $e ) {
+			} catch ( Exception $e ) {
 				$err->add( 'server_error', $e->getMessage() );
 			}
 
@@ -407,7 +407,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 			try {
 				$add = $this->_post( 'segments/' . $segment_id . '/contact/' . $contact_id . '/add' );
 				return $add;
-			} catch( Exception $e ) {
+			} catch ( Exception $e ) {
 				$err->add( 'subscribe_error', $e->getMessage() );
 			}
 			return $err;
@@ -417,7 +417,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * Get the list of available contact custom fields.
 		 **/
 		public function get_custom_fields() {
-			$fields = $this->_get('contacts/list/fields');
+			$fields = $this->_get( 'contacts/list/fields' );
 			return $fields;
 		}
 

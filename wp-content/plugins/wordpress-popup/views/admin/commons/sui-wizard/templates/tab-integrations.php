@@ -1,4 +1,11 @@
 <?php
+/**
+ * Main wrapper for the 'Integrations' tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 if ( isset( $smallcaps_singular ) ) {
 	$smallcaps_singular = $smallcaps_singular;
 } else {
@@ -19,7 +26,7 @@ if ( current_user_can( 'hustle_edit_integrations' ) ) {
 }
 ?>
 
-<div id="hustle-box-section-integrations" class="sui-box" <?php if ( 'integrations' !== $section ) echo 'style="display: none;"'; ?> data-tab="integrations">
+<div id="hustle-box-section-integrations" class="sui-box" <?php echo ( 'integrations' !== $section ) ? 'style="display: none;"' : ''; ?> data-tab="integrations">
 
 	<div class="sui-box-header">
 
@@ -96,14 +103,14 @@ if ( current_user_can( 'hustle_edit_integrations' ) ) {
 							<?php esc_html_e( 'Allow Submission', 'hustle' ); ?></label>
 
 						<label class="sui-tab-item<?php echo $allowed ? '' : ' active'; ?>">
-							<input type="radio" name="allow_subscribed_users" value="0" data-attribute="allow_subscribed_users"<?php checked( !$allowed ); ?> data-tab-menu="allow_submit">
+							<input type="radio" name="allow_subscribed_users" value="0" data-attribute="allow_subscribed_users"<?php checked( ! $allowed ); ?> data-tab-menu="allow_submit">
 							<?php esc_html_e( 'Disallow Submission', 'hustle' ); ?></label>
 
 					</div>
 
 					<div class="sui-tabs-content">
 
-						<div class="sui-tab-boxed<?php echo !$allowed ? ' active' : ''; ?>" data-tab-content="allow_submit">
+						<div class="sui-tab-boxed<?php echo ! $allowed ? ' active' : ''; ?>" data-tab-content="allow_submit">
 
 							<div class="sui-form-field">
 
@@ -150,13 +157,13 @@ if ( current_user_can( 'hustle_edit_integrations' ) ) {
 
 		<button class="sui-button wpmudev-button-navigation"
 			data-direction="prev">
-			<i class="sui-icon-arrow-left" aria-hidden="true"></i> <?php esc_html_e( 'Emails', 'hustle' ); ?>
+			<span class="sui-icon-arrow-left" aria-hidden="true"></span> <?php esc_html_e( 'Emails', 'hustle' ); ?>
 		</button>
 
 		<div class="sui-actions-right">
 			<button class="sui-button sui-button-icon-right wpmudev-button-navigation"
 				data-direction="next">
-				<?php esc_html_e( 'Appearance', 'hustle' ); ?> <i class="sui-icon-arrow-right" aria-hidden="true"></i>
+				<?php esc_html_e( 'Appearance', 'hustle' ); ?> <span class="sui-icon-arrow-right" aria-hidden="true"></span>
 			</button>
 		</div>
 

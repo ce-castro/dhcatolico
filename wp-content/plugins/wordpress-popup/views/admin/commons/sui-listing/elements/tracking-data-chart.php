@@ -1,11 +1,19 @@
 <?php
+/**
+ * Displays the actual tracking per module chart in the listing page.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $chart_message_class = '';
 $chart_message       = '';
 $chart_sub_type      = empty( $module_sub_type ) ? 'overall' : $module_sub_type;
 $is_tracking_enabled = ! empty( $tracking_types );
 $smallcaps_singular  = Opt_In_Utils::get_module_type_display_name( $module->module_type );
 
-$canvas_content = sprintf( '<canvas id="hustle-%1$s-%2$s-stats--%3$s"></canvas>',
+$canvas_content = sprintf(
+	'<canvas id="hustle-%1$s-%2$s-stats--%3$s"></canvas>',
 	esc_attr( $module->module_type ),
 	esc_attr( $module->id ),
 	esc_attr( $chart_sub_type )
@@ -77,7 +85,7 @@ if ( ! $module->active ) {
 			<label class="hui-selector-label">
 				<?php if ( ! empty( $notice_for_old_data ) ) { ?>
 				<span class="hui-label-icon sui-tooltip sui-tooltip-constrained" data-tooltip="<?php esc_attr_e( 'We can distinguish the new conversions from the version 4.0.4 or above. Your older conversions will appear under All conversions only.', 'hustle' ); ?>">
-					<i class="sui-icon-info sui-sm" aria-hidden="true"></i>
+					<span class="sui-icon-info sui-sm" aria-hidden="true"></span>
 				</span>
 				<?php } ?>
 				<span class="hui-label-text"><?php esc_html_e( 'Show conversions for', 'hustle' ); ?></span>
@@ -102,7 +110,7 @@ if ( ! $module->active ) {
 
 	<div class="sui-chartjs-message sui-chartjs-message--loading">
 
-		<p><i class="sui-icon-loader sui-loading" aria-hidden="true"></i> <?php esc_html_e( 'Loading data...', 'hustle' ); ?></p>
+		<p><span class="sui-icon-loader sui-loading" aria-hidden="true"></span> <?php esc_html_e( 'Loading data...', 'hustle' ); ?></p>
 
 	</div>
 
@@ -110,7 +118,7 @@ if ( ! $module->active ) {
 
 		<div class="sui-chartjs-message<?php echo esc_attr( $chart_message_class ); ?>">
 
-			<p><i class="sui-icon-info" aria-hidden="true"></i><?php echo $chart_message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+			<p><span class="sui-icon-info" aria-hidden="true"></span><?php echo $chart_message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 
 		</div>
 

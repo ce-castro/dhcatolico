@@ -2,24 +2,36 @@
 
 class Hustle_SShare_Model extends Hustle_Module_Model {
 
-	const SETTINGS_KEY = 'sshare_counters';
-	const COUNTER_META_KEY = 'hustle_shares';
+	const SETTINGS_KEY       = 'sshare_counters';
+	const COUNTER_META_KEY   = 'hustle_shares';
 	const TIMESTAMP_META_KEY = 'hustle_timestamp';
 	const REFRESH_OPTION_KEY = 'hustle_ss_refresh_counters';
-	const FLOAT_DESKTOP = 'float_desktop';
-	const FLOAT_MOBILE = 'float_mobile';
-	const FLOAT_MODULE = 'floating';
+	const FLOAT_DESKTOP      = 'float_desktop';
+	const FLOAT_MOBILE       = 'float_mobile';
+	const FLOAT_MODULE       = 'floating';
 
 	public static function instance() {
 		return new self();
 	}
 
-	public static function get_types() {
-		return array(
-			'floating_social',
-			'widget',
-			'shortcode',
-		);
+	/**
+	 * Get the sub-types for this module.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @return array
+	 */
+	public static function get_sshare_types( $with_titles = false ) {
+		if ( ! $with_titles ) {
+			return array( self::FLOAT_MODULE, 'inline', 'widget', 'shortcode' );
+		} else {
+			return array(
+				self::FLOAT_MODULE => __( 'Floating', 'hustle' ),
+				'inline'           => __( 'Inline', 'hustle' ),
+				'widget'           => __( 'Widget', 'hustle' ),
+				'shortcode'        => __( 'Shortcode', 'hustle' ),
+			);
+		}
 	}
 
 	public function get_content() {
@@ -86,7 +98,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	 * @since 3.0.3
 	 *
 	 * @param integer $post_id
-	 * @param bool $check_expiration_time Optional. Check expiration time or not
+	 * @param bool    $check_expiration_time Optional. Check expiration time or not
 	 * @return bool
 	 */
 	public function should_use_stored( $post_id, $check_expiration_time = false ) {
@@ -99,12 +111,12 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 				return false;
 			}
 
-		// If we're in somewhere that's not a page/post...
+			// If we're in somewhere that's not a page/post...
 		} else {
 
 			// Don't use stored if we don't have anything stored in the options;
 			$sshare_networks_option = Hustle_Settings_Admin::get_hustle_settings( self::SETTINGS_KEY );
-			 if ( empty( $sshare_networks_option ) || empty ( $sshare_networks_option[ self::COUNTER_META_KEY ] ) ) {
+			if ( empty( $sshare_networks_option ) || empty( $sshare_networks_option[ self::COUNTER_META_KEY ] ) ) {
 				return false;
 			}
 		}
@@ -142,7 +154,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	 * @since 3.0.3
 	 * @since 4.0
 	 *
-	 * @param array $network
+	 * @param array   $network
 	 * @param integer $post_id
 	 * @return array
 	 */
@@ -167,11 +179,9 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 
 				$networks_info = array_merge( $networks_info, $missing_info );
 			}
-
 		} else {
 			$networks_info = $this->get_refreshed_counters( $current_link, $networks, $post_id );
 		}
-
 
 		return $networks_info;
 	}
@@ -182,11 +192,11 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	 * @since 4.0
 	 *
 	 * @param string $current_link
-	 * @param array $networks
-	 * @param id $post_id
+	 * @param array  $networks
+	 * @param id     $post_id
 	 * @return array
 	 */
-	public function get_refreshed_counters( $current_link, $networks, $post_id  ) {
+	public function get_refreshed_counters( $current_link, $networks, $post_id ) {
 
 		// Get array with json formatted data for each active network
 		$networks_info = $this->get_networks_data_from_api( $current_link, $networks );
@@ -217,7 +227,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 
 			// Set global option for pages that are not a post.
 			$networks_data = array(
-				self::COUNTER_META_KEY => $networks_info,
+				self::COUNTER_META_KEY   => $networks_info,
 				self::TIMESTAMP_META_KEY => time(),
 			);
 
@@ -240,7 +250,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 
 		$networks_endpoint = self::get_networks_counter_endpoint( false, $current_link );
 
-		foreach( $social_networks as $network ) {
+		foreach ( $social_networks as $network ) {
 
 			if ( isset( $networks_endpoint[ $network ] ) ) {
 				$url = $networks_endpoint[ $network ];
@@ -248,7 +258,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 				continue;
 			}
 
-			$response = wp_remote_get( $url );
+			$response      = wp_remote_get( $url );
 			$response_body = wp_remote_retrieve_body( $response );
 
 			if ( $response_body ) {
@@ -282,11 +292,11 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 		return apply_filters(
 			'hustle_native_share_counter_enpoints',
 			array(
-				'facebook' => 'https://graph.facebook.com/?fields=og_object{engagement{count}}&id=' . $current_link,
+				'facebook'  => 'https://graph.facebook.com/?fields=og_object{engagement{count}}&id=' . $current_link,
 				// There's no official twitter api for doing this. This alternative requires signing in.
-				'twitter' => 'https://counts.twitcount.com/counts.php?url=' . $current_link,
+				'twitter'   => 'https://counts.twitcount.com/counts.php?url=' . $current_link,
 				'pinterest' => 'https://api.pinterest.com/v1/urls/count.json?url=' . $current_link,
-				'reddit' => 'https://www.reddit.com/api/info.json?url=' . $current_link,
+				'reddit'    => 'https://www.reddit.com/api/info.json?url=' . $current_link,
 				'vkontakte' => 'https://vk.com/share.php?act=count&url=' . $current_link,
 			)
 		);
@@ -297,7 +307,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $networks_data
+	 * @param array   $networks_data
 	 * @param boolean $shorten_count If true, 1000 shares would be formatted to 1K.
 	 * @return array
 	 */
@@ -305,7 +315,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 
 		$formatted = array();
 
-		foreach( $networks_data as $network => $response ) {
+		foreach ( $networks_data as $network => $response ) {
 
 			// Get "count" from each network's response and add the "count" number to $formatted array
 			$get_formatted_response = 'format_' . $network . '_api_response';
@@ -313,7 +323,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 				continue;
 			}
 
-			$formatted[ $network ] = $this->{$get_formatted_response}( $networks_data[$network] );
+			$formatted[ $network ] = $this->{$get_formatted_response}( $networks_data[ $network ] );
 
 			if ( $shorten_count ) {
 				$formatted[ $network ] = $this->shorten_count( $formatted[ $network ] );
@@ -336,9 +346,9 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 		if ( $count < 1000 ) {
 			return $count;
 		} elseif ( $count < 1000000 ) {
-			return round( $count/1000, 1, PHP_ROUND_HALF_DOWN ) . __(" K", 'hustle' );
+			return round( $count / 1000, 1, PHP_ROUND_HALF_DOWN ) . __( ' K', 'hustle' );
 		} else {
-			return round( $count/1000000, 1, PHP_ROUND_HALF_DOWN ) . __(" M", 'hustle' );
+			return round( $count / 1000000, 1, PHP_ROUND_HALF_DOWN ) . __( ' M', 'hustle' );
 		}
 	}
 
@@ -360,35 +370,35 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	 * @return integer
 	 */
 	private function format_facebook_api_response( $response ) {
-		$response = json_decode( $response , true);
+		$response   = json_decode( $response, true );
 		$engagement = ! empty( $response['og_object'] ) && ! empty( $response['og_object']['engagement']['count'] ) ? intval( $response['og_object']['engagement']['count'] ) : 0;
 
 		return $engagement;
 	}
 
 	private function format_twitter_api_response( $response ) {
-		$response = json_decode( $response , true);
+		$response = json_decode( $response, true );
 		return isset( $response['count'] ) ? intval( $response['count'] ) : 0;
 	}
 
 	private function format_pinterest_api_response( $response ) {
 		preg_match( '/^receiveCount\((.*)\)$/', $response, $match );
-		if( !isset( $match[1] ) ) {
+		if ( ! isset( $match[1] ) ) {
 			return 0;
 		}
-		$response = json_decode( $match[1] , true);
+		$response = json_decode( $match[1], true );
 		return isset( $response['count'] ) ? intval( $response['count'] ) : 0;
 	}
 
 	private function format_reddit_api_response( $response ) {
-		$response = json_decode( $response , true);
-		if ( !isset( $response['data']['children'] )) {
+		$response = json_decode( $response, true );
+		if ( ! isset( $response['data']['children'] ) ) {
 			return 0;
 		}
-		$data = $response['data']['children'];
+		$data    = $response['data']['children'];
 		$counter = 0;
-		foreach( $data as $sub ) {
-			if ( !isset( $sub['data']['subreddit_subscribers'] ) ) {
+		foreach ( $data as $sub ) {
+			if ( ! isset( $sub['data']['subreddit_subscribers'] ) ) {
 				continue;
 			}
 			$counter = $counter + intval( $sub['data']['subreddit_subscribers'] );
@@ -398,7 +408,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 
 	private function format_vkontakte_api_response( $response ) {
 		preg_match( '/^VK\.Share\.count\(.{1,3}(.*)\)/', $response, $match );
-		if( !isset( $match[1] ) ) {
+		if ( ! isset( $match[1] ) ) {
 			return 0;
 		}
 		return intval( $match[1] );
@@ -425,21 +435,25 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 		global $wp;
 		$current_url = rawurlencode( home_url( $wp->request ) );
 
-		//let users filter the title
+		// let users filter the title
 		$title = apply_filters( 'hustle_social_share_platform_title', rawurlencode( html_entity_decode( esc_html( get_the_title() ) ) ) );
 
-		return apply_filters( 'hustle_native_share_enpoints', array(
+		return apply_filters(
+			'hustle_native_share_enpoints',
+			array(
 
-			'facebook' => 'https://www.facebook.com/sharer/sharer.php?u=' . $current_url,
-			'twitter' => 'https://twitter.com/intent/tweet?url=' . $current_url . '&text=' . $title,
-			'pinterest' => 'https://www.pinterest.com/pin/create/button/?url=' . $current_url,
-			'reddit' => 'https://www.reddit.com/submit?url=' . $current_url,
-			'linkedin' => 'https://www.linkedin.com/shareArticle?mini=true&url=' . $current_url,
-			'vkontakte' => 'https://vk.com/share.php?url=' . $current_url,
-			'whatsapp' => 'https://api.whatsapp.com/send?text=' . $current_url,
-			'email' => 'mailto:?subject=' . $title . '&body=' . $current_url,
+				'facebook'  => 'https://www.facebook.com/sharer/sharer.php?u=' . $current_url,
+				'twitter'   => 'https://twitter.com/intent/tweet?url=' . $current_url . '&text=' . $title,
+				'pinterest' => 'https://www.pinterest.com/pin/create/button/?url=' . $current_url,
+				'reddit'    => 'https://www.reddit.com/submit?url=' . $current_url,
+				'linkedin'  => 'https://www.linkedin.com/shareArticle?mini=true&url=' . $current_url,
+				'vkontakte' => 'https://vk.com/share.php?url=' . $current_url,
+				'whatsapp'  => 'https://api.whatsapp.com/send?text=' . $current_url,
+				'email'     => 'mailto:?subject=' . $title . '&body=' . $current_url,
 
-		), $current_url );
+			),
+			$current_url
+		);
 	}
 
 	public function get_renderer() {

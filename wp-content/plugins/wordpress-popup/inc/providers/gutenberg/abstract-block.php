@@ -13,7 +13,7 @@ abstract class Hustle_GHBlock_Abstract {
 	 *
 	 * @var array
 	 */
-	protected $dependencies = [];
+	protected $dependencies = array();
 
 	/**
 	 * Type will be used as identifier
@@ -57,9 +57,12 @@ abstract class Hustle_GHBlock_Abstract {
 
 		if ( function_exists( 'register_block_type' ) ) {
 
-			register_block_type( 'hustle/' . $this->get_slug(), array(
-				'render_callback' => array( $this, 'render_block' ),
-			) );
+			register_block_type(
+				'hustle/' . $this->get_slug(),
+				array(
+					'render_callback' => array( $this, 'render_block' ),
+				)
+			);
 		}
 
 	}
@@ -97,7 +100,7 @@ abstract class Hustle_GHBlock_Abstract {
 	 * @return array $module_list List of modules with shortcode.
 	 */
 	protected function get_modules_by_type( $type ) {
-		$modules = Hustle_Module_Collection::instance()->get_all( true, array( 'module_type' => $type ) );
+		$modules     = Hustle_Module_Collection::instance()->get_all( true, array( 'module_type' => $type ) );
 		$module_list = array(
 			array(
 				'value' => '',
@@ -136,9 +139,9 @@ abstract class Hustle_GHBlock_Abstract {
 
 	/**
 	 * Check in every block type if this module should be available.
-	 * 
+	 *
 	 * @since 4.0
-	 * 
+	 *
 	 * @param Hustle_Module_Model $module
 	 * @return bool
 	 */

@@ -1,5 +1,18 @@
-<?php $accessibility_color = ! empty( $settings['accessibility_color'] ); ?>
-<div id="accessibility-box" class="sui-box" data-tab="accessibility" <?php if ( 'accessibility' !== $section ) echo 'style="display: none;"'; ?>>
+<?php
+/**
+ * Accessibility tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+$accessibility_color = ! empty( $settings['accessibility_color'] ); ?>
+<div id="accessibility-box" class="sui-box" data-tab="accessibility"
+<?php
+if ( 'accessibility' !== $section ) {
+	echo 'style="display: none;"';}
+?>
+>
 
 	<div class="sui-box-header">
 		<h2 class="sui-box-title"><?php esc_html_e( 'Accessibility', 'hustle' ); ?></h2>
@@ -26,18 +39,26 @@
 
 			<div class="sui-box-settings-col-2">
 
-				<label for="hustle-accessibility-color" class="sui-toggle">
-					<input
-						type="checkbox"
-						value="1"
-						name="hustle-accessibility-color"
-						id="hustle-accessibility-color"
-						<?php checked( $accessibility_color ); ?>
-					>
-					<span class="sui-toggle-slider"></span>
-				</label>
+				<div class="sui-form-field">
 
-				<label for="hustle-accessibility-color"><?php esc_html_e( 'Enable high contrast mode', 'hustle' ); ?></label>
+					<label for="hustle-accessibility-color" class="sui-toggle">
+
+						<input
+							type="checkbox"
+							value="1"
+							name="hustle-accessibility-color"
+							id="hustle-accessibility-color"
+							aria-labelledby="hustle-accessibility-color-label"
+							<?php checked( $accessibility_color ); ?>
+						>
+
+						<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+						<span id="hustle-accessibility-color-label" class="sui-toggle-label"><?php esc_html_e( 'Enable high contrast mode', 'hustle' ); ?></span>
+
+					</label>
+
+				</div>
 
 			</div>
 
@@ -54,7 +75,7 @@
 				data-target="accessibility"
 			>
 				<span class="sui-loading-text"><?php esc_html_e( 'Save Settings', 'hustle' ); ?></span>
-				<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 
 		</div>

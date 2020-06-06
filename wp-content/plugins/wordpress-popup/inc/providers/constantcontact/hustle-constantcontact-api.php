@@ -3,72 +3,73 @@
 if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 	if ( ! class_exists( 'Ctct\CTCTOfficialSplClassLoader' ) ) {
-		require_once Opt_In::$vendor_path . 'Ctct/autoload.php';
+		require_once dirname( __FILE__ ) . '/CtCt/autoload.php';
 	}
 
 	if ( ! class_exists( 'Hustle_ConstantContact_Api' ) ) :
 
 		class Hustle_ConstantContact_Api extends Opt_In_WPMUDEV_API {
 
-			const API_URL = 'https://api.constantcontact.com/v2/';
+			const API_URL      = 'https://api.constantcontact.com/v2/';
 			const AUTH_API_URL = 'https://oauth2.constantcontact.com/';
 
-			const APIKEY = 'wn8r98wcxnegkgy976xeuegt';
+			const APIKEY          = 'wn8r98wcxnegkgy976xeuegt';
 			const CONSUMER_SECRET = 'QZytJQReSTM3K9bH4NG9Dd2A';
 
-			//Random client ID we use to verify our calls
+			// Random client ID we use to verify our calls
 			const CLIENT_ID = '9253e5C3-28d6-48fd-c102-b92b8f250G1b';
 
-			const REFERER = 'hustle_constantcontact_referer';
+			const REFERER     = 'hustle_constantcontact_referer';
 			const CURRENTPAGE = 'hustle_constantcontact_current_page';
 
 			/**
-			* Auth token
-			* @var string
-			*/
+			 * Auth token
+			 *
+			 * @var string
+			 */
 			private $option_token_name = 'hustle_opt-in-constant_contact-token';
 
 
 			/**
-			* @var string
-			*/
+			 * @var string
+			 */
 			private $action_event = 'hustle_constantcontact_event';
 
 			/**
-			* @var bool
-			*/
+			 * @var bool
+			 */
 			public $is_error = false;
 
 			/**
-			* @var string
-			*/
+			 * @var string
+			 */
 			public $error_message;
 
 			/**
-			* @var boolean
-			*/
+			 * @var boolean
+			 */
 			public $sending = false;
 
 
 			/**
-			* Hustle_ConstantContact_Api constructor.
-			*/
+			 * Hustle_ConstantContact_Api constructor.
+			 */
 			public function __construct() {
 				// Init request callback listener
 				add_action( 'init', array( $this, 'process_callback_request' ) );
 			}
 
 			/**
-			* Helper function to listen to request callback sent from WPMUDEV
-			*/
+			 * Helper function to listen to request callback sent from WPMUDEV
+			 */
 			public function process_callback_request() {
 				if ( $this->validate_callback_request( 'constantcontact' ) ) {
-					$code 			= filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
-					$status			= 'error';
+					$code   = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
+					$status = 'error';
 
 					// Get the referer page that sent the request
-					$referer 		= get_option( self::REFERER );
-					$current_page 	= get_option( self::CURRENTPAGE );
+					$referer      = get_option( self::REFERER );
+					$current_page = get_option( self::CURRENTPAGE );
 					if ( $code ) {
 						if ( $this->get_access_token( $code ) ) {
 							if ( ! empty( $referer ) ) {
@@ -105,13 +106,13 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 					* Store $referer to use after retrieving the access token
 					*/
 					$params = array(
-						'page' 		=> $page,
-						'action'	=> 'external-redirect',
-						'slug'		=> 'constantcontact',
-						'nonce'		=> wp_create_nonce( 'hustle_provider_external_redirect' ),
+						'page'   => $page,
+						'action' => 'external-redirect',
+						'slug'   => 'constantcontact',
+						'nonce'  => wp_create_nonce( 'hustle_provider_external_redirect' ),
 					);
-					if ( !empty( $module_id ) ) {
-						$params['id'] = $module_id;
+					if ( ! empty( $module_id ) ) {
+						$params['id']      = $module_id;
 						$params['section'] = 'integrations';
 					}
 					$referer = add_query_arg( $params, admin_url( 'admin.php' ) );
@@ -122,10 +123,10 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			}
 
 			/**
-			* @param string $key
-			*
-			* @return bool|mixed
-			*/
+			 * @param string $key
+			 *
+			 * @return bool|mixed
+			 */
 			public function get_token( $key ) {
 				$auth = $this->get_auth_token();
 
@@ -137,11 +138,11 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 
 			/**
-			* Compose redirect_uri to use on request argument.
-			* The redirect uri must be constant and should not be change per request.
-			*
-			* @return string
-			*/
+			 * Compose redirect_uri to use on request argument.
+			 * The redirect uri must be constant and should not be change per request.
+			 *
+			 * @return string
+			 */
 			public function get_redirect_uri() {
 				return $this->_get_redirect_uri(
 					'constantcontact',
@@ -151,12 +152,12 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			}
 
 			/**
-			* Get Access token
-			*
-			* @param Array $args
-			*/
+			 * Get Access token
+			 *
+			 * @param Array $args
+			 */
 			public function get_access_token( $code ) {
-				$oauth = new Ctct\Auth\CtctOAuth2( self::APIKEY, self::CONSUMER_SECRET, $this->get_redirect_uri() );
+				$oauth        = new Ctct\Auth\CtctOAuth2( self::APIKEY, self::CONSUMER_SECRET, $this->get_redirect_uri() );
 				$access_token = $oauth->getAccessToken( $code );
 
 				$this->update_auth_token( $access_token );
@@ -166,21 +167,21 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 
 			/**
-			* Get stored token data.
-			*
-			* @return array|null
-			*/
+			 * Get stored token data.
+			 *
+			 * @return array|null
+			 */
 			public function get_auth_token() {
 				return get_option( $this->option_token_name );
 			}
 
 
 			/**
-			* Update token data.
-			*
-			* @param array $token
-			* @return void
-			*/
+			 * Update token data.
+			 *
+			 * @param array $token
+			 * @return void
+			 */
 			public function update_auth_token( array $token ) {
 				update_option( $this->option_token_name, $token );
 			}
@@ -197,10 +198,10 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			}
 
 			/**
-			* Retrieve contact lists from ConstantContact
-			*
-			* @return array
-			*/
+			 * Retrieve contact lists from ConstantContact
+			 *
+			 * @return array
+			 */
 			public function get_contact_lists() {
 
 				$cc_api = new Ctct\ConstantContact( self::APIKEY );
@@ -214,14 +215,14 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 
 			/**
-			* Retrieve contact from ConstantContact
-			*
-			* @param string $email
-			* @return false|Object
-			*/
+			 * Retrieve contact from ConstantContact
+			 *
+			 * @param string $email
+			 * @return false|Object
+			 */
 			public function get_contact( $email ) {
-				$contact = false;
-				$cc_api = new Ctct\ConstantContact( self::APIKEY );
+				$contact      = false;
+				$cc_api       = new Ctct\ConstantContact( self::APIKEY );
 				$access_token = $this->get_token( 'access_token' );
 				$res = $cc_api->contactService->getContacts( $access_token, array( 'email' => $email ) ); // phpcs:ignore
 				if ( is_object( $res ) && ! empty( $res->results ) ) {
@@ -233,19 +234,19 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 
 			/**
-			* Check if contact exists in certain list
-			*
-			* @param object $contact \Ctct\Components\Contacts\Contact
-			* @param string $list_id
-			* @return bool
-			*/
+			 * Check if contact exists in certain list
+			 *
+			 * @param object $contact \Ctct\Components\Contacts\Contact
+			 * @param string $list_id
+			 * @return bool
+			 */
 			public function contact_exist( $contact, $list_id ) {
 				$exists = false;
 				if ( $contact instanceof Ctct\Components\Contacts\Contact ) {
 					$lists = $contact->lists;
 					foreach ( $lists as $list ) {
 						$list = (array) $list;
-						if ( (string) $list_id === (string) $list['id']  ) {
+						if ( (string) $list_id === (string) $list['id'] ) {
 							$exists = true;
 							break;
 						}
@@ -257,16 +258,16 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 
 			/**
-			* Subscribe contact
-			*
-			* @param String $email
-			* @param String $list
-			* @param Array $custom_fields
-			*/
+			 * Subscribe contact
+			 *
+			 * @param String $email
+			 * @param String $list
+			 * @param Array  $custom_fields
+			 */
 			public function subscribe( $email, $first_name, $last_name, $list, $custom_fields = array() ) {
 				$access_token = $this->get_token( 'access_token' );
-				$cc_api = new Ctct\ConstantContact( self::APIKEY );
-				$contact = new Ctct\Components\Contacts\Contact();
+				$cc_api       = new Ctct\ConstantContact( self::APIKEY );
+				$contact      = new Ctct\Components\Contacts\Contact();
 				$contact->addEmail( $email );
 				if ( ! empty( $first_name ) ) {
 					$contact->first_name = $first_name;
@@ -294,8 +295,8 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 							$contact->$key = $value;
 						} else {
 							if ( ! empty( $value ) ) {
-								$custom_field = array(
-									'name' => 'CustomField' . $x,
+								$custom_field             = array(
+									'name'  => 'CustomField' . $x,
 									'value' => $value,
 								);
 								$contact->custom_fields[] = $custom_field;
@@ -317,12 +318,11 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			}
 
 			/**
-			* Update Subscription
-			*
-			*/
+			 * Update Subscription
+			 */
 			public function updateSubscription( $contact, $first_name, $last_name, $list, $custom_fields = array() ) {
 				$access_token = $this->get_token( 'access_token' );
-				$cc_api = new Ctct\ConstantContact( self::APIKEY );
+				$cc_api       = new Ctct\ConstantContact( self::APIKEY );
 				$contact->addList( $list );
 				if ( ! empty( $first_name ) ) {
 					$contact->first_name = $first_name;
@@ -349,8 +349,8 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 							$contact->$key = $value;
 						} else {
 							if ( ! empty( $value ) ) {
-								$custom_field = array(
-									'name' => 'CustomField' . $x,
+								$custom_field             = array(
+									'name'  => 'CustomField' . $x,
 									'value' => $value,
 								);
 								$contact->custom_fields[] = $custom_field;

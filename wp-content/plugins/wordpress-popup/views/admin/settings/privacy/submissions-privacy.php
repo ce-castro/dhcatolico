@@ -1,3 +1,12 @@
+<?php
+/**
+ * Submissions section under the "privacy" tab.
+ *
+ * @package Hustle
+ * @since 4.0.3
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -10,7 +19,7 @@
 		<?php
 		// Submission retention.
 		$this->render(
-			'admin/settings/privacy/submission-retention',
+			'admin/settings/privacy/submissions-retention',
 			array( 'settings' => $settings )
 		);
 		?>
@@ -18,7 +27,7 @@
 		<?php
 		// On Account erasure retention.
 		$this->render(
-			'admin/settings/privacy/account-erasure',
+			'admin/settings/privacy/submissions-account-erasure',
 			array( 'settings' => $settings )
 		);
 		?>

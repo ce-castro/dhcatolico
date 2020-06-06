@@ -1,12 +1,23 @@
+<?php
+/**
+ * Displays the summary section at the top of the listing page.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="<?php echo esc_attr( implode( ' ', $sui['summary']['classes'] ) ); ?>">
 	<div class="sui-summary-image-space" aria-hidden="true" style="<?php echo esc_attr( $sui['summary']['style'] ); ?>"></div>
 	<div class="sui-summary-segment">
 		<div class="sui-summary-details">
 			<span class="sui-summary-large"><?php echo esc_attr( $active_modules_count ); ?></span>
 			<?php if ( 1 === $active_modules_count ) { ?>
-				<span class="sui-summary-sub"><?php printf( esc_html__( 'Active %s', 'hustle' ), esc_html( $singular ) ); ?></span>
+				<?php /* translators: module type capitalized and in singular */ ?>
+				<span class="sui-summary-sub"><?php printf( esc_html__( 'Active %s', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
 			<?php } else { ?>
-				<span class="sui-summary-sub"><?php printf( esc_html__( 'Active %s', 'hustle' ), esc_html( $plural ) ); ?></span>
+				<?php /* translators: module type capitalized and in plural */ ?>
+				<span class="sui-summary-sub"><?php printf( esc_html__( 'Active %s', 'hustle' ), esc_html( $capitalize_plural ) ); ?></span>
 			<?php } ?>
 		</div>
 	</div>

@@ -4,7 +4,6 @@
  * This class handles the global "Integrations" page view.
  *
  * @since 4.0
- *
  */
 class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 
@@ -31,7 +30,7 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 		$accessibility = Hustle_Settings_Admin::get_hustle_settings( 'accessibility' );
 		return array(
 			'accessibility' => $accessibility,
-			'sui' => Opt_In::get_sui_summary_config(),
+			'sui'           => $this->get_sui_summary_config(),
 		);
 	}
 
@@ -47,9 +46,13 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 	 */
 	public function register_current_json( $current_array ) {
 
-		$current_array['integration_redirect'] 	= $this->grab_integration_external_redirect();
-		$current_array['integrations_url'] 		= add_query_arg( 'page', Hustle_Module_Admin::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
-		$current_array['integrations_migrate'] 	= $this->grab_integration_external_redirect_migration();
+		$current_array['integration_redirect'] = $this->grab_integration_external_redirect();
+		$current_array['integrations_url']     = add_query_arg( 'page', Hustle_Module_Admin::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
+		$current_array['integrations_migrate'] = $this->grab_integration_external_redirect_migration();
+
+		// Also defined wizards.
+		$current_array['providers_action_nonce'] = wp_create_nonce( 'hustle_provider_action' );
+		$current_array['fetching_list']          = __( 'Fetching integration list…', 'hustle' );
 
 		return $current_array;
 	}
@@ -64,18 +67,18 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 	 */
 	private function grab_integration_external_redirect() {
 
-		$response 	= array();
-		$action 	= filter_input ( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
-		$migration 	= filter_input ( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
+		$response  = array();
+		$action    = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+		$migration = filter_input( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
 
-		//handle migration elsewhere
+		// handle migration elsewhere
 		if ( 'external-redirect' === $action && true !== $migration ) {
 
-			$nonce = filter_input ( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
+			$nonce = filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
 
 			if ( $nonce && wp_verify_nonce( $nonce, 'hustle_provider_external_redirect' ) ) {
 
-				$slug = filter_input ( INPUT_GET, 'slug', FILTER_SANITIZE_STRING );
+				$slug = filter_input( INPUT_GET, 'slug', FILTER_SANITIZE_STRING );
 
 				$provider = Hustle_Provider_Utils::get_provider_by_slug( $slug );
 
@@ -86,13 +89,12 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 						$response['slug'] = $slug;
 					}
 				}
-
 			} else {
 
 				$response = array(
-					'action'	=> 'notification',
-					'status'	=> 'error',
-					'message'	=> __( "You're not allowed to do this request.", 'hustle' ),
+					'action'  => 'notification',
+					'status'  => 'error',
+					'message' => __( "You're not allowed to do this request.", 'hustle' ),
 				);
 			}
 		}
@@ -110,48 +112,47 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 	 */
 	private function grab_integration_external_redirect_migration() {
 
-		$response 	= array();
-		$action 	= filter_input ( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
-		$migration 	= filter_input ( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
-		$provider 	= filter_input ( INPUT_GET, 'show_provider_migration', FILTER_SANITIZE_STRING );
-		$multiID 	= filter_input ( INPUT_GET, 'integration_id', FILTER_SANITIZE_STRING );
+		$response  = array();
+		$action    = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+		$migration = filter_input( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
+		$provider  = filter_input( INPUT_GET, 'show_provider_migration', FILTER_SANITIZE_STRING );
+		$multiID   = filter_input( INPUT_GET, 'integration_id', FILTER_SANITIZE_STRING );
 
-		if( isset( $provider ) && ! empty( $provider ) ){
+		if ( isset( $provider ) && ! empty( $provider ) ) {
 			$response['provider_modal'] = $provider;
 		}
 
-		if( isset( $multiID ) && ! empty( $multiID ) ){
+		if ( isset( $multiID ) && ! empty( $multiID ) ) {
 			$response['integration_id'] = $multiID;
 		}
 
 		if ( 'external-redirect' === $action && true === $migration ) {
 
-			$nonce = filter_input ( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
+			$nonce = filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
 
 			if ( $nonce && wp_verify_nonce( $nonce, 'hustle_provider_external_redirect' ) ) {
 
-				$slug = filter_input ( INPUT_GET, 'slug', FILTER_SANITIZE_STRING );
+				$slug = filter_input( INPUT_GET, 'slug', FILTER_SANITIZE_STRING );
 
 				$response['migration_notificaiton'] = array(
-					'action'	=> 'notification',
-					'status'	=> 'success',
-					'slug'		=> $slug,
+					'action' => 'notification',
+					'status' => 'success',
+					'slug'   => $slug,
 				);
 
-				if( 'constantcontact' === $slug ){
-					$response['migration_notificaiton']['message'] = sprintf( esc_html__( "%s integration successfully migrated to the v3.0 API version.", 'hustle' ), '<strong>' . esc_html__( 'Constant Contact', 'hustle' ) . '</strong>' );
+				if ( 'constantcontact' === $slug ) {
+					$response['migration_notificaiton']['message'] = sprintf( esc_html__( '%s integration successfully migrated to the v3.0 API version.', 'hustle' ), '<strong>' . esc_html__( 'Constant Contact', 'hustle' ) . '</strong>' );
 				}
 
-				if( 'infusionsoft' === $slug ){
-					$response['migration_notificaiton']['message'] = sprintf( esc_html__( "%s integration successfully migrated to use the REST API.", 'hustle' ), '<strong>' . esc_html__( 'InfusionSoft', 'hustle' ) . '</strong>' );
+				if ( 'infusionsoft' === $slug ) {
+					$response['migration_notificaiton']['message'] = sprintf( esc_html__( '%s integration successfully migrated to use the REST API.', 'hustle' ), '<strong>' . esc_html__( 'InfusionSoft', 'hustle' ) . '</strong>' );
 				}
-
 			} else {
 
 				$response = array(
-					'action'	=> 'notification',
-					'status'	=> 'error',
-					'message'	=> __( "You're not allowed to do this request.", 'hustle' ),
+					'action'  => 'notification',
+					'status'  => 'error',
+					'message' => __( "You're not allowed to do this request.", 'hustle' ),
 				);
 			}
 		}

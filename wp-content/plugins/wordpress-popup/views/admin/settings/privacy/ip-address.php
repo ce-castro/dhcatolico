@@ -1,3 +1,12 @@
+<?php
+/**
+ * IP addresses handling section under the "privacy" tab.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">

@@ -1,3 +1,14 @@
+<?php
+/**
+ * Main wrapper for the 'Appearance' tab.
+ *
+ * @uses ../tab-appearance/
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box" <?php echo 'appearance' !== $section ? 'style="display: none;"' : ''; ?> data-tab="appearance">
 
 	<div class="sui-box-header">
@@ -11,7 +22,7 @@
 		<?php
 
 		// SETTING: Layout.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/layout',
 			array(
 				'is_optin'           => $is_optin,
@@ -21,7 +32,7 @@
 		);
 
 		// SETTING: Feature Image.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/feature-image',
 			array(
 				'is_optin'           => $is_optin,
@@ -32,7 +43,7 @@
 		);
 
 		// SETTING: Vanilla theme.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/vanilla-theme',
 			array(
 				'smallcaps_singular' => isset( $smallcaps_singular ) ? $smallcaps_singular : esc_html__( 'module', 'hustle' ),
@@ -43,20 +54,21 @@
 		if ( $is_optin ) {
 
 			// SETTING: Form Design.
-			self::static_render( 'admin/commons/sui-wizard/tab-appearance/form-design',
-				[ 'settings' => $settings ]
+			$this->render(
+				'admin/commons/sui-wizard/tab-appearance/form-design',
+				array( 'settings' => $settings )
 			);
 
 		}
 
 		// SETTING: CTA Button Design.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/cta-design',
-			[ 'settings' => $settings ]
+			array( 'settings' => $settings )
 		);
 
 		// SETTING: Colors Palette.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/colors-palette',
 			array(
 				'is_optin'           => $is_optin,
@@ -67,7 +79,7 @@
 		);
 
 		// SETTING: Border.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/border',
 			array(
 				'settings'           => $settings,
@@ -77,7 +89,7 @@
 		);
 
 		// SETTING: Drop Shadow.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/drop-shadow',
 			array(
 				'settings'           => $settings,
@@ -87,7 +99,7 @@
 		);
 
 		// SETTING: Custom Size.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/custom-size',
 			array(
 				'settings'            => $settings,
@@ -97,13 +109,13 @@
 		);
 
 		// SETTING: Custom CSS.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-appearance/custom-css',
-			[
+			array(
 				'is_optin'    => $is_optin,
 				'module_type' => $module_type,
 				'settings'    => $settings,
-			]
+			)
 		);
 		?>
 
@@ -112,13 +124,13 @@
 	<div class="sui-box-footer">
 
 		<button class="sui-button wpmudev-button-navigation" data-direction="prev">
-			<i class="sui-icon-arrow-left" aria-hidden="true"></i> <?php echo $is_optin ? esc_html__( 'Integrations', 'hustle' ) : esc_html__( 'Content', 'hustle' ); ?>
+			<span class="sui-icon-arrow-left" aria-hidden="true"></span> <?php echo $is_optin ? esc_html__( 'Integrations', 'hustle' ) : esc_html__( 'Content', 'hustle' ); ?>
 		</button>
 
 		<div class="sui-actions-right">
 
 			<button class="sui-button sui-button-icon-right wpmudev-button-navigation" data-direction="next">
-				<?php echo 'embedded' === $module_type ? esc_html_e( 'Display Options', 'hustle' ) : esc_html_e( 'Visibility', 'hustle' ); ?> <i class="sui-icon-arrow-right" aria-hidden="true"></i>
+				<?php echo 'embedded' === $module_type ? esc_html_e( 'Display Options', 'hustle' ) : esc_html_e( 'Visibility', 'hustle' ); ?> <span class="sui-icon-arrow-right" aria-hidden="true"></span>
 			</button>
 
 		</div>

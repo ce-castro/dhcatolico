@@ -1,3 +1,12 @@
+<?php
+/**
+ * Icons appearance section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div id="hustle-appearance-<?php echo esc_attr( $key ); ?>-icons-row" class="sui-box-settings-row" <?php echo ! $is_enabled ? ' style="display: none;"' : ''; ?>>
 
 	<div class="sui-box-settings-col-1">
@@ -41,7 +50,7 @@
 								class="sui-button-icon sui-accordion-open-indicator"
 								aria-label="<?php esc_html_e( 'Open counter color options', 'hustle' ); ?>"
 							>
-								<i class="sui-icon-chevron-down" aria-hidden="true"></i>
+								<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 							</button>
 						</div>
 
@@ -99,7 +108,7 @@
 													<label class="sui-label"><?php esc_html_e( 'Icon background', 'hustle' ); ?></label>
 												<?php } ?>
 
-												<?php Opt_In_Utils::sui_colorpicker( $key . '_icon_bg_color', $key . '_icon_bg_color', 'true', false, $settings[  $key . '_icon_bg_color' ] ); ?>
+												<?php Opt_In_Utils::sui_colorpicker( $key . '_icon_bg_color', $key . '_icon_bg_color', 'true', false, $settings[ $key . '_icon_bg_color' ] ); ?>
 
 											</div>
 
@@ -107,7 +116,7 @@
 
 												<label class="sui-label"><?php esc_html_e( 'Icon color', 'hustle' ); ?></label>
 
-												<?php Opt_In_Utils::sui_colorpicker( $key . '_icon_color', $key . '_icon_color', 'true', false, $settings[  $key . '_icon_color' ] ); ?>
+												<?php Opt_In_Utils::sui_colorpicker( $key . '_icon_color', $key . '_icon_color', 'true', false, $settings[ $key . '_icon_color' ] ); ?>
 
 											</div>
 
@@ -135,7 +144,7 @@
 								class="sui-button-icon sui-accordion-open-indicator"
 								aria-label="<?php esc_html_e( 'Open counter color options', 'hustle' ); ?>"
 							>
-								<i class="sui-icon-chevron-down" aria-hidden="true"></i>
+								<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 							</button>
 						</div>
 					</div>
@@ -150,7 +159,7 @@
 
 									<label class="sui-label"><?php esc_html_e( 'Border', 'hustle' ); ?></label>
 
-									<?php Opt_In_Utils::sui_colorpicker( $key . '_counter_border', $key . '_counter_border', 'true', false, $settings[  $key . '_counter_border' ] ); ?>
+									<?php Opt_In_Utils::sui_colorpicker( $key . '_counter_border', $key . '_counter_border', 'true', false, $settings[ $key . '_counter_border' ] ); ?>
 
 								</div>
 
@@ -158,7 +167,7 @@
 
 									<label class="sui-label"><?php esc_html_e( 'Text', 'hustle' ); ?></label>
 
-									<?php Opt_In_Utils::sui_colorpicker( $key . '_counter_color', $key . '_counter_color', 'true', false, $settings[  $key . '_counter_color' ] ); ?>
+									<?php Opt_In_Utils::sui_colorpicker( $key . '_counter_color', $key . '_counter_color', 'true', false, $settings[ $key . '_counter_color' ] ); ?>
 
 								</div>
 
@@ -180,7 +189,7 @@
 								class="sui-button-icon sui-accordion-open-indicator"
 								aria-label="<?php esc_html_e( 'Open container color options', 'hustle' ); ?>"
 							>
-								<i class="sui-icon-chevron-down" aria-hidden="true"></i>
+								<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 							</button>
 						</div>
 					</div>
@@ -195,7 +204,7 @@
 
 									<label class="sui-label"><?php esc_html_e( 'Background color', 'hustle' ); ?></label>
 
-									<?php Opt_In_Utils::sui_colorpicker( $key . '_bg_color', $key . '_bg_color', 'true', false, $settings[  $key . '_bg_color' ] ); ?>
+									<?php Opt_In_Utils::sui_colorpicker( $key . '_bg_color', $key . '_bg_color', 'true', false, $settings[ $key . '_bg_color' ] ); ?>
 
 								</div>
 
@@ -220,14 +229,16 @@
 					name="<?php echo esc_html( $key ); ?>_drop_shadow"
 					data-attribute="<?php echo esc_html( $key ); ?>_drop_shadow"
 					id="hustle-icons--<?php echo esc_html( $key ); ?>-shadow"
+					aria-labelledby="hustle-icons--<?php echo esc_html( $key ); ?>-shadow-label"
+					aria-describedby="hustle-icons--<?php echo esc_html( $key ); ?>-shadow-description"
 					<?php checked( $settings[ $key . '_drop_shadow' ], '1' ); ?>
 				/>
-				<span class="sui-toggle-slider"></span>
+				<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+				<span id="hustle-icons--<?php echo esc_html( $key ); ?>-shadow-label" class="sui-toggle-label"><?php esc_html_e( 'Drop shadow', 'hustle' ); ?></span>
+
+				<span id="hustle-icons--<?php echo esc_html( $key ); ?>-shadow-description" class="sui-description"><?php esc_html_e( 'Add a shadow to the container.', 'hustle' ); ?></span>
 			</label>
-
-			<label for="hustle-icons--<?php echo esc_html( $key ); ?>-shadow"><?php esc_html_e( 'Drop shadow', 'hustle' ); ?></label>
-
-			<span class="sui-description sui-toggle-description"><?php esc_html_e( 'Add a shadow to the container.', 'hustle' ); ?></span>
 
 			<div class="sui-border-frame sui-toggle-content" data-toggle-content="<?php echo esc_html( $key ); ?>-drop-shadow">
 
@@ -323,7 +334,7 @@
 
 							<label class="sui-label"><?php esc_html_e( 'Color', 'hustle' ); ?></label>
 
-							<?php Opt_In_Utils::sui_colorpicker( $key . '_drop_shadow_color', $key . '_drop_shadow_color', 'true', false, $settings[  $key . '_drop_shadow_color' ] ); ?>
+							<?php Opt_In_Utils::sui_colorpicker( $key . '_drop_shadow_color', $key . '_drop_shadow_color', 'true', false, $settings[ $key . '_drop_shadow_color' ] ); ?>
 
 						</div>
 
@@ -344,14 +355,16 @@
 					name="<?php echo esc_html( $key ); ?>_inline_count"
 					data-attribute="<?php echo esc_html( $key ); ?>_inline_count"
 					id="hustle-icons--<?php echo esc_html( $key ); ?>-inline-counter"
+					aria-labelledby="hustle-icons--<?php echo esc_html( $key ); ?>-inline-counter-label"
+					aria-describedby="hustle-icons--<?php echo esc_html( $key ); ?>-inline-counter-description"
 					<?php checked( $settings[ $key . '_inline_count' ], '1' ); ?>
 				/>
-				<span class="sui-toggle-slider"></span>
+				<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+				<span id="hustle-icons--<?php echo esc_html( $key ); ?>-inline-counter-label" class="sui-toggle-label"><?php esc_html_e( 'Inline counter', 'hustle' ); ?></span>
+
+				<span id="hustle-icons--<?php echo esc_html( $key ); ?>-inline-counter-description" class="sui-description"><?php esc_html_e( 'Enable this to make the counter text inline to the icon.', 'hustle' ); ?></span>
 			</label>
-
-			<label for="hustle-icons--<?php echo esc_html( $key ); ?>-inline-counter"><?php esc_html_e( 'Inline counter', 'hustle' ); ?></label>
-
-			<span class="sui-description sui-toggle-description"><?php esc_html_e( 'Enable this to make the counter text inline to the icon.', 'hustle' ); ?></span>
 
 		</div>
 
@@ -364,14 +377,16 @@
 					name="<?php echo esc_html( $key ); ?>_animate_icons"
 					data-attribute="<?php echo esc_html( $key ); ?>_animate_icons"
 					id="hustle-icons--<?php echo esc_html( $key ); ?>-animate"
+					aria-labelledby="hustle-icons--<?php echo esc_html( $key ); ?>-animate-label"
+					aria-describedby="hustle-icons--<?php echo esc_html( $key ); ?>-animate-description"
 					<?php checked( $settings[ $key . '_animate_icons' ], '1' ); ?>
 				/>
-				<span class="sui-toggle-slider"></span>
+				<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+				<span id="hustle-icons--<?php echo esc_html( $key ); ?>-animate-label" class="sui-toggle-label"><?php esc_html_e( 'Animate icons', 'hustle' ); ?></span>
+
+				<span id="hustle-icons--<?php echo esc_html( $key ); ?>-animate-description" class="sui-description"><?php esc_html_e( 'Animate the icons when visitor hovers over them.', 'hustle' ); ?></span>
 			</label>
-
-			<label for="hustle-icons--<?php echo esc_html( $key ); ?>-animate"><?php esc_html_e( 'Animate icons', 'hustle' ); ?></label>
-
-			<span class="sui-description sui-toggle-description"><?php esc_html_e( 'Animate the icons when visitor hovers over them.', 'hustle' ); ?></span>
 
 		</div>
 
@@ -391,7 +406,7 @@
 
 </div>
 
-<div id="hustle-appearance-<?php echo esc_attr( $key ); ?>-icons-placeholder" class="sui-box-settings-row"<?php echo ( $is_enabled || $is_empty  ) ? ' style="display: none;"' : ''; ?>>
+<div id="hustle-appearance-<?php echo esc_attr( $key ); ?>-icons-placeholder" class="sui-box-settings-row"<?php echo ( $is_enabled || $is_empty ) ? ' style="display: none;"' : ''; ?>>
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php echo esc_html( $label ); ?></span>

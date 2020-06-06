@@ -1,3 +1,12 @@
+<?php
+/**
+ * Unused file.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-focal">
 
 	<div class="hustle-focal-point-position-item">

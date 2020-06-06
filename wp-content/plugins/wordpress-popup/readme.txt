@@ -5,14 +5,14 @@ Author URI: https://premium.wpmudev.org/
 Contributors: WPMUDEV
 Tags: marketing, floating social, pop-up, popups slide-in, opt-in, email, advertise, signup, mailing list, wordpress pop up plugin, pop up maker
 Requires at least: 4.6
-Tested up to: 5.3
-Stable tag: 7.1.0
+Tested up to: 5.4
+Stable tag: 7.1.1
 
 Setup email opt-in forms, popups, social share bars, and generate leads with the world-class marketing pop-up builder plugin by WPMU DEV.
 
 == Description ==
 
-*Hustle is the ultimate marketing plugin for building a mailing list with opt-in forms, targeted marketing popups, lead generation, building a social following with share bars, improving conversions, and growing your business by the award-winning developers of [Smush](https://wordpress.org/plugins/wp-smushit/) image optimization and [Forminator](https://wordpress.org/plugins/forminator/) form builder at WPMU DEV.*
+*Hustle is the ultimate marketing plugin for building a mailing list with opt-in forms, targeted marketing popups, lead generation, building a social following with share bars, improving conversions, and growing your business by the award winning developers of [Smush](https://wordpress.org/plugins/wp-smushit/) image optimization and [Forminator](https://wordpress.org/plugins/forminator/) form builder at WPMU DEV.*
 
 Hustle lets you easily grow your mailing list or display targeted ads across your site with pop-ups, slide-ins, widgets, and shortcodes.
 
@@ -92,10 +92,10 @@ Hustle includes three handy metrics to help you make better marketing decisions 
 *Features available in Hustle include:*
 
 - Pop-ups, slide-ins, widgets, embeds and after post opt-ins
-- 3 free popups [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_1#trial)
-- 3 free slide-ins [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_2#trial)
-- 3 free social share bars [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_3#trial)
-- 3 free embeds [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_3#trial)
+- 3 free popups [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_1#trial)
+- 3 free slide-ins [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_2#trial)
+- 3 free social share bars [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_3#trial)
+- 3 free embeds [upgrade to Hustle Pro for unlimited](https://premium.wpmudev.org/project/hustle/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=upgrade_to_hustle_pro_for_unlimited_3#trial)
 - Built-in designs editor for simple customization
 - Color match your brand, like magic
 - Smooth display animations
@@ -114,6 +114,7 @@ Hey! This is Hustle, your trusted popup, email opt-in, and marketing plugin for 
 - [Smush](https://wordpress.org/plugins/wp-smushit/) - Image Compression and Optimization
 - [Forminator](https://wordpress.org/plugins/forminator/) - Form, Quiz, Poll and Survey Builder
 - [Hummingbird](https://wordpress.org/plugins/hummingbird-performance/) - Speed up, Cache, Optimize Your CSS and JS
+- [Branda](https://wordpress.org/plugins/branda-white-labeling/) - White Label WordPress, Maintenance Mode and Coming Soon Pages
 
 And if you need ALL our Pro plugins AND 24/7 WordPress support, get a WPMU DEV membership! You can try it free for 30 days: [premium.wpmudev.org](https://premium.wpmudev.org/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=hustle-readme&utm_content=link_wpmudev#trial)
 
@@ -143,6 +144,29 @@ No! Hustle gives you all the same settings and options as Hustle Pro. The only d
 4. Build beautiful pop-ups with any of the 4 included layouts.
 
 == Changelog ==
+= 7.2.0 =
+* Add scheduling modules functionality
+* Add hooks for adding custom Social Sharing platforms
+* Add handlers for modules' views in front
+* Fix Pop-up not showing on single CPT pages
+* Fix select dropdown search boxes not working fine in some modals
+* Fix Font Awesome icons not showing up in modules
+* Fix select dropdown for Mailchimp interests is not visible
+* Fix 'Page' condition for blog and WC shop pages not displaying the module
+* Fix 'Above' and 'Below' options for feature image positioning not working
+* Fix Embedded modules not displayin on preview on certain screen sizes
+* Fix minor UX and UI issues
+* Fix PHP notices when connecting to Aweber
+* Fix error when toggling tracking in bulk
+* Fix issues with ActiveCampaign and custom fields
+* Fix videos not being properly resized under certain conditions
+* Fix error on form submission when using custom date formats in the date field
+* Fix iContact marking a subscription as not subscribed when it was actually subscribed
+* Improve accessibility for modals and toggles on admin side
+* Improve accessibility for icons
+* Improve performance on admin side
+* Improve making the colorpickers editable without opening the selector
+
 = 7.1.1 =
 * Add Oauth2 for Aweber
 * Add compatibility with Mailchimp GDPR options

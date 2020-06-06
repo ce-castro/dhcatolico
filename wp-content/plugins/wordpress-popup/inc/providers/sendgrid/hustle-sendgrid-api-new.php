@@ -35,11 +35,11 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 			}
 
 			$args = array(
-				'headers' => array(
+				'headers'    => array(
 					'Authorization' => 'Bearer ' . $api_key,
 				),
 				'decompress' => false,
-				'timeout' => 10,
+				'timeout'    => 10,
 			);
 
 			return $args;
@@ -104,11 +104,13 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 
 			$data = $this->prepare_custom_fields( $data );
 
-			$req_body = wp_json_encode( [
-				'contacts' => [ $data ],
-				'list_ids' => [ $list_id ],
-			] );
-			$args['body'] = $req_body;
+			$req_body                        = wp_json_encode(
+				array(
+					'contacts' => array( $data ),
+					'list_ids' => array( $list_id ),
+				)
+			);
+			$args['body']                    = $req_body;
 			$args['headers']['Content-Type'] = 'application/json';
 
 			$response = $this->request( $url, $args, 'PUT' );
@@ -121,7 +123,7 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 
 			$recipient_response = json_decode( $response['body'], true );
 
-			if ( !empty( $recipient_response['errors'][0]['message'] ) ) {
+			if ( ! empty( $recipient_response['errors'][0]['message'] ) ) {
 				Hustle_Provider_Utils::maybe_log( __METHOD__, 'Error adding the recipient.', $recipient_response['errors'][0]['message'] );
 				return new WP_Error( 'subscribe_error', $recipient_response['errors'][0]['message'] );
 			}
@@ -145,10 +147,10 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 			if ( empty( $data['custom_fields'] ) ) {
 				return $data;
 			}
-			$custom_fields = [];
-			$existed_fields = wp_list_pluck( $this->get_custom_fields(), 'id', 'name' );
+			$custom_fields   = array();
+			$existed_fields  = wp_list_pluck( $this->get_custom_fields(), 'id', 'name' );
 			$reserved_fields = wp_list_pluck( $this->get_custom_fields( true ), 'id', 'name' );
-			$saved_cf = array_merge( $existed_fields, $reserved_fields );
+			$saved_cf        = array_merge( $existed_fields, $reserved_fields );
 
 			foreach ( $data['custom_fields'] as $cf_name => $cf_value ) {
 				$cf_id = in_array( $cf_name, array_keys( $saved_cf ), true ) ? $saved_cf[ $cf_name ] : false;
@@ -167,7 +169,6 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		 *
 		 * @param string $email
 		 * @return boolean true if the given email already in use otherwise false.
-		 *
 		 **/
 		public function email_exists( $email, $list_id ) {
 			$args = $this->get_headers();
@@ -176,9 +177,11 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 				return false;
 			}
 			$args['headers']['Content-Type'] = 'application/json';
-			$args['body'] = wp_json_encode( [
-				'query' => sprintf( "primary_email LIKE '%s%%' AND CONTAINS(list_ids, '%s')", $email, $list_id ),
-			] );
+			$args['body']                    = wp_json_encode(
+				array(
+					'query' => sprintf( "primary_email LIKE '%s%%' AND CONTAINS(list_ids, '%s')", $email, $list_id ),
+				)
+			);
 
 			$url = $this->sendgrid_url . '/marketing/contacts/search';
 
@@ -195,7 +198,7 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 				return false;
 			}
 
-			return ! empty( $response_array['result'][0]['id'] ) ? $response_array['result'][0]['id'] : false ;
+			return ! empty( $response_array['result'][0]['id'] ) ? $response_array['result'][0]['id'] : false;
 
 		}
 
@@ -209,7 +212,7 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 			$args = $this->get_headers();
 
 			if ( ! $args ) {
-				return [];
+				return array();
 			}
 
 			$url = $this->sendgrid_url . '/marketing/field_definitions';
@@ -217,17 +220,17 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 			$response = $this->request( $url, $args );
 
 			if ( ! is_array( $response ) || ! isset( $response['body'] ) ) {
-				return [];
+				return array();
 			}
 
 			$lists_response = json_decode( $response['body'], true );
-			if ( !$reserved && isset( $lists_response['custom_fields'] ) ) {
+			if ( ! $reserved && isset( $lists_response['custom_fields'] ) ) {
 				return $lists_response['custom_fields'];
-			} else if ( $reserved && isset( $lists_response['reserved_fields'] ) ) {
+			} elseif ( $reserved && isset( $lists_response['reserved_fields'] ) ) {
 				return $lists_response['reserved_fields'];
 			}
 
-			return [];
+			return array();
 		}
 
 		/**
@@ -239,15 +242,15 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 			return wp_list_pluck( $this->get_custom_fields( true ), 'name' );
 		}
 
-        /**
-         * Add custom fields
-         *
-         * @param array $fields
-         */
+		/**
+		 * Add custom fields
+		 *
+		 * @param array $fields
+		 */
 		public function add_custom_fields( $fields ) {
-			$existed_fields = wp_list_pluck( $this->get_custom_fields(), 'id', 'name' );
+			$existed_fields  = wp_list_pluck( $this->get_custom_fields(), 'id', 'name' );
 			$reserved_fields = wp_list_pluck( $this->get_custom_fields( true ), 'id', 'name' );
-			$existed_fields = array_merge( $existed_fields, $reserved_fields );
+			$existed_fields  = array_merge( $existed_fields, $reserved_fields );
 
 			foreach ( $fields as $field ) {
 				$type = strtolower( $field['type'] );
@@ -255,22 +258,24 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 				if ( in_array( $name, array_keys( $existed_fields ), true ) ) {
 					continue;
 				}
-				if ( !in_array( $type, array( 'text', 'number', 'date' ), true ) ) {
+				if ( ! in_array( $type, array( 'text', 'number', 'date' ), true ) ) {
 					$type = 'text';
 				}
-				$new_cf = $this->add_custom_field( array(
-					"name"	=> $name,
-					"field_type"  => ucfirst( $type ),
-				) );
+				$new_cf = $this->add_custom_field(
+					array(
+						'name'       => $name,
+						'field_type' => ucfirst( $type ),
+					)
+				);
 			}
 		}
 
-        /**
-         * Add custom field
-         *
-         * @param array $field_data (name, field_type)
-         */
-        public function add_custom_field( $field_data ) {
+		/**
+		 * Add custom field
+		 *
+		 * @param array $field_data (name, field_type)
+		 */
+		public function add_custom_field( $field_data ) {
 
 			$args = $this->get_headers();
 
@@ -278,8 +283,8 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 				return false;
 			}
 
-			$url = $this->sendgrid_url . '/marketing/field_definitions';
-			$req_body = wp_json_encode( $field_data );
+			$url          = $this->sendgrid_url . '/marketing/field_definitions';
+			$req_body     = wp_json_encode( $field_data );
 			$args['body'] = $req_body;
 
 			$response = $this->request( $url, $args, 'POST' );
@@ -297,20 +302,20 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		 * Request
 		 *
 		 * @param string $url
-		 * @param array $args
+		 * @param array  $args
 		 * @param string $method GET|POST
 		 * @return array|WP_Error
 		 */
 		private function request( $url, $args, $method = 'GET' ) {
-			if ( empty( $args['method'] ) && in_array( $method, [ 'GET', 'POST', 'PUT' ], true ) ) {
+			if ( empty( $args['method'] ) && in_array( $method, array( 'GET', 'POST', 'PUT' ), true ) ) {
 				$args['method'] = $method;
 			}
 
 			$response = wp_remote_request( $url, $args );
 
-			$utils = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request = $url;
-			$utils->_last_data_sent = $args;
+			$utils                      = Hustle_Provider_Utils::get_instance();
+			$utils->_last_url_request   = $url;
+			$utils->_last_data_sent     = $args;
 			$utils->_last_data_received = $response;
 
 			return $response;

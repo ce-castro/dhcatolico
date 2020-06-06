@@ -1,7 +1,14 @@
 <?php
+/**
+ * Users roles section under the "analytics" tab.
+ *
+ * @package Hustle
+ * @since 4.2.0
+ */
+
 global $wp_roles;
-$roles = Opt_In_Utils::get_user_roles();
-$admin_roles = [];
+$roles       = Opt_In_Utils::get_user_roles();
+$admin_roles = array();
 ?>
 
 <div class="sui-box-settings-row">

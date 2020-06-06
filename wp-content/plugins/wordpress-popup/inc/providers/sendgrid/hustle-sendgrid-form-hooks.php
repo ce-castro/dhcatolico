@@ -19,8 +19,8 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
-		$addon = $this->addon;
-		$module_id = $this->module_id;
+		$addon                  = $this->addon;
+		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
 		/**
@@ -28,9 +28,9 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		 *
 		 * @since 4.0
 		 *
-		 * @param array                                    	$submitted_data
-		 * @param int                                      	$module_id                current module_id
-		 * @param Hustle_Sendgrid_Form_Settings 	   	   	$form_settings_instance
+		 * @param array                                     $submitted_data
+		 * @param int                                       $module_id                current module_id
+		 * @param Hustle_Sendgrid_Form_Settings             $form_settings_instance
 		 */
 		$submitted_data = apply_filters(
 			'hustle_provider_sendgrid_form_submitted_data',
@@ -43,32 +43,32 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
 		try {
 			if ( empty( $submitted_data['email'] ) ) {
-				throw new Exception( __('Required Field "email" was not filled by the user.', 'hustle' ) );
+				throw new Exception( __( 'Required Field "email" was not filled by the user.', 'hustle' ) );
 			}
 
 			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
-			$api_key = $addon->get_setting( 'api_key', '', $global_multi_id );
-			$new_campaigns = $addon->get_setting( 'new_campaigns', '', $global_multi_id );
-			$api = $addon::api( $api_key, $new_campaigns );
+			$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
+			$new_campaigns   = $addon->get_setting( 'new_campaigns', '', $global_multi_id );
+			$api             = $addon::api( $api_key, $new_campaigns );
 
 			$list_id = $addon_setting_values['list_id'];
 
 			$submitted_data = $this->check_legacy( $submitted_data );
-			$is_sent = false;
-			$member_status = __( 'Member could not be subscribed.', 'hustle' );
+			$is_sent        = false;
+			$member_status  = __( 'Member could not be subscribed.', 'hustle' );
 
-			$existing_member 	= $this->get_subscriber(
+			$existing_member = $this->get_subscriber(
 				$api,
 				array(
-					'email' 	=> $submitted_data['email'],
-					'list_id' 	=> $list_id
+					'email'   => $submitted_data['email'],
+					'list_id' => $list_id,
 				)
 			);
 
 			// Add extra fields
 			$extra_data = array_diff_key( $submitted_data, array_flip( $api->get_reserved_fields_name() ) );
 
-			$extra_data 	= array_filter( $extra_data );
+			$extra_data     = array_filter( $extra_data );
 			$submitted_data = array_filter( $submitted_data );
 
 			if ( ! empty( $extra_data ) ) {
@@ -83,14 +83,14 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 					foreach ( $extra_data as $key => $value ) {
 						$type = isset( $form_fields[ $key ] ) ? $this->get_field_type( $form_fields[ $key ]['type'] ) : 'text';
 
-						if ( 'date' === $type && 'm/d/y' !== $form_fields[ $key ]['date_format'] && ! empty( $submitted_data[$key] ) ){
-							$submitted_data[ $key ] = date( 'm/d/Y', strtotime( $submitted_data[$key] ) );
+						if ( 'date' === $type && 'm/d/y' !== $form_fields[ $key ]['date_format'] && ! empty( $submitted_data[ $key ] ) ) {
+							$submitted_data[ $key ] = date( 'm/d/Y', strtotime( $submitted_data[ $key ] ) );
 						}
 
 						$custom_fields[] = array(
-							'name' => $key,
+							'name'  => $key,
 							'value' => $value,
-							'type' => 'text',
+							'type'  => 'text',
 						);
 
 					}
@@ -107,7 +107,8 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 * @param array  $submitted_data
 			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_sendgrid_before_add_subscriber',
+			do_action(
+				'hustle_provider_sendgrid_before_add_subscriber',
 				$module_id,
 				$submitted_data,
 				$form_settings_instance
@@ -132,7 +133,8 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 * @param mixed  $res
 			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_sendgrid_after_add_subscriber',
+			do_action(
+				'hustle_provider_sendgrid_after_add_subscriber',
 				$module_id,
 				$submitted_data,
 				$res,
@@ -142,8 +144,8 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			if ( is_wp_error( $res ) ) {
 				$details = $res->get_error_message();
 			} else {
-				$is_sent = true;
-				$details = __( 'Successfully added or updated member on SendGrid list', 'hustle' );
+				$is_sent       = true;
+				$details       = __( 'Successfully added or updated member on SendGrid list', 'hustle' );
 				$member_status = __( 'OK', 'hustle' );
 			}
 
@@ -161,11 +163,12 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$entry_fields = $this->exception( $e );
 		}
 
-		if ( !empty( $addon_setting_values['list_name'] ) ) {
+		if ( ! empty( $addon_setting_values['list_name'] ) ) {
 			$entry_fields[0]['value']['list_name'] = $addon_setting_values['list_name'];
 		}
 
-		$entry_fields = apply_filters( 'hustle_provider_sendgrid_entry_fields',
+		$entry_fields = apply_filters(
+			'hustle_provider_sendgrid_entry_fields',
 			$entry_fields,
 			$module_id,
 			$submitted_data,
@@ -185,11 +188,11 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
 
-		$is_success 				= true;
-		$module_id                	= $this->module_id;
-		$form_settings_instance 	= $this->form_settings_instance;
-		$addon 						= $this->addon;
-		$addon_setting_values 		= $form_settings_instance->get_form_settings_values();
+		$is_success             = true;
+		$module_id              = $this->module_id;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon                  = $this->addon;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
 
 		if ( empty( $submitted_data['email'] ) ) {
 			return __( 'Required Field "email" was not filled by the user.', 'hustle' );
@@ -213,22 +216,23 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$form_settings_instance
 			);
 
-			//triggers exception if not found.
-			$global_multi_id 	= $addon_setting_values['selected_global_multi_id'];
-			$api_key 			= $addon->get_setting( 'api_key', '', $global_multi_id );
-			$new_campaigns 		= $addon->get_setting( 'new_campaigns', '', $global_multi_id );
-			$api 				= $addon::api( $api_key, $new_campaigns );
-			$list_id 			= $addon_setting_values['list_id'];
-			$existing_member 	= $this->get_subscriber(
+			// triggers exception if not found.
+			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
+			$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
+			$new_campaigns   = $addon->get_setting( 'new_campaigns', '', $global_multi_id );
+			$api             = $addon::api( $api_key, $new_campaigns );
+			$list_id         = $addon_setting_values['list_id'];
+			$existing_member = $this->get_subscriber(
 				$api,
 				array(
-					'email' 	=> $submitted_data['email'],
-					'list_id' 	=> $list_id
+					'email'   => $submitted_data['email'],
+					'list_id' => $list_id,
 				)
 			);
 
-			if ( $existing_member )
+			if ( $existing_member ) {
 				$is_success = self::ALREADY_SUBSCRIBED_ERROR;
+			}
 		}
 
 		/**
@@ -273,12 +277,12 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param 	object 	$api
-	 * @param 	mixed  	$data
-	 * @return  mixed 	array/object API response on queried subscriber
+	 * @param   object $api
+	 * @param   mixed  $data
+	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if( empty ( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ){
+		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ) {
 			$this->_subscriber[ md5( $data['email'] ) ] = $api->email_exists( $data['email'], $data['list_id'] );
 		}
 
@@ -290,12 +294,12 @@ class Hustle_Sendgrid_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * This method is to be inherited
 	 * and extended by child classes.
-	 * 
-	 * List the fields supported by the 
+	 *
+	 * List the fields supported by the
 	 * provider
 	 *
 	 * @since 4.1
-	 *	
+	 *
 	 * @param string hustle field type
 	 * @return string Api field type
 	 */

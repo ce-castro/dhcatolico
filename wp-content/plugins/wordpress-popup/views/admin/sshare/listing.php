@@ -1,12 +1,21 @@
 <?php
-$module_type         = Hustle_Module_Model::SOCIAL_SHARING_MODULE;
-$multiple_charts     = Hustle_Module_Model::get_sshare_types( true );
-$capitalize_singular = esc_html__( 'Social Sharing', 'hustle' );
-$capitalize_plural   = esc_html__( 'Social Shares', 'hustle' );
-$smallcaps_singular  = self::get_smallcaps_singular( $module_type );
-$smallcaps_plural    = esc_html__( 'social shares', 'hustle' );
+/**
+ * Social sharing listing.
+ *
+ * @var Opt_In $this
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
 
-self::static_render(
+$module_type         = Hustle_Module_Model::SOCIAL_SHARING_MODULE;
+$multiple_charts     = Hustle_SShare_Model::get_sshare_types( true );
+$capitalize_singular = Opt_In_Utils::get_module_type_display_name( $module_type, false, true );
+$capitalize_plural   = Opt_In_Utils::get_module_type_display_name( $module_type, true, true );
+$smallcaps_singular  = Opt_In_Utils::get_module_type_display_name( $module_type );
+$smallcaps_plural    = Opt_In_Utils::get_module_type_display_name( $module_type, true, false );
+
+$this->render(
 	'admin/commons/sui-listing/listing',
 	array(
 		'page_title'          => $capitalize_singular,
@@ -21,8 +30,6 @@ self::static_render(
 		'capitalize_plural'   => $capitalize_plural,
 		'smallcaps_singular'  => $smallcaps_singular,
 		'multiple_charts'     => $multiple_charts,
-		'page'                => $page,
-		'paged'               => $paged,
 		'entries_per_page'    => $entries_per_page,
 		'message'             => $message,
 		'sui'                 => $sui,

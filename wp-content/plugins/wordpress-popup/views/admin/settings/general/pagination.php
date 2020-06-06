@@ -1,3 +1,12 @@
+<?php
+/**
+ * Pagination section under the "general" tab.
+ *
+ * @package Hustle
+ * @since 4.0.4
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -17,7 +26,7 @@
 				type="number"
 				name="module_pagination"
 				min="1"
-				value="<?php echo isset( $settings['module_pagination'] )? esc_attr( $settings['module_pagination'] ):''; ?>"
+				value="<?php echo isset( $settings['module_pagination'] ) ? esc_attr( $settings['module_pagination'] ) : ''; ?>"
 				id="hustle-pagination-modules"
 				class="sui-form-control sui-input-sm sui-field-has-suffix"
 				aria-labelledby="hustle-pagination-modules-label"
@@ -38,7 +47,7 @@
 				type="number"
 				name="submission_pagination"
 				min="1"
-				value="<?php echo isset( $settings['submission_pagination'] )? esc_attr( $settings['submission_pagination'] ):''; ?>"
+				value="<?php echo isset( $settings['submission_pagination'] ) ? esc_attr( $settings['submission_pagination'] ) : ''; ?>"
 				id="hustle-pagination-submissions"
 				class="sui-form-control sui-input-sm sui-field-has-suffix"
 				aria-labelledby="hustle-pagination-submissions-label"

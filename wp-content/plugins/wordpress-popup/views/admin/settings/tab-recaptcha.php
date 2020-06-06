@@ -1,4 +1,13 @@
-<div id="recaptcha-box" class="sui-box hustle-settings-tab-recaptcha" data-tab="recaptcha"  <?php if ( 'recaptcha' !== $section ) echo 'style="display: none;"'; ?>>
+<?php
+/**
+ * Recaptcha tab.
+ *
+ * @package Hustle
+ * @since 4.0.4
+ */
+
+?>
+<div id="recaptcha-box" class="sui-box hustle-settings-tab-recaptcha" data-tab="recaptcha" <?php echo 'recaptcha' !== $section ? 'style="display: none;"' : ''; ?>>
 
 	<div class="sui-box-header">
 		<h2 class="sui-box-title"><?php esc_html_e( 'reCAPTCHA', 'hustle' ); ?></h2>
@@ -24,14 +33,16 @@
 					$this->render(
 						'admin/settings/recaptcha/api-keys',
 						array( 'settings' => $settings )
-					); ?>
+					);
+					?>
 
 					<?php
 					// SETTINGS: Language.
 					$this->render(
 						'admin/settings/recaptcha/language',
 						array( 'settings' => $settings )
-					); ?>
+					);
+					?>
 
 				</form>
 
@@ -51,7 +62,7 @@
 				data-target="recaptcha"
 			>
 				<span class="sui-loading-text"><?php esc_html_e( 'Save Settings', 'hustle' ); ?></span>
-				<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 
 		</div>

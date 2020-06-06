@@ -1,3 +1,12 @@
+<?php
+/**
+ * Widget title section under the "analytics" tab.
+ *
+ * @package Hustle
+ * @since 4.2.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">

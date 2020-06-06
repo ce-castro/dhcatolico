@@ -1,11 +1,22 @@
+<?php
+/**
+ * Message for when no display types were selected.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div id="hustle-appearance-empty-message" class="sui-message"<?php echo ! $is_empty ? ' style="display: none;"' : ''; ?>>
 
 	<?php
-	echo Opt_In_Utils::render_image_markup( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		esc_url( self::$plugin_url . 'assets/images/hustle-empty-message.png' ),
-		esc_url( self::$plugin_url . 'assets/images/hustle-empty-message@2x.png' ),
-		'sui-image'
-	);
+	if ( ! $this->is_branding_hidden ) :
+		echo Opt_In_Utils::render_image_markup( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			self::$plugin_url . 'assets/images/hustle-empty-message.png',
+			self::$plugin_url . 'assets/images/hustle-empty-message@2x.png',
+			'sui-image'
+		);
+	endif;
 	?>
 
 	<div class="sui-message-content">

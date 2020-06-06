@@ -1,6 +1,19 @@
+<?php
+/**
+ * Displays the wrapper, and the tracking chart/s in the listing page.
+ *
+ * This file handles whether to show a single or multiple charts on each module.
+ *
+ * @uses ./tracking-data-chart.php
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <?php if ( ! $multiple_charts ) : ?>
 
-	<?php self::static_render( 'admin/commons/sui-listing/elements/tracking-data-chart', $render_arguments ); ?>
+	<?php $this->render( 'admin/commons/sui-listing/elements/tracking-data-chart', $render_arguments ); ?>
 
 <?php else : ?>
 
@@ -22,7 +35,7 @@
 
 			<div class="active">
 
-				<?php self::static_render( 'admin/commons/sui-listing/elements/tracking-data-chart', $render_arguments ); ?>
+				<?php $this->render( 'admin/commons/sui-listing/elements/tracking-data-chart', $render_arguments ); ?>
 
 			</div>
 
@@ -34,7 +47,7 @@
 
 				<div>
 
-					<?php self::static_render( 'admin/commons/sui-listing/elements/tracking-data-chart', $render_arguments ); ?>
+					<?php $this->render( 'admin/commons/sui-listing/elements/tracking-data-chart', $render_arguments ); ?>
 
 				</div>
 

@@ -1,3 +1,12 @@
+<?php
+/**
+ * Platform item for within the ./add-platforms.php modal.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <script id="hustle-add-platform-li-tpl" type="text/template">
 
 	<li><label for="hustle-social--{{platform}}" class="sui-box-selector sui-box-selector-vertical">

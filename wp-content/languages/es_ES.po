@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 5.4.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-05-05 10:10:59+0000\n"
+"PO-Revision-Date: 2020-05-23 16:05:34+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -76,6 +76,10 @@ msgstr ","
 #: wp-includes/class-wp-locale.php:200
 msgid "number_format_thousands_sep"
 msgstr "."
+
+#: wp-includes/rest-api.php:50
+msgid "Namespace must not start or end with a slash."
+msgstr "El namespace no debe empezar o acabar con una barra inclinada."
 
 #. translators: 1: Type of block (i.e. Text, Image etc)
 #: wp-includes/js/dist/block-editor.js:23760
@@ -1749,7 +1753,7 @@ msgstr "Añadido:"
 msgid "Unchanged:"
 msgstr "Sin cambios:"
 
-#: wp-includes/comment.php:3498
+#: wp-includes/comment.php:3503
 msgid "User&#8217;s comment data."
 msgstr "Datos de los comentarios del usuario."
 
@@ -2469,7 +2473,7 @@ msgid "Embed Crowdsignal (formerly Polldaddy) content."
 msgstr "Incrustar contenido de Crowdsignal (anteriormente Polldaddy)."
 
 #. translators: %s: rest_api_init
-#: wp-includes/rest-api.php:52
+#: wp-includes/rest-api.php:58
 msgid "REST API routes must be registered on the %s action."
 msgstr "Las rutas de la API REST deben registrarse en la acción %s."
 
@@ -2485,8 +2489,8 @@ msgid_plural "Failed <span class=\"count\">(%s)</span>"
 msgstr[0] "Fallida <span class=\"count\">(%s)</span>"
 msgstr[1] "Fallidas <span class=\"count\">(%s)</span>"
 
-#: wp-includes/class-walker-comment.php:271
-#: wp-includes/class-walker-comment.php:361
+#: wp-includes/class-walker-comment.php:304
+#: wp-includes/class-walker-comment.php:402
 msgid "Your comment is awaiting moderation. This is a preview, your comment will be visible after it has been approved."
 msgstr "Tu comentario está pendiente de moderación. Esto es una vista previa, tu comentario estará visible cuando se apruebe."
 
@@ -3884,10 +3888,6 @@ msgstr "Selecciona o sube medios"
 msgid "Show Block Settings"
 msgstr "Mostrar los ajustes del bloque"
 
-#: wp-includes/js/dist/edit-post.js:2716
-msgid "Hide Block Settings"
-msgstr "Ocultar los ajustes del bloque"
-
 #: wp-includes/js/dist/edit-post.js:2634
 msgid "Editing Code"
 msgstr "Editando el código"
@@ -3935,6 +3935,10 @@ msgstr "Paneles avanzados"
 #: wp-includes/js/dist/edit-post.js:3858
 msgid "Document panels"
 msgstr "Paneles de documentos"
+
+#: wp-includes/js/dist/edit-post.js:2716
+msgid "Hide Block Settings"
+msgstr "Ocultar ajustes del bloque"
 
 #: wp-includes/js/dist/edit-post.js:4298
 msgid "Editor"
@@ -4603,12 +4607,6 @@ msgstr "Copiar el texto de la entrada"
 msgid "(Your theme may already use a H1 for the post title)"
 msgstr "(Puede que tu tema ya use un H1 para el título de la entrada)"
 
-#: wp-includes/js/dist/block-editor.js:24627
-msgid "Remove Block"
-msgid_plural "Remove Blocks"
-msgstr[0] "Eliminar el bloque"
-msgstr[1] "Eliminar los bloques"
-
 #: wp-includes/js/dist/editor.js:8805 wp-includes/js/dist/editor.js:8815
 msgid "Generating preview…"
 msgstr "Generando la vista previa…"
@@ -4630,10 +4628,6 @@ msgstr "Permitir comentarios"
 msgid "Block %1$s is at the beginning of the content and can’t be moved right"
 msgstr "El bloque %s está al principio del contenido y no puede moverse hacia arriba"
 
-#: wp-includes/js/dist/editor.js:13136
-msgid "Add to Reusable blocks"
-msgstr "Añadir a los bloques reutilizables"
-
 #: wp-includes/js/dist/block-editor.js:17969
 #: wp-includes/js/dist/edit-post.js:1385
 msgid "Manage all reusable blocks"
@@ -4647,6 +4641,16 @@ msgstr "Más utilizados"
 #: wp-includes/js/dist/editor.js:13227
 msgid "Remove from Reusable blocks"
 msgstr "Eliminar de los bloques reutilizables"
+
+#: wp-includes/js/dist/editor.js:13136
+msgid "Add to Reusable blocks"
+msgstr "Añadir a bloques reutilizables"
+
+#: wp-includes/js/dist/block-editor.js:24627
+msgid "Remove Block"
+msgid_plural "Remove Blocks"
+msgstr[0] "Eliminar bloque"
+msgstr[1] "Eliminar bloques"
 
 #. translators: 1: Type of block (i.e. Text, Image etc), 2: Position of
 #. selected block, 3: New position
@@ -5222,10 +5226,6 @@ msgstr "Entrada publicada."
 msgid "Page published privately."
 msgstr "Página publicada de forma privada."
 
-#: wp-includes/class-wp-block-type-registry.php:70
-msgid "Block type names must contain a namespace prefix. Example: my-plugin/my-custom-block-type"
-msgstr "Los nombres de tipo de bloque deben contener un prefijo de espacio de nombres. Ejemplo: my-plugin/my-custom-block-type"
-
 #: wp-includes/class-wp-block-type-registry.php:63
 msgid "Block type names must not contain uppercase characters."
 msgstr "Los nombres de tipo de bloque no deben contener caracteres en mayúscula."
@@ -5267,6 +5267,10 @@ msgstr "El tipo de bloque «%s» ya está registrado."
 #: wp-includes/post.php:1720
 msgid "Page reverted to draft."
 msgstr "Página devuelta a borrador."
+
+#: wp-includes/class-wp-block-type-registry.php:70
+msgid "Block type names must contain a namespace prefix. Example: my-plugin/my-custom-block-type"
+msgstr "Los nombres de tipo de bloque deben contener un prefijo de namespace. Ejemplo: my-plugin/my-custom-block-type"
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-revisions-controller.php:308
 msgid "The offset number requested is larger than or equal to the number of available revisions."
@@ -5528,7 +5532,7 @@ msgid "[deleted]"
 msgstr "[borrado]"
 
 #. translators: %d: Comment ID.
-#: wp-includes/comment.php:3599
+#: wp-includes/comment.php:3604
 msgid "Comment %d contains personal data but could not be anonymized."
 msgstr "El comentario %d contiene datos personales pero no se pueden anonimizar."
 
@@ -5598,39 +5602,39 @@ msgstr ""
 "El equipo de ###SITENAME###\n"
 "###SITEURL###"
 
-#: wp-includes/comment.php:3447
+#: wp-includes/comment.php:3452
 msgid "Comment Author"
 msgstr "Autor del comentario"
 
-#: wp-includes/comment.php:3412 wp-includes/comment.php:3522
+#: wp-includes/comment.php:3417 wp-includes/comment.php:3527
 msgid "WordPress Comments"
 msgstr "Comentarios de WordPress"
 
-#: wp-includes/comment.php:3452
+#: wp-includes/comment.php:3457
 msgid "Comment Date"
 msgstr "Fecha del comentario"
 
-#: wp-includes/comment.php:3454
+#: wp-includes/comment.php:3459
 msgid "Comment URL"
 msgstr "URL del comentario"
 
-#: wp-includes/comment.php:3453
+#: wp-includes/comment.php:3458
 msgid "Comment Content"
 msgstr "Contenido del comentario"
 
-#: wp-includes/comment.php:3450
+#: wp-includes/comment.php:3455
 msgid "Comment Author IP"
 msgstr "IP del autor del comentario"
 
-#: wp-includes/comment.php:3449
+#: wp-includes/comment.php:3454
 msgid "Comment Author URL"
 msgstr "URL del autor del comentario"
 
-#: wp-includes/comment.php:3448
+#: wp-includes/comment.php:3453
 msgid "Comment Author Email"
 msgstr "Correo electrónico del autor del comentario"
 
-#: wp-includes/comment.php:3451
+#: wp-includes/comment.php:3456
 msgid "Comment Author User Agent"
 msgstr "Agente de usuario del autor del comentario"
 
@@ -5749,7 +5753,7 @@ msgid "Installed"
 msgstr "Instalado"
 
 #. translators: %s: Property of an object.
-#: wp-includes/rest-api.php:1279
+#: wp-includes/rest-api.php:1285
 msgid "%1$s is not a valid property of Object."
 msgstr "%1$s no es una propiedad válida del objeto."
 
@@ -7111,22 +7115,22 @@ msgid "Updated!"
 msgstr "¡Actualizado!"
 
 #. translators: 1: Parameter, 2: Maximum number.
-#: wp-includes/rest-api.php:1365
+#: wp-includes/rest-api.php:1371
 msgid "%1$s must be less than or equal to %2$d"
 msgstr "%1$s debe ser menor o igual a %2$d"
 
 #. translators: 1: Parameter, 2: Maximum number.
-#: wp-includes/rest-api.php:1362
+#: wp-includes/rest-api.php:1368
 msgid "%1$s must be less than %2$d"
 msgstr "%1$s debe ser menor que %2$d"
 
 #. translators: 1: Parameter, 2: Minimum number.
-#: wp-includes/rest-api.php:1357
+#: wp-includes/rest-api.php:1363
 msgid "%1$s must be greater than or equal to %2$d"
 msgstr "%1$s debe ser mayor o igual a %2$d"
 
 #. translators: 1: Parameter, 2: Minimum number.
-#: wp-includes/rest-api.php:1354
+#: wp-includes/rest-api.php:1360
 msgid "%1$s must be greater than %2$d"
 msgstr "%1$s debe ser mayor que %2$d"
 
@@ -7237,7 +7241,7 @@ msgstr ""
 msgid "Whether to perform an oEmbed discovery request for non-whitelisted providers."
 msgstr "Si se realizará una petición de descubrimiento de oEmbed a proveedores que no estén en lista blanca."
 
-#: wp-includes/comment.php:3295
+#: wp-includes/comment.php:3300
 msgid "Sorry, comments are not allowed for this item."
 msgstr "Lo siento, no se permiten comentarios para este elemento."
 
@@ -7569,13 +7573,13 @@ msgstr "Plantilla de página no válida."
 msgid "Invalid JSONP callback function."
 msgstr "Llamada no válida a JSONP."
 
-#: wp-includes/script-loader.php:1211 wp-includes/rest-api.php:1332
+#: wp-includes/script-loader.php:1211 wp-includes/rest-api.php:1338
 #: wp-includes/post.php:3739
 msgid "Invalid date."
 msgstr "Fecha no válida."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-users-controller.php:717
-#: wp-includes/rest-api.php:1338 wp-includes/user.php:3568
+#: wp-includes/rest-api.php:1344 wp-includes/user.php:3568
 msgid "Invalid email address."
 msgstr "Dirección de correo electrónico no valida."
 
@@ -8055,42 +8059,42 @@ msgid "Item selected."
 msgstr "Elemento seleccionado."
 
 #. translators: 1: Parameter, 2: Minimum number, 3: Maximum number.
-#: wp-includes/rest-api.php:1386
+#: wp-includes/rest-api.php:1392
 msgid "%1$s must be between %2$d (inclusive) and %3$d (inclusive)"
 msgstr "%1$s debe estar entre %2$d (incluido) y %3$d (incluido)"
 
 #. translators: 1: Parameter, 2: Minimum number, 3: Maximum number.
-#: wp-includes/rest-api.php:1381
+#: wp-includes/rest-api.php:1387
 msgid "%1$s must be between %2$d (exclusive) and %3$d (inclusive)"
 msgstr "%1$s debe estar entre %2$d (excluido) y %3$d (incluido)"
 
 #. translators: 1: Parameter, 2: Minimum number, 3: Maximum number.
-#: wp-includes/rest-api.php:1376
+#: wp-includes/rest-api.php:1382
 msgid "%1$s must be between %2$d (inclusive) and %3$d (exclusive)"
 msgstr "%1$s debe estar entre %2$d (incluido) y %3$d (excluido)"
 
 #. translators: 1: Parameter, 2: Minimum number, 3: Maximum number.
-#: wp-includes/rest-api.php:1371
+#: wp-includes/rest-api.php:1377
 msgid "%1$s must be between %2$d (exclusive) and %3$d (exclusive)"
 msgstr "%1$s debe estar entre %2$d (excluido) y %3$d (excluido)"
 
 #. translators: %s: IP address.
-#: wp-includes/rest-api.php:1344
+#: wp-includes/rest-api.php:1350
 msgid "%s is not a valid IP address."
 msgstr "%s no es una dirección de IP válida."
 
 #. translators: 1: Parameter, 2: List of types.
 #. translators: 1: Parameter, 2: Type name.
-#: wp-includes/rest-api.php:1231 wp-includes/rest-api.php:1241
-#: wp-includes/rest-api.php:1267 wp-includes/rest-api.php:1295
-#: wp-includes/rest-api.php:1310 wp-includes/rest-api.php:1315
-#: wp-includes/rest-api.php:1320 wp-includes/rest-api.php:1325
+#: wp-includes/rest-api.php:1237 wp-includes/rest-api.php:1247
+#: wp-includes/rest-api.php:1273 wp-includes/rest-api.php:1301
+#: wp-includes/rest-api.php:1316 wp-includes/rest-api.php:1321
+#: wp-includes/rest-api.php:1326 wp-includes/rest-api.php:1331
 msgid "%1$s is not of type %2$s."
 msgstr "%1$s no es del tipo %2$s."
 
 #. translators: 1: Parameter, 2: List of valid values.
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:1363
-#: wp-includes/rest-api.php:1304
+#: wp-includes/rest-api.php:1310
 msgid "%1$s is not one of %2$s."
 msgstr "%1$s no es ninguna de las siguientes %2$s."
 
@@ -8710,7 +8714,7 @@ msgstr "Para crear un comentario se necesita un nombre de autor y una dirección
 #: wp-includes/class-wp-xmlrpc-server.php:3852
 #: wp-includes/rest-api/endpoints/class-wp-rest-comments-controller.php:446
 #: wp-includes/rest-api/endpoints/class-wp-rest-comments-controller.php:468
-#: wp-includes/comment.php:3347
+#: wp-includes/comment.php:3352
 msgid "Sorry, you must be logged in to comment."
 msgstr "Lo siento, debes estar conectado para comentar."
 
@@ -9703,13 +9707,13 @@ msgstr "Debe especificarse la ruta."
 msgid "Drag boxes here"
 msgstr "Arrastra aquí las cajas"
 
-#: wp-includes/rest-api.php:40
-msgid "Routes must be namespaced with plugin or theme name and version."
-msgstr "Las rutas deben tener espacio de nombres con el nombre y versión del plugin o tema."
-
 #: wp-includes/post.php:1477
 msgid "Unregistering a built-in post type is not allowed"
 msgstr "No está permitido anular un tipo de contenido incorporado."
+
+#: wp-includes/rest-api.php:40
+msgid "Routes must be namespaced with plugin or theme name and version."
+msgstr "Las rutas deben tener namespace con el nombre y versión del plugin o tema."
 
 #: wp-includes/post.php:343
 msgctxt "post status"
@@ -10182,12 +10186,12 @@ msgstr "Navegación por la lista de categorías"
 
 #. translators: 1: Function name, 2: WordPress version number, 3: Error
 #. message.
-#: wp-includes/rest-api.php:565
+#: wp-includes/rest-api.php:571
 msgid "%1$s (since %2$s; %3$s)"
 msgstr "%1$s (desde %2$s; %3$s)"
 
 #. translators: 1: Function name, 2: WordPress version number.
-#: wp-includes/rest-api.php:544 wp-includes/rest-api.php:568
+#: wp-includes/rest-api.php:550 wp-includes/rest-api.php:574
 msgid "%1$s (since %2$s; no alternative available)"
 msgstr "%1$s (desde %2$s; sin alternativa disponible)"
 
@@ -10195,7 +10199,7 @@ msgstr "%1$s (desde %2$s; sin alternativa disponible)"
 msgid "Invalid shortcode name: Empty name given."
 msgstr "Nombre de shortcode no válido: Has dado un nombre vacío."
 
-#: wp-includes/rest-api.php:917
+#: wp-includes/rest-api.php:923
 msgid "Cookie nonce is invalid"
 msgstr "La cookie nonce no es válida"
 
@@ -10209,15 +10213,15 @@ msgstr "Enlace permanente guardado"
 msgid "Invalid shortcode name: %1$s. Do not use spaces or reserved characters: %2$s"
 msgstr "Nombre de shortcode no válido: %1$s. No utilices espacios o caracteres especiales: %2$s"
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1144
-msgid "The specified namespace could not be found."
-msgstr "El nombre de espacio que has especificado no está disponible."
-
 #. translators: 1: Function name, 2: WordPress version number, 3: New function
 #. name.
-#: wp-includes/rest-api.php:541
+#: wp-includes/rest-api.php:547
 msgid "%1$s (since %2$s; use %3$s instead)"
 msgstr "%1$s (desde %2$s; usa en su lugar %3$s)"
+
+#: wp-includes/rest-api/class-wp-rest-server.php:1144
+msgid "The specified namespace could not be found."
+msgstr "El namespace que has especificado no está disponible."
 
 #: wp-includes/rest-api/class-wp-rest-server.php:1057
 msgid "No route was found matching the URL and request method"
@@ -11326,12 +11330,6 @@ msgstr ""
 msgid "<strong>Could not find site %1$s.</strong> Searched for table %2$s in database %3$s. Is that right?"
 msgstr "<strong>No se ha podido encontrar el sitio %1$s.</strong> Se ha buscado la tabla %2$s en la base de datos %3$s. ¿Es correcto?"
 
-#. translators: Revision date format, see https://www.php.net/date
-#: wp-includes/post-template.php:1819 wp-includes/post-template.php:1861
-msgctxt "revision date format"
-msgid "F j, Y @ H:i:s"
-msgstr "j F Y @ H:i:s"
-
 #: wp-includes/media.php:3893
 msgid "Drag and drop to reorder media files."
 msgstr "Arrastra y suelta para reordenar los archivos de medios."
@@ -11365,6 +11363,12 @@ msgstr ""
 "¡Gracias!\n"
 "\n"
 "--El equipo @ SITE_NAME"
+
+#. translators: Revision date format, see https://www.php.net/date
+#: wp-includes/post-template.php:1819 wp-includes/post-template.php:1861
+msgctxt "revision date format"
+msgid "F j, Y @ H:i:s"
+msgstr "j \\d\\e F \\d\\e Y \\a \\l\\a\\s H:i:s"
 
 #. translators: 1: 'siteurl'/'home' argument, 2: bloginfo() function name, 3:
 #. 'url' argument.
@@ -11693,7 +11697,7 @@ msgstr "Valor no válido %1$s para %2$s. El valor esperado debería estar entre 
 #: wp-includes/general-template.php:1579 wp-includes/general-template.php:2214
 msgctxt "daily archives date format"
 msgid "F j, Y"
-msgstr "j F Y"
+msgstr "j \\d\\e F \\d\\e Y"
 
 #: wp-includes/class-wp-editor.php:1271
 #: wp-includes/js/dist/block-library.js:12311
@@ -11926,7 +11930,7 @@ msgstr "Estás personalizando %s"
 msgid "Widgets are independent sections of content that can be placed into widgetized areas provided by your theme (commonly called sidebars)."
 msgstr "Los widgets son secciones independientes de contenido que pueden colocarse en las áreas de widgets que tenga tu tema (también llamadas barras laterales)"
 
-#: wp-includes/comment.php:3396
+#: wp-includes/comment.php:3401
 msgid "<strong>Error</strong>: The comment could not be saved. Please try again later."
 msgstr "<strong>Error</strong>: no se ha podido guardar el comentario. Por favor, inténtalo de nuevo más tarde."
 
@@ -13066,26 +13070,26 @@ msgstr "#%d (sin título)"
 msgid "JavaScript must be enabled to use this feature."
 msgstr "JavaScript debe estar activado para utilizar esta funcionalidad."
 
-#. translators: Date format, see https://www.php.net/date
-#. translators: Localized date format, see https://www.php.net/date
-#: wp-includes/script-loader.php:157 wp-includes/script-loader.php:349
-#: wp-includes/media.php:3462 wp-includes/class-wp-locale.php:363
-msgid "F j, Y"
-msgstr "j F Y"
-
-#. translators: Date/Time format, see https://www.php.net/date
-#. translators: Localized date and time format, see https://www.php.net/date
-#: wp-includes/script-loader.php:158 wp-includes/script-loader.php:351
-#: wp-includes/class-wp-locale.php:367
-msgid "F j, Y g:i a"
-msgstr "j F Y H:i"
-
 #. translators: Time format, see https://www.php.net/date
 #. translators: Localized time format, see https://www.php.net/date
 #: wp-includes/script-loader.php:154 wp-includes/script-loader.php:347
 #: wp-includes/class-wp-locale.php:365
 msgid "g:i a"
 msgstr "H:i"
+
+#. translators: Date/Time format, see https://www.php.net/date
+#. translators: Localized date and time format, see https://www.php.net/date
+#: wp-includes/script-loader.php:158 wp-includes/script-loader.php:351
+#: wp-includes/class-wp-locale.php:367
+msgid "F j, Y g:i a"
+msgstr "j \\d\\e F \\d\\e Y H:i"
+
+#. translators: Date format, see https://www.php.net/date
+#. translators: Localized date format, see https://www.php.net/date
+#: wp-includes/script-loader.php:157 wp-includes/script-loader.php:349
+#: wp-includes/media.php:3462 wp-includes/class-wp-locale.php:363
+msgid "F j, Y"
+msgstr "j \\d\\e F \\d\\e Y"
 
 #: wp-includes/js/dist/block-editor.js:23515
 msgid "Not set"
@@ -13137,8 +13141,8 @@ msgid "The login page will open in a new tab. After logging in you can close it 
 msgstr "La página de acceso se abrirá en una pestaña nueva. Después de acceder puedes cerrarla y volver a esta página."
 
 #. translators: %s: Comment author link.
-#: wp-includes/class-walker-comment.php:287
-#: wp-includes/class-walker-comment.php:377
+#: wp-includes/class-walker-comment.php:326
+#: wp-includes/class-walker-comment.php:423
 msgid "%s <span class=\"says\">says:</span>"
 msgstr "%s <span class=\"says\">dice:</span>"
 
@@ -14130,15 +14134,15 @@ msgstr "El tamaño del archivo %s excede el tamaño permitido en este sitio."
 msgid "Feedback"
 msgstr "Sugerencias"
 
-#: wp-includes/comment.php:3355
+#: wp-includes/comment.php:3360
 msgid "<strong>Error</strong>: Please fill the required fields (name, email)."
 msgstr "<strong>Error</strong>: por favor, completa los campos obligatorios (nombre, correo electrónico)."
 
-#: wp-includes/comment.php:3357
+#: wp-includes/comment.php:3362
 msgid "<strong>Error</strong>: Please enter a valid email address."
 msgstr "<strong>Error</strong>: por favor, introduce una dirección de correo electrónico válida."
 
-#: wp-includes/comment.php:3382
+#: wp-includes/comment.php:3387
 msgid "<strong>Error</strong>: Please type a comment."
 msgstr "<strong>Error</strong>: por favor, escribe un comentario."
 
@@ -14280,7 +14284,7 @@ msgstr "Todas las páginas"
 msgid "All Posts"
 msgstr "Todas las entradas"
 
-#: wp-includes/class-walker-comment.php:242
+#: wp-includes/class-walker-comment.php:250
 msgid "Pingback:"
 msgstr "Pingback:"
 
@@ -15849,7 +15853,7 @@ msgstr "El autor es %s"
 msgid "Duplicate comment detected; it looks as though you&#8217;ve already said that!"
 msgstr "Comentario duplicado: ¡parece que ya había sido enviado antes!"
 
-#: wp-includes/comment.php:2279
+#: wp-includes/comment.php:2284
 msgid "Could not update comment status"
 msgstr "No ha sido posible actualizar el estado del comentario"
 
@@ -17094,7 +17098,7 @@ msgstr "Marcadores"
 msgid "No categories"
 msgstr "No hay categorías"
 
-#: wp-includes/class-walker-comment.php:304
+#: wp-includes/class-walker-comment.php:343
 msgid "(Edit)"
 msgstr "(Editar)"
 
@@ -17258,8 +17262,8 @@ msgid "Add New"
 msgstr "Añadir nueva"
 
 #. translators: 1: Comment date, 2: Comment time.
-#: wp-includes/class-walker-comment.php:300
-#: wp-includes/class-walker-comment.php:388
+#: wp-includes/class-walker-comment.php:339
+#: wp-includes/class-walker-comment.php:434
 msgid "%1$s at %2$s"
 msgstr "%1$s a las %2$s"
 
@@ -17283,7 +17287,7 @@ msgstr "Plugin:"
 
 #: wp-includes/class-wp-xmlrpc-server.php:3875
 #: wp-includes/rest-api/endpoints/class-wp-rest-comments-controller.php:549
-#: wp-includes/comment.php:3268
+#: wp-includes/comment.php:3273
 msgid "Sorry, comments are closed for this item."
 msgstr "Lo siento, los comentarios están cerrados para este elemento."
 
@@ -17292,8 +17296,8 @@ msgstr "Lo siento, los comentarios están cerrados para este elemento."
 msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
 msgstr "Lo siento, debes estar <a href=\"%s\">conectado</a> para publicar un comentario."
 
-#: wp-includes/class-walker-comment.php:269
-#: wp-includes/class-walker-comment.php:359
+#: wp-includes/class-walker-comment.php:302
+#: wp-includes/class-walker-comment.php:400
 msgid "Your comment is awaiting moderation."
 msgstr "Tu comentario está pendiente de moderación."
 
@@ -17429,8 +17433,8 @@ msgid "URL"
 msgstr "URL"
 
 #: wp-includes/class-wp-editor.php:1388
-#: wp-includes/class-walker-comment.php:242
-#: wp-includes/class-walker-comment.php:392 wp-includes/js/dist/editor.js:12394
+#: wp-includes/class-walker-comment.php:250
+#: wp-includes/class-walker-comment.php:438 wp-includes/js/dist/editor.js:12394
 #: wp-includes/js/dist/block-editor.js:20123
 #: wp-includes/js/dist/block-editor.js:20742
 #: wp-includes/js/dist/block-editor.js:22523
@@ -17443,7 +17447,7 @@ msgstr "Editar"
 msgid "%s ago"
 msgstr "hace %s"
 
-#: wp-includes/script-loader.php:1274 wp-includes/comment.php:3497
+#: wp-includes/script-loader.php:1274 wp-includes/comment.php:3502
 #: wp-includes/link-template.php:3047 wp-includes/link-template.php:3107
 msgid "Comments"
 msgstr "Comentarios"
@@ -17673,7 +17677,7 @@ msgid "(no title)"
 msgstr "(sin título)"
 
 #. translators: Name of a comment's author after being anonymized.
-#: wp-includes/comment.php:3568 wp-includes/class-wp-theme.php:897
+#: wp-includes/comment.php:3573 wp-includes/class-wp-theme.php:897
 #: wp-includes/comment-template.php:32
 msgid "Anonymous"
 msgstr "Anónimo"

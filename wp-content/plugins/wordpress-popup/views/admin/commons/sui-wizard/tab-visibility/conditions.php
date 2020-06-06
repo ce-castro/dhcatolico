@@ -1,10 +1,16 @@
 <?php
+/**
+ * Conditions section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $image_1x = self::$plugin_url . 'assets/images/hustle-visibility.png';
 $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 ?>
 
-<?php
-// TEMPLATE: Visibility Group ?>
+<?php // TEMPLATE: Visibility Group. ?>
 <script id="hustle-visibility-group-box-tpl" type="text/template">
 
 	<div id="hustle-visibility-group-{{ groupId }}" class="sui-box-builder">
@@ -48,7 +54,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 						class="sui-button-icon sui-button-red hustle-remove-visibility-group"
 						data-group-id="{{ groupId }}"
 					>
-						<i class="sui-icon-trash" aria-hidden="true"></i>
+						<span class="sui-icon-trash" aria-hidden="true"></span>
 						<span class="sui-screen-reader-text"><?php esc_html_e( 'Delete visibility group', 'hustle' ); ?></span>
 					</button>
 
@@ -56,12 +62,12 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 			</div>
 
-			<?php if ( in_array( $module_type, [ 'social_sharing', 'embedded' ], true ) ) { ?>
+			<?php if ( in_array( $module_type, array( 'social_sharing', 'embedded' ), true ) ) { ?>
 				<div class="sui-builder-options sui-options-inline">
 
 					<span class="sui-builder-text"><?php esc_html_e( 'Apply on', 'hustle' ); ?>
 						<button class="sui-button-icon sui-tooltip sui-tooltip-constrained" data-tooltip="<?php esc_attr_e( 'Choose the display options to apply these visibility conditions on. Note that the visibility rules will only affect the options which are active on the Display Options page.', 'hustle' ); ?>" style="width: 22px; height: 22px;">
-							<i class="sui-icon-info" aria-hidden="true"></i>
+							<span class="sui-icon-info" aria-hidden="true"></span>
 						</button>
 					</span>
 
@@ -130,8 +136,9 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 						<span aria-hidden="true"></span>
 						<span><?php esc_html_e( 'Shortcode', 'hustle' ); ?></span>
 
+						<?php /* translators: module type in small caps and in singular */ ?>
 						<button class="sui-button-icon sui-tooltip sui-tooltip-constrained" data-tooltip="<?php printf( esc_attr__( 'By default, the shortcode displays your %1$s wherever you add it. However, you can apply visibility rules on your %1$s shortcode for better control. For example, you can use visibility rules to show your %1$s to logged-in users only or visitors from a specific country only.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?>" style="width: 22px; height: 22px;">
-							<i class="sui-icon-info" aria-hidden="true"></i>
+							<span class="sui-icon-info" aria-hidden="true"></span>
 						</button>
 
 					</label>
@@ -146,14 +153,18 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 			<div class="sui-builder-fields sui-accordion"></div>
 
 			<button class="sui-button sui-button-dashed hustle-choose-conditions" data-group-id="{{ groupId }}">
-				<i class="sui-icon-plus" aria-hidden="true"></i> <?php esc_html_e( 'Add Conditions', 'hustle' ); ?>
+				<span class="sui-icon-plus" aria-hidden="true"></span> <?php esc_html_e( 'Add Conditions', 'hustle' ); ?>
 			</button>
 
 			<div class="sui-box-builder-message-block">
-
+				<?php /* translators: module type in small caps and in singular */ ?>
 				<span class="sui-box-builder-message"><?php printf( esc_html__( 'No visibility condition added yet. Currently, your %s will appear everywhere on your website.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
-				<?php echo Opt_In_Utils::render_image_markup( esc_url( $image_1x ), esc_url( $image_2x ), 'sui-image sui-image-center' ); // WPCS: XSS ok. ?>
+				<?php
+				if ( ! $this->is_branding_hidden ) :
+					echo Opt_In_Utils::render_image_markup( $image_1x, $image_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				endif;
+				?>
 
 			</div>
 
@@ -163,8 +174,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// TEMPLATE: Visibility Rule ?>
+<?php // TEMPLATE: Visibility Rule. ?>
 <script id="hustle-visibility-rule-tpl" type="text/template">
 
 	<div class="sui-accordion-item-header">
@@ -179,14 +189,14 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 			data-group-id="{{ groupId }}"
 			data-condition-id="{{ id }}"
 		>
-			<i class="sui-icon-trash" aria-hidden="true"></i>
+			<span class="sui-icon-trash" aria-hidden="true"></span>
 			<span class="sui-screen-reader-text"><?php esc_html_e( 'Delete visibility rule', 'hustle' ); ?></span>
 		</button>
 
 		<span class="sui-builder-field-border sui-hover-show" aria-hidden="true"></span>
 
 		<button class="sui-button-icon sui-accordion-open-indicator">
-			<i class="sui-icon-chevron-down" aria-hidden="true"></i>
+			<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 			<span class="sui-screen-reader-text"><?php esc_html_e( 'Open visibility rule', 'hustle' ); ?></span>
 		</button>
 
@@ -196,11 +206,10 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Posts ?>
+<?php // RULE: Posts. ?>
 <script id="hustle-visibility-rule-tpl--posts" type="text/template">
 
-	<label class="sui-label"><?php esc_html_e( "Choose posts", 'hustle' ); ?></label>
+	<label class="sui-label"><?php esc_html_e( 'Choose posts', 'hustle' ); ?></label>
 
 	<div class="sui-side-tabs">
 
@@ -259,11 +268,10 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Pages ?>
+<?php // RULE: Pages. ?>
 <script id="hustle-visibility-rule-tpl--pages" type="text/template">
 
-	<label class="sui-label"><?php esc_html_e( "Choose pages", 'hustle' ); ?></label>
+	<label class="sui-label"><?php esc_html_e( 'Choose pages', 'hustle' ); ?></label>
 
 	<div class="sui-side-tabs">
 
@@ -322,10 +330,10 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: CPT ?>
+<?php // RULE: CPT. ?>
 <script id="hustle-visibility-rule-tpl--post_type" type="text/template">
-	<label class="sui-label"><?php printf( esc_html__( "Choose %s", 'hustle' ), '{{ postTypeLabel }}' ); ?></label>
+	<?php /* translators: custom post type label */ ?>
+	<label class="sui-label"><?php printf( esc_html__( 'Choose %s', 'hustle' ), '{{ postTypeLabel }}' ); ?></label>
 
 	<div class="sui-side-tabs">
 
@@ -339,6 +347,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 					id="{{ groupId }}-{{ type }}-filter_type-{{postType}}-except"
 					data-attribute="filter_type"
 					{{ _.checked( filter_type, 'except' ) }} />
+				<?php /* translators: custom post type label */ ?>
 				<?php printf( esc_html__( 'All %s except', 'hustle' ), '{{ postTypeLabel }}' ); ?>
 			</label>
 
@@ -350,6 +359,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 					id="{{ groupId }}-{{ type }}-filter_type-{{postType}}-only"
 					data-attribute="filter_type"
 					{{ _.checked( filter_type, 'only' ) }} />
+				<?php /* translators: custom post type label */ ?>
 				<?php printf( esc_html__( 'Only these %s', 'hustle' ), '{{ postTypeLabel }}' ); ?>
 			</label>
 
@@ -365,6 +375,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 					multiple="multiple"
 					data-val="{{ selected_cpts }}"
 					data-attribute="selected_cpts"
+					<?php /* translators: custom post type label */ ?>
 					data-placeholder="<?php printf( esc_html__( 'Start typing the name of %s...', 'hustle' ), '{{ postTypeLabel }}' ); ?>">
 
 					<# _.each( optinVars.post_types[postType].data, function( post ) { #>
@@ -384,11 +395,10 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Categories ?>
+<?php // RULE: Categories. ?>
 <script id="hustle-visibility-rule-tpl--categories" type="text/template">
 
-	<label class="sui-label"><?php esc_html_e( "Choose categories", 'hustle' ); ?></label>
+	<label class="sui-label"><?php esc_html_e( 'Choose categories', 'hustle' ); ?></label>
 
 	<div class="sui-side-tabs">
 
@@ -448,11 +458,10 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Tags ?>
+<?php // RULE: Tags. ?>
 <script id="hustle-visibility-rule-tpl--tags" type="text/template">
 
-	<label class="sui-label"><?php esc_html_e( "Choose tags", 'hustle' ); ?></label>
+	<label class="sui-label"><?php esc_html_e( 'Choose tags', 'hustle' ); ?></label>
 
 	<div class="sui-side-tabs">
 
@@ -512,8 +521,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Visitor's logged in status ?>
+<?php // RULE: Visitor's logged in status. ?>
 <script id="hustle-visibility-rule-tpl--visitor_logged_in_status" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( "Visitor's status", 'hustle' ); ?></label>
@@ -550,8 +558,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Number of times visitor has seen ?>
+<?php // RULE: Number of times visitor has seen. ?>
 <script id="hustle-visibility-rule-tpl--shown_less_than" type="text/template">
 
 <div class="sui-row">
@@ -613,8 +620,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Visitor's Device ?>
+<?php // RULE: Visitor's Device. ?>
 <script id="hustle-visibility-rule-tpl--visitor_device" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose device', 'hustle' ); ?></label>
@@ -672,8 +678,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Referrer ?>
+<?php // RULE: Referrer. ?>
 <script id="hustle-visibility-rule-tpl--from_referrer" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose referrer', 'hustle' ); ?></label>
@@ -724,8 +729,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Source of Arrival ?>
+<?php // RULE: Source of Arrival. ?>
 <script id="hustle-visibility-rule-tpl--source_of_arrival" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose source of arrival', 'hustle' ); ?></label>
@@ -740,6 +744,14 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 				id="{{ groupId }}-{{ type }}-rule--source-direct" />
 			<span aria-hidden="direct"></span>
 			<span><?php esc_html_e( 'Direct', 'hustle' ); ?></span>
+			<span
+				style="height: 22px; cursor: pointer; margin-left: 5px;"
+				class="sui-tooltip sui-tooltip-top-left sui-tooltip-constrained"
+				<?php /* translators: module type in small caps and in singular */ ?>
+				data-tooltip="<?php printf( esc_html__( "Visitor enters the URL of the page containing this %s directly inside the browser's address bar.", 'hustle' ), esc_html( $smallcaps_singular ) ); ?>"
+			>
+				<span class="sui-icon-info sui-sm" style="pointer-events: none; vertical-align: middle;" aria-hidden="true"></span>
+			</span>
 		</label>
 
 		<label for="{{ groupId }}-{{ type }}-rule--source-external"
@@ -750,6 +762,14 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 				id="{{ groupId }}-{{ type }}-rule--source-external" />
 			<span aria-hidden="external"></span>
 			<span><?php esc_html_e( 'An external page', 'hustle' ); ?></span>
+			<span
+				style="height: 22px; cursor: pointer; margin-left: 5px;"
+				class="sui-tooltip sui-tooltip-top-left sui-tooltip-constrained"
+				<?php /* translators: module type in small caps and in singular */ ?>
+				data-tooltip="<?php printf( esc_html__( 'Visitor arrives on the page containing this %s from another website.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?>"
+			>
+				<span class="sui-icon-info sui-sm" style="pointer-events: none; vertical-align: middle;" aria-hidden="true"></span>
+			</span>
 		</label>
 
 		<label for="{{ groupId }}-{{ type }}-rule--source-internal"
@@ -760,6 +780,14 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 				id="{{ groupId }}-{{ type }}-rule--source-internal" />
 			<span aria-hidden="internal"></span>
 			<span><?php esc_html_e( 'An internal page', 'hustle' ); ?></span>
+			<span
+				style="height: 22px; cursor: pointer; margin-left: 5px;"
+				class="sui-tooltip sui-tooltip-top-left sui-tooltip-constrained"
+				<?php /* translators: module type in small caps and in singular */ ?>
+				data-tooltip="<?php printf( esc_html__( 'Visitor arrives on the page containing this %s from another page on your website.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?>"
+			>
+				<span class="sui-icon-info sui-sm" style="pointer-events: none; vertical-align: middle;" aria-hidden="true"></span>
+			</span>
 		</label>
 
 		<label for="{{ groupId }}-{{ type }}-rule--source-search"
@@ -770,6 +798,14 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 				id="{{ groupId }}-{{ type }}-rule--source-search" />
 			<span aria-hidden="search"></span>
 			<span><?php esc_html_e( 'A search engine', 'hustle' ); ?></span>
+			<span
+				style="height: 22px; cursor: pointer; margin-left: 5px;"
+				class="sui-tooltip sui-tooltip-top-left sui-tooltip-constrained"
+				<?php /* translators: module type in small caps and in singular */ ?>
+				data-tooltip="<?php printf( esc_html__( 'Visitor arrives on the page containing this %s from a search engine result.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?>"
+			>
+				<span class="sui-icon-info sui-sm" style="pointer-events: none; vertical-align: middle;" aria-hidden="true"></span>
+			</span>
 		</label>
 
 		<label for="{{ groupId }}-{{ type }}-rule--source-not-search"
@@ -780,14 +816,21 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 				id="{{ groupId }}-{{ type }}-rule--source-not-search" />
 			<span aria-hidden="not_search"></span>
 			<span><?php esc_html_e( 'Not a search engine', 'hustle' ); ?></span>
+			<span
+				style="height: 22px; cursor: pointer; margin-left: 5px;"
+				class="sui-tooltip sui-tooltip-top-left sui-tooltip-constrained"
+				<?php /* translators: module type in small caps and in singular */ ?>
+				data-tooltip="<?php printf( esc_html__( 'Visitor arrives on the page containing this %s from anywhere except a search engine result.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?>"
+			>
+				<span class="sui-icon-info sui-sm" style="pointer-events: none; vertical-align: middle;" aria-hidden="true"></span>
+			</span>
 		</label>
 
 	</div>
 
 </script>
 
-<?php
-// RULE: Specific URL ?>
+<?php // RULE: Specific URL. ?>
 <script id="hustle-visibility-rule-tpl--on_url" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose specific urls', 'hustle' ); ?></label>
@@ -838,8 +881,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Visitor's Browser ?>
+<?php // RULE: Visitor's Browser. ?>
 <script id="hustle-visibility-rule-tpl--on_browser" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose visitor’s browser', 'hustle' ); ?></label>
@@ -899,8 +941,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Visitor Commented Before ?>
+<?php // RULE: Visitor Commented Before. ?>
 <script id="hustle-visibility-rule-tpl--visitor_commented" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'If the visitor has ever commented before is', 'hustle' ); ?></label>
@@ -937,13 +978,13 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 	</div>
 
 	<div class="sui-notice" style="margin-top: 20px;">
-		<p style="margin-bottom: 0;"><?php printf( esc_html__( "You might also want to combine this condition along with %1\$s%2\$s%3\$s.", 'hustle' ), '<strong>', esc_html__( "Visitor's logged in status", 'hustle' ), '</strong>' ); ?></p>
+		<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */ ?>
+		<p style="margin-bottom: 0;"><?php printf( esc_html__( 'You might also want to combine this condition along with %1$sVisitor\'s logged in status%2$s.', 'hustle' ), '<strong>', '</strong>' ); ?></p>
 	</div>
 
 </script>
 
-<?php
-// RULE: Visitor's Country ?>
+<?php // RULE: Visitor's Country. ?>
 <script id="hustle-visibility-rule-tpl--visitor_country" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose visitor’s county', 'hustle' ); ?></label>
@@ -1004,8 +1045,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 </script>
 
 
-<?php
-// RULE: Specific roles ?>
+<?php // RULE: Specific roles. ?>
 <script id="hustle-visibility-rule-tpl--user_roles" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose user roles', 'hustle' ); ?></label>
@@ -1064,8 +1104,8 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 	</div>
 
 </script>
-<?php
-// RULE: User registration based visibility ?>
+
+<?php // RULE: User registration based visibility. ?>
 <script id="hustle-visibility-rule-tpl--user_registration" type="text/template">
 
 	<?php $days_past = __( 'day(s) past the registration day', 'hustle' ); ?>
@@ -1108,8 +1148,8 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 	</span>
 
 </script>
-<?php
-// RULE: User template based visibility ?>
+
+<?php // RULE: User template based visibility. ?>
 <script id="hustle-visibility-rule-tpl--page_templates" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose page templates', 'hustle' ); ?></label>
@@ -1169,8 +1209,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Static Pages ?>
+<?php // RULE: Static Pages. ?>
 <script id="hustle-visibility-rule-tpl--wp_conditions" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose static pages', 'hustle' ); ?></label>
@@ -1229,8 +1268,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
-<?php
-// RULE: Archive pages ?>
+<?php // RULE: Archive pages. ?>
 <script id="hustle-visibility-rule-tpl--archive_pages" type="text/template">
 
 	<label class="sui-label"><?php esc_html_e( 'Choose archive pages', 'hustle' ); ?></label>
@@ -1289,301 +1327,300 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
+<?php // RULE: WooCommerce Page. ?>
+<script id="hustle-visibility-rule-tpl--wc_pages" type="text/template">
 
-	<?php // RULE: WooCommerce Page ?>
-	<script id="hustle-visibility-rule-tpl--wc_pages" type="text/template">
+	<div class="sui-side-tabs">
 
-		<div class="sui-side-tabs">
+		<div class="sui-tabs-menu">
 
-			<div class="sui-tabs-menu">
+			<label for="{{ groupId }}-{{ type }}-filter_type-wc-all-pages"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-filter_type-wc-pages"
+					value="all"
+					id="{{ groupId }}-{{ type }}-filter_type-wc-all-pages"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'all' ) }} />
+				<?php esc_html_e( 'All WooCommerce pages', 'hustle' ); ?>
+			</label>
 
-				<label for="{{ groupId }}-{{ type }}-filter_type-wc-all-pages"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-filter_type-wc-pages"
-						value="all"
-						id="{{ groupId }}-{{ type }}-filter_type-wc-all-pages"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'all' ) }} />
-					<?php esc_html_e( 'All WooCommerce pages', 'hustle' ); ?>
-				</label>
+			<label for="{{ groupId }}-{{ type }}-filter_type-wc-none-pages"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-filter_type-wc-pages"
+					value="none"
+					id="{{ groupId }}-{{ type }}-filter_type-wc-none-pages"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'none' ) }} />
+				<?php esc_html_e( 'None', 'hustle' ); ?>
+			</label>
 
-				<label for="{{ groupId }}-{{ type }}-filter_type-wc-none-pages"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-filter_type-wc-pages"
-						value="none"
-						id="{{ groupId }}-{{ type }}-filter_type-wc-none-pages"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'none' ) }} />
-					<?php esc_html_e( 'None', 'hustle' ); ?>
-				</label>
+		</div>
 
-			</div>
+		<div class="sui-tabs-content">
 
-			<div class="sui-tabs-content">
+			<div class="sui-tab-content active">
 
-				<div class="sui-tab-content active">
-
-					<span class="sui-description"><?php esc_html_e( 'Use this condition to affect either all or none of the WooCommerce pages.', 'hustle' ); ?></span>
-
-				</div>
+				<span class="sui-description"><?php esc_html_e( 'Use this condition to affect either all or none of the WooCommerce pages.', 'hustle' ); ?></span>
 
 			</div>
 
 		</div>
 
-	</script>
+	</div>
 
-	<?php // RULE: WooCommerce Categories ?>
-	<script id="hustle-visibility-rule-tpl--wc_categories" type="text/template">
+</script>
 
-		<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce categories', 'hustle' ); ?></label>
+<?php // RULE: WooCommerce Categories. ?>
+<script id="hustle-visibility-rule-tpl--wc_categories" type="text/template">
 
-		<div class="sui-side-tabs">
+	<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce categories', 'hustle' ); ?></label>
 
-			<div class="sui-tabs-menu">
+	<div class="sui-side-tabs">
 
-				<label for="{{ groupId }}-{{ type }}-filter_type-wc-categories-except"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-filter_type-wc-categories"
-						value="except"
-						id="{{ groupId }}-{{ type }}-filter_type-wc-categories-except"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'except' ) }} />
-					<?php esc_html_e( 'All except', 'hustle' ); ?>
-				</label>
+		<div class="sui-tabs-menu">
 
-				<label for="{{ groupId }}-{{ type }}-filter_type-wc-categories-only"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-filter_type-wc-categories"
-						value="only"
-						id="{{ groupId }}-{{ type }}-filter_type-wc-categories-only"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'only' ) }} />
-					<?php esc_html_e( 'Only these', 'hustle' ); ?>
-				</label>
+			<label for="{{ groupId }}-{{ type }}-filter_type-wc-categories-except"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-filter_type-wc-categories"
+					value="except"
+					id="{{ groupId }}-{{ type }}-filter_type-wc-categories-except"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'except' ) }} />
+				<?php esc_html_e( 'All except', 'hustle' ); ?>
+			</label>
 
-			</div>
+			<label for="{{ groupId }}-{{ type }}-filter_type-wc-categories-only"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-filter_type-wc-categories"
+					value="only"
+					id="{{ groupId }}-{{ type }}-filter_type-wc-categories-only"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'only' ) }} />
+				<?php esc_html_e( 'Only these', 'hustle' ); ?>
+			</label>
 
-			<div class="sui-tabs-content">
+		</div>
 
-				<div class="sui-tab-content active">
+		<div class="sui-tabs-content">
 
-					<select name=""
-						id="{{ groupId }}-{{ type }}-filter_type-wc-categories"
-						class="sui-select sui-select-lg hustle-select-ajax"
-						multiple="multiple"
-						data-val="{{ wc_categories }}"
-						data-attribute="wc_categories"
-						data-placeholder="<?php esc_html_e( 'Start typing the name of WooCommerce categories...', 'hustle' ); ?>">
+			<div class="sui-tab-content active">
 
-						<# _.each( optinVars.wc_cats, function( cat ) { #>
-							<option value="{{ cat.id }}" {{ _.selected( _.contains( wc_categories, cat.id.toString() ), true ) }}>
-								{{ cat.text }}
-							</option>
-						<# } ); #>
+				<select name=""
+					id="{{ groupId }}-{{ type }}-filter_type-wc-categories"
+					class="sui-select sui-select-lg hustle-select-ajax"
+					multiple="multiple"
+					data-val="{{ wc_categories }}"
+					data-attribute="wc_categories"
+					data-placeholder="<?php esc_html_e( 'Start typing the name of WooCommerce categories...', 'hustle' ); ?>">
 
-					</select>
+					<# _.each( optinVars.wc_cats, function( cat ) { #>
+						<option value="{{ cat.id }}" {{ _.selected( _.contains( wc_categories, cat.id.toString() ), true ) }}>
+							{{ cat.text }}
+						</option>
+					<# } ); #>
 
-					<span class="sui-description"><?php esc_html_e( 'Note that this condition affects the products with selected categories and doesn\'t include product category archives.', 'hustle' ); ?></span>
+				</select>
 
-				</div>
+				<span class="sui-description"><?php esc_html_e( 'Note that this condition affects the products with selected categories and doesn\'t include product category archives.', 'hustle' ); ?></span>
 
 			</div>
 
 		</div>
 
-	</script>
+	</div>
 
-	<?php // RULE: WooCommerce Tags ?>
-	<script id="hustle-visibility-rule-tpl--wc_tags" type="text/template">
+</script>
 
-		<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce tags', 'hustle' ); ?></label>
+<?php // RULE: WooCommerce Tags. ?>
+<script id="hustle-visibility-rule-tpl--wc_tags" type="text/template">
 
-		<div class="sui-side-tabs">
+	<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce tags', 'hustle' ); ?></label>
 
-			<div class="sui-tabs-menu">
+	<div class="sui-side-tabs">
 
-				<label for="{{ groupId }}-{{ type }}-filter_type-wc-tags-except"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-filter_type-wc-tags"
-						value="except"
-						id="{{ groupId }}-{{ type }}-filter_type-wc-tags-except"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'except' ) }} />
-					<?php esc_html_e( 'All except', 'hustle' ); ?>
-				</label>
+		<div class="sui-tabs-menu">
 
-				<label for="{{ groupId }}-{{ type }}-filter_type-wc-tags-only"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-filter_type-wc-tags"
-						value="only"
-						id="{{ groupId }}-{{ type }}-filter_type-wc-tags-only"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'only' ) }} />
-					<?php esc_html_e( 'Only these', 'hustle' ); ?>
-				</label>
+			<label for="{{ groupId }}-{{ type }}-filter_type-wc-tags-except"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-filter_type-wc-tags"
+					value="except"
+					id="{{ groupId }}-{{ type }}-filter_type-wc-tags-except"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'except' ) }} />
+				<?php esc_html_e( 'All except', 'hustle' ); ?>
+			</label>
 
-			</div>
+			<label for="{{ groupId }}-{{ type }}-filter_type-wc-tags-only"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-filter_type-wc-tags"
+					value="only"
+					id="{{ groupId }}-{{ type }}-filter_type-wc-tags-only"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'only' ) }} />
+				<?php esc_html_e( 'Only these', 'hustle' ); ?>
+			</label>
 
-			<div class="sui-tabs-content">
+		</div>
 
-				<div class="sui-tab-content active">
+		<div class="sui-tabs-content">
 
-					<select name=""
-						id="{{ groupId }}-{{ type }}-filter_type-wc-tags"
-						class="sui-select sui-select-lg hustle-select-ajax"
-						multiple="multiple"
-						data-val="{{ wc_tags }}"
-						data-attribute="wc_tags"
-						data-placeholder="<?php esc_html_e( 'Start typing the name of WooCommerce tags...', 'hustle' ); ?>">
+			<div class="sui-tab-content active">
 
-						<# _.each( optinVars.wc_tags, function( tag ) { #>
-							<option value="{{ tag.id }}" {{ _.selected( _.contains( wc_tags, tag.id.toString() ), true ) }}>
-								{{ tag.text }}
-							</option>
-						<# } ); #>
+				<select name=""
+					id="{{ groupId }}-{{ type }}-filter_type-wc-tags"
+					class="sui-select sui-select-lg hustle-select-ajax"
+					multiple="multiple"
+					data-val="{{ wc_tags }}"
+					data-attribute="wc_tags"
+					data-placeholder="<?php esc_html_e( 'Start typing the name of WooCommerce tags...', 'hustle' ); ?>">
 
-					</select>
+					<# _.each( optinVars.wc_tags, function( tag ) { #>
+						<option value="{{ tag.id }}" {{ _.selected( _.contains( wc_tags, tag.id.toString() ), true ) }}>
+							{{ tag.text }}
+						</option>
+					<# } ); #>
 
-					<span class="sui-description"><?php esc_html_e( 'Note that this condition affects the products with selected tags and doesn\'t include product tag archives.', 'hustle' ); ?></span>
+				</select>
 
-				</div>
+				<span class="sui-description"><?php esc_html_e( 'Note that this condition affects the products with selected tags and doesn\'t include product tag archives.', 'hustle' ); ?></span>
 
 			</div>
 
 		</div>
 
-	</script>
+	</div>
 
-	<?php // RULE: WC Archive pages ?>
-	<script id="hustle-visibility-rule-tpl--wc_archive_pages" type="text/template">
+</script>
 
-		<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce archives', 'hustle' ); ?></label>
+<?php // RULE: WC Archive pages. ?>
+<script id="hustle-visibility-rule-tpl--wc_archive_pages" type="text/template">
 
-		<div class="sui-side-tabs">
+	<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce archives', 'hustle' ); ?></label>
 
-			<div class="sui-tabs-menu">
+	<div class="sui-side-tabs">
 
-				<label for="{{ groupId }}-{{ type }}-rule--wc-archive-page-except"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-rule--wc-archive-page"
-						value="except"
-						id="{{ groupId }}-{{ type }}-rule--wc-archive-page-except"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'except' ) }} />
-					<?php esc_html_e( 'All except', 'hustle' ); ?>
-				</label>
+		<div class="sui-tabs-menu">
 
-				<label for="{{ groupId }}-{{ type }}-rule--wc-archive-page-only"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-rule--wc-archive-page"
-						value="only"
-						id="{{ groupId }}-{{ type }}-rule--wc-archive-page-only"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'only' ) }} />
-					<?php esc_html_e( 'Only these', 'hustle' ); ?>
-				</label>
+			<label for="{{ groupId }}-{{ type }}-rule--wc-archive-page-except"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-rule--wc-archive-page"
+					value="except"
+					id="{{ groupId }}-{{ type }}-rule--wc-archive-page-except"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'except' ) }} />
+				<?php esc_html_e( 'All except', 'hustle' ); ?>
+			</label>
 
-			</div>
+			<label for="{{ groupId }}-{{ type }}-rule--wc-archive-page-only"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-rule--wc-archive-page"
+					value="only"
+					id="{{ groupId }}-{{ type }}-rule--wc-archive-page-only"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'only' ) }} />
+				<?php esc_html_e( 'Only these', 'hustle' ); ?>
+			</label>
 
-			<div class="sui-tabs-content">
+		</div>
 
-				<div class="sui-tab-content active">
+		<div class="sui-tabs-content">
+
+			<div class="sui-tab-content active">
 
 
-					<select multiple="multiple"
-						data-placeholder="<?php esc_attr_e( 'Start typing the name of WooCommerce archives...', 'hustle' ); ?>"
-						class="sui-select sui-select-lg"
-						data-attribute="wc_archive_pages">
+				<select multiple="multiple"
+					data-placeholder="<?php esc_attr_e( 'Start typing the name of WooCommerce archives...', 'hustle' ); ?>"
+					class="sui-select sui-select-lg"
+					data-attribute="wc_archive_pages">
 
-							<# _.each( _.keys( optinVars.wc_archive_pages ), function( key ) { #>
+						<# _.each( _.keys( optinVars.wc_archive_pages ), function( key ) { #>
 
-								<option value="{{ key }}">{{ optinVars.wc_archive_pages[key] }}</option>
+							<option value="{{ key }}">{{ optinVars.wc_archive_pages[key] }}</option>
 
-							<# }); #>
+						<# }); #>
 
-					</select>
-
-				</div>
+				</select>
 
 			</div>
 
 		</div>
 
-	</script>
+	</div>
 
-	<?php // RULE: WC Static Pages ?>
-	<script id="hustle-visibility-rule-tpl--wc_static_pages" type="text/template">
+</script>
 
-		<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce static pages', 'hustle' ); ?></label>
+<?php // RULE: WC Static Pages. ?>
+<script id="hustle-visibility-rule-tpl--wc_static_pages" type="text/template">
 
-		<div class="sui-side-tabs">
+	<label class="sui-label"><?php esc_html_e( 'Choose WooCommerce static pages', 'hustle' ); ?></label>
 
-			<div class="sui-tabs-menu">
+	<div class="sui-side-tabs">
 
-				<label for="{{ groupId }}-{{ type }}-rule--wc-static-page-except"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-rule--wc-static-page"
-						value="except"
-						id="{{ groupId }}-{{ type }}-rule--wc-static-page-except"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'except' ) }} />
-					<?php esc_html_e( 'All except', 'hustle' ); ?>
-				</label>
+		<div class="sui-tabs-menu">
 
-				<label for="{{ groupId }}-{{ type }}-rule--wc-static-page-only"
-					class="sui-tab-item">
-					<input type="radio"
-						name="{{ groupId }}-{{ type }}-rule--wc-static-page"
-						value="only"
-						id="{{ groupId }}-{{ type }}-rule--wc-static-page-only"
-						data-attribute="filter_type"
-						{{ _.checked( filter_type, 'only' ) }} />
-					<?php esc_html_e( 'Only these', 'hustle' ); ?>
-				</label>
+			<label for="{{ groupId }}-{{ type }}-rule--wc-static-page-except"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-rule--wc-static-page"
+					value="except"
+					id="{{ groupId }}-{{ type }}-rule--wc-static-page-except"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'except' ) }} />
+				<?php esc_html_e( 'All except', 'hustle' ); ?>
+			</label>
 
-			</div>
+			<label for="{{ groupId }}-{{ type }}-rule--wc-static-page-only"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-rule--wc-static-page"
+					value="only"
+					id="{{ groupId }}-{{ type }}-rule--wc-static-page-only"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'only' ) }} />
+				<?php esc_html_e( 'Only these', 'hustle' ); ?>
+			</label>
 
-			<div class="sui-tabs-content">
+		</div>
 
-				<div class="sui-tab-content active">
+		<div class="sui-tabs-content">
+
+			<div class="sui-tab-content active">
 
 
-					<select multiple="multiple"
-						data-placeholder="<?php esc_attr_e( 'Start typing the name of WooCommerce static pages...', 'hustle' ); ?>"
-						class="sui-select sui-select-lg"
-						data-attribute="wc_static_pages">
+				<select multiple="multiple"
+					data-placeholder="<?php esc_attr_e( 'Start typing the name of WooCommerce static pages...', 'hustle' ); ?>"
+					class="sui-select sui-select-lg"
+					data-attribute="wc_static_pages">
 
-							<# _.each( _.keys( optinVars.wc_static_pages ), function( key ) { #>
+						<# _.each( _.keys( optinVars.wc_static_pages ), function( key ) { #>
 
-								<option value="{{ key }}">{{ optinVars.wc_static_pages[key] }}</option>
+							<option value="{{ key }}">{{ optinVars.wc_static_pages[key] }}</option>
 
-							<# }); #>
+						<# }); #>
 
-					</select>
-
-				</div>
+				</select>
 
 			</div>
 
 		</div>
 
-	</script>
+	</div>
+
+</script>
 
 <?php
 
 /**
  * Visibility Conditions: Action for adding JS-templates on Admin area and other JS-code
  *
- * @since 4.1
+ * @since 4.1.0
  */
 do_action( 'hustle_visibility_condition_templates' );

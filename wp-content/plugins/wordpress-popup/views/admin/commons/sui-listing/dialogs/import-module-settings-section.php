@@ -1,8 +1,13 @@
 <?php
 /**
- * Template used by the "Import" dialog (./import-module.php) to display the
- * checkboxes for selecting the module's meta to be imported.
+ * Template used by the "Import" dialog (./import-module.php).
+ *
+ * Used to display the checkboxes for selecting the module's meta to be imported.
+ *
+ * @package Hustle
+ * @since 4.0.0
  */
+
 ?>
 <label class="sui-label"><?php esc_html_e( 'Settings to import', 'hustle' ); ?></label>
 
@@ -55,22 +60,6 @@
 					endif;
 				}
 			}
-
-			/*foreach ( $metas as $key => $data ) { ?>
-
-				<li><label for="hustle-import-<?php echo esc_attr( $id ); ?>--<?php echo esc_attr( $data['name'] ); ?>" class="sui-checkbox sui-checkbox-stacked sui-checkbox-sm">
-					<input
-						type="checkbox"
-						id="hustle-import-<?php echo esc_attr( $id ); ?>--<?php echo esc_attr( $data['name'] ); ?>"
-						name="metas[]"
-						value="<?php echo esc_attr( $data['name'] ); ?>"
-						checked
-					/>
-					<span aria-hidden="true"></span>
-					<span><?php echo esc_html( $data['label'] ); ?></span>
-				</label></li>
-
-			<?php } */
 			?>
 
 		</ul>

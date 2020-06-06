@@ -30,7 +30,7 @@ class Hustle_Addon_Aweber_Oauth {
 			$url   = array_shift( $parts );
 			$items = explode( '&', $query );
 			foreach ( $items as $item ) {
-				list( $key, $value ) = explode( '=', $item );
+				list( $key, $value )          = explode( '=', $item );
 				$data[ rawurldecode( $key ) ] = rawurldecode( $value );
 			}
 		}
@@ -163,7 +163,6 @@ class Hustle_Addon_Aweber_Oauth {
 		 * @param int    $timestamp current timestamp for future reference
 		 */
 		$oauth_nonce = apply_filters( 'hustle_addon_aweber_oauth_nonce', $oauth_nonce, $timestamp );
-
 
 		return $oauth_nonce;
 	}

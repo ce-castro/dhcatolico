@@ -1,3 +1,12 @@
+<?php
+/**
+ * CTA design section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row" data-toggle-content="use-vanilla">
 
 	<div class="sui-box-settings-col-1">
@@ -7,8 +16,7 @@
 
 	<div class="sui-box-settings-col-2">
 
-		<?php
-		// SETTING: Button style ?>
+		<?php // SETTING: Button style. ?>
 		<div class="sui-form-field">
 
 			<label class="sui-label"><?php esc_html_e( 'Button style', 'hustle' ); ?></label>

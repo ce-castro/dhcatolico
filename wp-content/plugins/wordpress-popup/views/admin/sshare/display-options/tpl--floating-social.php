@@ -1,3 +1,12 @@
+<?php
+/**
+ * Floating display type section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -12,7 +21,7 @@
 
 		<?php
 		// SETTINGS: Enable on desktop.
-		self::static_render(
+		$this->render(
 			'admin/sshare/display-options/tpl--position-settings',
 			array(
 				'label'       => esc_html__( 'on desktop', 'hustle' ),
@@ -42,7 +51,7 @@
 		);
 
 		// SETTINGS: Enable on mobile.
-		self::static_render(
+		$this->render(
 			'admin/sshare/display-options/tpl--position-settings',
 			array(
 				'label'       => esc_html__( 'on mobile', 'hustle' ),
@@ -69,7 +78,8 @@
 					),
 				),
 			)
-		); ?>
+		);
+		?>
 
 	</div>
 

@@ -1,11 +1,20 @@
-<?php $global_placeholders = Opt_In_Utils::get_global_placeholders();?>
+<?php
+/**
+ * Platform row.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+$global_placeholders = Opt_In_Utils::get_global_placeholders();
+?>
 <script id="hustle-platform-row-tpl" type="text/template">
 
 	<div class="sui-builder-field sui-accordion-item sui-can-move ui-sortable-handle" id="hustle-platform-{{platform}}" data-platform="{{platform}}">
 
 		<div class="sui-accordion-item-header">
 
-			<i class="sui-icon-drag" aria-hidden="true"></i>
+			<span class="sui-icon-drag" aria-hidden="true"></span>
 
 			<div class="sui-builder-field-label">
 
@@ -20,14 +29,14 @@
 			</div>
 
 			<button class="sui-button-icon sui-button-red hustle-remove-social-service" data-platform="{{platform}}">
-				<i class="sui-icon-trash" aria-hidden="true"></i>
+				<span class="sui-icon-trash" aria-hidden="true"></span>
 				<span class="sui-screen-reader-text"><?php esc_html_e( 'Remove platform', 'hustle' ); ?></span>
 			</button>
 
 			<div class="sui-builder-field-border" aria-hidden="true"></div>
 
 			<button class="sui-button-icon sui-accordion-open-indicator">
-				<i class="sui-icon-chevron-down" aria-hidden="true"></i>
+				<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 				<span class="sui-screen-reader-text"><?php esc_html_e( 'Open platform settings', 'hustle' ); ?></span>
 			</button>
 
@@ -77,10 +86,14 @@
 							<div class="sui-tabs-content">
 								<div class="sui-tab-content" data-tab-content="{{platform}}-type-native">
 									<span class="sui-description">
-										<?php printf(
-												esc_html__( 'Twitter deprecated its native counter functionality. Sign-up to %1$sthis service%2$s in order to retrieve your Twitter stats. Keep in mind that this only tracks new shares after you register your site.', 'hustle' ),
-											'<a href="http://www.twitcount.com/" target="_blank">', '</a>'
-										); ?>
+										<?php
+										printf(
+											/* translators: 1. opening 'a' tag, 2. closing 'a' tag */
+											esc_html__( 'Twitter deprecated its native counter functionality. Sign-up to %1$sthis service%2$s in order to retrieve your Twitter stats. Keep in mind that this only tracks new shares after you register your site.', 'hustle' ),
+											'<a href="http://www.twitcount.com/" target="_blank">',
+											'</a>'
+										);
+										?>
 									</span>
 								</div>
 							</div>

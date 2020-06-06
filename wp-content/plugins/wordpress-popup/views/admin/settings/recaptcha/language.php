@@ -1,3 +1,12 @@
+<?php
+/**
+ * Language section under the "recaptcha" tab.
+ *
+ * @package Hustle
+ * @since 4.0.4
+ */
+
+?>
 <div class="sui-form-field">
 
 	<label class="sui-settings-label"><?php esc_html_e( 'Language', 'hustle' ); ?></label>
@@ -10,16 +19,17 @@
 			class="sui-select"
 			name="language"
 		>
-			<option value="automatic" <?php selected( !empty( $settings['language'] ) && 'automatic' === $settings['language'] ); ?>>
-				<?php esc_attr_e( "Automatic", 'hustle' ); ?>
+			<option value="automatic" <?php selected( ! empty( $settings['language'] ) && 'automatic' === $settings['language'] ); ?>>
+				<?php esc_attr_e( 'Automatic', 'hustle' ); ?>
 			</option>
 
 			<?php
 			$languages = Opt_In_Utils::get_captcha_languages();
 
-			foreach ( $languages as $key => $language ) : ?>
+			foreach ( $languages as $key => $language ) :
+				?>
 
-				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( !empty( $settings['language'] ) && $settings['language'] === $key ); ?>>
+				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( ! empty( $settings['language'] ) && $settings['language'] === $key ); ?>>
 					<?php echo esc_attr( $language ); ?>
 				</option>
 

@@ -19,8 +19,8 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
-		$addon = $this->addon;
-		$module_id = $this->module_id;
+		$addon                  = $this->addon;
+		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
 		/**
@@ -30,34 +30,33 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		 *
 		 * @param array                                    $submitted_data
 		 * @param int                                      $module_id                current module_id
-		 * @param Hustle_Mad_Mimi_Form_Settings 	   	   $form_settings_instance
+		 * @param Hustle_Mad_Mimi_Form_Settings            $form_settings_instance
 		 */
-		$submitted_data = apply_filters( 
-			'hustle_provider_mad_mimi_form_submitted_data', 
-			$submitted_data, 
-			$module_id, 
-			$form_settings_instance 
+		$submitted_data = apply_filters(
+			'hustle_provider_mad_mimi_form_submitted_data',
+			$submitted_data,
+			$module_id,
+			$form_settings_instance
 		);
 
 		$addon_setting_values = $form_settings_instance->get_form_settings_values();
 		try {
 			if ( empty( $submitted_data['email'] ) ) {
-				throw new Exception( __('Required Field "email" was not filled by the user.', 'hustle' ) );
+				throw new Exception( __( 'Required Field "email" was not filled by the user.', 'hustle' ) );
 			}
 
 			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
-			$api_key 	= $addon->get_setting( 'api_key', '', $global_multi_id );
-			$username 	= $addon->get_setting( 'username', '', $global_multi_id );
-			$api 		= $addon::api( $username, $api_key );
+			$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
+			$username        = $addon->get_setting( 'username', '', $global_multi_id );
+			$api             = $addon::api( $username, $api_key );
 
-			$list_id = $addon_setting_values['list_id'];
-			$submitted_data = $this->check_legacy( $submitted_data );
-			$subscribe_data = array();
-			$subscribe_data['email'] =  $submitted_data['email'];
+			$list_id                 = $addon_setting_values['list_id'];
+			$submitted_data          = $this->check_legacy( $submitted_data );
+			$subscribe_data          = array();
+			$subscribe_data['email'] = $submitted_data['email'];
 
-			$is_sent = false;
+			$is_sent       = false;
 			$member_status = __( 'Member could not be subscribed.', 'hustle' );
-
 
 			$name = array();
 
@@ -71,24 +70,36 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			unset( $submitted_data['first_name'] );
 			unset( $submitted_data['last_name'] );
 
-			$exisiting_fields = array( 'email', 'firstName', 'lastName', 'city',
-			'phone', 'company', 'title', 'address', 'state', 'zip', 'country'
+			$exisiting_fields = array(
+				'email',
+				'firstName',
+				'lastName',
+				'city',
+				'phone',
+				'company',
+				'title',
+				'address',
+				'state',
+				'zip',
+				'country',
 			);
 			// Remove unwanted fields
-			foreach( $submitted_data as $key => $sub_d ){
+			foreach ( $submitted_data as $key => $sub_d ) {
 
-				if( in_array( $key, $exisiting_fields, true ) ) continue;
+				if ( in_array( $key, $exisiting_fields, true ) ) {
+					continue;
+				}
 
-				$_fields[$key] = $sub_d;
-				unset( $submitted_data[$key] );
+				$_fields[ $key ] = $sub_d;
+				unset( $submitted_data[ $key ] );
 			}
 
-			if( !empty( $_fields ) ){
+			if ( ! empty( $_fields ) ) {
 				$submitted_data['auxData'] = $_fields;
 			}
 
 			$email_exist = $this->get_subscriber( $api, $submitted_data['email'] );
-			
+
 			/**
 			 * Fires before adding subscriber
 			 *
@@ -96,28 +107,29 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 *
 			 * @param int    $module_id
 			 * @param array  $submitted_data
-			 * @param object $form_settings_instance 
+			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_mad_mimi_before_add_subscriber', 
-				$module_id, 
-				$submitted_data, 
-				$form_settings_instance 
+			do_action(
+				'hustle_provider_mad_mimi_before_add_subscriber',
+				$module_id,
+				$submitted_data,
+				$form_settings_instance
 			);
 
-			//update if email exisits
-			if( ! empty( $email_exist->subscribers ) ){
+			// update if email exisits
+			if ( ! empty( $email_exist->subscribers ) ) {
 				$existing_member = $email_exist->subscribers[0];
 				$exisiting_list  = $existing_member->subscriberLists; //phpcs:ignore
-				$is_member 		 = $this->_is_memeber_on_list( $exisiting_list, $list_id );
-				$lists 			 = array();
+				$is_member       = $this->_is_memeber_on_list( $exisiting_list, $list_id );
+				$lists           = array();
 
-				if( true !== $is_member  ){
-					$lists = $is_member;
+				if ( true !== $is_member ) {
+					$lists   = $is_member;
 					$lists[] = $list_id;
 				}
 
 				$res = $api->update_subscriber( $existing_member->id, $submitted_data, $lists );
-			}else{
+			} else {
 				$res = $api->subscribe( $list_id, $submitted_data );
 			}
 
@@ -129,24 +141,24 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			 * @param int    $module_id
 			 * @param array  $submitted_data
 			 * @param mixed  $res
-			 * @param object $form_settings_instance 
+			 * @param object $form_settings_instance
 			 */
-			do_action( 'hustle_provider_mad_mimi_after_add_subscriber', 
-				$module_id, 
+			do_action(
+				'hustle_provider_mad_mimi_after_add_subscriber',
+				$module_id,
 				$submitted_data,
 				$res,
-				$form_settings_instance 
+				$form_settings_instance
 			);
 
 			if ( is_wp_error( $res ) ) {
 				$details = $res->get_error_message();
 			} else {
 
-				$is_sent = true;
+				$is_sent       = true;
 				$member_status = __( 'OK', 'hustle' );
-				$details = __( 'Successfully added or updated member on Mad Mimi list', 'hustle' );
+				$details       = __( 'Successfully added or updated member on Mad Mimi list', 'hustle' );
 			}
-
 
 			$entry_fields = array(
 				array(
@@ -162,11 +174,12 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$entry_fields = $this->exception( $e );
 		}
 
-		if ( !empty( $addon_setting_values['list_name'] ) ) {
+		if ( ! empty( $addon_setting_values['list_name'] ) ) {
 			$entry_fields[0]['value']['list_name'] = $addon_setting_values['list_name'];
 		}
 
-		$entry_fields = apply_filters( 'hustle_provider_' . $addon->get_slug() . '_entry_fields',
+		$entry_fields = apply_filters(
+			'hustle_provider_' . $addon->get_slug() . '_entry_fields',
 			$entry_fields,
 			$module_id,
 			$submitted_data,
@@ -186,16 +199,16 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
 
-		$is_success 				= true;
-		$module_id                	= $this->module_id;
-		$form_settings_instance 	= $this->form_settings_instance;
-		$addon 						= $this->addon;
-		$addon_setting_values 		= $form_settings_instance->get_form_settings_values();
-		$global_multi_id 			= $addon_setting_values['selected_global_multi_id'];
-		$key 						=  $addon->get_setting( 'api_key', '', $global_multi_id );
-		$user 						=  $addon->get_setting( 'username', '', $global_multi_id );
-		$api 						= $addon::api( $user, $key );
-		$list_id 					= $addon_setting_values['list_id'];
+		$is_success             = true;
+		$module_id              = $this->module_id;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon                  = $this->addon;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
+		$key                    = $addon->get_setting( 'api_key', '', $global_multi_id );
+		$user                   = $addon->get_setting( 'username', '', $global_multi_id );
+		$api                    = $addon::api( $user, $key );
+		$list_id                = $addon_setting_values['list_id'];
 
 		if ( empty( $submitted_data['email'] ) ) {
 			return __( 'Required Field "email" was not filled by the user.', 'hustle' );
@@ -219,19 +232,20 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$form_settings_instance
 			);
 
-			try{
-				//triggers exception if not found.
+			try {
+				// triggers exception if not found.
 				$existing_member = $this->get_subscriber( $api, $submitted_data['email'] );
-				// var_dump($existing_member); 
-				//if member exisits check if member is on a current list
-				if( ! empty( $existing_member->subscribers ) ){
+				// var_dump($existing_member);
+				// if member exisits check if member is on a current list
+				if ( ! empty( $existing_member->subscribers ) ) {
 					$existing_member = $existing_member->subscribers[0];
 					$exisiting_list  = $existing_member->subscriberLists; //phpcs:ignore
 
-					if( true === $this->_is_memeber_on_list( $exisiting_list, $list_id ) )
+					if ( true === $this->_is_memeber_on_list( $exisiting_list, $list_id ) ) {
 						$is_success = self::ALREADY_SUBSCRIBED_ERROR;
+					}
 				}
-			} catch( Exception $e){
+			} catch ( Exception $e ) {
 				$is_success = true;
 			}
 		}
@@ -275,12 +289,13 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * @param $list current list
 	 * @return bool
 	 */
-	private function _is_memeber_on_list( $existing_lists, $list ){
+	private function _is_memeber_on_list( $existing_lists, $list ) {
 		$lists = array();
 		foreach ( $existing_lists as $key => $exisiting_list ) {
 			$lists[] = $exisiting_list->id;
-			if( absint( $list ) === $exisiting_list->id )
+			if ( absint( $list ) === $exisiting_list->id ) {
 				return true;
+			}
 		}
 		return $lists;
 	}
@@ -296,12 +311,12 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param 	object 	$api
-	 * @param 	mixed  	$data
-	 * @return  mixed 	array/object API response on queried subscriber
+	 * @param   object $api
+	 * @param   mixed  $data
+	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if( empty ( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ){
+		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ) {
 			$this->_subscriber[ md5( $data ) ] = $api->get_subscriber( array( 'query' => $data ) );
 		}
 

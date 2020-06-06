@@ -1,4 +1,11 @@
 <?php
+/**
+ * Closing methods section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
 $is_popup = Hustle_Module_Model::POPUP_MODULE === $module_type;
 
 ?>
@@ -6,6 +13,7 @@ $is_popup = Hustle_Module_Model::POPUP_MODULE === $module_type;
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Additional Closing Methods', 'hustle' ); ?></span>
+		<?php /* translators: module type in small caps and in singular */ ?>
 		<span class="sui-description"><?php printf( esc_html__( 'Choose the additional closing methods for your %s apart from closing it by clicking on “x”.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 	</div>
 
@@ -18,19 +26,24 @@ $is_popup = Hustle_Module_Model::POPUP_MODULE === $module_type;
 			<label for="hustle-methods--auto-hide" class="sui-toggle hustle-toggle-with-container" data-toggle-on="auto-hide">
 				<input type="checkbox"
 					id="hustle-methods--auto-hide"
-					name="auto_hide" 
+					name="auto_hide"
 					data-attribute="auto_hide"
+					aria-labelledby="hustle-methods--auto-hide-label"
+					aria-describedby="hustle-methods--auto-hide-description"
 					<?php checked( $settings['auto_hide'], '1' ); ?>
 				/>
-				<span class="sui-toggle-slider"></span>
+				<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+				<?php /* translators: module type in small caps and in singular */ ?>
+				<span id="hustle-methods--auto-hide-label" class="sui-toggle-label"><?php printf( esc_html__( 'Auto-Close %s', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+
+				<?php /* translators: module type in small caps and in singular */ ?>
+				<span id="hustle-methods--auto-hide-description" class="sui-description" style="margin-top: 0;"><?php printf( esc_html__( 'This will automatically close your %s after specified time.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 			</label>
-
-			<label for="hustle-methods--auto-hide"><?php printf( esc_html__( 'Auto-Close %s', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></label>
-
-			<span class="sui-description sui-toggle-description" style="margin-top: 0;"><?php printf( esc_html__( 'This will automatically close your %s after specified time.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 			<div class="sui-border-frame sui-toggle-content" data-toggle-content="auto-hide">
 
+				<?php /* translators: module type in small caps and in singular */ ?>
 				<label class="sui-label"><?php printf( esc_html__( 'Automatically close %s after', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></label>
 
 				<div class="sui-row">
@@ -87,14 +100,18 @@ $is_popup = Hustle_Module_Model::POPUP_MODULE === $module_type;
 						id="hustle-methods--close-mask"
 						name="close_on_background_click"
 						data-attribute="close_on_background_click"
+						aria-labelledby="hustle-methods--close-mask-label"
+						aria-describedby="hustle-methods--close-mask-description"
 						<?php checked( $settings['close_on_background_click'], '1' ); ?>
 					/>
-					<span class="sui-toggle-slider"></span>
+					<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+					<?php /* translators: module type in small caps and in singular */ ?>
+					<span id="hustle-methods--close-mask-label" class="sui-toggle-label"><?php printf( esc_html__( 'Close %s when clicked outside', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+
+					<?php /* translators: 1. module type in small caps and in singular */ ?>
+					<span id="hustle-methods--close-mask-description" class="sui-description" style="margin-top: 0;"><?php printf( esc_html__( 'This will close the %1$s when a user clicks anywhere outside of the %1$s.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 				</label>
-
-				<label for="hustle-methods--close-mask"><?php printf( esc_html__( 'Close %1$s when clicked outside', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></label>
-
-				<span class="sui-description sui-toggle-description" style="margin-top: 0;"><?php printf( esc_html__( 'This will close the %1$s when a user clicks anywhere outside of the %1$s.', 'hustle' ), esc_html( $smallcaps_singular ), esc_html( $smallcaps_singular ) ); ?></span>
 
 			</div>
 
@@ -109,14 +126,18 @@ $is_popup = Hustle_Module_Model::POPUP_MODULE === $module_type;
 					id="hustle-close-cta"
 					name="close_cta"
 					data-attribute="close_cta"
+					aria-labelledby="hustle-close-cta-label"
+					aria-describedby="hustle-close-cta-description"
 					<?php checked( $settings['close_cta'], '1' ); ?>
 				/>
-				<span class="sui-toggle-slider"></span>
-			</label>
-			
-			<label for="hustle-close-cta"><?php printf( esc_html__( 'Close %s after CTA conversion', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></label>
+				<span class="sui-toggle-slider" aria-hidden="true"></span>
 
-			<span class="sui-description sui-toggle-description"><?php printf( esc_html__( 'Choose whether to close the %s after a user has clicked on the CTA button.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+				<?php /* translators: module type in small caps and in singular */ ?>
+				<span id="hustle-close-cta-label" class="sui-toggle-label"><?php printf( esc_html__( 'Close %s after CTA conversion', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+
+				<?php /* translators: module type in small caps and in singular */ ?>
+				<span id="hustle-close-cta-description" class="sui-description"><?php printf( esc_html__( 'Choose whether to close the %s after a user has clicked on the CTA button.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+			</label>
 
 			<div class="sui-border-frame sui-toggle-content" data-toggle-content="close-cta">
 

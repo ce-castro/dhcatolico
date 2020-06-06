@@ -1,3 +1,12 @@
+<?php
+/**
+ * Feature image's appearance settings section.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -12,6 +21,7 @@
 		<div id="hustle-feature-image-position-option" class="sui-form-field">
 
 			<span class="sui-settings-label"><?php esc_html_e( 'Position', 'hustle' ); ?></span>
+			<?php /* translators: module type in small caps and in singular */ ?>
 			<span class="sui-description"><?php printf( esc_html__( 'Choose the position of your feature image relative to the content of the %s in your chosen layout.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 			<div class="sui-side-tabs"
@@ -27,7 +37,7 @@
 							id="hustle-feature-image-left"
 							<?php checked( $settings['feature_image_position'], 'left' ); ?>
 						/>
-						<?php esc_attr_e( "Left", 'hustle' ); ?>
+						<?php esc_attr_e( 'Left', 'hustle' ); ?>
 					</label>
 
 					<?php if ( $is_optin ) { ?>
@@ -40,7 +50,7 @@
 								id="hustle-feature-image-above"
 								<?php checked( $settings['feature_image_position'], 'above' ); ?>
 							/>
-							<?php esc_attr_e( "Above Content", 'hustle' ); ?>
+							<?php esc_attr_e( 'Above Content', 'hustle' ); ?>
 						</label>
 
 						<label id="hustle-feature-image-below-label" for="hustle-feature-image-below" class="sui-tab-item<?php echo 'one' !== $settings['form_layout'] ? ' sui-hidden' : ''; ?>">
@@ -51,7 +61,7 @@
 								id="hustle-feature-image-below"
 								<?php checked( $settings['feature_image_position'], 'below' ); ?>
 								/>
-							<?php esc_attr_e( "Below Content", 'hustle' ); ?>
+							<?php esc_attr_e( 'Below Content', 'hustle' ); ?>
 						</label>
 
 					<?php } ?>
@@ -64,7 +74,7 @@
 							id="hustle-feature-image-right"
 							<?php checked( $settings['feature_image_position'], 'right' ); ?>
 						/>
-						<?php esc_attr_e( "Right", 'hustle' ); ?>
+						<?php esc_attr_e( 'Right', 'hustle' ); ?>
 					</label>
 
 				</div>
@@ -73,12 +83,18 @@
 
 		</div>
 
-		<div id="hustle-appearance-feature-image-settings" <?php if ( empty( $feature_image ) ) echo ' style="display:none;"'; ?>>
+		<div id="hustle-appearance-feature-image-settings"
+		<?php
+		if ( empty( $feature_image ) ) {
+			echo ' style="display:none;"';}
+		?>
+		>
 
 			<?php // SETTING: Fitting. ?>
 			<div class="sui-form-field">
 
 				<span class="sui-settings-label"><?php esc_html_e( 'Fitting', 'hustle' ); ?></span>
+				<?php /* translators: module type in small caps and in singular */ ?>
 				<span class="sui-description"><?php printf( esc_html__( 'Choose the feature image fitting type. You can preview the %s to check how each option affects the feature image.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 				<div class="sui-side-tabs"
@@ -95,7 +111,7 @@
 								data-tab-menu="hustle-focus-image"
 								<?php checked( $settings['feature_image_fit'], 'cover' ); ?>
 							/>
-							<?php esc_attr_e( "Cover", 'hustle' ); ?>
+							<?php esc_attr_e( 'Cover', 'hustle' ); ?>
 						</label>
 
 						<label for="hustle-feature-image-fill" class="sui-tab-item">
@@ -106,7 +122,7 @@
 								id="hustle-feature-image-fill"
 								<?php checked( $settings['feature_image_fit'], 'fill' ); ?>
 							/>
-							<?php esc_attr_e( "Fill", 'hustle' ); ?>
+							<?php esc_attr_e( 'Fill', 'hustle' ); ?>
 						</label>
 
 						<label for="hustle-feature-image-contain" class="sui-tab-item">
@@ -118,7 +134,7 @@
 								data-tab-menu="hustle-focus-image"
 								<?php checked( $settings['feature_image_fit'], 'contain' ); ?>
 							/>
-							<?php esc_attr_e( "Contain", 'hustle' ); ?>
+							<?php esc_attr_e( 'Contain', 'hustle' ); ?>
 						</label>
 
 						<label for="hustle-feature-image-none" class="sui-tab-item">
@@ -129,7 +145,7 @@
 								id="hustle-feature-image-none"
 								<?php checked( $settings['feature_image_fit'], 'none' ); ?>
 							/>
-							<?php esc_attr_e( "None", 'hustle' ); ?>
+							<?php esc_attr_e( 'None', 'hustle' ); ?>
 						</label>
 
 					</div>
@@ -139,10 +155,13 @@
 						<div class="sui-tab-content sui-tab-boxed" data-tab-content="hustle-focus-image">
 
 							<?php
-							self::static_render( 'admin/commons/sui-wizard/elements/focal-point', array(
-								'feature_image' => $feature_image,
-								'settings'      => $settings,
-							) );
+							$this->render(
+								'admin/commons/sui-wizard/elements/focal-point',
+								array(
+									'feature_image' => $feature_image,
+									'settings'      => $settings,
+								)
+							);
 							?>
 
 						</div>
@@ -172,7 +191,7 @@
 								id="hustle-feature-image-visible"
 								<?php checked( $settings['feature_image_hide_on_mobile'], '0' ); ?>
 							/>
-							<?php esc_attr_e( "Visible", 'hustle' ); ?>
+							<?php esc_attr_e( 'Visible', 'hustle' ); ?>
 						</label>
 
 						<label for="hustle-feature-image-hidden" class="sui-tab-item">
@@ -183,7 +202,7 @@
 								id="hustle-feature-image-hidden"
 								<?php checked( $settings['feature_image_hide_on_mobile'], '1' ); ?>
 							/>
-							<?php esc_attr_e( "Hidden", 'hustle' ); ?>
+							<?php esc_attr_e( 'Hidden', 'hustle' ); ?>
 						</label>
 
 					</div>

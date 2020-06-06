@@ -8,87 +8,87 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 
 		const SLUG = 'infusionsoft';
 
-		const CLIENT_ID = 'inc_opt_infusionsoft_clientid';
+		const CLIENT_ID     = 'inc_opt_infusionsoft_clientid';
 		const CLIENT_SECRET = 'inc_opt_infusionsoft_clientsecret';
 
 		/**
-	 * @var Opt_In_Infusionsoft_Api $api
-	 */
-		protected  static $api;
+		 * @var Opt_In_Infusionsoft_Api $api
+		 */
+		protected static $api;
 		/**
-	 * @var WP_Error $errors
-	 */
+		 * @var WP_Error $errors
+		 */
 		protected static $errors;
 
 		/**
-	 * Provider Instance
-	 *
-	 * @since 3.0.5
-	 *
-	 * @var self|null
-	 */
+		 * Provider Instance
+		 *
+		 * @since 3.0.5
+		 *
+		 * @var self|null
+		 */
 		protected static $_instance = null;
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_slug 				   = 'infusionsoft';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_slug = 'infusionsoft';
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_version				   = '1.0';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_version = '1.0';
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_class				   = __CLASS__;
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_class = __CLASS__;
 
 		/**
-	 * @since 3.0.5
-	 * @var string
-	 */
-		protected $_title                  = 'Infusionsoft';
+		 * @since 3.0.5
+		 * @var string
+		 */
+		protected $_title = 'Infusionsoft';
 
 		/**
-	 * Class name of form settings
-	 *
-	 * @var string
-	 */
+		 * Class name of form settings
+		 *
+		 * @var string
+		 */
 		protected $_form_settings = 'Hustle_Infusion_Soft_Form_Settings';
 
 		/**
-	 * Class name of form hooks
-	 *
-	 * @since 4.0
-	 * @var string
-	 */
+		 * Class name of form hooks
+		 *
+		 * @since 4.0
+		 * @var string
+		 */
 		protected $_form_hooks = 'Hustle_InfusionSoft_Form_Hooks';
 
-	/**
-	 * Array of options which should exist for confirming that settings are completed
-	 *
-	 * @since 4.0
-	 * @var array
-	 */
-	protected $_completion_options = array( 'api_key', 'account_name' );
+		/**
+		 * Array of options which should exist for confirming that settings are completed
+		 *
+		 * @since 4.0
+		 * @var array
+		 */
+		protected $_completion_options = array( 'api_key', 'account_name' );
 
-	/**
-	 * Provider constructor.
-	 */
+		/**
+		 * Provider constructor.
+		 */
 		public function __construct() {
 			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
 			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
-	/**
-	 * Get Instance
-	 *
-	 * @return self|null
-	 */
+		/**
+		 * Get Instance
+		 *
+		 * @return self|null
+		 */
 		public static function get_instance() {
 			if ( is_null( self::$_instance ) ) {
 				self::$_instance = new self();
@@ -97,36 +97,35 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 			return self::$_instance;
 		}
 
-	/**
-	 * Returns a cached api
-	 *
-	 * @param $api_key
-	 * @param $app_name
-	 * @return Opt_In_Infusionsoft_Api
-	 */
-		//protected static function api( $api_key, $app_name){
+		/**
+		 * Returns a cached api
+		 *
+		 * @param $api_key
+		 * @param $app_name
+		 * @return Opt_In_Infusionsoft_Api
+		 */
+		// protected static function api( $api_key, $app_name){
 		public static function api( $api_key, $app_name ) {
 
 			if ( empty( self::$api ) ) {
 				try {
 					self::$errors = array();
-					self::$api = new Opt_In_Infusionsoft_Api( $api_key , $app_name );
-				} catch (Exception $e) {
-					self::$errors = array( 'api_error' => $e ) ;
+					self::$api    = new Opt_In_Infusionsoft_Api( $api_key, $app_name );
+				} catch ( Exception $e ) {
+					self::$errors = array( 'api_error' => $e );
 				}
-
 			}
 
 			return self::$api;
 		}
 
 		/**
-	 * Get the wizard callbacks for the global settings.
-	 *
-	 * @since 4.0
-	 *
-	 * @return array
-	 */
+		 * Get the wizard callbacks for the global settings.
+		 *
+		 * @since 4.0
+		 *
+		 * @return array
+		 */
 		public function settings_wizards() {
 			return array(
 				array(
@@ -137,44 +136,44 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 		}
 
 		/**
-	 * Configure the API key settings. Global settings.
-	 *
-	 * @since 4.0
-	 *
-	 * @param array $submitted_data
-	 * @return array
-	 */
+		 * Configure the API key settings. Global settings.
+		 *
+		 * @since 4.0
+		 *
+		 * @param array $submitted_data
+		 * @return array
+		 */
 		public function configure_api_key( $submitted_data ) {
-			$has_errors = false;
-			$default_data = array(
-				'api_key' => '',
+			$has_errors      = false;
+			$default_data    = array(
+				'api_key'      => '',
 				'account_name' => '',
-				'name' => '',
+				'name'         => '',
 			);
-			$current_data = $this->get_current_data( $default_data, $submitted_data );
-			$is_submit = isset( $submitted_data['api_key'] ) && isset( $submitted_data['account_name'] );
+			$current_data    = $this->get_current_data( $default_data, $submitted_data );
+			$is_submit       = isset( $submitted_data['api_key'] ) && isset( $submitted_data['account_name'] );
 			$global_multi_id = $this->get_global_multi_id( $submitted_data );
 
 			$api_key_valid = $api_account_name_valid = true;
 
 			if ( $is_submit ) {
 
-				$api_key_valid = ! empty( trim( $current_data['api_key'] ) );
+				$api_key_valid          = ! empty( trim( $current_data['api_key'] ) );
 				$api_account_name_valid = ! empty( trim( $current_data['account_name'] ) );
-				$api_key_validated = $api_key_valid
-				                     && $api_account_name_valid
-				                     && $this->validate_credentials( $submitted_data['api_key'], $submitted_data['account_name'] );
+				$api_key_validated      = $api_key_valid
+									 && $api_account_name_valid
+									 && $this->validate_credentials( $submitted_data['api_key'], $submitted_data['account_name'] );
 				if ( ! $api_key_validated ) {
 					$error_message = $this->provider_connection_falied();
 					$api_key_valid = $api_account_name_valid = false;
-					$has_errors = true;
+					$has_errors    = true;
 				}
 
 				if ( ! $has_errors ) {
 					$settings_to_save = array(
-						'api_key' => $current_data['api_key'],
+						'api_key'      => $current_data['api_key'],
 						'account_name' => $current_data['account_name'],
-						'name' => $current_data['name'],
+						'name'         => $current_data['name'],
 					);
 					// If not active, activate it.
 					// TODO: Wrap this in a friendlier method
@@ -183,7 +182,7 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
-						$has_errors = true;
+						$has_errors    = true;
 					}
 				}
 
@@ -212,7 +211,7 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 					'type'     => 'wrapper',
 					'class'    => $api_key_valid ? '' : 'sui-form-field-error',
 					'elements' => array(
-						'label' => array(
+						'label'   => array(
 							'type'  => 'label',
 							'for'   => 'api_key',
 							'value' => __( 'API Key (Encrypted)', 'hustle' ),
@@ -225,7 +224,7 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 							'id'          => 'api_key',
 							'icon'        => 'key',
 						),
-						'error' => array(
+						'error'   => array(
 							'type'  => 'error',
 							'class' => $api_key_valid ? 'sui-hidden' : '',
 							'value' => __( 'Please enter a valid InfusionSoft encrypted API key', 'hustle' ),
@@ -236,7 +235,7 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 					'type'     => 'wrapper',
 					'class'    => $api_account_name_valid ? '' : 'sui-form-field-error',
 					'elements' => array(
-						'label' => array(
+						'label'        => array(
 							'type'  => 'label',
 							'for'   => 'account_name',
 							'value' => __( 'Account Name', 'hustle' ),
@@ -249,7 +248,7 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 							'id'          => 'account_name',
 							'icon'        => 'style-type',
 						),
-						'error' => array(
+						'error'        => array(
 							'type'  => 'error',
 							'class' => $api_account_name_valid ? 'sui-hidden' : '',
 							'value' => __( 'Please enter a valid InfusionSoft account name', 'hustle' ),
@@ -260,12 +259,12 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 					'type'     => 'wrapper',
 					'style'    => 'margin-bottom: 0;',
 					'elements' => array(
-						'label' => array(
+						'label'   => array(
 							'type'  => 'label',
 							'for'   => 'instance-name-input',
 							'value' => __( 'Identifier', 'hustle' ),
 						),
-						'name' => array(
+						'name'    => array(
 							'type'        => 'text',
 							'name'        => 'name',
 							'value'       => $current_data['name'],
@@ -276,7 +275,7 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 							'type'  => 'description',
 							'value' => __( 'Helps to distinguish your integrations if you have connected to the multiple accounts of this integration.', 'hustle' ),
 						),
-					)
+					),
 				),
 			);
 
@@ -305,7 +304,7 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 							true
 						),
 					),
-					'save' => array(
+					'save'       => array(
 						'markup' => Hustle_Provider_Utils::get_provider_button_markup(
 							__( 'Save', 'hustle' ),
 							'',
@@ -329,23 +328,23 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 			}
 
 			$response = array(
-			'html'       => $step_html,
-			'buttons'    => $buttons,
-			'has_errors' => $has_errors,
+				'html'       => $step_html,
+				'buttons'    => $buttons,
+				'has_errors' => $has_errors,
 			);
 
 			return $response;
 		}
 
 		/**
-	 * Validate the provided API key and account name.
-	 *
-	 * @since 4.0
-	 *
-	 * @param string $api_key
-	 * @param string $account_name
-	 * @return bool
-	 */
+		 * Validate the provided API key and account name.
+		 *
+		 * @since 4.0
+		 *
+		 * @param string $api_key
+		 * @param string $account_name
+		 * @return bool
+		 */
 		private function validate_credentials( $api_key, $account_name ) {
 			if ( empty( $api_key ) || empty( $account_name ) ) {
 				return false;
@@ -359,7 +358,6 @@ if ( ! class_exists( 'Hustle_Infusion_Soft' ) ) :
 					Hustle_Provider_Utils::maybe_log( __METHOD__, __( 'Invalid InfusionSoft credentials.', 'hustle' ) );
 					return false;
 				}
-
 			} catch ( Exception $e ) {
 				Hustle_Provider_Utils::maybe_log( __METHOD__, $e->getMessage() );
 				return false;

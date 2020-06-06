@@ -1,4 +1,15 @@
-<div id="hustle-appearance-icons-style" class="sui-box-settings-row"<?php if ( $is_empty ) echo ' style="display: none;"'; ?>>
+<?php
+/**
+ * Icons style section.
+ *
+ * @var bool $is_empty True if neither inline nor floating display types are enabled.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
+<div id="hustle-appearance-icons-style" class="sui-box-settings-row"<?php echo $is_empty ? ' style="display: none;"' : ''; ?>>
 
 	<div class="sui-box-settings-col-1">
 
@@ -22,7 +33,7 @@
 						id="hustle-social-icon--default"
 						<?php checked( $icon_style, 'flat' ); ?>
 					/>
-					<i class="hui-icon-social-facebook hui-sm" aria-hidden="true"></i>
+					<span class="hui-icon-social-facebook hui-sm" aria-hidden="true"></span>
 					<span class="sui-screen-reader-text"><?php esc_html_e( 'Default', 'hustle' ); ?></span>
 				</label>
 
@@ -35,7 +46,7 @@
 						id="hustle-social-icon--outlined"
 						<?php checked( $icon_style, 'outline' ); ?>
 					/>
-					<i class="hui-icon-social-facebook hui-icon-outlined hui-sm" aria-hidden="true"></i>
+					<span class="hui-icon-social-facebook hui-icon-outlined hui-sm" aria-hidden="true"></span>
 					<span class="sui-screen-reader-text"><?php esc_html_e( 'Outlined', 'hustle' ); ?></span>
 				</label>
 
@@ -48,7 +59,7 @@
 						id="hustle-social-icon--circle"
 						<?php checked( $icon_style, 'rounded' ); ?>
 					/>
-					<i class="hui-icon-social-facebook hui-icon-circle hui-sm" aria-hidden="true"></i>
+					<span class="hui-icon-social-facebook hui-icon-circle hui-sm" aria-hidden="true"></span>
 					<span class="sui-screen-reader-text"><?php esc_html_e( 'Circle', 'hustle' ); ?></span>
 				</label>
 
@@ -61,7 +72,7 @@
 						id="hustle-social-icon--square"
 						<?php checked( $icon_style, 'squared' ); ?>
 					/>
-					<i class="hui-icon-social-facebook hui-icon-square hui-sm" aria-hidden="true"></i>
+					<span class="hui-icon-social-facebook hui-icon-square hui-sm" aria-hidden="true"></span>
 					<span class="sui-screen-reader-text"><?php esc_html_e( 'Square', 'hustle' ); ?></span>
 				</label>
 

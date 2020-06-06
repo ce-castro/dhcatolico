@@ -1,49 +1,53 @@
 <?php
-$module_steps = 1;
-$dialog_class = 'sui-dialog sui-dialog-sm sui-dialog-alt';
+/**
+ * Markup for the modal "Create Module" on listing pages.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
 
 $is_social_share = ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module_type );
-
-if ( ! $is_social_share ) {
-	$module_steps = 2;
-	$dialog_class = 'sui-dialog sui-dialog-alt';
-}
 
 $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 ?>
 
-<div id="hustle-new-module--dialog">
+<div class="sui-modal sui-modal-lg">
 
-	<?php if ( ! $is_social_share ) { ?>
+	<div
+		role="dialog"
+		id="hustle-dialog--create-new-module"
+		class="sui-modal-content"
+		aria-modal="true"
+		<?php /* translators: module type in smallcaps and singular. */ ?>
+		aria-label="<?php printf( esc_html__( 'Create a new %s', 'hustle' ), esc_html( $smallcaps_singular ) ); ?>"
+		data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_create_new_module' ) ); ?>"
+	>
 
-		<div class="sui-modal sui-modal-lg">
+		<?php if ( ! $is_social_share ) { ?>
 
 			<div
-				role="dialog"
-				id="hustle-new-module--type"
-				class="sui-modal-content"
-				aria-modal="true"
-				aria-labelledby="hustle-new-module--type-title"
-				aria-describedby="hustle-new-module--type-description"
+				id="hustle-create-new-module-step-1"
+				class="sui-modal-slide sui-active"
+				data-modal-size="lg"
 			>
 
-				<div role="document" class="sui-box">
+				<div class="sui-box">
 
 					<div class="sui-box-header sui-flatten sui-content-center sui-spacing-top--60">
+
+						<button class="sui-button-icon sui-button-float--right hustle-modal-close" data-modal-close>
+							<span class="sui-icon-close sui-md" aria-hidden="true"></span>
+							<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog window', 'hustle' ); ?></span>
+						</button>
 
 						<span class="sui-box-steps sui-md sui-steps-float" aria-hidden="true">
 							<span class="sui-current"></span>
 							<span></span>
 						</span>
 
-						<button id="hustle-new-module--type-close" class="sui-button-icon sui-button-float--right" data-modal-close="">
-							<i class="sui-icon-close sui-md" aria-hidden="true"></i>
-							<span class="sui-screen-reader-text"><?php esc_html_e( 'Close create modal', 'hustle' ); ?></span>
-						</button>
+						<h3 class="sui-box-title sui-lg"><?php esc_html_e( 'Choose Content Type', 'hustle' ); ?></h3>
 
-						<h4 id="hustle-new-module--type-title" class="sui-box-title sui-lg"><?php esc_html_e( 'Choose Content Type', 'hustle' ); ?></h4>
-
-						<p id="hustle-new-module--type-description" class="sui-description"><?php esc_html_e( "Let's start by choosing an appropriate content type based on your goal.", 'hustle' ); ?></p>
+						<p class="sui-description"><?php esc_html_e( "Let's start by choosing an appropriate content type based on your goal.", 'hustle' ); ?></p>
 
 					</div>
 
@@ -53,13 +57,13 @@ $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 
 							<li><label for="optin" class="sui-box-selector">
 								<input type="radio" name="mode" id="optin" value="optin" checked="checked" />
-								<span><i class="sui-icon-mail" aria-hidden="true"></i> <?php esc_html_e( 'Email Opt-in', 'hustle' ); ?></span>
+								<span><span class="sui-icon-mail" aria-hidden="true"></span> <?php esc_html_e( 'Email Opt-in', 'hustle' ); ?></span>
 								<span><?php esc_html_e( 'Perfect for Newsletter signups, or collecting user data in general.', 'hustle' ); ?></span>
 							</label></li>
 
 							<li><label for="informational" class="sui-box-selector">
 								<input type="radio" name="mode" id="informational" value="informational" />
-								<span><i class="sui-icon-info" aria-hidden="true"></i> <?php esc_html_e( 'Informational', 'hustle' ); ?></span>
+								<span><span class="sui-icon-info" aria-hidden="true"></span> <?php esc_html_e( 'Informational', 'hustle' ); ?></span>
 								<span><?php esc_html_e( 'Perfect for promotional offers with Call to Action.', 'hustle' ); ?></span>
 							</label></li>
 
@@ -77,6 +81,7 @@ $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 						<img
 							src="<?php echo esc_url( self::$plugin_url . 'assets/images/hustle-create.png' ); ?>"
 							srcset="<?php echo esc_url( self::$plugin_url . 'assets/images/hustle-create.png' ); ?> 1x, <?php echo esc_url( self::$plugin_url . 'assets/images/hustle-create@2x.png' ); ?> 2x"
+							<?php /* translators: module's type capitalized and in singular. */ ?>
 							alt="<?php printf( esc_html__( 'Create New %s', 'hustle' ), esc_html( $capitalize_singular ) ); ?>"
 							class="sui-image sui-image-center"
 							aria-hidden="true"
@@ -87,26 +92,22 @@ $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 
 			</div>
 
-		</div>
-
-	<?php } ?>
-
-	<div class="sui-modal sui-modal-sm">
+		<?php } ?>
 
 		<div
-			role="dialog"
-			id="hustle-new-module--create"
-			class="sui-modal-content"
-			aria-modal="true"
-			aria-labelledby="hustle-new-module--create-title"
-			aria-describedby="hustle-new-module--create-description"
-			data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_create_new_module' ) ); ?>"
+			id="hustle-create-new-module-step-2"
+			class="sui-modal-slide sui-active"
+			data-modal-size="sm"
 		>
 
-			<div role="document" class="sui-box">
+			<div class="sui-box">
 
 				<div class="sui-box-header sui-flatten sui-content-center sui-spacing-top--60">
 
+					<button class="sui-button-icon sui-button-float--right hustle-modal-close" data-modal-close>
+						<span class="sui-icon-close sui-md" aria-hidden="true"></span>
+						<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog window', 'hustle' ); ?></span>
+					</button>
 					<?php if ( ! $is_social_share ) { ?>
 
 						<span class="sui-box-steps sui-md sui-steps-float" aria-hidden="true">
@@ -114,21 +115,18 @@ $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 							<span class="sui-current"></span>
 						</span>
 
-						<button id="hustle-new-module--create-back" class="sui-button-icon sui-button-float--left">
-							<i class="sui-icon-chevron-left sui-md" aria-hidden="true"></i>
+						<button class="sui-button-icon sui-button-float--left" data-modal-slide="hustle-create-new-module-step-1" data-modal-slide-focus="hustle-select-mode" data-modal-slide-intro="back">
+							<span class="sui-icon-chevron-left sui-md" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Go back to choose module content type', 'hustle' ); ?></span>
 						</button>
 
 					<?php } ?>
 
-					<button id="hustle-new-module--create-close" class="sui-button-icon sui-button-float--right" data-modal-close="">
-						<i class="sui-icon-close sui-md" aria-hidden="true"></i>
-						<span class="sui-screen-reader-text"><?php esc_html_e( 'Close create modal', 'hustle' ); ?></span>
-					</button>
+					<?php /* translators: module's type capitalized and in singular. */ ?>
+					<h3 class="sui-box-title sui-lg"><?php printf( esc_html__( 'Create %s', 'hustle' ), esc_html( $capitalize_singular ) ); ?></h3>
 
-					<h4 id="hustle-new-module--create-title" class="sui-box-title sui-lg"><?php printf( esc_html__( 'Create %s', 'hustle' ), esc_html( $capitalize_singular ) ); ?></h4>
-
-					<p id="hustle-new-module--create-description" class="sui-description"><?php printf( esc_html__( "Let's give your new %s module a name. What would you like to name it?", 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
+					<?php /* translators: module's type in small caps and in singular. */ ?>
+					<p class="sui-description"><?php printf( esc_html__( "Let's give your new %s module a name. What would you like to name it?", 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
 
 				</div>
 
@@ -136,6 +134,7 @@ $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 
 					<div class="sui-form-field">
 
+						<?php /* translators: module's type in small caps and in singular. */ ?>
 						<label for="hustle-module-name" class="sui-screen-reader-text"><?php printf( esc_html__( '%s name', 'hustle' ), esc_html( $capitalize_singular ) ); ?></label>
 
 						<div class="sui-with-button sui-inside">
@@ -152,9 +151,9 @@ $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 
 							<button id="hustle-create-module" class="sui-button-icon sui-button-blue sui-button-filled sui-button-lg" disabled>
 								<span class="sui-loading-text">
-									<i class="sui-icon-arrow-right" aria-hidden="true"></i>
+									<span class="sui-icon-arrow-right" aria-hidden="true"></span>
 								</span>
-								<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+								<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 								<span class="sui-screen-reader-text"><?php esc_html_e( 'Done', 'hustle' ); ?></span>
 							</button>
 
@@ -174,6 +173,7 @@ $hide_branding = apply_filters( 'wpmudev_branding_hide_branding', false );
 					<img
 						src="<?php echo esc_url( self::$plugin_url . 'assets/images/hustle-create.png' ); ?>"
 						srcset="<?php echo esc_url( self::$plugin_url . 'assets/images/hustle-create.png' ); ?> 1x, <?php echo esc_url( self::$plugin_url . 'assets/images/hustle-create@2x.png' ); ?> 2x"
+						<?php /* translators: module's type capitalized and in singular. */ ?>
 						alt="<?php printf( esc_html__( 'Create New %s', 'hustle' ), esc_html( $capitalize_singular ) ); ?>"
 						class="sui-image sui-image-center"
 						aria-hidden="true"

@@ -1,32 +1,77 @@
+<?php
+/**
+ * Policy text template.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="wp-suggested-text">
 	<h2><?php esc_html_e( 'Which modules collect personal data?', 'hustle' ); ?></h2>
 	<p class="privacy-policy-tutorial">
-		<?php esc_html_e( 'If you use Hustle to create and embed any Pop-up, Embed, Slide-in, or Social share module, you may need to mention it here to properly distinguish it from other plugins.',
-		                  'hustle' ); ?>
+		<?php
+		esc_html_e(
+			'If you use Hustle to create and embed any Pop-up, Embed, Slide-in, or Social share module, you may need to mention it here to properly distinguish it from other plugins.',
+			'hustle'
+		);
+		?>
 	</p>
 
 	<h2><?php esc_html_e( 'What personal data do we collect and why?', 'hustle' ); ?></h2>
 	<p class="privacy-policy-tutorial">
-		<?php _e( 'By default, Hustle captures the <strong>IP Address</strong> for each conversion and for each view only if the "tracking" functionality is enabled. Other personal data such as your <strong>name</strong> and <strong>email address</strong> may also be captured,
-depending on the form fields.',
-		          'hustle' );//wpcs : xss ok ?>
+		<?php
+		printf(
+			/* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */
+			esc_html__(
+				'By default, Hustle captures the %1$sIP Address%2$s for each conversion and for each view only if the "tracking" functionality is enabled. Other personal data such as your %1$sname%2$s and %1$semail address%2$s may also be captured,
+	depending on the form fields.',
+				'hustle'
+			),
+			'<strong>',
+			'</strong>'
+		);
+		?>
 	</p>
 	<p class="privacy-policy-tutorial">
 		<i>
-			<?php esc_html_e( 'Note: In this section you should include any personal data you collected and which form captures personal data to give users more relevant information. You should also include an explanation of why this data is needed. The explanation must note either the legal basis for your data collection and retention of the active consent the user has given.',
-			                  'hustle' ); ?></i>
+			<?php
+			esc_html_e(
+				'Note: In this section you should include any personal data you collected and which form captures personal data to give users more relevant information. You should also include an explanation of why this data is needed. The explanation must note either the legal basis for your data collection and retention of the active consent the user has given.',
+				'hustle'
+			);
+			?>
+		</i>
 	</p>
 	<p>
 		<strong class="privacy-policy-tutorial"><?php esc_html_e( 'Suggested text: ', 'hustle' ); ?></strong>
-		<?php _e( 'When visitors or users submit a form or view a module, we capture the <strong>IP Address</strong> for analyisis purposes. We also capture the <strong>email address</strong> and might capture other personal data included in the form fields.',
-		          'hustle' );//wpcs : xss ok ?>
+		<?php
+		printf(
+			/* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */
+			esc_html__(
+				'When visitors or users submit a form or view a module, we capture the %1$sIP Address%2$s for analyisis purposes. We also capture the %1$semail address%2$s and might capture other personal data included in the form fields.',
+				'hustle'
+			),
+			'<strong>',
+			'</strong>'
+		);
+		?>
 	</p>
 
 	<h2><?php esc_html_e( 'How long we retain your data', 'hustle' ); ?></h2>
 	<p class="privacy-policy-tutorial">
-		<?php _e( 'By default Hustle retains all form submissions and tracking data <strong>forever</strong>. You can delete the stored data in <strong>Hustle</strong> &raquo; <strong>Settings</strong> &raquo;
-		<strong>Privacy Settings</strong>, and under each module\'s settings.',
-		          'hustle' );//wpcs : xss ok ?>
+		<?php
+		printf(
+			/* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */
+			esc_html__(
+				'By default Hustle retains all form submissions and tracking data %1$sforever%2$s. You can delete the stored data in %1$sHustle%2$s &raquo; %1$sSettings%2$s &raquo;
+				%1$sPrivacy Settings%2$s, and under each module\'s settings.',
+				'hustle'
+			),
+			'<strong>',
+			'</strong>'
+		);
+		?>
 	</p>
 
 	<p>
@@ -40,8 +85,12 @@ depending on the form fields.',
 	</p>
 	<h2><?php esc_html_e( 'Third Parties', 'hustle' ); ?></h2>
 	<p class="privacy-policy-tutorial">
-		<?php esc_html_e( 'If your forms use either built-in or external third party services, in this section you should mention any third parties and its privacy policy.',
-		                  'hustle' ); ?>
+		<?php
+		esc_html_e(
+			'If your forms use either built-in or external third party services, in this section you should mention any third parties and its privacy policy.',
+			'hustle'
+		);
+		?>
 	</p>
 	<p class="privacy-policy-tutorial">
 		<?php esc_html_e( 'By default Hustle optionally use these third party integrations:', 'hustle' ); ?>
@@ -91,9 +140,13 @@ depending on the form fields.',
 
 	<h2><?php esc_html_e( 'Cookies', 'hustle' ); ?></h2>
 	<p class="privacy-policy-tutorial">
-		<?php _e( 'By default Hustle uses cookies to count how many times each module is visualized. Cookies might be used to handle other features such as display settings, used when a module should not be displayed for a certain time,
+		<?php
+		esc_html_e(
+			'By default Hustle uses cookies to count how many times each module is visualized. Cookies might be used to handle other features such as display settings, used when a module should not be displayed for a certain time,
 		whether the user commented before, whether the user has subscribed, among others, if their related settings are enabled.',
-		          'hustle' );//wpcs : xss ok ?>
+			'hustle'
+		);
+		?>
 	</p>
 
 

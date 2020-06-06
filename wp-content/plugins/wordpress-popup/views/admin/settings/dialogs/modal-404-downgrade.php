@@ -1,4 +1,11 @@
 <?php
+/**
+ * Restore 4.0.4 modal.
+ *
+ * @package Hustle
+ * @since 4.1.0
+ */
+
 $banner_1x = self::$plugin_url . 'assets/images/banner-downgrade.png';
 $banner_2x = self::$plugin_url . 'assets/images/banner-downgrade@2x.png';
 
@@ -10,12 +17,12 @@ $hustle_download_url = Opt_In_Utils::_is_free() ? 'https://downloads.wordpress.o
 
 // Link to trigger the restore and deactivate the plugin.
 $visibility_restore_url = add_query_arg(
-	[
+	array(
 		'page'               => 'hustle_settings',
 		'section'            => 'data',
 		'hustle-restore-40x' => 'true',
 		'nonce'              => wp_create_nonce( 'hustle-restore-40x-visibility' ),
-	],
+	),
 	'admin.php'
 );
 ?>
@@ -35,14 +42,14 @@ $visibility_restore_url = add_query_arg(
 
 			<div class="sui-box-header sui-flatten sui-content-center">
 
+				<button class="sui-button-icon sui-button-white sui-button-float--right" data-modal-close>
+					<span class="sui-icon-close sui-md"></span>
+					<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog', 'hustle' ); ?></span>
+				</button>
+
 				<figure class="sui-box-banner" aria-hidden="true">
 					<?php echo Opt_In_Utils::render_image_markup( esc_url( $banner_1x ), esc_url( $banner_2x ), 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</figure>
-
-				<button class="sui-button-icon sui-button-float--right" data-modal-close>
-					<i class="sui-icon-close sui-md"></i>
-					<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog', 'hustle' ); ?></span>
-				</button>
 
 				<h3 id="hustle404Downgrade" class="sui-box-title sui-lg">
 					<?php /* translators: version to rollback into. */ ?>
@@ -98,7 +105,7 @@ $visibility_restore_url = add_query_arg(
 			<div class="sui-box-footer sui-content-right">
 				<a href="<?php echo esc_url_raw( $visibility_restore_url ); ?>" class="sui-button hustle-load-on-click">
 					<span class="sui-loading-text"><?php esc_html_e( 'Rollback Database & Deactivate', 'hustle' ); ?></span>
-					<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 				</a>
 			</div>
 

@@ -3,20 +3,20 @@
  * Class Hustle_Mailchimp
  * The class that defines mailchimp provider
  */
-if( !class_exists("Hustle_Mailchimp") ):
+if ( ! class_exists( 'Hustle_Mailchimp' ) ) :
 
 	include_once 'hustle-mailchimp-api.php';
 
-	class Hustle_Mailchimp extends Hustle_Provider_Abstract{
+	class Hustle_Mailchimp extends Hustle_Provider_Abstract {
 
-		const GROUP_TRANSIENT = "hustle-mailchimp-group-transient";
+		const GROUP_TRANSIENT = 'hustle-mailchimp-group-transient';
 
-		const SLUG = "mailchimp";
+		const SLUG = 'mailchimp';
 
 		/**
 		 * @var $api Mailchimp
 		 */
-		protected  static $api;
+		protected static $api;
 
 		/**
 		 * Mailchimp Provider Instance
@@ -37,7 +37,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version	= '1.0';
+		protected $_version = '1.0';
 
 		/**
 		 * @since 3.0.5
@@ -86,20 +86,22 @@ if( !class_exists("Hustle_Mailchimp") ):
 			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
 			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 
-			add_action( 'wp_ajax_hustle_mailchimp_get_group_interests', [ $this, 'ajax_group_interests' ] );
+			if ( wp_doing_ajax() ) {
+				add_action( 'wp_ajax_hustle_mailchimp_get_group_interests', array( $this, 'ajax_group_interests' ) );
+			}
 		}
 
 		public function ajax_group_interests() {
 			Opt_In_Utils::validate_ajax_call( 'hustle_mailchimp_interests' );
-			$html = '';
+			$html      = '';
 			$post_data = filter_input( INPUT_POST, 'data' );
-			$data =[];
+			$data      = array();
 			wp_parse_str( $post_data, $data );
 			$module_id = isset( $data['module_id'] ) ? $data['module_id'] : '';
 			if ( $module_id ) {
-				$class_name = $this->_form_settings;
+				$class_name             = $this->_form_settings;
 				$form_settings_instance = new $class_name( $this, $module_id );
-				$html = $form_settings_instance->get_group_interests( $data );
+				$html                   = $form_settings_instance->get_group_interests( $data );
 			}
 
 			wp_send_json_success( $html );
@@ -132,9 +134,9 @@ if( !class_exists("Hustle_Mailchimp") ):
 		 */
 		public function before_save_settings_values( $values ) {
 
-			//if ( ! empty( $this->_connected_account ) ) {
-			//	$values['connected_account'] = $this->_connected_account;
-			//}
+			// if ( ! empty( $this->_connected_account ) ) {
+			// $values['connected_account'] = $this->_connected_account;
+			// }
 
 			return $values;
 		}
@@ -143,12 +145,12 @@ if( !class_exists("Hustle_Mailchimp") ):
 		 * @param string $api_key
 		 * @return Hustle_Mailchimp_Api
 		 */
-		public function get_api( $api_key ){
+		public function get_api( $api_key ) {
 
 			if ( empty( self::$api ) ) {
-				$exploded = explode( '-', $api_key );
+				$exploded    = explode( '-', $api_key );
 				$data_center = end( $exploded );
-				self::$api = new Hustle_Mailchimp_Api( $api_key, $data_center );
+				self::$api   = new Hustle_Mailchimp_Api( $api_key, $data_center );
 			}
 			return self::$api;
 		}
@@ -156,7 +158,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 		/**
 		 * @param string $email
 		 * @param string $list_id
-		 * @param array $data
+		 * @param array  $data
 		 * @param string $api_key
 		 *
 		 * @return Object Returns the member if the email address already exists otherwise false.
@@ -166,13 +168,13 @@ if( !class_exists("Hustle_Mailchimp") ):
 			try {
 				$api = $this->get_api( $api_key );
 
-				$member_info = $api->check_email( $list_id, $email);
+				$member_info = $api->check_email( $list_id, $email );
 				// Mailchimp returns WP error if can't find member on a list
-				if ( is_wp_error( $member_info ) &&  404 === $member_info->get_error_code() ) {
+				if ( is_wp_error( $member_info ) && 404 === $member_info->get_error_code() ) {
 					return false;
 				}
 				return $member_info;
-			} catch( Exception $e ) {
+			} catch ( Exception $e ) {
 				Hustle_Provider_Utils::maybe_log( __METHOD__, 'Failed to get member from Mailchimp list.', $e->getMessage() );
 
 				return false;
@@ -182,7 +184,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 		/**
 		 * @param string $email
 		 * @param string $list_id
-		 * @param array $data
+		 * @param array  $data
 		 * @param string $api_key
 		 *
 		 * @return NULL if the member is deleted otherwise false.
@@ -191,13 +193,13 @@ if( !class_exists("Hustle_Mailchimp") ):
 			try {
 				$api = $this->get_api( $api_key );
 
-				$delete_status = $api->delete_email( $list_id, $email);
+				$delete_status = $api->delete_email( $list_id, $email );
 				// Mailchimp returns WP error if can't find member on a list
-				if ( is_wp_error( $member_info ) &&  404 === $delete_status->get_error_code() ) {
+				if ( is_wp_error( $member_info ) && 404 === $delete_status->get_error_code() ) {
 					return false;
 				}
 				return $delete_status;
-			} catch( Exception $e ) {
+			} catch ( Exception $e ) {
 				Hustle_Provider_Utils::maybe_log( __METHOD__, 'Failed to delete member from Mailchimp list.', $e->getMessage() );
 
 				return false;
@@ -229,13 +231,13 @@ if( !class_exists("Hustle_Mailchimp") ):
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
-			$has_errors = false;
-			$default_data = array(
+			$has_errors      = false;
+			$default_data    = array(
 				'api_key' => '',
-				'name' => '',
+				'name'    => '',
 			);
-			$current_data = $this->get_current_data( $default_data, $submitted_data );
-			$is_submit = isset( $submitted_data['api_key'] );
+			$current_data    = $this->get_current_data( $default_data, $submitted_data );
+			$is_submit       = isset( $submitted_data['api_key'] );
 			$global_multi_id = $this->get_global_multi_id( $submitted_data );
 
 			$api_key_validated = true;
@@ -244,13 +246,13 @@ if( !class_exists("Hustle_Mailchimp") ):
 				$api_key_validated = $this->validate_api_key( $current_data['api_key'] );
 				if ( ! $api_key_validated ) {
 					$error_message = $this->provider_connection_falied();
-					$has_errors = true;
+					$has_errors    = true;
 				}
 
 				if ( ! $has_errors ) {
 					$settings_to_save = array(
 						'api_key' => $current_data['api_key'],
-						'name' => $current_data['name'],
+						'name'    => $current_data['name'],
 					);
 
 					// If not active, activate it.
@@ -260,7 +262,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
-						$has_errors = true;
+						$has_errors    = true;
 					}
 				}
 
@@ -282,7 +284,6 @@ if( !class_exists("Hustle_Mailchimp") ):
 					);
 
 				}
-
 			}
 
 			$options = array(
@@ -290,7 +291,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 					'type'     => 'wrapper',
 					'class'    => $api_key_validated ? '' : 'sui-form-field-error',
 					'elements' => array(
-						'label' => array(
+						'label'   => array(
 							'type'  => 'label',
 							'for'   => 'api_key',
 							'value' => __( 'API Key', 'hustle' ),
@@ -303,23 +304,23 @@ if( !class_exists("Hustle_Mailchimp") ):
 							'id'          => 'api_key',
 							'icon'        => 'key',
 						),
-						'error' => array(
+						'error'   => array(
 							'type'  => 'error',
 							'class' => $api_key_validated ? 'sui-hidden' : '',
 							'value' => __( 'Please enter a valid Mailchimp API key', 'hustle' ),
 						),
-					)
+					),
 				),
 				array(
-					'type'  => 'wrapper',
-					'style' => 'margin-bottom: 0;',
+					'type'     => 'wrapper',
+					'style'    => 'margin-bottom: 0;',
 					'elements' => array(
-						'label' => array(
+						'label'   => array(
 							'type'  => 'label',
 							'for'   => 'mailchimp-name-input',
 							'value' => __( 'Identifier', 'hustle' ),
 						),
-						'name' => array(
+						'name'    => array(
 							'type'        => 'text',
 							'name'        => 'name',
 							'value'       => $current_data['name'],
@@ -339,7 +340,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 				),
 			);
 
-			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup( __( 'Configure Mailchimp', 'hustle' ), sprintf( __("Log in to your %1\$sMailchimp account%2\$s to get your API Key.", 'hustle' ), '<a href="https://admin.mailchimp.com/account/api/" target="_blank">', '</a>' ) );
+			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup( __( 'Configure Mailchimp', 'hustle' ), sprintf( __( 'Log in to your %1$sMailchimp account%2$s to get your API Key.', 'hustle' ), '<a href="https://admin.mailchimp.com/account/api/" target="_blank">', '</a>' ) );
 			if ( $has_errors ) {
 				$step_html .= '<span class="sui-notice sui-notice-error"><p>' . esc_html( $error_message ) . '</p></span>';
 			}
@@ -351,7 +352,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 					'disconnect' => array(
 						'markup' => Hustle_Provider_Utils::get_provider_button_markup( __( 'Disconnect', 'hustle' ), 'sui-button-ghost', 'disconnect', true ),
 					),
-					'save' => array(
+					'save'       => array(
 						'markup' => Hustle_Provider_Utils::get_provider_button_markup(
 							__( 'Save', 'hustle' ),
 							'',
@@ -434,14 +435,14 @@ if( !class_exists("Hustle_Mailchimp") ):
 			/**
 			 * For mailchimp version 3.x used to store a lot of unnecessary crap, let's get rid of it now.
 			 */
-			$redundant = array( 'is_step', 'slug', 'step', 'current_step', 'module_type' );
+			$redundant                = array( 'is_step', 'slug', 'step', 'current_step', 'module_type' );
 			$module_provider_settings = $module->get_provider_settings( $this->get_slug() );
 			if ( ! empty( $module_provider_settings ) ) {
 				// Remove redundants
 				$module_provider_settings = array_diff_key( $module_provider_settings, array_combine( $redundant, $redundant ) );
 
 				// Interest options are stored differently so let's try to bridge the differences
-				$interest_options = $this->transform_interest_options( $module_provider_settings );
+				$interest_options                             = $this->transform_interest_options( $module_provider_settings );
 				$module_provider_settings['interest_options'] = $interest_options;
 
 				if ( isset( $module_provider_settings['group_interest'] ) ) {
@@ -450,7 +451,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 					$module_provider_settings['group_interest_name'] = is_array( $interest_options ) && ! empty( $interest_options[ $module_provider_settings['group_interest'] ] )
 						? $interest_options[ $module_provider_settings['group_interest'] ]
 						: '';
-					$module_provider_settings['group_type'] = 'radio';
+					$module_provider_settings['group_type']          = 'radio';
 
 				}
 
@@ -469,14 +470,14 @@ if( !class_exists("Hustle_Mailchimp") ):
 				return array();
 			}
 
-			$original = $module_provider_settings['interest_options'];
-			$list_id = $module_provider_settings['list_id'];
+			$original  = $module_provider_settings['interest_options'];
+			$list_id   = $module_provider_settings['list_id'];
 			$transient = get_site_transient( self::GROUP_TRANSIENT . $list_id );
 			if ( empty( $transient ) ) {
 				return $original;
 			}
 
-			$group_id = $module_provider_settings['group'];
+			$group_id  = $module_provider_settings['group'];
 			$interests = array();
 			foreach ( $transient as $group ) {
 				if (
@@ -549,7 +550,7 @@ if( !class_exists("Hustle_Mailchimp") ):
 
 			$api_key = $this->get_setting( 'api_key', '', $global_multi_id );
 			try {
-				$api = $this->get_api( $api_key );
+				$api      = $this->get_api( $api_key );
 				$response = $api->get_interests( $list_id, $group_id, PHP_INT_MAX );
 				if ( is_wp_error( $response ) || ! is_array( $response->interests ) ) {
 					return array();
@@ -566,19 +567,19 @@ if( !class_exists("Hustle_Mailchimp") ):
 		public function maybe_add_custom_fields( $api, $list_id, $merge_data, $module_id ) {
 
 			$existed_custom_fields = $api->get_custom_fields( $list_id );
-			$existed_keys = !empty( $existed_custom_fields->merge_fields ) ? wp_list_pluck( $existed_custom_fields->merge_fields, 'tag' ) : array();
-			$new_fields = array();
+			$existed_keys          = ! empty( $existed_custom_fields->merge_fields ) ? wp_list_pluck( $existed_custom_fields->merge_fields, 'tag' ) : array();
+			$new_fields            = array();
 			foreach ( $merge_data as $k => $v ) {
-				if ( !in_array( strtoupper( $k ), $existed_keys, true ) ) {
+				if ( ! in_array( strtoupper( $k ), $existed_keys, true ) ) {
 					$new_fields[] = $k;
 				}
 			}
-			if ( !empty( $new_fields ) ) {
+			if ( ! empty( $new_fields ) ) {
 				$module = Hustle_Module_Model::instance()->get( $module_id );
 				if ( is_wp_error( $module ) ) {
 					return $module;
 				}
-				$form_fields = $module->get_form_fields();
+				$form_fields    = $module->get_form_fields();
 				$possible_types = array(
 					'text',
 					'number',
@@ -593,14 +594,17 @@ if( !class_exists("Hustle_Mailchimp") ):
 				);
 
 				foreach ( $new_fields as $field ) {
-					$tag = strtoupper( $field );
-					$name = !empty( $form_fields[ $field ]['label'] ) ? $form_fields[ $field ]['label'] : $field;
-					$type = !empty( $form_fields[ $field ]['type'] ) ? $form_fields[ $field ]['type'] : '';
-					$api->add_custom_field( $list_id, array(
-						'tag'   => $tag,
-						'name'  => $name,
-						'type'  => in_array( $type,  $possible_types, true ) ? $type : 'text',
-					) );
+					$tag  = strtoupper( $field );
+					$name = ! empty( $form_fields[ $field ]['label'] ) ? $form_fields[ $field ]['label'] : $field;
+					$type = ! empty( $form_fields[ $field ]['type'] ) ? $form_fields[ $field ]['type'] : '';
+					$api->add_custom_field(
+						$list_id,
+						array(
+							'tag'  => $tag,
+							'name' => $name,
+							'type' => in_array( $type, $possible_types, true ) ? $type : 'text',
+						)
+					);
 				}
 			}
 

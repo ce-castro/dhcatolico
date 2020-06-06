@@ -28,6 +28,7 @@ class Hustle_Deletion {
 		delete_option( 'hustle_database_version' );
 		delete_option( 'hustle_unsubscribe_nonces' );
 		delete_option( 'hustle_migrations' );
+		delete_option( 'hustle_previous_version' );
 		delete_option( 'hustle_30_migration_data' );
 		delete_option( 'hustle_settings' );
 		delete_option( 'hustle_ss_refresh_counters' );
@@ -42,6 +43,7 @@ class Hustle_Deletion {
 		delete_option( 'widget_hustle_module_widget' );
 		delete_option( 'opt_in_database_version' );
 		delete_option( 'hustle_custom_palettes' );
+		delete_option( 'hustle_notice_stop_support_m2' );
 	}
 
 	/**
@@ -61,7 +63,7 @@ class Hustle_Deletion {
 			delete_option( "hustle_provider_{$slug}_settings" );
 
 			if ( 'constantcontact' === $slug || 'hubspot' === $slug ) {
-				delete_option( "hustle_opt-in-constant_contact-token" );
+				delete_option( 'hustle_opt-in-constant_contact-token' );
 				delete_option( "hustle_opt-in-{$slug}-token" );
 				delete_option( "hustle_{$slug}_referer" );
 				delete_option( "hustle_{$slug}_current_page" );

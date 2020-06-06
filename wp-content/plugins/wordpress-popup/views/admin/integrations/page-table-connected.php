@@ -1,3 +1,12 @@
+<?php
+/**
+ * List of the providers that are globally connected.
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <?php if ( 0 === count( $providers ) ) : ?>
 
 	<div class="sui-notice sui-notice-error">
@@ -12,12 +21,14 @@
 
 			<?php foreach ( $providers as $provider ) : ?>
 
-				<?php self::static_render(
+				<?php
+				$this->render(
 					'admin/integrations/integration-row',
 					array(
 						'provider' => $provider,
 					)
-				); ?>
+				);
+				?>
 
 			<?php endforeach; ?>
 

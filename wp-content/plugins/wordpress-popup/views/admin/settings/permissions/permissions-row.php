@@ -1,3 +1,12 @@
+<?php
+/**
+ * Permissions row for the "permissions" tab.
+ *
+ * @package Hustle
+ * @since 4.1.0
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -6,10 +15,10 @@
 	</div>
 
 	<div class="sui-box-settings-col-2">
-		<select 
+		<select
 			form="<?php echo esc_attr( $form_id ); ?>"
 			class="hustle-update-field-ajax sui-select"
-			name="<?php echo esc_attr( $input_name ); ?>" 
+			name="<?php echo esc_attr( $input_name ); ?>"
 			multiple
 		>
 

@@ -84,16 +84,16 @@ class Hustle_Entry_Model {
 	 * @since 4.0
 	 */
 	public function __construct( $entry_id = null ) {
-		$this->table_name = Hustle_Db::entries_table();
+		$this->table_name      = Hustle_Db::entries_table();
 		$this->table_meta_name = Hustle_Db::entries_meta_table();
 
 		if ( is_numeric( $entry_id ) && $entry_id > 0 ) {
 			$this->get( $entry_id );
 			// get connected addons
-			//if ( ! empty( $this->module_id ) ) {
+			// if ( ! empty( $this->module_id ) ) {
 
-				//self::get_connected_addons( $this->module_id );
-			//}
+				// self::get_connected_addons( $this->module_id );
+			// }
 		}
 	}
 
@@ -109,7 +109,7 @@ class Hustle_Entry_Model {
 	public function get( $entry_id ) {
 		global $wpdb;
 
-		$cache_key = get_class( $this );
+		$cache_key          = get_class( $this );
 		$entry_object_cache = wp_cache_get( $entry_id, $cache_key );
 
 		if ( $entry_object_cache ) {
@@ -144,8 +144,8 @@ class Hustle_Entry_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $meta_array {
-	 *                          Array of data to be saved
+	 * @param array  $meta_array {
+	 *                           Array of data to be saved
 	 *
 	 * @type key - string the meta key
 	 * @type value - string the meta value
@@ -185,7 +185,7 @@ class Hustle_Entry_Model {
 			$date_created = Opt_In_Utils::get_current_date();
 		}
 
-		//clear cache first
+		// clear cache first
 		$cache_key = get_class( $this );
 		wp_cache_delete( $this->entry_id, $cache_key );
 		foreach ( $meta_array as $meta ) {
@@ -232,8 +232,8 @@ class Hustle_Entry_Model {
 			$db = $wpdb;
 		}
 		$this->meta_data = array();
-		$sql = "SELECT `meta_id`, `meta_key`, `meta_value` FROM {$this->table_meta_name} WHERE `entry_id` = %d";
-		$results = $db->get_results( $db->prepare( $sql, $this->entry_id ) );
+		$sql             = "SELECT `meta_id`, `meta_key`, `meta_value` FROM {$this->table_meta_name} WHERE `entry_id` = %d";
+		$results         = $db->get_results( $db->prepare( $sql, $this->entry_id ) );
 		foreach ( $results as $result ) {
 			$this->meta_data[ $result->meta_key ] = array(
 				'id'    => $result->meta_id,
@@ -247,7 +247,7 @@ class Hustle_Entry_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $meta_key - the meta key
+	 * @param string      $meta_key - the meta key
 	 * @param bool|object $default_value - the default value
 	 *
 	 * @return bool|string
@@ -345,7 +345,7 @@ class Hustle_Entry_Model {
 	 * @since 4.0
 	 *
 	 * @param array $args
-	 * @param int $count pass by reference for get count
+	 * @param int   $count pass by reference for get count
 	 *
 	 * @return array Hustle_Entry_Model[]
 	 */
@@ -379,7 +379,7 @@ class Hustle_Entry_Model {
 			$args['order'] = 'DESC';
 		}
 
-		$entries_table_name = Hustle_Db::entries_table();
+		$entries_table_name      = Hustle_Db::entries_table();
 		$entries_meta_table_name = Hustle_Db::entries_meta_table();
 
 		$entries = array();
@@ -397,7 +397,7 @@ class Hustle_Entry_Model {
 			$date_created = $args['date_created'];
 			if ( is_array( $date_created ) && isset( $date_created[0] ) && isset( $date_created[1] ) ) {
 				$date_created[1] = $date_created[1] . ' 23:59:00';
-				$where           .= $wpdb->prepare( ' AND ( entries.date_created >= %s AND entries.date_created <= %s )', $date_created[0], $date_created[1] );
+				$where          .= $wpdb->prepare( ' AND ( entries.date_created >= %s AND entries.date_created <= %s )', $date_created[0], $date_created[1] );
 			}
 		}
 
@@ -451,7 +451,7 @@ class Hustle_Entry_Model {
     			{$limit}
     			";
 
-			$sql = apply_filters( 'hustle_query_entries_sql', $sql, $args );
+			$sql     = apply_filters( 'hustle_query_entries_sql', $sql, $args );
 			$results = $wpdb->get_results( $sql ); // WPCS: unprepared SQL ok. false positive
 
 			foreach ( $results as $result ) {
@@ -483,7 +483,7 @@ class Hustle_Entry_Model {
 			return $entries_cache;
 		} else {
 			$table_name = Hustle_Db::entries_table();
-			$sql = "SELECT count(`entry_id`) FROM {$table_name} WHERE `module_id` = %d";
+			$sql        = "SELECT count(`entry_id`) FROM {$table_name} WHERE `module_id` = %d";
 			$entries    = $db->get_var( $db->prepare( $sql, $module_id ) );
 			if ( $entries ) {
 				wp_cache_set( $module_id, $entries, $cache_key );
@@ -505,15 +505,15 @@ class Hustle_Entry_Model {
 	public static function global_count_entries() {
 		global $wpdb;
 
-		$cache_group = 'hustle_total_entries';
-		$cache_key = 'global_count';
+		$cache_group   = 'hustle_total_entries';
+		$cache_key     = 'global_count';
 		$entries_cache = wp_cache_get( $cache_key, $cache_group );
 
 		if ( $entries_cache ) {
 			$global_count = $entries_cache;
 		} else {
-			$table_name = Hustle_Db::entries_table();
-			$global_count = (int)$wpdb->get_var( "SELECT count(`entry_id`) FROM {$table_name}" ); //WPCS: unprepared SQL ok. false positive
+			$table_name   = Hustle_Db::entries_table();
+			$global_count = (int) $wpdb->get_var( "SELECT count(`entry_id`) FROM {$table_name}" ); // WPCS: unprepared SQL ok. false positive
 			wp_cache_set( $cache_key, $global_count, $cache_group );
 		}
 
@@ -543,7 +543,7 @@ class Hustle_Entry_Model {
 	public static function get_entries( $module_id ) {
 		global $wpdb;
 		$entries    = array();
-		$table_name =  Hustle_Db::entries_table();
+		$table_name = Hustle_Db::entries_table();
 		$sql        = "SELECT `entry_id` FROM {$table_name} WHERE `module_id` = %d ORDER BY `entry_id` DESC";
 		$results    = $wpdb->get_results( $wpdb->prepare( $sql, $module_id ) ); // WPCS: unprepared SQL ok. false positive
 
@@ -562,7 +562,7 @@ class Hustle_Entry_Model {
 	 * @since 4.0
 	 *
 	 * @param $module_id
-	 * @param array $entries
+	 * @param array     $entries
 	 * @param bool|wpdb $db
 	 *
 	 * @return bool
@@ -570,7 +570,7 @@ class Hustle_Entry_Model {
 	public static function delete_by_entries( $module_id, $entries, $db = false ) {
 
 		// get connected addons
-		//self::get_connected_addons( $module_id );
+		// self::get_connected_addons( $module_id );
 
 		if ( ! $db ) {
 			global $wpdb;
@@ -580,15 +580,15 @@ class Hustle_Entry_Model {
 			return false;
 		}
 
-		$table_name = Hustle_Db::entries_table();
+		$table_name      = Hustle_Db::entries_table();
 		$table_meta_name = Hustle_Db::entries_meta_table();
 
 		if ( ! empty( $entries ) && is_array( $entries ) ) {
 			foreach ( $entries as $entry_id ) {
-				$module_id  = (int) $module_id;
-				$entry_id = (int) $entry_id;
+				$module_id   = (int) $module_id;
+				$entry_id    = (int) $entry_id;
 				$entry_model = new Hustle_Entry_Model( $entry_id );
-				//self::attach_addons_on_before_delete_entry( $module_id, $entry_model );
+				// self::attach_addons_on_before_delete_entry( $module_id, $entry_model );
 			}
 		}
 
@@ -622,8 +622,8 @@ class Hustle_Entry_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $module_id
-	 * @param int $entry_id
+	 * @param int                                        $module_id
+	 * @param int                                        $entry_id
 	 * @param bool|object - the WP_Object optional param
 	 */
 	public static function delete_by_entry( $module_id, $entry_id, $db = false ) {
@@ -633,16 +633,16 @@ class Hustle_Entry_Model {
 			$db = $wpdb;
 		}
 
-		$table_name = Hustle_Db::entries_table();
+		$table_name      = Hustle_Db::entries_table();
 		$table_meta_name = Hustle_Db::entries_meta_table();
-		$cache_key = __CLASS__;
+		$cache_key       = __CLASS__;
 
 		$module_id = (int) $module_id;
-		$entry_id = (int) $entry_id;
+		$entry_id  = (int) $entry_id;
 
-		//do_action_ref_array( 'hustle_before_delete_entry', array( $module_id, $entry_id ) );
+		// do_action_ref_array( 'hustle_before_delete_entry', array( $module_id, $entry_id ) );
 		$entry_model = new Hustle_Entry_Model( $entry_id );
-		//self::attach_addons_on_before_delete_entry( $module_id, $entry_model );
+		// self::attach_addons_on_before_delete_entry( $module_id, $entry_model );
 
 		$sql = "DELETE FROM {$table_meta_name} WHERE `entry_id` = %d";
 		$db->query( $db->prepare( $sql, $entry_id ) );
@@ -660,25 +660,28 @@ class Hustle_Entry_Model {
 	public static function delete_entries( $module_id ) {
 		global $wpdb;
 
-		$entires_table = Hustle_Db::entries_table();
+		$entires_table      = Hustle_Db::entries_table();
 		$entires_meta_table = Hustle_Db::entries_meta_table();
-		$entires = $wpdb->get_col( $wpdb->prepare(
+		$entires            = $wpdb->get_col(
+			$wpdb->prepare(
 			"SELECT `entry_id` FROM {$entires_table} WHERE `module_id` = %d", //phpcs:ignore
-			$module_id
-		) );
+				$module_id
+			)
+		);
 		if ( $entires ) {
-			//delete entries meta data
+			// delete entries meta data
 			$wpdb->query(
 				"DELETE FROM {$entires_meta_table} WHERE `entry_id` IN ('" . implode( "','", $entires ) . "')" //phpcs:ignore
 			);
 
-			//delete entries data
-			$wpdb->delete( $entires_table,
+			// delete entries data
+			$wpdb->delete(
+				$entires_table,
 				array(
 					'module_id' => $module_id,
 				),
 				array(
-					'%d'
+					'%d',
 				)
 			);
 
@@ -706,8 +709,8 @@ class Hustle_Entry_Model {
 	 *
 	 * @param      $field_type
 	 * @param      $meta_value
-	 * @param bool $allow_html
-	 * @param int  $truncate truncate returned string (usefull if display container is limited)
+	 * @param bool       $allow_html
+	 * @param int        $truncate truncate returned string (usefull if display container is limited)
 	 *
 	 * @return string
 	 */
@@ -716,17 +719,17 @@ class Hustle_Entry_Model {
 			case 'email':
 				if ( ! empty( $meta_value ) ) {
 					$string_value = $meta_value;
-					//truncate
+					// truncate
 					if ( $allow_html ) {
 						// make link
 						$email = $string_value;
-						//truncate
+						// truncate
 						if ( strlen( $email ) > $truncate ) {
 							$email = substr( $email, 0, $truncate ) . '...';
 						}
 						$string_value = '<a href="mailto:' . $email . '" target="_blank" title="' . __( 'Send Email', 'hustle' ) . '">' . $email . '</a>';
 					} else {
-						//truncate url
+						// truncate url
 						if ( strlen( $string_value ) > $truncate ) {
 							$string_value = substr( $string_value, 0, $truncate ) . '...';
 						}
@@ -739,17 +742,17 @@ class Hustle_Entry_Model {
 			case 'url':
 				if ( ! empty( $meta_value ) ) {
 					$string_value = $meta_value;
-					//truncate
+					// truncate
 					if ( $allow_html ) {
 						// make link
 						$website = $string_value;
-						//truncate
+						// truncate
 						if ( strlen( $website ) > $truncate ) {
 							$website = substr( $website, 0, $truncate ) . '...';
 						}
 						$string_value = '<a href="' . $website . '" target="_blank" title="' . __( 'View Website', 'hustle' ) . '">' . $website . '</a>';
 					} else {
-						//truncate url
+						// truncate url
 						if ( strlen( $string_value ) > $truncate ) {
 							$string_value = substr( $string_value, 0, $truncate ) . '...';
 						}
@@ -768,7 +771,7 @@ class Hustle_Entry_Model {
 					// or juggling to string
 					$string_value = (string) $meta_value;
 				}
-				//truncate
+				// truncate
 				if ( strlen( $string_value ) > $truncate ) {
 					$string_value = substr( $string_value, 0, $truncate ) . '...';
 				}
@@ -821,7 +824,7 @@ class Hustle_Entry_Model {
 		}
 
 		global $wpdb;
-		$entry = null;
+		$entry      = null;
 		$table_name = Hustle_Db::entries_table();
 		if ( 'all' !== $entry_type ) {
 			$sql = "SELECT `entry_id` FROM {$table_name} WHERE `entry_type` = %s ORDER BY `date_created` DESC";
@@ -849,10 +852,10 @@ class Hustle_Entry_Model {
 	public static function get_latest_entry_by_module_id( $module_id ) {
 
 		global $wpdb;
-		$entry = null;
+		$entry      = null;
 		$table_name = Hustle_Db::entries_table();
-		$sql = "SELECT `entry_id` FROM {$table_name} WHERE `module_id` = %d ORDER BY `date_created` DESC";
-		$entry_id = $wpdb->get_var( $wpdb->prepare( $sql, $module_id ) ); // WPCS: unprepared SQL ok. false positive
+		$sql        = "SELECT `entry_id` FROM {$table_name} WHERE `module_id` = %d ORDER BY `date_created` DESC";
+		$entry_id   = $wpdb->get_var( $wpdb->prepare( $sql, $module_id ) ); // WPCS: unprepared SQL ok. false positive
 
 		if ( ! empty( $entry_id ) ) {
 			$entry = new Hustle_Entry_Model( $entry_id );
@@ -876,8 +879,8 @@ class Hustle_Entry_Model {
 
 		global $wpdb;
 		$entry_table_name = Hustle_Db::entries_table();
-		$sql = "SELECT count(`entry_id`) FROM {$entry_table_name} WHERE `entry_type` = %s AND `date_created` > %s";
-		$entries = $wpdb->get_var( $wpdb->prepare( $sql, $entry_type, $date_created ) ); // WPCS: unprepared SQL ok. false positive
+		$sql              = "SELECT count(`entry_id`) FROM {$entry_table_name} WHERE `entry_type` = %s AND `date_created` > %s";
+		$entries          = $wpdb->get_var( $wpdb->prepare( $sql, $entry_type, $date_created ) ); // WPCS: unprepared SQL ok. false positive
 
 		return $entries;
 	}
@@ -887,16 +890,16 @@ class Hustle_Entry_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $module_id
+	 * @param int    $module_id
 	 * @param string $email
 	 * @return bool
 	 */
 	public static function is_email_subscribed_to_module_id( $module_id, $email ) {
 		global $wpdb;
 
-		$entries_table = Hustle_Db::entries_table();
+		$entries_table      = Hustle_Db::entries_table();
 		$entries_meta_table = Hustle_Db::entries_meta_table();
-		$query =
+		$query              =
 			"SELECT COUNT(*)
 			FROM {$entries_table} e
 			INNER JOIN {$entries_meta_table} m
@@ -918,16 +921,16 @@ class Hustle_Entry_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $module_id
+	 * @param int    $module_id
 	 * @param string $email
 	 * @return bool
 	 */
 	public static function get_email_subscribed_to_module_id( $module_id, $email ) {
 		global $wpdb;
 
-		$entries_table = Hustle_Db::entries_table();
+		$entries_table      = Hustle_Db::entries_table();
 		$entries_meta_table = Hustle_Db::entries_meta_table();
-		$query =
+		$query              =
 			"SELECT e.entry_id
 			FROM {$entries_table} e
 			INNER JOIN {$entries_meta_table} m
@@ -936,8 +939,8 @@ class Hustle_Entry_Model {
 			AND m.meta_key = 'email'
 			AND m.meta_value = %s";
 
-		$query 	= $wpdb->prepare( $query, $module_id, $email ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$id 	= $wpdb->get_var( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$query = $wpdb->prepare( $query, $module_id, $email ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$id    = $wpdb->get_var( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		$is_subscribed = apply_filters( 'hustle_email_entry_id_in_module_local_list', $id );
 
@@ -956,11 +959,11 @@ class Hustle_Entry_Model {
 		global $wpdb;
 
 		$cache_key = get_class( $this );
-		$id = wp_cache_get( 'local_' . $email, $cache_key );
+		$id        = wp_cache_get( 'local_' . $email, $cache_key );
 
 		if ( empty( $id ) ) {
 			$query = $wpdb->prepare(
-				"SELECT DISTINCT `module_id` FROM " . Hustle_Db::entries_table() . " e INNER JOIN " . Hustle_Db::entries_meta_table() . " m ON e.entry_id = m.entry_id AND m.meta_key = 'email' AND m.meta_value = %s",
+				'SELECT DISTINCT `module_id` FROM ' . Hustle_Db::entries_table() . ' e INNER JOIN ' . Hustle_Db::entries_meta_table() . " m ON e.entry_id = m.entry_id AND m.meta_key = 'email' AND m.meta_value = %s",
 				$email
 			);
 
@@ -1004,7 +1007,7 @@ class Hustle_Entry_Model {
 
 		// Clear cache after unsubscription.
 		$cache_key = get_class( $this );
-		$id = wp_cache_delete( 'local_' . $email, $cache_key );
+		$id        = wp_cache_delete( 'local_' . $email, $cache_key );
 
 		// The email was unsubscribed and the nonce was used. Remove it from the saved list.
 		unset( $data[ $email ] );
@@ -1018,7 +1021,7 @@ class Hustle_Entry_Model {
 	 * @since 4.0.0
 	 *
 	 * @param string $email
-	 * @param int $module_id
+	 * @param int    $module_id
 	 * @return array
 	 */
 	public function remove_local_subscription_by_email_and_module_id( $email, $module_id ) {
@@ -1051,7 +1054,7 @@ class Hustle_Entry_Model {
 		global $wpdb;
 
 		$entries_table = Hustle_Db::entries_table();
-		$query = "SELECT e.entry_id AS entry_id
+		$query         = "SELECT e.entry_id AS entry_id
 					FROM {$entries_table} e
 					WHERE e.date_created < %s";
 
@@ -1074,7 +1077,7 @@ class Hustle_Entry_Model {
 	public static function get_entries_by_email( $email ) {
 		global $wpdb;
 		$meta_table = Hustle_Db::entries_meta_table();
-		$query = "SELECT m.entry_id AS entry_id
+		$query      = "SELECT m.entry_id AS entry_id
 				FROM {$meta_table} m
 				WHERE (m.meta_key LIKE %s)
 				AND m.meta_value = %s
@@ -1098,7 +1101,7 @@ class Hustle_Entry_Model {
 			array( 'meta_key' => 'hustle_ip' )
 		);
 	}
-	
+
 	/**
 	 * Delete selected IPs
 	 *
@@ -1111,7 +1114,7 @@ class Hustle_Entry_Model {
 			return;
 		}
 		global $wpdb;
-		$in = array();
+		$in     = array();
 		$ranges = array();
 		foreach ( $ips as $one ) {
 			if ( is_array( $one ) ) {
@@ -1129,10 +1132,13 @@ class Hustle_Entry_Model {
 			Hustle_Db::entries_meta_table()
 		);
 		if ( ! empty( $in ) ) {
-			$formatted_in_array = array_map( function( $a ) {
-				return sprintf( '\'%s\'', $a ); 
-			}, $in );
-			$query .= sprintf( '`meta_value` IN ( %s ) ', implode( ', ', $formatted_in_array ) );
+			$formatted_in_array = array_map(
+				function( $a ) {
+					return sprintf( '\'%s\'', $a );
+				},
+				$in
+			);
+			$query             .= sprintf( '`meta_value` IN ( %s ) ', implode( ', ', $formatted_in_array ) );
 			if ( ! empty( $ranges ) ) {
 				$query .= 'OR ';
 			}

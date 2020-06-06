@@ -1,8 +1,8 @@
 <?php
 
 class Hustle_Sendy_API {
-	const SUBSCRIBE = 'subscribe';
-	const SUBSCRIBER_COUNT = 'api/subscribers/active-subscriber-count.php';
+	const SUBSCRIBE         = 'subscribe';
+	const SUBSCRIBER_COUNT  = 'api/subscribers/active-subscriber-count.php';
 	const SUBSCRIBER_STATUS = 'api/subscribers/subscription-status.php';
 
 	private $base_url;
@@ -11,8 +11,8 @@ class Hustle_Sendy_API {
 
 	public function __construct( $base_url, $api_key, $list_id ) {
 		$this->base_url = trim( strval( $base_url ) );
-		$this->api_key = trim( strval( $api_key ) );
-		$this->list_id = trim( strval( $list_id ) );
+		$this->api_key  = trim( strval( $api_key ) );
+		$this->list_id  = trim( strval( $list_id ) );
 	}
 
 	private function get_endpoint_url( $endpoint ) {
@@ -21,38 +21,49 @@ class Hustle_Sendy_API {
 
 	/**
 	 * @param $endpoint
-	 * @param array $args
+	 * @param array    $args
 	 *
 	 * @return string|WP_Error Response body or WP_Error
 	 */
 	private function make_request( $endpoint, $args = array(), $verb = 'POST' ) {
 		$url = $this->get_endpoint_url( $endpoint );
 
-		if( 'GET' === $verb ){
-			$response = wp_remote_get( $url, array(
-				'timeout' => 10,
-				'body'    => array_merge( array(
-					'api_key' => $this->api_key,
-					'list_id' => $this->list_id,
-				), $args ),
-			) );
+		if ( 'GET' === $verb ) {
+			$response = wp_remote_get(
+				$url,
+				array(
+					'timeout' => 10,
+					'body'    => array_merge(
+						array(
+							'api_key' => $this->api_key,
+							'list_id' => $this->list_id,
+						),
+						$args
+					),
+				)
+			);
 
-
-		}else{
-			$response = wp_remote_post( $url, array(
-				'timeout' => 10,
-				'body'    => array_merge( array(
-					'api_key' => $this->api_key,
-					'list_id' => $this->list_id,
-				), $args ),
-			) );
+		} else {
+			$response = wp_remote_post(
+				$url,
+				array(
+					'timeout' => 10,
+					'body'    => array_merge(
+						array(
+							'api_key' => $this->api_key,
+							'list_id' => $this->list_id,
+						),
+						$args
+					),
+				)
+			);
 		}
 
-		//logging data
-		$utils = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request = $url;
+		// logging data
+		$utils                      = Hustle_Provider_Utils::get_instance();
+		$utils->_last_url_request   = $url;
 		$utils->_last_data_received = $response;
-		$utils->_last_data_sent = $args;
+		$utils->_last_data_sent     = $args;
 
 		if (
 			is_wp_error( $response )
@@ -83,14 +94,14 @@ class Hustle_Sendy_API {
 
 	public function subscribe( $data ) {
 
-		if( empty( $data ) || ! isset( $data['email'] ) ){
+		if ( empty( $data ) || ! isset( $data['email'] ) ) {
 			return new WP_Error( 'invalid_data', __( 'Invalid or empty data supplied', 'hustle' ) );
 		}
 
 		$data['list'] = $this->list_id;
-		$response = $this->make_request( self::SUBSCRIBE, array_filter( $data ) );
+		$response     = $this->make_request( self::SUBSCRIBE, array_filter( $data ) );
 
-		if( !is_wp_error( $response ) ){
+		if ( ! is_wp_error( $response ) ) {
 			return true;
 		}
 
@@ -99,9 +110,15 @@ class Hustle_Sendy_API {
 
 	public function subscriber_status( $email ) {
 
-		$response = $this->make_request( self::SUBSCRIBER_STATUS, array_filter( array(
-			'email'   	=> $email,
-		) ), 'POST' );
+		$response = $this->make_request(
+			self::SUBSCRIBER_STATUS,
+			array_filter(
+				array(
+					'email' => $email,
+				)
+			),
+			'POST'
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -133,7 +150,7 @@ class Hustle_Sendy_API {
 
 		// We need the non-translated code sometimes.
 		return array(
-			'code' => $string, 
+			'code'    => $string,
 			'message' => $message,
 		);
 	}

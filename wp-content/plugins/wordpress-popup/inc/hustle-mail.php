@@ -69,9 +69,9 @@ class Hustle_Mail {
 			$this->subject = $subject;
 		}
 
-		$general_settings = Hustle_Settings_Admin::get_general_settings();
+		$general_settings   = Hustle_Settings_Admin::get_general_settings();
 		$this->sender_email = $general_settings['sender_email_address'];
-		$this->sender_name = $general_settings['sender_email_name'];
+		$this->sender_name  = $general_settings['sender_email_name'];
 		$this->set_headers();
 	}
 
@@ -200,9 +200,12 @@ class Hustle_Mail {
 		$parsed_url      = wp_parse_url( $referer, PHP_URL_QUERY );
 		$concatenate     = empty( $parsed_url ) ? '?' : '&';
 		$email           = apply_filters( 'hustle_unsubscribe_email_recipient', $email, $modules_id, $referer );
-		$unsubscribe_url = apply_filters( 'hustle_unsubscribe_email_url',
+		$unsubscribe_url = apply_filters(
+			'hustle_unsubscribe_email_url',
 			$referer . $concatenate . 'token=' . $nonce . '&email=' . rawurlencode( $email ),
-			$email, $modules_id, $referer
+			$email,
+			$modules_id,
+			$referer
 		);
 
 		$email_settings = Hustle_Settings_Admin::get_unsubscribe_email_settings();

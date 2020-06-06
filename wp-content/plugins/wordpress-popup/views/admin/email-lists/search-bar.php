@@ -1,3 +1,14 @@
+<?php
+/**
+ * Search bar section.
+ *
+ * @var Hustle_Layout_Helper $this
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box">
 
 	<div class="hui-box-entries-search">
@@ -17,12 +28,12 @@
 					class="sui-select-sm"
 					onchange="submit()"
 				>
-					<?php foreach ( $admin->get_module_types() as $post_type => $name ) { ?>
-						<option value="<?php echo esc_attr( $post_type ); ?>" <?php echo selected( $post_type, $admin->get_current_module_type() ); ?>><?php echo esc_html( $name ); ?></option>
+					<?php foreach ( $this->admin->get_module_types() as $module_type => $name ) { ?>
+						<option value="<?php echo esc_attr( $module_type ); ?>" <?php echo selected( $module_type, $this->admin->get_current_module_type() ); ?>><?php echo esc_html( $name ); ?></option>
 					<?php } ?>
 				</select>
 
-				<?php echo $admin->render_module_switcher(); // phpcs:ignore ?>
+				<?php echo $this->admin->render_module_switcher(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 			</div>
 
@@ -41,7 +52,7 @@
 					<input type="hidden" name="id" value="<?php echo esc_attr( $module->id ); ?>">
 					<?php wp_nonce_field( 'hustle_module_export_listing' ); ?>
 					<button class="sui-button sui-button-ghost">
-						<i class="sui-icon-paperclip" aria-hidden="true"></i>
+						<span class="sui-icon-paperclip" aria-hidden="true"></span>
 						<?php esc_html_e( 'Export CSV', 'hustle' ); ?>
 					</button>
 				</form>

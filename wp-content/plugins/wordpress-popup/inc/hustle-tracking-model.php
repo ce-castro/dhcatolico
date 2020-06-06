@@ -11,7 +11,7 @@ class Hustle_Tracking_Model {
 	/**
 	 * The table name
 	 *
-		 * @since 4.0
+	 * @since 4.0
 	 * @var string
 	 */
 	protected $table_name;
@@ -19,7 +19,7 @@ class Hustle_Tracking_Model {
 	/**
 	 * Tracking_Model instance
 	 *
-		 * @since 4.0
+	 * @since 4.0
 	 * @var null
 	 */
 	private static $instance = null;
@@ -51,8 +51,8 @@ class Hustle_Tracking_Model {
 	 * Save conversion
 	 *
 	 * @since 4.0
-	 * @param int $module_id
-	 * @param array $data
+	 * @param int    $module_id
+	 * @param array  $data
 	 * @param string $action - 'cta_conversion' || 'optin_conversion' || 'conversion' || 'view'
 	 * @param string $date_created Created date, default null will be * completed.
 	 */
@@ -61,15 +61,15 @@ class Hustle_Tracking_Model {
 		/**
 		 * IP Tracking
 		 */
-		$ip_query = ' AND `ip` IS NULL';
-		$settings = Hustle_Settings_Admin::get_privacy_settings();
+		$ip_query    = ' AND `ip` IS NULL';
+		$settings    = Hustle_Settings_Admin::get_privacy_settings();
 		$ip_tracking = ! isset( $settings['ip_tracking'] ) || 'on' === $settings['ip_tracking'];
 		if ( $ip_tracking ) {
-			$ip = $ip ? $ip : Opt_In_Geo::get_user_ip();
+			$ip       = $ip ? $ip : Opt_In_Geo::get_user_ip();
 			$ip_query = ' AND `ip` = %s';
 		}
-		if ( ! in_array( $action, [ 'conversion', 'cta_conversion', 'optin_conversion' ], true ) ) {
-			$action =  'view';
+		if ( ! in_array( $action, array( 'conversion', 'cta_conversion', 'optin_conversion' ), true ) ) {
+			$action = 'view';
 		}
 		// Store the subtype for embeddeds and social sharing. Whether they're "widget", "embedded", etc.
 		if ( ! is_null( $module_sub_type ) ) {
@@ -120,16 +120,19 @@ class Hustle_Tracking_Model {
 
 		$date_created = Opt_In_Utils::get_current_date();
 
-		$db->insert( $this->table_name, array(
-			'module_id'     => 0,
-			'page_id'       => $page_id,
-			'module_type'   => Hustle_Module_Model::SOCIAL_SHARING_MODULE,
-			'action' 		=> '_page_shares',
-			'ip'            => null,
-			'date_created'  => $date_created,
-			'date_updated'  => $date_created,
-			'counter'		=> $count
-		) );
+		$db->insert(
+			$this->table_name,
+			array(
+				'module_id'    => 0,
+				'page_id'      => $page_id,
+				'module_type'  => Hustle_Module_Model::SOCIAL_SHARING_MODULE,
+				'action'       => '_page_shares',
+				'ip'           => null,
+				'date_created' => $date_created,
+				'date_updated' => $date_created,
+				'counter'      => $count,
+			)
+		);
 	}
 
 	/**
@@ -137,13 +140,13 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $module_id
-	 * @param int $page_id
-	 * @param string $module_type popup | slidein | embedded
-	 * @param string $action view | conversion
-	 * @param string $ip - the user ip
+	 * @param int         $module_id
+	 * @param int         $page_id
+	 * @param string      $module_type popup | slidein | embedded
+	 * @param string      $action view | conversion
+	 * @param string      $ip - the user ip
 	 * @param bool|object $db - the wp db object
-	 * @param string $date_created Created date, default null will be * completed.
+	 * @param string      $date_created Created date, default null will be * completed.
 	 */
 	private function _save( $module_id, $page_id, $module_type, $action, $ip, $db = false, $date_created = null ) {
 		if ( ! $db ) {
@@ -153,24 +156,26 @@ class Hustle_Tracking_Model {
 		if ( empty( $date_created ) ) {
 			$date_created = Opt_In_Utils::get_current_date();
 		}
-		$db->insert( $this->table_name, array(
-			'module_id'     => $module_id,
-			'page_id'       => $page_id,
-			'module_type'   => $module_type,
-			'action' 		=> $action,
-			'ip'            => $ip,
-			'date_created'  => $date_created,
-			'date_updated'  => $date_created,
-		) );
+		$db->insert(
+			$this->table_name,
+			array(
+				'module_id'    => $module_id,
+				'page_id'      => $page_id,
+				'module_type'  => $module_type,
+				'action'       => $action,
+				'ip'           => $ip,
+				'date_created' => $date_created,
+				'date_updated' => $date_created,
+			)
+		);
 	}
 
 	/**
 	 * Update tracking
 	 *
 	 * @since 4.0
-	 * @param int $id - tracking id
+	 * @param int         $id - tracking id
 	 * @param bool|object $db - the wp db object
-	 *
 	 */
 	private function _update( $id, $db = false ) {
 		if ( ! $db ) {
@@ -191,7 +196,7 @@ class Hustle_Tracking_Model {
 	 * Count conversions
 	 *
 	 * @since 4.0
-	 * @param int $module_id
+	 * @param int    $module_id
 	 * @param string $action - view | all_conversion | optin_conversion | cta_conversion
 	 * @param string $module_subtype - the module subtype
 	 * @param string $starting_date - the start date (dd-mm-yyy)
@@ -200,7 +205,7 @@ class Hustle_Tracking_Model {
 	 * @return int - total views based on parameters
 	 */
 	public function count_tracking_data( $module_id, $action, $module_subtype = null, $starting_date = null, $ending_date = null ) {
-		if ( ! in_array( $action, [ 'all_conversion', 'cta_conversion', 'optin_conversion' ], true ) ) {
+		if ( ! in_array( $action, array( 'all_conversion', 'cta_conversion', 'optin_conversion' ), true ) ) {
 			$action = 'view';
 		}
 		return $this->_count( $action, $module_id, $module_subtype, $starting_date, $ending_date );
@@ -216,9 +221,9 @@ class Hustle_Tracking_Model {
 	 */
 	public function has_old_tracking_data( $module_id ) {
 		global $wpdb;
-		$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( tracking_id ) FROM {$this->table_name} WHERE module_id = %d AND action = 'conversion'", $module_id  ) ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( tracking_id ) FROM {$this->table_name} WHERE module_id = %d AND action = 'conversion'", $module_id ) ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		return !empty( $result );
+		return ! empty( $result );
 	}
 
 	/**
@@ -227,7 +232,7 @@ class Hustle_Tracking_Model {
 	 * @since 4.0
 	 *
 	 * @param string $action view | all_conversion | optin_conversion | cta_conversion
-	 * @param int $module_id - the module id
+	 * @param int    $module_id - the module id
 	 * @param string $module_subtype - the module subtype
 	 * @param string $starting_date - the start date (dd-mm-yyy)
 	 * @param string $ending_date - the end date (dd-mm-yyy)
@@ -245,15 +250,15 @@ class Hustle_Tracking_Model {
 			$where_query .= $wpdb->prepare( ' AND `module_id` = %d', $module_id );
 		}
 		if ( $module_subtype ) {
-			if ( in_array( $module_subtype, [ 'social_sharing', 'embedded' ], true ) ) {
-				$where_query .=  ' AND `module_type` like \'' . $module_subtype . '%\'';
+			if ( in_array( $module_subtype, array( 'social_sharing', 'embedded' ), true ) ) {
+				$where_query .= ' AND `module_type` like \'' . $module_subtype . '%\'';
 			} else {
 				$where_query .= $wpdb->prepare( ' AND `module_type` = %s', $module_subtype );
 			}
 		}
 		$date_query = $this->_generate_date_query( $wpdb, $starting_date, $ending_date );
-		$sql = "SELECT SUM(`counter`) FROM {$this->table_name} {$where_query} $date_query";
-		$counts = $wpdb->get_var( $sql ); // WPCS: unprepared SQL ok. false positive
+		$sql        = "SELECT SUM(`counter`) FROM {$this->table_name} {$where_query} $date_query";
+		$counts     = $wpdb->get_var( $sql ); // WPCS: unprepared SQL ok. false positive
 		if ( $counts ) {
 			return $counts;
 		}
@@ -271,7 +276,7 @@ class Hustle_Tracking_Model {
 	 * @return string $date_query
 	 */
 	private function _generate_date_query( $wpdb, $starting_date = null, $ending_date = null, $prefix = '', $clause = 'AND' ) {
-		$date_query = '';
+		$date_query  = '';
 		$date_format = '%%Y-%%m-%%d';
 		if ( ! is_null( $starting_date ) && ! is_null( $ending_date ) && ! empty( $starting_date ) && ! empty( $ending_date ) ) {
 			$date_query = $wpdb->prepare( "$clause DATE_FORMAT($prefix`date_created`, '$date_format') >= %s AND DATE_FORMAT($prefix`date_created`, '$date_format') <= %s", $starting_date, $ending_date ); // WPCS: unprepared SQL OK.
@@ -290,7 +295,7 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $module_id
+	 * @param int          $module_id
 	 * @param $date_created
 	 *
 	 * @return array
@@ -298,7 +303,7 @@ class Hustle_Tracking_Model {
 	public function get_form_latest_tracking_data_count_grouped_by_day( $module_id, $date_created, $action, $module_type = null, $module_sub_type = null ) {
 		global $wpdb;
 		$table_name = $this->table_name;
-		if ( ! in_array( $action, [ 'all_conversion', 'cta_conversion', 'optin_conversion' ], true ) ) {
+		if ( ! in_array( $action, array( 'all_conversion', 'cta_conversion', 'optin_conversion' ), true ) ) {
 			$action = 'view';
 		}
 
@@ -312,7 +317,7 @@ class Hustle_Tracking_Model {
 			if ( Hustle_Module_Model::EMBEDDED_MODULE === $module_type ) {
 				$sub_types_array = Hustle_Module_Model::get_embedded_types();
 			} elseif ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module_type ) {
-				$sub_types_array = Hustle_Module_Model::get_sshare_types();
+				$sub_types_array = Hustle_SShare_Model::get_sshare_types();
 			} else {
 				return false;
 			}
@@ -322,8 +327,8 @@ class Hustle_Tracking_Model {
 			}
 			$sub_type_query = $wpdb->prepare( 'AND e.module_type = %s', $module_sub_type );
 		}
-		$date_query = $this->_generate_date_query( $wpdb, $date_created );
-		$sql = "SELECT SUM(`counter`) AS tracked_count,
+		$date_query         = $this->_generate_date_query( $wpdb, $date_created );
+		$sql                = "SELECT SUM(`counter`) AS tracked_count,
 			DATE(e.date_created) AS date_created
 			FROM {$table_name} e
 			WHERE e.module_id = %d
@@ -332,8 +337,10 @@ class Hustle_Tracking_Model {
 			{$date_query}
 			GROUP BY DATE(e.date_created)
 			ORDER BY e.date_created DESC";
-		$sql = $wpdb->prepare( $sql, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$module_id );
+		$sql                = $wpdb->prepare(
+			$sql, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$module_id
+		);
 		$conversions_amount = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $conversions_amount;
 	}
@@ -360,7 +367,7 @@ class Hustle_Tracking_Model {
 		global $wpdb;
 		$entry = null;
 		if ( 'all' !== $module_type ) {
-			if ( in_array( $module_type, [ 'social_sharing', 'embedded' ], true ) ) {
+			if ( in_array( $module_type, array( 'social_sharing', 'embedded' ), true ) ) {
 				$where_query = 'WHERE `module_type` like \'' . $module_type . '%\'';
 			} else {
 				$where_query = $wpdb->prepare( 'WHERE `module_type` = %s', $module_type );
@@ -379,24 +386,24 @@ class Hustle_Tracking_Model {
 	 * @since 4.0
 	 *
 	 * @param $module_id
-	 * @param string $sub_type Optional
-	 * @param string $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion
+	 * @param string    $sub_type Optional
+	 * @param string    $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion
 	 * @return Hustle_Entry_Model|null
 	 */
 	public function get_latest_conversion_date_by_module_id( $module_id, $sub_type = '', $cta_or_optin = 'all_conversion' ) {
 		global $wpdb;
 		$and_subtype = '';
-		if ( !empty( $sub_type ) ) {
-			$and_subtype = $wpdb->prepare( " AND `module_type` = %s", $sub_type );
+		if ( ! empty( $sub_type ) ) {
+			$and_subtype = $wpdb->prepare( ' AND `module_type` = %s', $sub_type );
 		}
 
 		if ( 'all_conversion' === $cta_or_optin ) {
 			$and_action = " AND `action` IN ( 'cta_conversion', 'optin_conversion', 'conversion' )";
 		} else {
-			$and_action = $wpdb->prepare( " AND `action` = %s", $cta_or_optin );
+			$and_action = $wpdb->prepare( ' AND `action` = %s', $cta_or_optin );
 		}
 
-		$sql = "SELECT `date_updated` FROM {$this->table_name} WHERE `module_id` = %d {$and_action}{$and_subtype} ORDER BY `date_updated` DESC";
+		$sql  = "SELECT `date_updated` FROM {$this->table_name} WHERE `module_id` = %d {$and_action}{$and_subtype} ORDER BY `date_updated` DESC";
 		$date = $wpdb->get_var( $wpdb->prepare( $sql, $module_id ) ); // WPCS: unprepared SQL ok. false positive
 		return $date;
 	}
@@ -424,7 +431,7 @@ class Hustle_Tracking_Model {
 	 *
 	 * @param string $module_type
 	 * @param string $action
-	 * @param array $pages
+	 * @param array  $pages
 	 * @return array
 	 */
 	public function get_module_type_tracking_count_per_page( $module_type, $action, $limit = 5, $offset = 0 ) {
@@ -435,14 +442,14 @@ class Hustle_Tracking_Model {
 			$module_type = '';
 		}
 
-		$sql = " AND e.action = %s
+		$sql = ' AND e.action = %s
 			GROUP BY e.page_id
 			ORDER BY tracked_count DESC
-			LIMIT %d";
+			LIMIT %d';
 
 		$sql = $wpdb->prepare( $sql, $action, $limit );// phpcs:ignore
 
-		$sql = "SELECT SUM(`counter`) AS tracked_count,
+		$sql                = "SELECT SUM(`counter`) AS tracked_count,
 			e.page_id AS page_id
 			FROM {$table_name} e
 			WHERE e.module_type LIKE '{$module_type}%'" . $sql;
@@ -465,7 +472,7 @@ class Hustle_Tracking_Model {
 			GROUP BY `page_id`
 			ORDER BY `counter` DESC
 			LIMIT %d",
-			Hustle_Module_Model::SOCIAL_SHARING_MODULE .'%',
+			Hustle_Module_Model::SOCIAL_SHARING_MODULE . '%',
 			$limit
 		);
 
@@ -478,9 +485,9 @@ class Hustle_Tracking_Model {
 	 * @since 4.0
 	 *
 	 * @param string $module_type
-	 * @param array $pages_ids
+	 * @param array  $pages_ids
 	 * @param string $action
-	 * @param array $pages
+	 * @param array  $pages
 	 * @return array
 	 */
 	public function get_tracking_count_by_page_id_and_module_type( $module_type, $pages_ids, $action ) {
@@ -494,7 +501,7 @@ class Hustle_Tracking_Model {
 		$pages_ids_placeholders = implode( ', ', array_fill( 0, count( $pages_ids ), '%d' ) );
 		$pages_ids_query = $wpdb->prepare( "WHERE page_id IN ({$pages_ids_placeholders})", $pages_ids ); // phpcs:ignore
 
-		$sql = $wpdb->prepare(
+		$sql                = $wpdb->prepare(
 			"SELECT SUM(`counter`) AS tracked_count, `page_id` AS page_id
 			FROM {$table_name}
 			{$pages_ids_query}
@@ -530,7 +537,7 @@ class Hustle_Tracking_Model {
 	 */
 	public function get_average_conversion_rate() {
 		$conversions = $this->_count( 'all_conversion' );
-		$views = $this->_count( 'view' );
+		$views       = $this->_count( 'view' );
 		if ( 0 < $views ) {
 			return sprintf( '%.2f%%', 100 * $conversions / $views );
 		}
@@ -558,9 +565,11 @@ class Hustle_Tracking_Model {
 	public function get_most_conversions_module_id() {
 		global $wpdb;
 
-		$value = intval( $wpdb->get_var( // WPCS: unprepared SQL OK.
-			"SELECT `module_id` FROM " . $this->table_name . " WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion' ) GROUP BY `module_id` ORDER BY sum(`counter`) DESC LIMIT 1"
-		) );
+		$value = intval(
+			$wpdb->get_var( // WPCS: unprepared SQL OK.
+				'SELECT `module_id` FROM ' . $this->table_name . " WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion' ) GROUP BY `module_id` ORDER BY sum(`counter`) DESC LIMIT 1"
+			)
+		);
 
 		return $value;
 	}
@@ -574,7 +583,7 @@ class Hustle_Tracking_Model {
 	 */
 	public function get_today_conversions() {
 		global $wpdb;
-		$sql = sprintf(
+		$sql   = sprintf(
 			'SELECT COUNT(*) FROM `%s` WHERE `action` = "conversion" AND `date_created` > DATE_SUB( NOW(), INTERVAL 24 hour )',
 			$this->table_name
 		);
@@ -591,7 +600,7 @@ class Hustle_Tracking_Model {
 	 */
 	public function get_last_week_conversions() {
 		global $wpdb;
-		$sql = sprintf(
+		$sql   = sprintf(
 			'SELECT COUNT(*) FROM `%s` WHERE `action` = "conversion" AND `date_created` > DATE_SUB( NOW(), INTERVAL 7 DAY )',
 			$this->table_name
 		);
@@ -608,15 +617,15 @@ class Hustle_Tracking_Model {
 	 */
 	public function get_last_month_conversions() {
 		global $wpdb;
-		$sql = sprintf(
+		$sql   = sprintf(
 			'SELECT COUNT(*) FROM `%s` WHERE `action` = "conversion" AND `date_created` > DATE_SUB( NOW(), INTERVAL 1 MONTH )',
 			$this->table_name
 		);
 		$value = intval( $wpdb->get_var( $sql ) );
-        return $value;
-    }
+		return $value;
+	}
 
-    /**
+	/**
 	 * Set null on all IP
 	 *
 	 * @since 4.0.0
@@ -642,7 +651,7 @@ class Hustle_Tracking_Model {
 			return;
 		}
 		global $wpdb;
-		$in = array();
+		$in     = array();
 		$ranges = array();
 		foreach ( $ips as $one ) {
 			if ( is_array( $one ) ) {
@@ -658,7 +667,8 @@ class Hustle_Tracking_Model {
 		$query = sprintf( 'UPDATE `%s` SET `ip` = NULL WHERE ', $this->table_name );
 		if ( ! empty( $in ) ) {
 			$query .= sprintf(
-				'`ip` IN ( %s ) ', implode( ', ', array_map( array( $this, 'wrap_ip' ), $in ) )
+				'`ip` IN ( %s ) ',
+				implode( ', ', array_map( array( $this, 'wrap_ip' ), $in ) )
 			);
 			if ( ! empty( $ranges ) ) {
 				$query .= 'OR ';
@@ -703,7 +713,7 @@ class Hustle_Tracking_Model {
 	public static function get_older_tracking_ids( $date_created ) {
 		global $wpdb;
 		$tracking_table = Hustle_Db::tracking_table();
-		$query = "SELECT e.tracking_id AS tracking_id
+		$query          = "SELECT e.tracking_id AS tracking_id
 					FROM {$tracking_table} e
 					WHERE e.date_created < %s";
 
@@ -723,10 +733,10 @@ class Hustle_Tracking_Model {
 	 *
 	 * @return array ip address
 	 */
-	public static function get_ip_from_tracking_id( $tracking_id ){
+	public static function get_ip_from_tracking_id( $tracking_id ) {
 		global $wpdb;
 		$tracking_table = Hustle_Db::tracking_table();
-		$query = "SELECT e.ip AS ip
+		$query          = "SELECT e.ip AS ip
 					FROM {$tracking_table} e
 					WHERE e.tracking_id < %s";
 
@@ -747,14 +757,16 @@ class Hustle_Tracking_Model {
 	 *
 	 * @return array ip address
 	 */
-	public static function anonymise_tracked_id( $tracking_id, $ip ){
+	public static function anonymise_tracked_id( $tracking_id, $ip ) {
 		global $wpdb;
 		$tracking_table = Hustle_Db::tracking_table();
-		$wpdb->query( $wpdb->prepare(
-			"UPDATE {$tracking_table} SET `ip` = %s WHERE `tracking_id` = %d",
-			$ip,
-			$tracking_id
-		));
+		$wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$tracking_table} SET `ip` = %s WHERE `tracking_id` = %d",
+				$ip,
+				$tracking_id
+			)
+		);
 	}
 
 	/**
@@ -767,39 +779,45 @@ class Hustle_Tracking_Model {
 	 * @return array
 	 */
 	public static function analytics_stats( $days_ago ) {
-		$transient_key = 'hustle_analytics_stats_' . current_time('Y-m-d') . '_' . $days_ago;
-		$cached = get_transient( $transient_key );
+		$transient_key = 'hustle_analytics_stats_' . current_time( 'Y-m-d' ) . '_' . $days_ago;
+		$cached        = get_transient( $transient_key );
 		if ( false !== $cached ) {
 			return $cached;
 		}
 
 		global $wpdb;
 		$tracking_table = Hustle_Db::tracking_table();
-		$ranges = array_keys( Opt_In_Utils::get_analytic_ranges() );
-		$days_ago = in_array( $days_ago, $ranges, true ) ? $days_ago : 7;
-		$today = new DateTime( current_time('Y-m-d') );
-		$end_date = date( 'Y-m-d H:i:s', $today->format('U') - 1 );
-		$start_date = date( 'Y-m-d H:i:s', $today->format('U') - $days_ago * DAY_IN_SECONDS );
-		$mysql_format = '%Y-%m-%d %H:%i:%s';
+		$ranges         = array_keys( Opt_In_Utils::get_analytic_ranges() );
+		$days_ago       = in_array( $days_ago, $ranges, true ) ? $days_ago : 7;
+		$today          = new DateTime( current_time( 'Y-m-d' ) );
+		$end_date       = date( 'Y-m-d H:i:s', $today->format( 'U' ) - 1 );
+		$start_date     = date( 'Y-m-d H:i:s', $today->format( 'U' ) - $days_ago * DAY_IN_SECONDS );
+		$mysql_format   = '%Y-%m-%d %H:%i:%s';
 
 		$result = $wpdb->get_results(
-			$wpdb->prepare( "SELECT module_type, action, date_created, counter "
+			$wpdb->prepare(
+				'SELECT module_type, action, date_created, counter '
 				. "FROM {$tracking_table} " // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				. "WHERE date_created BETWEEN STR_TO_DATE( %s, %s ) AND STR_TO_DATE( %s, %s)", $start_date, $mysql_format, $end_date, $mysql_format ), ARRAY_A );
-
-
+				. 'WHERE date_created BETWEEN STR_TO_DATE( %s, %s ) AND STR_TO_DATE( %s, %s)',
+				$start_date,
+				$mysql_format,
+				$end_date,
+				$mysql_format
+			),
+			ARRAY_A
+		);
 
 		$final_data = self::get_default_analytics_stats( $days_ago );
 
 		foreach ( $result as $data ) {
 			$day = explode( ' ', $data['date_created'] )[0];
 			$final_data[ $data['module_type'] ][ $data['action'] ][ $day ] += $data['counter'];
-			$final_data[ 'overall' ][ $data['action'] ][ $day ] += $data['counter'];
+			$final_data['overall'][ $data['action'] ][ $day ]              += $data['counter'];
 			if ( 0 === strpos( $data['module_type'], 'embedded_' ) ) {
-				$final_data[ 'embedded' ][ $data['action'] ][ $day ] += $data['counter'];
+				$final_data['embedded'][ $data['action'] ][ $day ] += $data['counter'];
 			}
 			if ( 0 === strpos( $data['module_type'], 'social_sharing_' ) ) {
-				$final_data[ 'social_sharing' ][ $data['action'] ][ $day ] += $data['counter'];
+				$final_data['social_sharing'][ $data['action'] ][ $day ] += $data['counter'];
 			}
 		}
 		// count rates
@@ -809,7 +827,7 @@ class Hustle_Tracking_Model {
 					continue;
 				}
 				foreach ( $days as $day => $val ) {
-					if ( !empty( $final_data[ $block ]['view'][ $day ] ) && !empty( $final_data[ $block ]['conversion'][ $day ] ) ) {
+					if ( ! empty( $final_data[ $block ]['view'][ $day ] ) && ! empty( $final_data[ $block ]['conversion'][ $day ] ) ) {
 						$final_data[ $block ]['rate'][ $day ] = round( 100 * $final_data[ $block ]['conversion'][ $day ] / $final_data[ $block ]['view'][ $day ], 2 );
 					}
 				}
@@ -831,11 +849,11 @@ class Hustle_Tracking_Model {
 	 * @return array
 	 */
 	public static function get_default_analytics_stats( $days_ago ) {
-		$days = [];
+		$days = array();
 		for ( $i = 1; $i <= $days_ago; $i++ ) {
-			$days[] = date( 'Y-m-d', current_time('U') - $i * DAY_IN_SECONDS );
+			$days[] = date( 'Y-m-d', current_time( 'U' ) - $i * DAY_IN_SECONDS );
 		}
-		$all_blocks = [
+		$all_blocks = array(
 			'overall',
 			'popup',
 			'slidein',
@@ -848,16 +866,16 @@ class Hustle_Tracking_Model {
 			'social_sharing_inline',
 			'social_sharing_widget',
 			'social_sharing_shortcode',
-		];
+		);
 
-		$all_types = [
+		$all_types  = array(
 			'view',
 			'conversion',
 			'cta_conversion',
 			'optin_conversion',
 			'rate',
-		];
-		$final_data = [];
+		);
+		$final_data = array();
 		foreach ( $all_blocks as $block ) {
 			foreach ( $all_types as $type ) {
 				foreach ( $days as $day ) {

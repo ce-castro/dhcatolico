@@ -1,3 +1,14 @@
+<?php
+/**
+ * Main wrapper for the 'Behavior' tab.
+ *
+ * @uses ../tab-behaviour/
+ *
+ * @package Hustle
+ * @since 4.0.0
+ */
+
+?>
 <div class="sui-box" <?php echo 'behavior' !== $section ? 'style="display: none;"' : ''; ?> data-tab="behavior">
 
 	<div class="sui-box-header">
@@ -9,10 +20,19 @@
 	<div id="hustle-wizard-behaviour" class="sui-box-body">
 
 		<?php
+
+		// DIALOG: Schedule.
+		$this->render(
+			'admin/commons/sui-wizard/tab-behaviour/schedule',
+			array(
+				'smallcaps_singular' => $smallcaps_singular,
+			)
+		);
+
 		if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 
 			// SETTING: Trigger.
-			self::static_render(
+			$this->render(
 				'admin/commons/sui-wizard/tab-behaviour/trigger',
 				array(
 					'triggers'            => $settings['triggers'],
@@ -28,7 +48,7 @@
 		if ( Hustle_Module_Model::SLIDEIN_MODULE === $module_type ) {
 
 			// SETTING: Position.
-			self::static_render(
+			$this->render(
 				'admin/commons/sui-wizard/tab-behaviour/position',
 				array(
 					'display_position'    => $settings['display_position'],
@@ -42,7 +62,7 @@
 		if ( Hustle_Module_Model::SLIDEIN_MODULE !== $module_type ) {
 
 			// SETTING: Animation Settings.
-			self::static_render(
+			$this->render(
 				'admin/commons/sui-wizard/tab-behaviour/animation-settings',
 				array(
 					'settings'            => $settings,
@@ -56,7 +76,7 @@
 		if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 
 			// SETTING: Additional Closing Methods.
-			self::static_render(
+			$this->render(
 				'admin/commons/sui-wizard/tab-behaviour/closing-methods',
 				array(
 					'settings'           => $settings,
@@ -66,7 +86,7 @@
 			);
 
 			// SETTING: Closing Behavior.
-			self::static_render(
+			$this->render(
 				'admin/commons/sui-wizard/tab-behaviour/closing-behaviour',
 				array(
 					'settings'            => $settings,
@@ -78,7 +98,7 @@
 		}
 
 		// SETTING: Additional Settings.
-		self::static_render(
+		$this->render(
 			'admin/commons/sui-wizard/tab-behaviour/additional-settings',
 			array(
 				'settings'           => $settings,
@@ -95,7 +115,7 @@
 
 	<div class="sui-box-footer">
 
-		<button class="sui-button wpmudev-button-navigation" data-direction="prev"><i class="sui-icon-arrow-left" aria-hidden="true"></i> <?php esc_html_e( 'Visibility', 'hustle' ); ?></button>
+		<button class="sui-button wpmudev-button-navigation" data-direction="prev"><span class="sui-icon-arrow-left" aria-hidden="true"></span> <?php esc_html_e( 'Visibility', 'hustle' ); ?></button>
 
 		<div class="sui-actions-right">
 
@@ -103,10 +123,10 @@
 				class="hustle-publish-button sui-button sui-button-blue hustle-action-save"
 				data-active="1">
 				<span class="sui-loading-text">
-					<i class="sui-icon-web-globe-world" aria-hidden="true"></i>
+					<span class="sui-icon-web-globe-world" aria-hidden="true"></span>
 					<span class="button-text"><?php $is_active ? esc_html_e( 'Save changes', 'hustle' ) : esc_html_e( 'Publish', 'hustle' ); ?></span>
 				</span>
-				<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 
 		</div>
@@ -114,3 +134,16 @@
 	</div>
 
 </div>
+
+<?php
+if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ) {
+
+	// SETTINGS: schedule section template.
+	$this->render(
+		'admin/commons/sui-wizard/tab-behaviour/schedule-tpl',
+		array(
+			'smallcaps_singular' => $smallcaps_singular,
+		)
+	);
+}
+?>
