@@ -219,8 +219,7 @@ $this->render_modal( $attributes );
 
 						<div class="sui-tabs-content">
 
-							<div class="sui-tab-boxed{{ _.isTrue( validate ) ? ' active' : '' }}" data-tab-content="validate">
-
+							<div class="sui-tab-boxed{{ 'true' === validate ? ' active' : '' }}" data-tab-content="validate">
 				<# } #>
 
 								<div class="sui-form-field">
@@ -330,18 +329,32 @@ $this->render_modal( $attributes );
 				</div>
 
 				<?php
-				$url                 = add_query_arg(
+				$url = add_query_arg(
 					array(
-						'page'    => Hustle_Module_Admin::SETTINGS_PAGE,
+						'page'    => Hustle_Data::SETTINGS_PAGE,
 						'section' => 'recaptcha',
 					),
 					'admin.php'
 				);
-				$unavailable_message =
-					'<div class="sui-notice sui-notice-error"><p>' .
+
+				$message_string = sprintf(
 					/* translators: 1: opening 'a' tag, 2: closing 'a' tag */
-					sprintf( esc_html__( 'You haven\'t added API keys for this reCAPTCHA type in your global settings. Add your API keys %1$shere%2$s and then come back to configure this field.', 'hustle' ), '<a href="' . $url . '" target="_blank">', '</a>' ) .
-					'</p></div>';
+					esc_html__( 'You haven\'t added API keys for this reCAPTCHA type in your global settings. Add your API keys %1$shere%2$s and then come back to configure this field.', 'hustle' ),
+					'<a href="' . esc_url_raw( $url ) . '" target="_blank">',
+					'</a>'
+				);
+
+				$unavailable_message = $this->get_html_for_options(
+					array(
+						array(
+							'type'  => 'inline_notice',
+							'class' => 'sui-notice-error',
+							'icon'  => 'info',
+							'value' => $message_string,
+						),
+					),
+					true
+				);
 				?>
 
 				<div class="sui-tabs-content">
@@ -765,9 +778,9 @@ $this->render_modal( $attributes );
 
 				<label class="sui-label"><?php esc_html_e( 'Format', 'hustle' ); ?></label>
 
-				<select id="hustle-date-format" data-attribute="date_format" name="date_format">
+				<select id="hustle-date-format" class="sui-select" data-attribute="date_format" name="date_format">
 					<?php
-						$formats = Opt_In_Utils::get_date_formats();
+						$formats = Hustle_Time_Helper::get_date_formats();
 					foreach ( $formats as $key => $format ) {
 						?>
 							<option value="<?php echo esc_attr( $key ); ?>" {{ _.selected( '<?php echo esc_attr( $key ); ?>' === date_format, true ) }} ><?php echo esc_attr( $format ); ?></option>
@@ -889,9 +902,9 @@ $this->render_modal( $attributes );
 
 		<div class="sui-col-md-3">
 			<div class="sui-form-field{{'24' === time_format ? ' sui-hidden' : ''}}">
-				<select id="hustle-date-format" data-attribute="time_period" class="sui-select-sm" name="time_period">
+				<select id="hustle-date-format" class="sui-select" data-attribute="time_period" name="time_period" data-width="100">
 					<?php
-						$periods = Opt_In_Utils::get_time_periods();
+						$periods = Hustle_Time_Helper::get_meridiam_periods();
 					foreach ( $periods as $key => $period ) {
 						?>
 							<option value="<?php echo esc_attr( $key ); ?>" {{ _.selected( '<?php echo esc_attr( $key ); ?>' === time_period, true ) }} ><?php echo esc_attr( $period ); ?></option>
@@ -1009,11 +1022,11 @@ $this->render_modal( $attributes );
 				<label for="hustle-field-hidden--default" id="hustle-field-hidden--default-label" class="sui-label"><?php esc_html_e( 'Default Value', 'hustle' ); ?></label>
 
 				<select
-					id="hustle-field-hidden--default"
-					aria-labelledby="hustle-field-hidden--default-label"
 					name="default_value"
-					class="hustle-select-with-container"
+					id="hustle-field-hidden--default"
+					class="sui-select"
 					data-content-on="custom_value"
+					aria-labelledby="hustle-field-hidden--default-label"
 				>
 					<option value="user_ip" {{ _.selected( 'user_ip' === default_value, true ) }}><?php esc_html_e( 'User IP Address', 'hustle' ); ?></option>
 					<option value="date_mdy" {{ _.selected( 'date_mdy' === default_value, true ) }}><?php esc_html_e( 'Date (mm/dd/yyyy)', 'hustle' ); ?></option>

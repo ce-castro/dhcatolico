@@ -56,10 +56,6 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		$this->_oauth_token_secret         = isset( $creds['access_secret'] ) ? $creds['access_secret'] : '';
 		$this->_oauth2_token_access_token  = isset( $creds['access_oauth2_token'] ) ? $creds['access_oauth2_token'] : '';
 		$this->_oauth2_token_refresh_token = isset( $creds['access_oauth2_refresh'] ) ? $creds['access_oauth2_refresh'] : '';
-
-		// token refresh
-		add_action( 'hustle_aweber_token_refresh', array( $this, 'validate_auth_token_lifespan' ) );
-
 	}
 
 	/**
@@ -125,7 +121,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
 	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
 	 */
-	private function _request( $verb = 'GET', $url, $args = array(), $headers = array() ) {
+	private function _request( $url, $verb = 'GET', $args = array(), $headers = array() ) {
 		// Adding extra user agent for wp remote request
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
@@ -450,7 +446,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	public function get_accounts( $args = array() ) {
 		$default_args = array();
 		$args         = array_merge( $default_args, $args );
-		return $this->_request( 'GET', $this->get_api_url( 'accounts' ), $args );
+		return $this->_request( $this->get_api_url( 'accounts' ), 'GET', $args );
 	}
 
 	/**
@@ -469,7 +465,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		$default_args = array();
 		$args         = array_merge( $default_args, $args );
 
-		return $this->_request( 'GET', $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists' ), $args );
+		return $this->_request( $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists' ), 'GET', $args );
 	}
 
 	/**
@@ -488,7 +484,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		$default_args = array();
 		$args         = array_merge( $default_args, $args );
 
-		return $this->_request( 'GET', $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists/' . rawurlencode( trim( $list_id ) ) ), $args );
+		return $this->_request( $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists/' . rawurlencode( trim( $list_id ) ) ), 'GET', $args );
 	}
 
 	/**
@@ -509,13 +505,13 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		$args         = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			$this->get_api_url(
 				'accounts/' .
 				rawurlencode( trim( $account_id ) ) .
 				'/lists/' .
 				rawurlencode( trim( $list_id ) ) . '/custom_fields'
 			),
+			'GET',
 			$args
 		);
 	}
@@ -552,8 +548,8 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		);
 
 		$res = $this->_request(
-			'POST',
 			$api_url,
+			'POST',
 			$args
 		);
 
@@ -592,8 +588,8 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		);
 
 		$res = $this->_request(
-			'POST',
 			$api_url,
+			'POST',
 			$args
 		);
 
@@ -634,8 +630,8 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		);
 
 		$res = $this->_request(
-			'PATCH',
 			$api_url,
+			'PATCH',
 			$args,
 			array(
 				'Content-Type' => 'application/json',
@@ -677,8 +673,8 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		);
 
 		$res = $this->_request(
-			'GET',
 			$api_url,
+			'GET',
 			$args,
 			array(
 				'Content-Type' => 'application/json',
@@ -803,8 +799,8 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * @param array $token
 	 * @return void
 	 */
-	public function validate_auth_token_lifespan() {
-		$this->_refresh_access_token();
+	public function validate_auth_token_lifespan( $multi_id ) {
+		$this->_refresh_access_token( $multi_id );
 	}
 
 	/**
@@ -816,7 +812,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * @param String $list
 	 * @param Array  $custom_fields
 	 */
-	private function _refresh_access_token() {
+	private function _refresh_access_token( $multi_id ) {
 		$addon    = new Hustle_Aweber();
 		$settings = $addon->get_settings_values( 'aweber' );
 		// Adding extra user agent for wp remote request
@@ -831,61 +827,72 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			'Content-Type' => 'application/json',
 		);
 
-		foreach ( $settings as $key => $value ) {
+		$multi_id_settings = $settings[ $multi_id ];
 
-			if ( ! isset( $value['expires_in'] ) ) {
-				return;
-			}
+		if ( ! isset( $multi_id_settings['expires_in'] ) ) {
+			return;
+		}
 
-			$time = $value['expires_in'] - time();
-			if ( $time >= 3000 ) {
-				return;
-			}
+		$time = $multi_id_settings['expires_in'] - time();
 
-			$url .= ( '?' . http_build_query(
-				array(
-					'refresh_token' => $value['access_oauth2_refresh'],
-					'grant_type'    => 'refresh_token',
-					'client_id'     => self::APIKEY,
-				)
-			) );
+		if ( $time >= 3000 ) {
+			return;
+		}
 
-			$_args = array(
-				'headers' => $headers,
-				'body'    => array(),
-				'method'  => 'POST',
-			);
+		$url .= ( '?' . http_build_query(
+			array(
+				'refresh_token' => $multi_id_settings['access_oauth2_refresh'],
+				'grant_type'    => 'refresh_token',
+				'client_id'     => self::APIKEY,
+			)
+		) );
 
-			$res = wp_remote_request( $url, $_args );
+		$_args = array(
+			'headers' => $headers,
+			'body'    => array(),
+			'method'  => 'POST',
+		);
 
-			if ( isset( $res['response']['code'] ) ) {
-				$status_code = $res['response']['code'];
-				$msg         = '';
-				if ( $status_code >= 400 ) {
-					if ( isset( $res['response']['message'] ) ) {
-						$msg = $res['response']['message'];
-					}
+		$res = wp_remote_request( $url, $_args );
 
-					$body_json = wp_remote_retrieve_body( $res );
-					$res_json  = json_decode( $body_json );
+		$has_error = false;
+		if ( is_wp_error( $res ) ) {
+			$has_error = true;
+			$msg       = $res->get_error_code() . ' - ' . $res->get_error_message();
 
-					if ( ! is_null( $res_json ) && is_object( $res_json ) && isset( $res_json->Message ) ) {//phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
-						$msg = $res_json->Message;//phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
-					}
+		} elseif ( isset( $res['response']['code'] ) ) {
+			$status_code = $res['response']['code'];
+			$msg         = '';
+			if ( $status_code >= 400 ) {
+				$has_error = true;
 
-					Hustle_Provider_Utils::maybe_log( __METHOD__, $msg );
-					continue;
+				if ( isset( $res['response']['message'] ) ) {
+					$msg = $res['response']['message'];
+				}
+
+				$body_json = wp_remote_retrieve_body( $res );
+				$res_json  = json_decode( $body_json );
+
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				if ( ! is_null( $res_json ) && is_object( $res_json ) && isset( $res_json->Message ) ) {
+					$msg = $res_json->Message; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				}
 			}
+		}
 
+		if ( $has_error ) {
+			Hustle_Provider_Utils::maybe_log( __METHOD__, $msg );
+		} else {
 			$body = wp_remote_retrieve_body( $res );
-			// probably silent mode
+			// Probably silent mode.
 			if ( ! empty( $body ) ) {
-				$res                            = (array) json_decode( $body );
-				$value['expires_in']            = time() + $res['expires_in'];
-				$value['access_oauth2_token']   = $res['access_token'];
-				$value['access_oauth2_refresh'] = $res['refresh_token'];
-				$addon->save_multi_settings_values( $key, $value );
+				$res = (array) json_decode( $body );
+
+				$multi_id_settings['expires_in']            = time() + $res['expires_in'];
+				$multi_id_settings['access_oauth2_token']   = $res['access_token'];
+				$multi_id_settings['access_oauth2_refresh'] = $res['refresh_token'];
+
+				$addon->save_multi_settings_values( $multi_id, $multi_id_settings );
 			}
 		}
 

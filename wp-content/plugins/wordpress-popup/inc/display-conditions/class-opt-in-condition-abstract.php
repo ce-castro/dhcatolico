@@ -65,24 +65,6 @@ abstract class Opt_In_Condition_Abstract {
 	}
 
 	/**
-	 * Instanctiates and returns Opt_In_Condition_Utils
-	 *
-	 * @since unkwnon
-	 * @return Opt_In_Utils
-	 */
-	public function utils() {
-		if ( empty( $this->utils ) ) {
-			if ( empty( $this->geo ) ) {
-				$this->geo = new Opt_In_Geo();
-			}
-
-			$this->utils = new Opt_In_Utils( $this->geo );
-		}
-
-		return $this->utils;
-	}
-
-	/**
 	 * Sets optin type for the condition.
 	 *
 	 * @since unkwnon
@@ -99,4 +81,40 @@ abstract class Opt_In_Condition_Abstract {
 	 * @return boolean
 	 */
 	abstract public function is_allowed();
+
+	/**
+	 * Get global post
+	 *
+	 * @global object $post
+	 * @return object
+	 */
+	public static function get_post() {
+		if ( wp_doing_ajax() ) {
+			$url     = wp_get_referer();
+			$post_id = url_to_postid( $url );
+			$post    = get_post( $post_id );
+		} else {
+			global $post;
+		}
+
+		return $post;
+	}
+
+	/**
+	 * Check WP conditional tag
+	 *
+	 * @param  string $tag Function name.
+	 * @return boolean
+	 */
+	public static function check( $tag ) {
+		if ( wp_doing_ajax() ) {
+			$tags = filter_input( INPUT_POST, 'conditional_tags', FILTER_VALIDATE_BOOLEAN, FILTER_REQUIRE_ARRAY );
+			return ! empty( $tags[ $tag ] );
+		} else {
+			if ( 'is_order_received' === $tag ) {
+				return is_wc_endpoint_url( 'order-received' );
+			}
+			return $tag();
+		}
+	}
 }

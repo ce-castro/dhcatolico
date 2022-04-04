@@ -50,7 +50,7 @@ class Hustle_Module_Widget extends WP_Widget {
 
 		$module = Hustle_Module_Collection::instance()->return_model_from_id( $instance['module_id'] );
 
-		if ( is_wp_error( $module ) || ! $module || ! $module->active || ! $module->is_display_type_active( Hustle_Module_Model::WIDGET_MODULE ) ) {
+		if ( is_wp_error( $module ) || ! $module || empty( $module->active ) || ! $module->is_display_type_active( Hustle_Module_Model::WIDGET_MODULE ) ) {
 			return;
 		}
 
@@ -93,7 +93,7 @@ class Hustle_Module_Widget extends WP_Widget {
 				<?php
 					$types = array( 'embedded', 'social_sharing' );
 				foreach ( Hustle_Module_Collection::instance()->get_embed_id_names( $types ) as $mod ) :
-					$module = Hustle_Module_Model::instance()->get( $mod->module_id );
+					$module = new Hustle_Module_Model( $mod->module_id );
 					if ( is_wp_error( $module ) ) {
 						continue;
 					}

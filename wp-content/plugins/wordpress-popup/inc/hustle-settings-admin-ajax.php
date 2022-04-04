@@ -177,10 +177,14 @@ class Hustle_Settings_Admin_Ajax {
 	public function save_data_settings() {
 
 		$reset_settings_uninstall = filter_input( INPUT_POST, 'reset_settings_uninstall', FILTER_SANITIZE_STRING );
+		$reset_all_sites          = filter_input( INPUT_POST, 'reset_all_sites', FILTER_SANITIZE_STRING );
 
 		$value = array(
 			'reset_settings_uninstall' => '1' === $reset_settings_uninstall ? '1' : '0',
 		);
+		if ( $reset_all_sites ) {
+			$value['reset_all_sites'] = $reset_all_sites;
+		}
 
 		Hustle_Settings_Admin::update_hustle_settings( $value, 'data' );
 		wp_send_json_success();
@@ -434,7 +438,7 @@ class Hustle_Settings_Admin_Ajax {
 
 			foreach ( $modules_ids as $module_id ) {
 
-				$module = Hustle_Module_Model::instance()->get( $module_id );
+				$module = new Hustle_Module_Model( $module_id );
 				if ( ! is_wp_error( $module ) ) {
 
 					$selected_roles = isset( $modules_roles[ $module_id ] ) ? $modules_roles[ $module_id ] : array();
@@ -625,6 +629,14 @@ class Hustle_Settings_Admin_Ajax {
 			}
 		}
 
+		// TODO: delete transient on uninstall.
+		// TODO: get these dynamically.
+		// Delete the transients set for retrieving this data in the WP Dashboard.
+		// These are the same values available in Hustle_Wp_Dashboard_Page::get_analytic_ranges().
+		delete_transient( 'hustle_wp_widget_daily_stats_7' );
+		delete_transient( 'hustle_wp_widget_daily_stats_30' );
+		delete_transient( 'hustle_wp_widget_daily_stats_90' );
+
 		Hustle_Settings_Admin::update_hustle_settings( $value, 'analytics' );
 
 		if ( ! $reload ) {
@@ -648,7 +660,7 @@ class Hustle_Settings_Admin_Ajax {
 		$action     = filter_input( INPUT_POST, 'hustleAction', FILTER_SANITIZE_STRING );
 
 		$args = array(
-			'page'    => Hustle_Module_Admin::SETTINGS_PAGE,
+			'page'    => Hustle_Data::SETTINGS_PAGE,
 			'section' => 'palettes',
 		);
 
@@ -696,7 +708,7 @@ class Hustle_Settings_Admin_Ajax {
 		if ( $palette_slug ) { // Editing an existing palette.
 
 			$palette_name          = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
-			$palette_array         = Hustle_Meta_Base_Design::get_palette_array( $palette_slug );
+			$palette_array         = Hustle_Palettes_Helper::get_palette_array( $palette_slug );
 			$palette_array['slug'] = $palette_slug;
 			$palette_array['name'] = $palette_name;
 
@@ -710,17 +722,17 @@ class Hustle_Settings_Admin_Ajax {
 			if ( 'palette' === $base_source ) {
 				// Use an existing palette as the base.
 				$palette       = filter_input( INPUT_POST, 'base_palette', FILTER_SANITIZE_STRING );
-				$palette_array = Hustle_Meta_Base_Design::get_palette_array( $palette );
+				$palette_array = Hustle_Palettes_Helper::get_palette_array( $palette );
 
 			} else {
 				// Use a module's palette as the base.
 
 				$fallback_palette_name = filter_input( INPUT_POST, 'fallback_palette', FILTER_SANITIZE_STRING );
-				$fallback_palette      = Hustle_Meta_Base_Design::get_palette_array( $fallback_palette_name );
+				$fallback_palette      = Hustle_Palettes_Helper::get_palette_array( $fallback_palette_name );
 
 				$module_id = filter_input( INPUT_POST, 'module_id', FILTER_SANITIZE_STRING );
 
-				$module = Hustle_Module_Model::instance()->get( $module_id );
+				$module = new Hustle_Module_Model( $module_id );
 
 				if ( is_wp_error( $module ) ) {
 					$palette_array = $fallback_palette;
@@ -730,7 +742,7 @@ class Hustle_Settings_Admin_Ajax {
 
 					// remove option color keys from info modules.
 					if ( 'informational' === $module->module_mode ) {
-						$info   = Hustle_Meta_Base_Design::get_palette_array( 'info-module' );
+						$info   = Hustle_Palettes_Helper::get_palette_array( 'info-module' );
 						$design = array_diff_key( $design, $info );
 					}
 
@@ -759,7 +771,7 @@ class Hustle_Settings_Admin_Ajax {
 		$palette_name = filter_input( INPUT_POST, 'palette_name', FILTER_SANITIZE_STRING );
 
 		// Remove non-palette data.
-		$palette_colors = array_intersect_key( $_POST, Hustle_Meta_Base_Design::get_palette_array( 'gray_slate' ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$palette_colors = array_intersect_key( $_POST, Hustle_Palettes_Helper::get_palette_array( 'gray_slate' ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 
 		$palette_data = array( 'palette' => $palette_colors );
 

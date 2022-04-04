@@ -31,8 +31,11 @@
 
 		// SETTING: Feature Image.
 		$this->render(
-			'admin/commons/sui-wizard/tab-content/feature-image',
-			array( 'feature_image' => $settings['feature_image'] )
+			'admin/commons/sui-wizard/tab-content/images',
+			array(
+				'settings'           => $settings,
+				'smallcaps_singular' => $smallcaps_singular,
+			)
 		);
 
 		// SETTING: Main Content.
@@ -45,8 +48,9 @@
 		$this->render(
 			'admin/commons/sui-wizard/tab-content/call-to-action',
 			array(
-				'settings'           => $settings,
-				'smallcaps_singular' => $smallcaps_singular,
+				'settings'            => $settings,
+				'smallcaps_singular'  => $smallcaps_singular,
+				'capitalize_singular' => $capitalize_singular,
 			)
 		);
 

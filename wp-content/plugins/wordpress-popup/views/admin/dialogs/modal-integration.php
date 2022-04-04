@@ -23,7 +23,7 @@
 
 			<!-- content -->
 
-				<form autocomplete="off" style="margin: 0;">
+				<form onsubmit="return false;" style="margin: 0;">
 
 					<div class="sui-box-header sui-flatten sui-content-center sui-spacing-bottom--0 sui-spacing-top--60">
 

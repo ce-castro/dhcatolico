@@ -51,8 +51,8 @@ class Opt_In_Condition_Wc_Categories extends Opt_In_Condition_Abstract {
 	 * @return null|array
 	 */
 	private function get_current_wc_categories() {
-		global $post;
-		if ( ! isset( $post ) || ! ( $post instanceof WP_Post ) || 'product' !== $post->post_type || ! is_single() ) {
+		$post = self::get_post();
+		if ( ! isset( $post ) || ! ( $post instanceof WP_Post ) || 'product' !== $post->post_type || ! self::check( 'is_single' ) ) {
 			return null;
 		}
 

@@ -28,11 +28,11 @@ class Opt_In_Condition_Wc_Archive_Pages extends Opt_In_Condition_Abstract {
 		if ( isset( $this->args->wc_archive_pages ) ) {
 			$archive_pages = (array) $this->args->wc_archive_pages;
 
-			if ( is_product_tag() ) {
+			if ( self::check( 'is_product_tag' ) ) {
 				$allowed = in_array( 'is_product_tag', $archive_pages, true );
-			} elseif ( is_product_category() ) {
+			} elseif ( self::check( 'is_product_category' ) ) {
 				$allowed = in_array( 'is_product_category', $archive_pages, true );
-			} elseif ( is_shop() ) {
+			} elseif ( self::check( 'is_shop' ) ) {
 				$allowed = in_array( 'is_shop', $archive_pages, true );
 			}
 

@@ -1,7 +1,7 @@
 <?php
 // Load Gutenberg module after Hustle is loaded.
 add_action( 'init', array( 'Hustle_Gutenberg', 'init' ), 5 );
-add_filter( 'block_categories', array( 'Hustle_Gutenberg', 'register_hustle_category' ), 10, 2 );
+add_filter( 'block_categories_all', array( 'Hustle_Gutenberg', 'register_hustle_category' ), 10, 2 );
 
 class Hustle_Gutenberg {
 
@@ -50,7 +50,7 @@ class Hustle_Gutenberg {
 	 * @since 4.2.0
 	 */
 	public static function gutenberg_init_frontend() {
-		if ( has_blocks() ) {
+		if ( function_exists( 'has_blocks' ) && has_blocks() ) {
 			// Load abstracts.
 			require_once dirname( __FILE__ ) . '/abstract-block.php';
 
@@ -87,7 +87,7 @@ class Hustle_Gutenberg {
 	 * @since 1.0 Gutenberg Addon
 	 * @return array
 	 */
-	public static function register_hustle_category( $categories, $post ) {
+	public static function register_hustle_category( $categories, $block_editor_context ) {
 
 		return array_merge(
 			$categories,

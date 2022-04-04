@@ -19,10 +19,12 @@ $can_create = current_user_can( 'hustle_create' );
 	<select
 		name="hustle_action"
 		id="hustle-bulk-action-select<?php echo $is_bottom ? '-bottom' : '-top'; ?>"
-		class="sui-select-sm sui-select-inline"
+		class="sui-select sui-select-sm sui-select-inline"
 		data-width="200"
+		data-theme="icon"
 		data-placeholder="<?php esc_html_e( 'Bulk actions', 'hustle' ); ?>"
 	>
+		<option></option>
 		<option value="publish" data-icon="upload-cloud"><?php esc_html_e( 'Publish', 'hustle' ); ?></option>
 		<option value="unpublish" data-icon="unpublish"><?php esc_html_e( 'Unpublish', 'hustle' ); ?></option>
 		<?php if ( $can_create ) : ?>

@@ -6,49 +6,43 @@
  * @since 4.0.3
  */
 
-$submission_erasure_enabled = '1' === $settings['retain_sub_on_erasure'];
-$remove_data_url            = admin_url( 'tools.php?page=remove_personal_data' );
 ?>
-
 <fieldset class="sui-form-field">
 
 	<label class="sui-settings-label"><?php esc_html_e( 'Account Erasure Requests', 'hustle' ); ?></label>
 
-	<span class="sui-description">
+	<span class="sui-description" style="margin-bottom: 10px;">
 		<?php
 		printf(
 			/* translators: 1. opening 'a' tag to the 'remove personal data' tool, 2. closing 'a' tag */
 			esc_html__( 'When handling an %1$saccount erasure request%2$s that contains an email associated with a submission, what do you want to do?', 'hustle' ),
-			'<a href="' . esc_url( $remove_data_url ) . '">',
+			'<a href="' . esc_url( admin_url( 'tools.php?page=remove_personal_data' ) ) . '">',
 			'</a>'
 		);
 		?>
 	</span>
 
-	<div class="sui-side-tabs" style="margin-top: 10px;">
-
-		<div class="sui-tabs-menu">
-
-			<label for="retain_sub_on_erasure-true" class="sui-tab-item">
-				<input type="radio"
-					name="retain_sub_on_erasure"
-					value="1"
-					id="retain_sub_on_erasure-true"
-					<?php checked( $submission_erasure_enabled, true ); ?> />
-				<?php esc_html_e( 'Retain Submission', 'hustle' ); ?>
-			</label>
-
-			<label for="retain_sub_on_erasure-false" class="sui-tab-item">
-				<input type="radio"
-					name="retain_sub_on_erasure"
-					value="0"
-					id="retain_sub_on_erasure-false"
-					<?php checked( $submission_erasure_enabled, false ); ?> />
-				<?php esc_html_e( 'Remove Submission', 'hustle' ); ?>
-			</label>
-
-		</div>
-
-	</div>
+	<?php
+	$this->render(
+		'admin/global/sui-components/sui-tabs',
+		array(
+			'name'        => 'retain_sub_on_erasure',
+			'radio'       => true,
+			'saved_value' => $settings['retain_sub_on_erasure'],
+			'sidetabs'    => true,
+			'content'     => false,
+			'options'     => array(
+				'1' => array(
+					'value' => '1',
+					'label' => esc_html__( 'Retain Submission', 'hustle' ),
+				),
+				'0' => array(
+					'value' => '0',
+					'label' => esc_html__( 'Remove Submission', 'hustle' ),
+				),
+			),
+		)
+	);
+	?>
 
 </fieldset>

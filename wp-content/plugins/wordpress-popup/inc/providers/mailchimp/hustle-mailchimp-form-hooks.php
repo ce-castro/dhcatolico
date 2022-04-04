@@ -20,12 +20,12 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * @return array
 	 */
 	private function prepare_marketing_permissions( $gdpr_fields ) {
-		$permissions = [];
+		$permissions = array();
 		foreach ( $gdpr_fields as $key ) {
-			$permissions[] = [
+			$permissions[] = array(
 				'marketing_permission_id' => $key,
-				'enabled' => true,
-			];
+				'enabled'                 => true,
+			);
 		}
 
 		return $permissions;
@@ -214,6 +214,8 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 						// Resend Confirm Subscription Email even if `Automatically opt-in new users to the mailing list` is set
 						$subscribe_data['status'] = 'pending';
 						$can_subscribe            = true;
+					} elseif ( 'archived' === $existing_member->status ) {
+						$can_subscribe = true;
 					} else {
 						unset( $subscribe_data['status'] );
 					}

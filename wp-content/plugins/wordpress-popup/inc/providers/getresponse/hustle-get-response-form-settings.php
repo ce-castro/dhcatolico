@@ -13,7 +13,7 @@ if ( ! class_exists( 'Hustle_Get_Response_Form_Settings' ) ) :
 		 * @since 4.2.0
 		 * @var array
 		 */
-		protected $form_completion_options = array(  'selected_global_multi_id', 'list_id', 'list_name' );
+		protected $form_completion_options = array( 'selected_global_multi_id', 'list_id', 'list_name' );
 
 		/**
 		 * For settings Wizard steps

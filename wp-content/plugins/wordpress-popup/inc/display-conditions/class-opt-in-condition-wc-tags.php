@@ -63,8 +63,8 @@ class Opt_In_Condition_Wc_Tags extends Opt_In_Condition_Abstract {
 	 * @return null|array
 	 */
 	private function get_current_wc_tags() {
-		global $post;
-		if ( ! isset( $post ) || ! ( $post instanceof WP_Post ) || 'product' !== $post->post_type || ! is_single() ) {
+		$post = self::get_post();
+		if ( ! isset( $post ) || ! ( $post instanceof WP_Post ) || 'product' !== $post->post_type || ! self::check( 'is_single' ) ) {
 			return null;
 		}
 

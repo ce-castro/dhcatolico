@@ -57,7 +57,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @param $username
 		 * @param $password
 		 */
-		private function __construct( $base_url, $username, $password ) {
+		private function __construct( $username, $base_url, $password ) {
 			// final check here
 			if ( ! $base_url || ! $username || ! $password ) {
 				throw new Exception( __( 'Missing required API Credentials', 'hustle' ) );
@@ -79,14 +79,14 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 *
 		 * @return Hustle_Mautic_Api|null
 		 */
-		public static function get_instance( $base_url = '', $username, $password = '' ) {
+		public static function get_instance( $username, $base_url = '', $password = '' ) {
 			// initial check here
 			if ( ! $username ) {
 				throw new Exception( __( 'Missing required API Credentials', 'hustle' ) );
 			}
 
 			if ( ! isset( self::$_instances[ md5( $username ) ] ) ) {
-				self::$_instances[ md5( $username ) ] = new self( $base_url, $username, $password );
+				self::$_instances[ md5( $username ) ] = new self( $username, $base_url, $password );
 			}
 			return self::$_instances[ md5( $username ) ];
 		}
@@ -129,7 +129,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @return array|mixed|object
 		 * @throws Exception
 		 */
-		private function _request( $verb = 'GET', $url, $args = array() ) {
+		private function _request( $url, $verb = 'GET', $args = array() ) {
 			// Adding extra user agent for wp remote request
 			add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
@@ -278,7 +278,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @return array|mixed|object|WP_Error
 		 */
 		private function _get( $action, $args = array() ) {
-			return $this->_request( 'GET', $action, $args );
+			return $this->_request( $action, 'GET', $args );
 		}
 
 		/**
@@ -289,7 +289,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @return array|mixed|object|WP_Error
 		 */
 		private function _post( $action, $args = array() ) {
-			return $this->_request( 'POST', $action, $args );
+			return $this->_request( $action, 'POST', $args );
 		}
 
 		/**
@@ -300,7 +300,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @return array|mixed|object|WP_Error
 		 */
 		private function _patch( $action, $args = array() ) {
-			return $this->_request( 'PATCH', $action, $args );
+			return $this->_request( $action, 'PATCH', $args );
 		}
 
 		/**

@@ -111,9 +111,8 @@ $meridiem_options = array(
 									)
 								);
 								?>
-
 							</div>
-
+							<span class="sui-error-message" style="display: none;"><?php esc_html_e( 'Invalid date format. Date should be in the mm/dd/yy format.', 'hustle' ); ?></span>
 						</div>
 
 						<div class="sui-col-md-6">
@@ -130,7 +129,9 @@ $meridiem_options = array(
 											'is_template' => true,
 											'name'        => 'start_hour',
 											'options'     => $hour_options,
+											'class'       => 'sui-select sui-select-inline',
 											'attributes'  => array(
+												'data-search' => 'true',
 												'data-checkbox-content' => 'not-schedule-start',
 											),
 										),
@@ -139,7 +140,9 @@ $meridiem_options = array(
 											'is_template' => true,
 											'name'        => 'start_minute',
 											'options'     => $minute_options,
+											'class'       => 'sui-select sui-select-inline',
 											'attributes'  => array(
+												'data-search' => 'true',
 												'data-checkbox-content' => 'not-schedule-start',
 											),
 										),
@@ -148,6 +151,7 @@ $meridiem_options = array(
 											'is_template' => true,
 											'name'        => 'start_meridiem_offset',
 											'options'     => $meridiem_options,
+											'class'       => 'sui-select sui-select-inline',
 											'attributes'  => array(
 												'data-checkbox-content' => 'not-schedule-start',
 											),
@@ -211,7 +215,7 @@ $meridiem_options = array(
 								?>
 
 							</div>
-
+							<span class="sui-error-message" style="display: none;"><?php esc_html_e( 'Invalid date format. Date should be in the mm/dd/yy format.', 'hustle' ); ?></span>
 						</div>
 
 						<div class="sui-col-md-6">
@@ -228,6 +232,7 @@ $meridiem_options = array(
 											'is_template' => true,
 											'name'        => 'end_hour',
 											'options'     => $hour_options,
+											'class'       => 'sui-select sui-select-inline',
 											'attributes'  => array(
 												'data-checkbox-content' => 'not-schedule-end',
 											),
@@ -237,6 +242,7 @@ $meridiem_options = array(
 											'is_template' => true,
 											'name'        => 'end_minute',
 											'options'     => $minute_options,
+											'class'       => 'sui-select sui-select-inline',
 											'attributes'  => array(
 												'data-checkbox-content' => 'not-schedule-end',
 											),
@@ -246,6 +252,7 @@ $meridiem_options = array(
 											'is_template' => true,
 											'name'        => 'end_meridiem_offset',
 											'options'     => $meridiem_options,
+											'class'       => 'sui-select sui-select-inline',
 											'attributes'  => array(
 												'data-checkbox-content' => 'not-schedule-end',
 											),
@@ -363,7 +370,7 @@ $meridiem_options = array(
 											'type'        => 'checkboxes',
 											'name'        => 'week_days',
 											'class'       => 'sui-checkbox-sm sui-checkbox-stacked',
-											'options'     => Opt_In_Utils::get_week_days( 'full' ),
+											'options'     => Hustle_Time_Helper::get_week_days( 'full' ),
 										),
 									)
 								);
@@ -409,18 +416,30 @@ $meridiem_options = array(
 								array(
 									array(
 										'type'        => 'select',
+										'class'       => 'sui-select sui-select-inline',
+										'attributes'  => array(
+											'data-width' => '200px',
+										),
 										'is_template' => true,
 										'name'        => 'day_start_hour',
 										'options'     => $hour_options,
 									),
 									array(
 										'type'        => 'select',
+										'class'       => 'sui-select sui-select-inline',
+										'attributes'  => array(
+											'data-width' => '200px',
+										),
 										'is_template' => true,
 										'name'        => 'day_start_minute',
 										'options'     => $minute_options,
 									),
 									array(
 										'type'        => 'select',
+										'class'       => 'sui-select',
+										'attributes'  => array(
+											'data-width' => '200px',
+										),
 										'is_template' => true,
 										'name'        => 'day_start_meridiem_offset',
 										'options'     => $meridiem_options,
@@ -444,18 +463,30 @@ $meridiem_options = array(
 								array(
 									array(
 										'type'        => 'select',
+										'class'       => 'sui-select sui-select-inline',
+										'attributes'  => array(
+											'data-width' => '200px',
+										),
 										'is_template' => true,
 										'name'        => 'day_end_hour',
 										'options'     => $hour_options,
 									),
 									array(
 										'type'        => 'select',
+										'class'       => 'sui-select sui-select-inline',
+										'attributes'  => array(
+											'data-width' => '200px',
+										),
 										'is_template' => true,
 										'name'        => 'day_end_minute',
 										'options'     => $minute_options,
 									),
 									array(
 										'type'        => 'select',
+										'class'       => 'sui-select',
+										'attributes'  => array(
+											'data-width' => '200px',
+										),
 										'is_template' => true,
 										'name'        => 'day_end_meridiem_offset',
 										'options'     => $meridiem_options,
@@ -547,13 +578,30 @@ $meridiem_options = array(
 
 							<label class="sui-label" style="margin-bottom: 5px;"><?php esc_html_e( 'Timezone', 'hustle' ); ?></label>
 
-							<div class="sui-notice sui-notice-info" style="margin-top: 5px;">
+							<?php
+							$timezone = str_replace( '_', ' ', get_option( 'timezone_string' ) );
 
-								<?php $timezone = str_replace( '_', ' ', get_option( 'timezone_string' ) ); ?>
-
-								<p><?php printf( esc_html__( "Your server's timezone is %1\$s(GMT %3\$s) %4\$s%2\$s and the current time on your server is %1\$s%5\$s%2\$s. ", 'hustle' ), '<strong>', '</strong>', esc_html( $wp_gmt_offset ), esc_html( $timezone ), '{{ serverCurrentTime }}' ); ?></p>
-
-							</div>
+							$notice_message = sprintf(
+								esc_html__( "Your server's timezone is %1\$s(GMT %3\$s) %4\$s%2\$s and the current time on your server is %1\$s%5\$s%2\$s. ", 'hustle' ),
+								'<strong>',
+								'</strong>',
+								esc_html( $wp_gmt_offset ),
+								esc_html( $timezone ),
+								'{{ serverCurrentTime }}'
+							);
+							$notice_options = array(
+								array(
+									'type'       => 'inline_notice',
+									'class'      => 'sui-notice-info',
+									'icon'       => 'info',
+									'value'      => $notice_message,
+									'attributes' => array(
+										'style' => 'margin-top: 5px;',
+									),
+								),
+							);
+							$this->get_html_for_options( $notice_options );
+							?>
 
 						</div>
 

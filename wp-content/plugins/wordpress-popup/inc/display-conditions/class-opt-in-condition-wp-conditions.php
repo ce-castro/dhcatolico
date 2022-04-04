@@ -25,11 +25,11 @@ class Opt_In_Condition_Wp_Conditions extends Opt_In_Condition_Abstract {
 		if ( isset( $this->args->wp_conditions ) ) {
 			$conditions = (array) $this->args->wp_conditions;
 
-			if ( is_404() ) {
+			if ( self::check( 'is_404' ) ) {
 				$allowed = in_array( 'is_404', $conditions, true );
-			} elseif ( is_front_page() ) {
+			} elseif ( self::check( 'is_front_page' ) ) {
 				$allowed = in_array( 'is_front_page', $conditions, true );
-			} elseif ( is_search() ) {
+			} elseif ( self::check( 'is_search' ) ) {
 				$allowed = in_array( 'is_search', $conditions, true );
 			}
 

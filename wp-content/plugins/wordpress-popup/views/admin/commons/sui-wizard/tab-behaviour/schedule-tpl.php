@@ -22,37 +22,54 @@
 
 		<div id="hustle-schedule-notice" class="sui-notice hui-notice-schedule {{ hasFinished ? 'sui-notice-error' : 'sui-notice-success' }}">
 
-			<span class="hui-notice-icon sui-icon-clock sui-sm" aria-hidden="true"></span>
+			<div class="sui-notice-content">
 
-			<div class="hui-notice-content">
+				<div class="sui-notice-message">
 
-				<p><strong>{{ startDate }} <small style="color: #888;">{{ startTime }}</small> - {{ endDate }} <small style="color: #888;">{{ endTime }}</small></strong></p>
+					<span class="sui-notice-icon sui-icon-clock sui-sm" aria-hidden="true"></span>
 
-				<# if ( strings.activeDays && strings.activeTime ) { #>
-					<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag, 3. week days, 4. week time */ ?>
-					<p><small><?php printf( esc_html__( 'Active on %1$s%3$s%2$s between %1$s%4$s%2$s', 'hustle' ), '<strong>', '</strong>', '{{ weekdays }}', '{{ weektime }}' ); ?></small></p>
-				<# } else { #>
-					<# if ( strings.activeDays && ! strings.activeTime ) { #>
-						<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag, 3. week days*/ ?>
-						<p><small><?php printf( esc_html__( 'Active on %1$s%3$s%2$s', 'hustle' ), '<strong>', '</strong>', '{{ weekdays }}' ); ?></small></p>
-					<# } else if ( ! strings.activeDays && strings.activeTime ) { #>
-						<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag, 3. week time */ ?>
-						<p><small><?php printf( esc_html__( 'Active %1$sEVERYDAY%2$s between %1$s%3$s%2$s', 'hustle' ), '<strong>', '</strong>', '{{ weektime }}' ); ?></small></p>
+					<p><strong>{{ startDate }} <small>{{ startTime }}</small> - {{ endDate }} <small>{{ endTime }}</small></strong></p>
+
+					<# if ( strings.activeDays && strings.activeTime ) { #>
+
+						<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag, 3. week days, 4. week time */ ?>
+						<p><small><?php printf( esc_html__( 'Active on %1$s%3$s%2$s between %1$s%4$s%2$s', 'hustle' ), '<strong>', '</strong>', '{{ weekdays }}', '{{ weektime }}' ); ?></small></p>
+
 					<# } else { #>
 
-						<# if ( strings.startDate || strings.endDate ) { #>
-							<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */ ?>
-							<p><small><?php printf( esc_html__( 'Active %1$sEVERYDAY%2$s', 'hustle' ), '<strong>', '</strong>' ); ?></small></p>
+						<# if ( strings.activeDays && ! strings.activeTime ) { #>
+
+							<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag, 3. week days*/ ?>
+							<p><small><?php printf( esc_html__( 'Active on %1$s%3$s%2$s', 'hustle' ), '<strong>', '</strong>', '{{ weekdays }}' ); ?></small></p>
+
+						<# } else if ( ! strings.activeDays && strings.activeTime ) { #>
+
+							<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag, 3. week time */ ?>
+							<p><small><?php printf( esc_html__( 'Active %1$sEVERYDAY%2$s between %1$s%3$s%2$s', 'hustle' ), '<strong>', '</strong>', '{{ weektime }}' ); ?></small></p>
+
+						<# } else { #>
+
+							<# if ( strings.startDate || strings.endDate ) { #>
+								<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */ ?>
+								<p><small><?php printf( esc_html__( 'Active %1$sEVERYDAY%2$s', 'hustle' ), '<strong>', '</strong>' ); ?></small></p>
+							<# } #>
+
 						<# } #>
+
 					<# } #>
 
-				<# } #>
-			</div>
+				</div>
 
-			<button id="hustle-schedule-focus" class="hui-notice-action sui-button-icon sui-tooltip sui-tooltip-top-right hustle-button-open-schedule-dialog" data-tooltip="<?php esc_html_e( 'Update or delete schedule', 'hustle' ); ?>">
-				<span class="sui-icon-widget-settings-config" aria-hidden="true"></span>
-				<span class="sui-screen-reader-text"><?php esc_html_e( 'Update or delete schedule', 'hustle' ); ?></span>
-			</button>
+				<div class="sui-notice-actions">
+
+					<button id="hustle-schedule-focus" class="hui-notice-action sui-button-icon sui-tooltip sui-tooltip-top-right hustle-button-open-schedule-dialog" data-tooltip="<?php esc_html_e( 'Update or delete schedule', 'hustle' ); ?>">
+						<span class="sui-icon-widget-settings-config" aria-hidden="true"></span>
+						<span class="sui-screen-reader-text"><?php esc_html_e( 'Click to edit schedule settings', 'hustle' ); ?></span>
+					</button>
+
+				</div>
+
+			</div>
 
 		</div>
 

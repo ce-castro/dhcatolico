@@ -61,7 +61,7 @@ $is_popup = Hustle_Module_Model::POPUP_MODULE === $module_type;
 
 					<div class="sui-col-md-6">
 
-						<select name="auto_hide_unit" data-attribute="auto_hide_unit">
+						<select name="auto_hide_unit" class="sui-select" data-attribute="auto_hide_unit">
 
 							<option value="seconds"
 								<?php selected( $settings['auto_hide_unit'], 'seconds' ); ?>>

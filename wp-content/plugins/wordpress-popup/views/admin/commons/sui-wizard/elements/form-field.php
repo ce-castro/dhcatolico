@@ -42,7 +42,7 @@
 					<span class="sui-icon-copy" aria-hidden="true"></span> <?php esc_html_e( 'Duplicate', 'hustle' ); ?>
 				</button></li>
 
-				<# if ( 'undefined' !== typeof can_delete && _.isTrue( can_delete ) ) { #>
+				<# if ( 'undefined' !== typeof can_delete && ( true === can_delete || 'true' === can_delete ) ) { #>
 					<li><button class="hustle-optin-field--delete">
 						<span class="sui-icon-trash" aria-hidden="true"></span> <?php esc_html_e( 'Delete', 'hustle' ); ?>
 					</button></li>

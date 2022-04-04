@@ -17,9 +17,39 @@ class Hustle_Notifications {
 	 * Is Hustle free
 	 *
 	 * @since 4.2.0
-	 * @var bool
+	 * @var bool $is_free
 	 */
 	private $is_free;
+
+	/**
+	 * Whether the current user can update plugins.
+	 *
+	 * @since 4.2.2
+	 * @var bool $user_can_update_plugins
+	 */
+	private $user_can_update_plugins;
+
+	/**
+	 * Instance of class.
+	 *
+	 * @since 4.2.2
+	 * @var Hustle_Notifications|null $instance
+	 */
+	private static $instance = null;
+
+	/**
+	 * Return the plugin instance.
+	 *
+	 * @since 4.2.2
+	 * @return Hustle_Notifications
+	 */
+	public static function get_instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * Hustle_Notifications constructor.
@@ -27,6 +57,18 @@ class Hustle_Notifications {
 	public function __construct() {
 
 		$this->is_free = Opt_In_Utils::_is_free();
+
+		if ( $this->is_free && ( wp_doing_ajax() || is_admin() ) ) {
+			require_once Opt_In::$plugin_path . 'lib/free-dashboard/module.php';
+		}
+
+		add_action( 'current_screen', array( $this, 'load_plugins_page_notices' ) );
+
+		$cap = is_multisite() ? 'manage_network_plugins' : 'update_plugins';
+
+		$this->user_can_update_plugins = current_user_can( $cap );
+
+		add_action( 'wp_ajax_hustle_dismiss_notification', array( $this, 'dismiss_notification' ) );
 	}
 
 	/**
@@ -38,7 +80,7 @@ class Hustle_Notifications {
 
 		// Show upgrade notice only if this is free, and Hustle Pro is not already installed.
 		if ( $this->is_free && ! file_exists( WP_PLUGIN_DIR . '/hustle/opt-in.php' ) ) {
-			add_action( 'admin_notices', array( $this, 'show_hustle_pro_available_notice' ) );
+			add_action( 'admin_notices', array( $this, 'show_pro_available_notice' ) );
 		}
 
 		if ( Hustle_Migration::check_tracking_needs_migration() ) {
@@ -56,19 +98,6 @@ class Hustle_Notifications {
 		add_action( 'admin_notices', array( $this, 'show_sendgrid_update_notice' ) );
 
 		add_action( 'admin_notices', array( $this, 'show_provider_migration_notice' ) );
-
-		add_action( 'admin_notices', array( $this, 'show_depricating_m2_conditions' ) );
-	}
-
-	/**
-	 * Adds ajax actionz.
-	 *
-	 * @since 4.2.0
-	 */
-	public function add_ajax_actions() {
-		add_action( 'wp_ajax_hustle_dismiss_notification', array( $this, 'dismiss_notification' ) );
-
-		add_action( 'wp_ajax_hustle_dismiss_m2_notification', array( $this, 'dismiss_m2_notification' ) );
 	}
 
 	/**
@@ -77,34 +106,34 @@ class Hustle_Notifications {
 	 * @since 4.2.0
 	 *
 	 * @param string         $message Notice's message. Must be already escaped.
-	 * @param boolean|string $additional Extra message in a following line. Must be already escaped.
-	 * @param boolean|string $id Notice's ID.
+	 * @param boolean|string $name Notice's name.
 	 * @param string         $type Notice's type error|success|info|warning.
-	 * @param boolean        $is_dismissable Whether the notice is dismissable.
+	 * @param boolean        $is_dismissible Whether the notice is dismissible.
 	 */
-	private function show_notice( $message, $additional = false, $id = false, $type = 'info', $is_dismissable = false ) {
+	private function show_notice( $message, $name = false, $type = 'info', $is_dismissible = false ) {
 		$notices_types = array( 'info', 'success', 'error', 'warning' );
 
-		$class  = in_array( $type, $notices_types, true ) ? ' notice-' . $type : '';
-		$class .= $is_dismissable ? ' is-dismissible' : '';
+		$class  = 'notice';
+		$class .= in_array( $type, $notices_types, true ) ? ' notice-' . $type : '';
+		$nonce  = false;
 
-		$ajax_nonce = $is_dismissable ? ' data-nonce="' . esc_attr( wp_create_nonce( 'hustle_dismiss_notification' ) ) . '"' : '';
+		if ( $is_dismissible ) {
+			$class .= ' is-dismissible';
+
+			if ( $name ) {
+				$class .= ' hustle-dismissible-admin-notice';
+				$nonce  = wp_create_nonce( 'hustle_dismiss_notification' );
+			}
+		}
 		?>
 
 		<div
-			<?php echo $id ? 'id="' . esc_attr( $id ) . '"' : ''; ?>
-			class="notice<?php echo esc_attr( $class ); ?>"
-			<?php echo $ajax_nonce; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo $name ? ' id="hustle-' . esc_attr( $name ) . '"' : ''; ?>
+			class="<?php echo esc_attr( $class ); ?>"
+			<?php echo $nonce ? ' data-nonce="' . esc_attr( $nonce ) . '"' : ''; ?>
+			<?php echo $name ? ' data-name="' . esc_attr( $name ) . '"' : ''; ?>
 		>
-
-			<p><?php echo $message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-
-			<?php if ( $additional ) : ?>
-
-				<p><?php echo $additional; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-
-			<?php endif; ?>
-
+			<?php echo wp_kses_post( $message ); ?>
 		</div>
 		<?php
 	}
@@ -126,32 +155,6 @@ class Hustle_Notifications {
 		}
 
 		wp_send_json_success();
-	}
-
-	/**
-	 * Dismisses the notification about deprecating Membership2 visibility condition.
-	 *
-	 * @since 4.2.0
-	 */
-	public function dismiss_m2_notification() {
-		Opt_In_Utils::validate_ajax_call( 'hustle_dismiss_notification' );
-		delete_option( 'hustle_notice_stop_support_m2' );
-
-		wp_send_json_success();
-	}
-
-	/**
-	 * Check is $provider integrated or not
-	 *
-	 * @since 4.0.4
-	 * @param string $provider Provider slug.
-	 * @return bool
-	 */
-	private function is_provider_integrated( $provider ) {
-		$providers = Hustle_Provider_Utils::get_registered_addons_grouped_by_connected();
-		$connected = wp_list_pluck( $providers['connected'], 'slug' );
-
-		return in_array( $provider, $connected, true );
 	}
 
 	/**
@@ -193,71 +196,6 @@ class Hustle_Notifications {
 	}
 
 	/**
-	 * Displays an admin notice when the user is an active member and doesn't have Hustle Pro installed
-	 *
-	 * @since 3.0.6
-	 */
-	public function show_hustle_pro_available_notice() {
-		// Show the notice only to super admins who are members.
-		if ( ! is_super_admin() || ! lib3()->is_member() ) {
-			return;
-		}
-
-		// The notice was already dismissed.
-		if ( self::was_notification_dismissed( 'hustle_pro_is_available' ) ) {
-			return;
-		}
-
-		$link = lib3()->html->element(
-			array(
-				'type'  => 'html_link',
-				'value' => esc_html__( 'Upgrade' ),
-				'url'   => esc_url( lib3()->get_link( 'hustle', 'install_plugin', '' ) ),
-				'class' => 'button-primary',
-			),
-			true
-		);
-
-		$profile = get_option( 'wdp_un_profile_data', '' );
-		$name    = ! empty( $profile ) ? $profile['profile']['name'] : 'Hey';
-
-		/* translators: user's name */
-		$message = sprintf( esc_html__( '%s, it appears you have an active WPMU DEV membership but haven\'t upgraded Hustle to the pro version. You won\'t lose an any settings upgrading, go for it!', 'hustle' ), $name );
-
-		$this->show_notice( $message, $link, 'hustle-notice-pro-is-available', 'info', true );
-	}
-
-	/**
-	 * Display the notice to migrate tracking and subscriptions data.
-	 *
-	 * @since 4.0.0
-	 */
-	public function show_migrate_tracking_notice() {
-
-		if ( ! self::is_show_migrate_tracking_notice() ) {
-			return;
-		}
-
-		$migrate_url = add_query_arg(
-			array(
-				'page'         => Hustle_Module_Admin::ADMIN_PAGE,
-				'show-migrate' => 'true',
-			),
-			'admin.php'
-		);
-
-		$current_user = wp_get_current_user();
-		$username     = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
-		?>
-		<div id="hustle-tracking-migration-notice" class="notice notice-warning">
-			<?php /* translators: user's name */ ?>
-			<p><?php printf( esc_html__( 'Hey %s, nice work on updating the Hustle! However, you need to migrate the data of your existing modules such as tracking data and email list manually.', 'hustle' ), esc_html( $username ) ); ?></p>
-			<p><a href="<?php echo esc_url( $migrate_url ); ?>" class="button-primary"><?php esc_html_e( 'Migrate Data', 'hustle' ); ?></a><a href="#" class="hustle-notice-dismiss" style="margin-left:20px;">Dismiss</a></p>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Whether to show the 3.x to 4.x migration wizard modal
 	 *
 	 * @since 4.0.0
@@ -272,146 +210,11 @@ class Hustle_Notifications {
 		$page       = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
 		$show_modal = filter_input( INPUT_GET, 'show-migrate', FILTER_VALIDATE_BOOLEAN );
 
-		if ( $show_modal || ( Hustle_Module_Admin::ADMIN_PAGE === $page && ! self::was_notification_dismissed( Hustle_Dashboard_Admin::MIGRATE_MODAL_NAME ) ) ) {
+		if ( $show_modal || ( Hustle_Data::ADMIN_PAGE === $page && ! self::was_notification_dismissed( Hustle_Dashboard_Admin::MIGRATE_MODAL_NAME ) ) ) {
 			return false;
 		}
 
 		return true;
-	}
-
-	/**
-	 * Display a notice for reviewing the modules' custom css after migration
-	 *
-	 * @since 4.0.0
-	 */
-	public function show_review_css_after_migration_notice() {
-		if ( self::was_notification_dismissed( '40_custom_style_review' ) ) {
-			return;
-		}
-
-		$current_user = wp_get_current_user();
-		$username     = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
-		?>
-		<div class="hustle-notice notice notice-warning is-dismissible" data-name="40_custom_style_review" data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_dismiss_notification' ) ); ?>">
-			<p>
-			<?php
-			printf(
-				/* translators: user's name */
-				esc_html__( "Hey %s, we have improved Hustle’s front-end code in this update, which included modifying some CSS classes. Any custom CSS you were using may have been affected. We recommend reviewing the modules (which were using custom CSS) to ensure they don't need any adjustments.", 'hustle' ),
-				esc_html( $username )
-			);
-			?>
-			</p>
-			<p><a href="#" class="dismiss-notice"><?php esc_html_e( 'Dismiss this notice', 'hustle' ); ?></a></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Display a notice for reviewing visibility conditions after updating.
-	 *
-	 * @since 4.1.0
-	 */
-	public function show_visibility_behavior_update() {
-		if ( self::was_notification_dismissed( '41_visibility_behavior_update' ) ) {
-			return;
-		}
-		$url_params = array(
-			'page'              => Hustle_Module_Admin::ADMIN_PAGE,
-			'review-conditions' => 'true',
-		);
-		$url        = add_query_arg( $url_params, 'admin.php' );
-		$link       = lib3()->html->element(
-			array(
-				'type'  => 'html_link',
-				'value' => esc_html__( 'Check conditions', 'hustle' ),
-				'url'   => esc_url_raw( $url ),
-				'class' => 'button-primary',
-			),
-			true
-		);
-		$version    = $this->is_free ? '7.1' : '4.1';
-		?>
-		<div class="hustle-notice notice notice-warning" data-name="41_visibility_behavior_update" data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_dismiss_notification' ) ); ?>">
-			<p><b><?php esc_html_e( 'Hustle - Module visibility behaviour update', 'hustle' ); ?></b></p>
-			<p>
-				<?php /* translators: 4.1 version pro or free */ ?>
-				<?php printf( esc_html__( 'Hustle %s fixes a visibility bug which may affect the visibility behavior of your popups and other modules. Please review the visibility conditions of each of your modules to ensure they will appear as you expect.', 'hustle' ), esc_attr( $version ) ); ?>
-			</p>
-			<p>
-				<?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>&nbsp;&nbsp;&nbsp;
-				<label class="sui-label"><span class="sui-label-link dismiss-notice" role="button"><?php esc_html_e( 'Dismiss', 'hustle' ); ?></span></label>
-			</p>
-
-		</div>
-		<?php
-	}
-
-	/**
-	 * Display a notice for updating Marketing Campaings via Sendgrid.
-	 *
-	 * @since 4.0.4
-	 */
-	public function show_sendgrid_update_notice() {
-		// Check if the notification is already dismissed.
-		if ( self::was_notification_dismissed( 'hustle_sendgrid_update_showed' ) ) {
-			return;
-		}
-		// Check if there is no Sendgrid intagration.
-		if ( ! $this->is_provider_integrated( 'sendgrid' ) ) {
-			self::add_dismissed_notification( 'hustle_sendgrid_update_showed' );
-
-			return;
-		}
-
-		$integrations_url = add_query_arg(
-			array(
-				'page' => Hustle_Module_Admin::INTEGRATIONS_PAGE,
-			),
-			'admin.php'
-		);
-
-		$current_user = wp_get_current_user();
-		$username     = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
-		?>
-		<div id="hustle-sendgrid-update-notice" class="notice notice-warning is-dismissible" data-name="hustle_sendgrid_update_showed" data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_dismiss_notification' ) ); ?>">
-			<p>
-			<?php
-				printf(
-					/* translators: 1. user's name, 2. opening 'a' tag to sendgrid link, 3. closing 'a' tag, 4. opening 'b' tag, 5. closing 'b' tag */
-					esc_html__( 'Hey %1$s, we have updated our %4$sSendGrid%5$s integration to support the %2$snew Marketing Campaigns%3$s. You need to review your existing SendGrid integration(s) and select the Marketing Campaigns version (new or legacy) you are using to avoid failed API calls.', 'hustle' ),
-					esc_html( $username ),
-					'<a href="https://sendgrid.com/blog/new-era-marketing-campaigns/" target="_blank">',
-					'</a>',
-					'<b>',
-					'</b>'
-				);
-			?>
-				</p>
-			<p><a href="<?php echo esc_url( $integrations_url ); ?>" class="button-primary"><?php esc_html_e( 'Review Integrations', 'hustle' ); ?></a></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Shows the provider's migration notice.
-	 *
-	 * @since 4.2.0
-	 */
-	public function show_provider_migration_notice() {
-
-		$aweber_instances = get_option( 'hustle_provider_aweber_settings' );
-		if ( ! empty( $aweber_instances ) ) {
-			foreach ( $aweber_instances as $key => $instance ) {
-				if ( ! array_key_exists( 'access_oauth2_token', $instance ) || empty( $instance['access_oauth2_token'] ) ) {
-					$provider_data = array(
-						'name' => $instance['name'],
-						'id'   => $key,
-					);
-					$this->get_provider_migration_notice_html( 'aweber', $provider_data );
-				}
-			}
-		}
 	}
 
 	/**
@@ -422,14 +225,14 @@ class Hustle_Notifications {
 	 * @param string $provider Provider's name.
 	 * @param array  $provider_data Provider's data.
 	 */
-	public function get_provider_migration_notice_html( $provider, $provider_data = array() ) {
+	private function get_provider_migration_notice_html( $provider, $provider_data = array() ) {
 		$current_user = wp_get_current_user();
 
 		$username = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
 
 		$migrate_url = add_query_arg(
 			array(
-				'page'                    => Hustle_Module_Admin::INTEGRATIONS_PAGE,
+				'page'                    => Hustle_Data::INTEGRATIONS_PAGE,
 				'show_provider_migration' => $provider,
 				'integration_id'          => isset( $provider_data['id'] ) ? $provider_data['id'] : '',
 			),
@@ -483,49 +286,22 @@ class Hustle_Notifications {
 	}
 
 	/**
-	 * Display a notice for Deprecating Membership 2 visibility condition
-	 *
-	 * @since 4.1
-	 */
-	public function show_depricating_m2_conditions() {
-		$count_m2_modules = count( get_option( 'hustle_notice_stop_support_m2', array() ) );
-		if ( ! $count_m2_modules ) {
-			return;
-		}
-
-		$current_user = wp_get_current_user();
-		$username     = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
-		?>
-		<div id="hustle-m2-notice" class="notice notice-error">
-			<p><b><?php esc_html_e( 'Hustle - Deprecating Membership 2 visibility condition', 'hustle' ); ?></b></p>
-			<p>
-			<?php
-				printf(
-					/* translators: user's name */
-					esc_html__( 'Hey %1$s, we have deprecated the membership visibility condition for the %2$sMembership 2%4$s plugin. Since you were using the condition on %5$s modules, you can install a mu-plugin to continue using it. Read our mu-plugin %3$sinstallation guide%4$s.', 'hustle' ),
-					esc_html( $username ),
-					'<a href="https://github.com/wpmudev/membership-2" target="_blank">',
-					'<a href="https://premium.wpmudev.org/manuals/wpmu-manual-2/using-mu-plugins/" target="_blank">',
-					'</a>',
-					(int) $count_m2_modules
-				);
-			?>
-				</p>
-			<p>
-				<a href="https://gist.github.com/wpmudev-sls/84544541eddd5cd7c7c60c5ef0406597" class="button-primary" target="_blank"><?php esc_html_e( 'Membership 2 condition mu-plugin', 'hustle' ); ?></a>
-				&nbsp;&nbsp;
-				<span id="hustle-dismiss-m2-notice" data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_dismiss_notification' ) ); ?>" style="cursor: pointer;"><?php esc_html_e( 'Dismiss', 'hustle' ); ?></span>
-			</p>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Add the notices for the plugins page
 	 *
 	 * @since 4.2.0
 	 */
 	public function load_plugins_page_notices() {
+		if ( $this->is_free ) {
+			// Register the current plugin.
+			do_action(
+				'wdev-register-plugin', // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+				plugin_basename( __FILE__ ),             // 1. Plugin ID
+				'Hustle',                                // 2. Plugin Title
+				'/plugins/wordpress-popup/',             // 3. https://wordpress.org
+				__( 'Sign Me Up', 'hustle' ), // 4. Email Button CTA
+				'f68d9fbc51'                             // 5. Mailchimp List id
+			);
+		}
 
 		// Skip if the current page doesn't have 'current_screen' defined.
 		if ( ! function_exists( 'get_current_screen' ) ) {
@@ -539,24 +315,25 @@ class Hustle_Notifications {
 		}
 
 		// Display admin notice about plugin deactivation.
-		add_action( 'network_admin_notices', array( $this, 'hustle_activated_deactivated' ) );
+		if ( is_multisite() ) {
+			add_action( 'network_admin_notices', array( $this, 'hustle_activated_deactivated' ) );
+		}
+
+		// We want to show this in the subsite's plugin page as well.
 		add_action( 'admin_notices', array( $this, 'hustle_activated_deactivated' ) );
 
-		// Add notice to plugin row for 4.1 on Plugins page.
+		$this->add_in_hustle_row_messages();
+	}
+
+	/**
+	 * Add notices in the plugin's row.
+	 *
+	 * @since 4.2.2
+	 */
+	private function add_in_hustle_row_messages() {
+
 		if ( $this->is_free ) {
 			add_action( 'in_plugin_update_message-wordpress-popup/popover.php', array( $this, 'in_plugin_update_message' ), 10, 2 );
-
-			require_once Opt_In::$plugin_path . 'lib/free-dashboard/module.php';
-			// Register the current plugin.
-			do_action(
-				'wdev-register-plugin', // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-				plugin_basename( __FILE__ ),             // 1. Plugin ID
-				'Hustle',                                // 2. Plugin Title
-				'/plugins/wordpress-popup/',             // 3. https://wordpress.org
-				__( 'Sign Me Up', 'hustle' ), // 4. Email Button CTA
-				'f68d9fbc51'                             // 5. Mailchimp List id
-			);
-
 		} else {
 
 			add_action(
@@ -578,37 +355,6 @@ class Hustle_Notifications {
 				),
 			);
 			require_once Opt_In::$plugin_path . 'lib/wpmudev-dashboard/wpmudev-dash-notification.php';
-		}
-
-	}
-
-	/**
-	 * Display admin notice about plugin deactivation
-	 *
-	 * @since 2.1.4
-	 * @since 4.2.0 Moved from Opt_In to this class.
-	 */
-	public function hustle_activated_deactivated() {
-
-		// For Pro.
-		if ( get_site_option( 'hustle_free_deactivated' ) && is_super_admin() ) {
-			?>
-			<div class="notice notice-success is-dismissible">
-				<p><?php esc_html_e( 'Congratulations! You have activated Hustle Pro! We have automatically deactivated the free version.', 'hustle' ); ?></p>
-			</div>
-
-			<?php
-			delete_site_option( 'hustle_free_deactivated' );
-		}
-
-		// For Free.
-		if ( get_site_option( 'hustle_free_activated' ) && is_super_admin() ) {
-			?>
-			<div class="notice notice-error is-dismissible">
-				<p><?php esc_html_e( 'You already have Hustle Pro activated. If you really wish to go back to the free version of Hustle, please deactivate the Pro version first.', 'hustle' ); ?></p>
-			</div>
-			<?php
-			delete_site_option( 'hustle_free_activated' );
 		}
 	}
 
@@ -644,4 +390,282 @@ class Hustle_Notifications {
 		</script>";
 	}
 
+	/**
+	 * **************************
+	 * NOTICES
+	 * **************************
+	 */
+
+	/**
+	 * Available notifications.
+	 *
+	 * In plugins.php page.
+	 *
+	 * @see Hustle_Notifications::hustle_activated_deactivated()
+	 *
+	 * In Hustle pages.
+	 * @see Hustle_Notifications::show_pro_available_notice()
+	 * @see Hustle_Notifications::show_migrate_tracking_notice()
+	 * @see Hustle_Notifications::show_review_css_after_migration_notice()
+	 * @see Hustle_Notifications::show_sendgrid_update_notice()
+	 * @see Hustle_Notifications::show_provider_migration_notice()
+	 * @see Hustle_Notifications::show_visibility_behavior_update()
+	 */
+
+	/**
+	 * Displays a notice on plugin activation and deactivaton.
+	 * This is shown when either free or pro is active, and the other version (free or pro) is activated.
+	 *
+	 * @since 2.1.4
+	 * @since 4.2.0 Moved from Opt_In to this class.
+	 */
+	public function hustle_activated_deactivated() {
+		// Show the notice only to users who can do something about this.
+		if ( ! $this->user_can_update_plugins ) {
+			return;
+		}
+
+		// For Pro.
+		if ( get_site_option( 'hustle_free_deactivated' ) ) {
+			$message = '<p>' . esc_html__( 'Congratulations! You have activated Hustle Pro! We have automatically deactivated the free version.', 'hustle' ) . '</p>';
+			$this->show_notice( $message, false, 'success', true );
+
+			delete_site_option( 'hustle_free_deactivated' );
+		}
+
+		// For Free.
+		if ( get_site_option( 'hustle_free_activated' ) ) {
+			$message = '<p>' . esc_html__( 'You already have Hustle Pro activated. If you really wish to go back to the free version of Hustle, please deactivate the Pro version first', 'hustle' ) . '</p>';
+			$this->show_notice( $message, false, 'error', true );
+
+			delete_site_option( 'hustle_free_activated' );
+		}
+	}
+
+	/**
+	 * Displays an admin notice when the user is an active member and doesn't have Hustle Pro installed
+	 * Shown in hustle pages. Per user notification.
+	 *
+	 * @since 3.0.6
+	 */
+	public function show_pro_available_notice() {
+		// The notice was already dismissed.
+		if ( self::was_notification_dismissed( 'hustle_pro_is_available' ) ) {
+			return;
+		}
+
+		// Show the notice only to users who can do something about this and who are members.
+		if ( ! $this->user_can_update_plugins || ! Opt_In_Utils::is_hustle_included_in_membership() ) {
+			return;
+		}
+
+		$link = '<a class="button-primary" href="' . esc_url( Opt_In_Utils::get_link( 'install_plugin' ) ) . '" target="_self" >' . esc_html__( 'Upgrade' ) . '</a>';
+
+		$profile = get_option( 'wdp_un_profile_data', '' );
+		$name    = ! empty( $profile ) ? $profile['profile']['name'] : __( 'Hey', 'hustle' );
+
+		$message = '<p>';
+		/* translators: user's name */
+		$message .= sprintf( esc_html__( '%s, it appears you have an active WPMU DEV membership but haven\'t upgraded Hustle to the pro version. You won\'t lose an any settings upgrading, go for it!', 'hustle' ), $name );
+		$message .= '</p>';
+		$message .= '<p>' . $link . '</p>';
+
+		// used id hustle-notice-pro-is-available before.
+		$this->show_notice( $message, 'hustle_pro_is_available', 'info', true );
+	}
+
+	/**
+	 * Display the notice to migrate tracking and subscriptions data.
+	 * Shown in hustle pages. Per user notification.
+	 *
+	 * @since 4.0.0
+	 */
+	public function show_migrate_tracking_notice() {
+
+		if ( ! self::is_show_migrate_tracking_notice() ) {
+			return;
+		}
+
+		$migrate_url = add_query_arg(
+			array(
+				'page'         => Hustle_Data::ADMIN_PAGE,
+				'show-migrate' => 'true',
+			),
+			'admin.php'
+		);
+
+		$current_user = wp_get_current_user();
+		$username     = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
+
+		$message = '<p>';
+		/* translators: user's name */
+		$message .= sprintf( esc_html__( 'Hey %s, nice work on updating the Hustle! However, you need to migrate the data of your existing modules such as tracking data and email list manually.', 'hustle' ), esc_html( $username ) );
+		$message .= '</p>';
+		$message .= '<p><a href="' . esc_url( $migrate_url ) . '" class="button-primary">' . esc_html__( 'Migrate Data', 'hustle' ) . '</a><a href="#" class="hustle-notice-dismiss" style="margin-left:20px;">' . esc_html__( 'Dismiss', 'hustle' ) . '</a></p>';
+
+		$this->show_notice( $message, 'tracking-migration-notice', 'warning', false );
+	}
+
+	/**
+	 * Display a notice for reviewing the modules' custom css after migration.
+	 * Shown in hustle pages. Per user notification.
+	 *
+	 * @since 4.0.0
+	 */
+	public function show_review_css_after_migration_notice() {
+		if ( self::was_notification_dismissed( '40_custom_style_review' ) ) {
+			return;
+		}
+
+		$current_user = wp_get_current_user();
+		$username     = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
+
+		$message  = '<p>';
+		$message .= sprintf(
+			/* translators: user's name */
+			esc_html__( "Hey %s, we have improved Hustle’s front-end code in this update, which included modifying some CSS classes. Any custom CSS you were using may have been affected. We recommend reviewing the modules (which were using custom CSS) to ensure they don't need any adjustments.", 'hustle' ),
+			esc_html( $username )
+		);
+		$message .= '</p>';
+
+		$this->show_notice( $message, '40_custom_style_review', 'warning', true );
+	}
+
+	/**
+	 * Display a notice for updating Marketing Campaings via Sendgrid.
+	 * Shown in hustle pages. Per user notification.
+	 *
+	 * @since 4.0.4
+	 */
+	public function show_sendgrid_update_notice() {
+		// Check if the notification is already dismissed.
+		if ( self::was_notification_dismissed( 'hustle_sendgrid_update_showed' ) ) {
+			return;
+		}
+		// Check if there is no Sendgrid intagration.
+		if ( ! $this->is_provider_integrated( 'sendgrid' ) ) {
+			self::add_dismissed_notification( 'hustle_sendgrid_update_showed' );
+			return;
+		}
+
+		$integrations_url = add_query_arg(
+			array( 'page' => Hustle_Data::INTEGRATIONS_PAGE ),
+			'admin.php'
+		);
+
+		$current_user = wp_get_current_user();
+		$username     = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
+
+		$message  = '<p>';
+		$message .= sprintf(
+			/* translators: 1. user's name, 2. opening 'a' tag to sendgrid link, 3. closing 'a' tag, 4. opening 'b' tag, 5. closing 'b' tag */
+			esc_html__( 'Hey %1$s, we have updated our %4$sSendGrid%5$s integration to support the %2$snew Marketing Campaigns%3$s. You need to review your existing SendGrid integration(s) and select the Marketing Campaigns version (new or legacy) you are using to avoid failed API calls.', 'hustle' ),
+			esc_html( $username ),
+			'<a href="https://sendgrid.com/blog/new-era-marketing-campaigns/" target="_blank">',
+			'</a>',
+			'<b>',
+			'</b>'
+		);
+		$message .= '</p>';
+		$message .= '<p><a href="' . esc_url( $integrations_url ) . '" class="button-primary">' . esc_html__( 'Review Integrations', 'hustle' ) . '</a></p>';
+
+		$this->show_notice( $message, 'hustle_sendgrid_update_showed', 'warning', true );
+	}
+
+	/**
+	 * Shows the provider's migration notice.
+	 * Shown in hustle pages. Per user notification.
+	 *
+	 * @since 4.2.0
+	 */
+	public function show_provider_migration_notice() {
+
+		$aweber_instances = get_option( 'hustle_provider_aweber_settings' );
+		if ( ! empty( $aweber_instances ) ) {
+			foreach ( $aweber_instances as $key => $instance ) {
+				if ( ! array_key_exists( 'access_oauth2_token', $instance ) || empty( $instance['access_oauth2_token'] ) ) {
+					$provider_data = array(
+						'name' => $instance['name'],
+						'id'   => $key,
+					);
+					$this->get_provider_migration_notice_html( 'aweber', $provider_data );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Display a notice for reviewing visibility conditions after updating.
+	 * Shown in hustle pages. Per user notification.
+	 *
+	 * @since 4.1.0
+	 */
+	public function show_visibility_behavior_update() {
+		if ( self::was_notification_dismissed( '41_visibility_behavior_update' ) ) {
+			return;
+		}
+		if ( $this->is_fresh_install() ) {
+			return;
+		}
+		$url_params = array(
+			'page'              => Hustle_Data::ADMIN_PAGE,
+			'review-conditions' => 'true',
+		);
+		$url        = add_query_arg( $url_params, 'admin.php' );
+
+		$link = '<a class="button-primary" href="' . esc_url( $url ) . '" target="_self" >' . esc_html__( 'Check conditions', 'hustle' ) . '</a>';
+
+		$version = $this->is_free ? '7.1' : '4.1';
+
+		ob_start();
+		?>
+		<p>
+			<b><?php esc_html_e( 'Hustle - Module visibility behaviour update', 'hustle' ); ?></b>
+		</p>
+
+		<p>
+			<?php /* translators: 4.1 version pro or free */ ?>
+			<?php printf( esc_html__( 'Hustle %s fixes a visibility bug which may affect the visibility behavior of your popups and other modules. Please review the visibility conditions of each of your modules to ensure they will appear as you expect.', 'hustle' ), esc_attr( $version ) ); ?>
+		</p>
+
+		<p>
+			<?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<a href="#" class="dismiss-notice" style="margin-left:14px;"><?php esc_html_e( 'Dismiss', 'hustle' ); ?></a>
+		</p>
+		<?php
+		$message = ob_get_clean();
+
+		$this->show_notice( $message, '41_visibility_behavior_update', 'warning', true );
+	}
+
+	/**
+	 * **************************
+	 * NOTICES
+	 * **************************
+	 */
+	/**
+	 * Check is $provider integrated or not
+	 *
+	 * @since 4.0.4
+	 * @param string $provider Provider slug.
+	 * @return bool
+	 */
+	private function is_provider_integrated( $provider ) {
+		$providers = Hustle_Provider_Utils::get_registered_addons_grouped_by_connected();
+		$connected = wp_list_pluck( $providers['connected'], 'slug' );
+
+		return in_array( $provider, $connected, true );
+	}
+
+	/**
+	 * Checks whether the current install is a fresh one.
+	 * It returns false if there was a version installed before.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return boolean
+	 */
+	private function is_fresh_install() {
+		return ! get_site_option( 'hustle_previous_version', false );
+	}
 }

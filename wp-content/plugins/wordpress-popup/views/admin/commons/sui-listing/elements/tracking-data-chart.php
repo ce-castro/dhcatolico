@@ -6,6 +6,13 @@
  * @since 4.0.0
  */
 
+// Labels and values for the options for the Optin tracking charts.
+$cta_labels = array(
+	'all'   => __( 'All', 'hustle' ),
+	'cta'   => __( 'Call to Action', 'hustle' ),
+	'optin' => __( 'Opt-in Form', 'hustle' ),
+);
+
 $chart_message_class = '';
 $chart_message       = '';
 $chart_sub_type      = empty( $module_sub_type ) ? 'overall' : $module_sub_type;
@@ -20,8 +27,7 @@ $canvas_content = sprintf(
 );
 
 // For embeds and ssharing, check if the sub type (inline, shortcode, etc.) this chart
-// belongs to has tracking enabled.
-if ( ! empty( $module_sub_type ) && $is_tracking_enabled ) {
+if ( ! empty( $module_sub_type ) ) {
 
 	// And set the data of this sub type.
 	$is_tracking_enabled      = isset( $tracking_types[ $module_sub_type ] );
@@ -78,7 +84,7 @@ if ( ! $module->active ) {
 		<span class="hustle-tracking-<?php echo esc_attr( $chart_sub_type ); ?>-conversions-rate"><?php echo esc_html( $rate ); ?>%</span>
 	</li>
 
-	<?php if ( ! empty( $is_cta ) && Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type && Hustle_Module_Model::OPTIN_MODE === $module->module_mode ) : ?>
+	<?php if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type && Hustle_Module_Model::OPTIN_MODE === $module->module_mode ) : ?>
 
 		<li class="hustle-conversion-select" data-col="selector">
 
@@ -92,12 +98,13 @@ if ( ! $module->active ) {
 			</label>
 
 			<select
-				class="sui-select-sm hui-selector-button hustle-conversion-type"
+				class="sui-select sui-select-inline sui-select-sm hustle-conversion-type"
+				data-width="120"
 				data-module-type="<?php echo esc_attr( $chart_sub_type ); ?>"
 			>
-				<option value="all"><?php esc_html_e( 'All', 'hustle' ); ?></option>
-				<option value="cta"><?php esc_html_e( 'CTA', 'hustle' ); ?></option>
-				<option value="optin"><?php esc_html_e( 'Opt-in Form', 'hustle' ); ?></option>
+				<?php foreach ( $cta_labels as $key => $cta_label ) { ?>
+					<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $cta_label ); ?></option>
+				<?php } ?>
 			</select>
 
 		</li>

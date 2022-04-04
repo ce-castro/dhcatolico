@@ -211,10 +211,17 @@ class Hustle_Provider_Utils {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param string $module_id Module ID.
+	 * @param string $module_id Optional. Module ID.Get module id from URL if it's not set.
 	 * @return array
 	 */
-	public static function get_registered_addons_grouped_by_form_connected( $module_id ) {
+	public static function get_registered_addons_grouped_by_form_connected( $module_id = null ) {
+
+		if ( is_null( $module_id ) ) {
+			$module_id = filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT );
+			if ( is_null( $module_id ) ) {
+				$module_id = '';
+			}
+		}
 
 		$connected_addons     = array();
 		$not_connected_addons = array();
@@ -353,7 +360,7 @@ class Hustle_Provider_Utils {
 
 		foreach ( $modules_ids as $id ) {
 
-			$module = Hustle_Module_Model::instance()->get( $id );
+			$module = new Hustle_Module_Model( $id );
 
 			if ( is_wp_error( $module ) ) {
 				continue;
@@ -561,7 +568,7 @@ class Hustle_Provider_Utils {
 					$action_class = 'hustle-provider-back ';
 					break;
 				case 'close':
-					$action_class = 'hustle-provider-close ';
+					$action_class = 'hustle-provider-close hustle-modal-close ';
 					break;
 				case 'connect':
 					$action_class = 'hustle-provider-connect ';

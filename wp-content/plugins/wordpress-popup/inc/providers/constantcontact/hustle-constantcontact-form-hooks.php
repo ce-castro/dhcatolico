@@ -101,8 +101,7 @@ class Hustle_ConstantContact_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstr
 			);
 
 			if ( $exists ) {
-				$existing_contact = $api->get_contact( $submitted_data['email'] );
-				$response         = $api->updateSubscription( $existing_contact, $first_name, $last_name, $list_id, $custom_fields );
+				$response = $api->updateSubscription( $exists, $first_name, $last_name, $list_id, $custom_fields );
 			} else {
 				$response = $api->subscribe( $submitted_data['email'], $first_name, $last_name, $list_id, $custom_fields );
 			}
@@ -263,8 +262,7 @@ class Hustle_ConstantContact_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstr
 	 */
 	protected function get_subscriber( $api, $data ) {
 		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ) {
-			$existing_contact                           = $api->get_contact( $data['email'] );
-			$this->_subscriber[ md5( $data['email'] ) ] = $api->contact_exist( $existing_contact, $data['list_id'] );
+			$this->_subscriber[ md5( $data['email'] ) ] = $api->get_contact( $data['email'] );
 		}
 		return $this->_subscriber[ md5( $data['email'] ) ];
 	}

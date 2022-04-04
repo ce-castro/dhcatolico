@@ -46,7 +46,11 @@
 						value="<?php echo esc_attr( $settings['never_see_link_text'] ); ?>"
 						class="sui-form-control" />
 
+
+
 				</div>
+
+				<?php Opt_In_Utils::get_cookie_saving_notice(); ?>
 
 			</div>
 

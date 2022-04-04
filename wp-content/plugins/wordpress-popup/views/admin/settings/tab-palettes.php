@@ -77,9 +77,9 @@
 						array(
 							array(
 								'type'  => 'inline_notice',
-								'class' => 'sui-notice-info',
+								'icon'  => 'info',
 								/* translators: 1: opening 'strong' tag, 2: closing 'strong' tag */
-								'value' => sprintf( esc_html__( 'You have not created any custom color palette yet. Click on the %1$s“Create Color Palette”%2$s button to create your first custom palette.', 'hustle' ), '<strong>', '</strong>' ),
+								'value' => sprintf( esc_html__( 'You have not created any custom color palette yet. Click on the %1$s“Create Custom Palette”%2$s button to create your first custom palette.', 'hustle' ), '<strong>', '</strong>' ),
 							),
 						)
 					);
@@ -87,7 +87,7 @@
 
 				<?php endif; ?>
 
-				<button class="hustle-create-palette sui-button sui-button-ghost">
+				<button class="hustle-create-palette sui-button sui-button-ghost" data-tooltip="<?php esc_attr_e( 'Create Custom Palette', 'hustle' ); ?>">
 					<span class="sui-icon-plus" aria-hidden="true"></span> <?php esc_html_e( 'Create custom palette', 'hustle' ); ?>
 				</button>
 

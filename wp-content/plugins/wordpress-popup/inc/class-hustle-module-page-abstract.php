@@ -15,6 +15,14 @@
 abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 	/**
+	 * Edit page slug defined by WordPress when registering the page.
+	 *
+	 * @since 4.3.1
+	 * @var string
+	 */
+	private $page_edit_slug;
+
+	/**
 	 * Wizard page slug assigned by us.
 	 *
 	 * @since 4.0.1
@@ -63,6 +71,14 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	private $module_count_type;
 
 	/**
+	 * Module type this page belongs to.
+	 *
+	 * @since 4.2.0
+	 * @var string
+	 */
+	public $module_type;
+
+	/**
 	 * Established the properties for the page.
 	 *
 	 * @since 4.0.1
@@ -73,11 +89,11 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 		$this->page_menu_title = $this->page_title;
 
-		$this->page = Hustle_Module_Admin::get_listing_page_by_module_type( $this->module_type );
+		$this->page = Hustle_Data::get_listing_page_by_module_type( $this->module_type );
 
 		$this->page_capability = 'hustle_edit_module';
 
-		$this->page_edit = Hustle_Module_Admin::get_wizard_page_by_module_type( $this->module_type );
+		$this->page_edit = Hustle_Data::get_wizard_page_by_module_type( $this->module_type );
 
 		$this->page_edit_capability = 'hustle_edit_module';
 
@@ -118,8 +134,6 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		} else {
 			$this->on_listing_only_actions();
 		}
-
-		$this->load_preview_scripts();
 	}
 
 	/**
@@ -128,8 +142,8 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	 *
 	 * @since 4.2.0
 	 */
-	public function run_action_on_page_load() {
-		$this->export_module();
+	public function current_page_loaded() {
+		parent::current_page_loaded();
 	}
 
 	/**
@@ -167,7 +181,39 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			}
 		}
 
+		if ( $module_type ) {
+			self::maybe_view_stats( $module_type );
+		}
+
 		return $removable_query_args;
+	}
+
+	/**
+	 * Change pagination page to the relevant one for View Stats links
+	 *
+	 * @param string $module_type Module type.
+	 */
+	private static function maybe_view_stats( $module_type ) {
+		$module_id = filter_input( INPUT_GET, 'view-stats', FILTER_VALIDATE_INT );
+		if ( ! $module_id ) {
+			return;
+		}
+		$module_id        = (string) $module_id;
+		$args             = array(
+			'module_type' => $module_type,
+			'fields'      => 'ids',
+		);
+		$entries_per_page = Hustle_Settings_Admin::get_per_page( 'module' );
+		$modules          = Hustle_Module_Collection::instance()->get_all( null, $args );
+		$i                = array_search( $module_id, $modules, true );
+		if ( false === $i ) {
+			return;
+		}
+
+		$paged = ceil( ( $i + 1 ) / $entries_per_page );
+		if ( 1 < $paged ) {
+			$_GET['paged'] = $paged;
+		}
 	}
 
 	/**
@@ -208,9 +254,6 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 			add_filter( 'mce_external_plugins', array( $this, 'add_hustle_tinymce_button_and_remove_externals' ) );
 		}
-
-		// Register variables for the js side only if this is the requested page.
-		add_filter( 'hustle_optin_vars', array( $this, 'register_current_json' ) );
 	}
 
 	/**
@@ -223,7 +266,18 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 		wp_enqueue_script( 'jquery-ui-sortable' );
 
-		wp_enqueue_script( 'wp-color-picker-alpha', Opt_In::$plugin_url . 'assets/js/vendor/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), '1.2.2', true );
+		wp_register_script( 'wp-color-picker-alpha', Opt_In::$plugin_url . 'assets/js/vendor/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), '3.0.2', true );
+
+		$color_picker_strings = array(
+			'clear'            => __( 'Clear', 'hustle' ),
+			'clearAriaLabel'   => __( 'Clear color', 'hustle' ),
+			'defaultString'    => __( 'Default', 'hustle' ),
+			'defaultAriaLabel' => __( 'Select default color', 'hustle' ),
+			'pick'             => __( 'Select Color', 'hustle' ),
+			'defaultLabel'     => __( 'Color value', 'hustle' ),
+		);
+		wp_localize_script( 'wp-color-picker-alpha', 'wpColorPickerL10n', $color_picker_strings );
+		wp_enqueue_script( 'wp-color-picker-alpha' );
 	}
 
 	/**
@@ -255,23 +309,32 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		wp_enqueue_media();
 		wp_enqueue_script( 'media-upload' );
 
-		wp_register_script(
-			'optin_admin_ace',
-			Opt_In::$plugin_url . 'assets/js/vendor/ace/ace.js',
-			array(),
-			Opt_In::VERSION,
-			true
-		);
-		wp_register_script(
-			'optin_admin_fitie',
-			Opt_In::$plugin_url . 'assets/js/vendor/fitie/fitie.js',
-			array(),
-			Opt_In::VERSION,
+//		wp_enqueue_script(
+//			'optin_admin_ace',
+//			Opt_In::$plugin_url . 'assets/js/vendor/ace/ace.js',
+//			array(),
+//			Opt_In::VERSION,
+//			true
+//		);
+
+		Opt_In_Utils::maybe_add_scripts_for_ie();
+
+		// Datepicker and timpicker for automated email in optins.
+		wp_enqueue_script( 'jquery-ui-datepicker' );
+		wp_enqueue_script(
+			'jquery-ui-timepicker',
+			Opt_In::$plugin_url . 'assets/js/vendor/jquery.timepicker.min.js',
+			array( 'jquery' ),
+			'1.3.5',
 			true
 		);
 
-		wp_enqueue_script( 'optin_admin_ace' );
-		wp_enqueue_script( 'optin_admin_fitie' );
+		wp_enqueue_style(
+			'jquery-ui-timepicker',
+			Opt_In::$plugin_url . 'assets/css/jquery.timepicker.min.css',
+			array(),
+			'1.3.5'
+		);
 
 		// Register moment.js and its timezone extension.
 		// Used for schedule, to calculate time with timezones on client side.
@@ -318,6 +381,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 		$var_button   = array();
 		$saved_fields = $this->module->get_form_fields();
+		$var_button   = array();
 
 		if ( is_array( $saved_fields ) && ! empty( $saved_fields ) ) {
 			$fields         = array();
@@ -369,10 +433,11 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	 * @return void
 	 */
 	public function register_admin_menu() {
-
 		parent::register_admin_menu();
 
-		add_submenu_page( 'hustle', $this->page_edit_title, $this->page_edit_title, $this->page_edit_capability, $this->page_edit, array( $this, 'render_edit_page' ) );
+		$this->page_edit_slug = add_submenu_page( 'hustle', $this->page_edit_title, $this->page_edit_title, $this->page_edit_capability, $this->page_edit, array( $this, 'render_edit_page' ) );
+
+		add_action( 'load-' . $this->page_edit_slug, array( $this, 'current_page_loaded' ) );
 	}
 
 	/**
@@ -481,12 +546,12 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	/**
 	 * Add data to the current json array.
 	 *
-	 * @since 4.0.1
+	 * @since 4.3.1
 	 *
-	 * @param array $current_array Currently registered data.
 	 * @return array
 	 */
-	public function register_current_json( $current_array ) {
+	protected function get_vars_to_localize() {
+		$current_array = parent::get_vars_to_localize();
 
 		// Wizard page only.
 		if ( $this->module ) {
@@ -495,67 +560,32 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			$module_metas = $this->module->get_module_metas_as_array();
 
 			$current_array = $this->register_visibility_conditions_js_vars( $current_array );
-			$current_array = $this->register_fields_js_vars( $current_array );
+
+			$current_array += $this->get_wizard_js_variables_to_localize();
 
 			$current_array['current'] = array_merge(
 				$module_metas,
 				array(
-					'listing_page'     => $this->page,
-					'wizard_page'      => $this->page_edit,
-					'section'          => Hustle_Module_Admin::get_current_section(),
-					'data'             => $data,
-					'shortcode_id'     => $this->module->get_shortcode_id(),
-					'schedule_strings' => array(
-						'months'    => Opt_In_Utils::get_months(),
-						'week_days' => Opt_In_Utils::get_week_days( 'short' ),
-						'meridiem'  => Opt_In_Utils::get_time_periods(),
-					),
+					'is_optin'     => 'optin' === $this->module->module_mode,
+					'listing_page' => $this->page,
+					'wizard_page'  => $this->page_edit,
+					'section'      => $this->get_current_section(),
+					'data'         => $data,
+					'shortcode_id' => $this->module->get_shortcode_id(),
 				)
 			);
-
-			$wp_gmt = get_option( 'gmt_offset' );
-
-			$current_array['time'] = array(
-				'wp_gmt_offset' => $wp_gmt,
-			);
-
-			// Also defined integrations.
-			$current_array['providers_action_nonce'] = wp_create_nonce( 'hustle_provider_action' );
-			$current_array['fetching_list']          = __( 'Fetching integration list…', 'hustle' );
-			$current_array['palettes']               = Hustle_Meta_Base_Design::get_all_palettes();
 
 			$type_capitalized = Opt_In_Utils::get_module_type_display_name( $this->module_type, false, true );
 			$type_lowercase   = Opt_In_Utils::get_module_type_display_name( $this->module_type );
 
 			$messages = array(
-				'required_error_message'       => __( 'Your {field} is required.', 'hustle' ),
-				'is_required'                  => __( '{field} is required.', 'hustle' ),
-				'cant_empty'                   => __( 'This field can\'t be empty.', 'hustle' ),
-				'url_required_error_message'   => __( 'Your website url is required.', 'hustle' ),
-				'gdpr_required_error_message'  => __( 'Please accept the terms and try again.', 'hustle' ),
-				'validation_message'           => __( 'Please enter a valid {field}.', 'hustle' ),
-				'date_validation_message'      => __( 'Please enter a valid date.', 'hustle' ),
-				'time_validation_message'      => __( 'Please enter a valid time.', 'hustle' ),
-				'recaptcha_validation_message' => __( 'reCAPTCHA verification failed. Please try again.', 'hustle' ),
-				/* translators: 1. module type in lowercase */
-				'new_schedule_set'             => sprintf( esc_html__( 'Successfully added a schedule for your %1$s. However, make sure to save changes and publish your %1$s for it to start appearing as per your schedule.', 'hustle' ), esc_html( $type_lowercase ) ),
-				'unpublish'                    => __( 'Unpublish', 'hustle' ),
-				'save_draft'                   => __( 'Save draft', 'hustle' ),
-				'save_changes'                 => __( 'Save changes', 'hustle' ),
-				'publish'                      => __( 'Publish', 'hustle' ),
+				'module_error'        => __( "Couldn't save your module settings because there were some errors on {page} tab(s). Please fix those errors and try again.", 'hustle' ),
+				'module_error_reload' => __( 'Something went wrong. Please reload this page and try saving again', 'hustle' ),
 				/* translators: 1. module type capitalized, 2. module type in lowercase */
-				'module_created'               => sprintf( __( '%1$s created successfully. Get started by adding content to your new %2$s below.', 'hustle' ), $type_capitalized, $type_lowercase ), // only when 'is_new'.
-				'media_uploader'               => array(
-					'select_or_upload' => __( 'Select or Upload Image', 'hustle' ),
-					'use_this_image'   => __( 'Use this image', 'hustle' ),
-				),
-				'settings'                     => array(
-					'popup'           => __( 'popup', 'hustle' ),
-					'slide_in'        => __( 'slide in', 'hustle' ),
-					'after_content'   => __( 'after content', 'hustle' ),
-					'floating_social' => __( 'floating social', 'hustle' ),
-				),
+				'module_created'      => sprintf( __( '%1$s created successfully. Get started by adding content to your new %2$s below.', 'hustle' ), $type_capitalized, $type_lowercase ), // only when 'is_new'.
 			);
+
+			$current_array['single_module_action_nonce'] = wp_create_nonce( 'hustle_single_action' );
 
 			$current_array['messages'] = array_merge( $current_array['messages'], $messages );
 
@@ -568,7 +598,9 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			);
 
 			$current_array['labels'] = array(
+				/* translators: number of conversions */
 				'submissions' => __( '%d Conversions', 'hustle' ),
+				/* translators: number of views */
 				'views'       => __( '%d Views', 'hustle' ),
 			);
 
@@ -589,21 +621,27 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			}
 
 			$messages = array(
-				'module_imported'       => __( 'Module successfully imported.', 'hustle' ),
-				'module_duplicated'     => __( 'Module successfully duplicated.', 'hustle' ),
-				'module_tracking_reset' => __( "Module's tracking data successfully reset.", 'hustle' ),
+				'module_imported'       => esc_html__( 'Module successfully imported.', 'hustle' ),
+				'module_duplicated'     => esc_html__( 'Module successfully duplicated.', 'hustle' ),
+				'module_tracking_reset' => esc_html__( "Module's tracking data successfully reset.", 'hustle' ),
 				'module-not-found'      => $module_not_found_message,
 			);
+
 			$current_array['messages'] = array_merge( $current_array['messages'], $messages );
 		}
 
 		// Both Wizard and Listing pages.
 		$current_array['messages']['days_and_months'] = array(
-			'days_full'    => Opt_In_Utils::get_week_days(),
-			'days_short'   => Opt_In_Utils::get_week_days( 'short' ),
-			'days_min'     => Opt_In_Utils::get_week_days( 'min' ),
-			'months_full'  => Opt_In_Utils::get_months(),
-			'months_short' => Opt_In_Utils::get_months( 'short' ),
+			'days_full'    => Hustle_Time_Helper::get_week_days(),
+			'days_short'   => Hustle_Time_Helper::get_week_days( 'short' ),
+			'days_min'     => Hustle_Time_Helper::get_week_days( 'min' ),
+			'months_full'  => Hustle_Time_Helper::get_months(),
+			'months_short' => Hustle_Time_Helper::get_months( 'short' ),
+		);
+
+		$current_array['module_tabs'] = array(
+			'services' => esc_html__( 'Services', 'hustle' ),
+			'display'  => esc_html__( 'Display Options', 'hustle' ),
 		);
 
 		return $current_array;
@@ -618,7 +656,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	 * @param array $vars Current registered variables.
 	 * @return array
 	 */
-	protected function register_visibility_conditions_js_vars( $vars ) {
+	private function register_visibility_conditions_js_vars( $vars ) {
 
 		$post_ids   = array();
 		$page_ids   = array();
@@ -631,7 +669,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		$wc_cats    = array();
 		$wc_tags    = array();
 
-		$module = Hustle_Module_Model::instance()->get( filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ) );
+		$module = new Hustle_Module_Model( filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ) );
 		if ( ! is_wp_error( $module ) ) {
 			$settings = $module->get_visibility()->to_array();
 
@@ -739,13 +777,12 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		$vars['roles']     = Opt_In_Utils::get_user_roles();
 		$vars['templates'] = Opt_In_Utils::hustle_get_page_templates();
 
-		// Module error message.
-		$vars['messages']['sshare_module_error'] = __( "Couldn't save your module settings because there were some errors on {page} tab(s). Please fix those errors and try again.", 'hustle' );
+		$vars['type_singular_lower'] = Opt_In_Utils::get_module_type_display_name( $this->module_type );
 
 		// Visibility conditions titles, labels and bodies.
 		$vars['messages']['conditions'] = array(
 			'visitor_logged_in'           => __( 'Logged in status', 'hustle' ),
-			'shown_less_than'             => __( 'Number of times visitor has seen', 'hustle' ),
+			'shown_less_than'             => __( 'Number of times visitor has seen this module', 'hustle' ),
 			'only_on_mobile'              => __( "Visitor's Device", 'hustle' ),
 			'from_specific_ref'           => __( 'Referrer', 'hustle' ),
 			'from_search_engine'          => __( 'Source of Arrival', 'hustle' ),
@@ -768,27 +805,31 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			'wc_tags'                     => __( 'WooCommerce Tags', 'hustle' ),
 			'wc_archive_pages'            => __( 'WooCommerce Archives', 'hustle' ),
 			'wc_static_pages'             => __( 'WooCommerce Static Pages', 'hustle' ),
+			'cookie_set'                  => __( 'Browser Cookie', 'hustle' ),
 		);
 
 		$vars['messages']['condition_labels'] = array(
-			'mobile_only'       => __( 'Mobile only', 'hustle' ),
-			'desktop_only'      => __( 'Desktop only', 'hustle' ),
-			'any_conditions'    => __( '{number} condition(s)', 'hustle' ),
-			'number_views'      => '< {number}',
-			'number_views_more' => '> {number}',
-			'any'               => __( 'Any', 'hustle' ),
-			'all'               => __( 'All', 'hustle' ),
-			'no'                => __( 'No', 'hustle' ),
-			'none'              => __( 'None', 'hustle' ),
-			'true'              => __( 'True', 'hustle' ),
-			'false'             => __( 'False', 'hustle' ),
-			'logged_in'         => __( 'Logged in', 'hustle' ),
-			'logged_out'        => __( 'Logged out', 'hustle' ),
-			'only_these'        => __( 'Only {number}', 'hustle' ),
-			'except_these'      => __( 'All except {number}', 'hustle' ),
-			'reg_date'          => __( 'Day {number} ', 'hustle' ),
-			'immediately'       => __( 'Immediately', 'hustle' ),
-			'forever'           => __( 'Forever', 'hustle' ),
+			'mobile_only'         => __( 'Mobile only', 'hustle' ),
+			'desktop_only'        => __( 'Desktop only', 'hustle' ),
+			'any_conditions'      => __( '{number} condition(s)', 'hustle' ),
+			'number_views'        => '< {number}',
+			'number_views_more'   => '> {number}',
+			'any'                 => __( 'Any', 'hustle' ),
+			'all'                 => __( 'All', 'hustle' ),
+			'no'                  => __( 'No', 'hustle' ),
+			'none'                => __( 'None', 'hustle' ),
+			'true'                => __( 'True', 'hustle' ),
+			'false'               => __( 'False', 'hustle' ),
+			'logged_in'           => __( 'Logged in', 'hustle' ),
+			'logged_out'          => __( 'Logged out', 'hustle' ),
+			'only_these'          => __( 'Only {number}', 'hustle' ),
+			'except_these'        => __( 'All except {number}', 'hustle' ),
+			'reg_date'            => __( 'Day {number} ', 'hustle' ),
+			'immediately'         => __( 'Immediately', 'hustle' ),
+			'forever'             => __( 'Forever', 'hustle' ),
+			'cookie_anything'     => __( '{name} is anything', 'hustle' ),
+			'cookie_doesnt_exist' => __( '{name} does not exist', 'hustle' ),
+			'cookie_value'        => __( '{name} {value_condition} {value}', 'hustle' ),
 		);
 
 		$vars['wp_conditions'] = array(
@@ -818,6 +859,20 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			'is_product_tag'      => __( 'Product Tag', 'hustle' ),
 		);
 
+		$vars['wp_cookie_set'] = array(
+			'anything'             => __( 'is anything', 'hustle' ),
+			'equals'               => __( 'equals', 'hustle' ),
+			'contains'             => __( 'contains', 'hustle' ),
+			'matches_pattern'      => __( 'matches a pattern', 'hustle' ),
+			'doesnt_equals'        => __( 'does not equals', 'hustle' ),
+			'doesnt_contain'       => __( 'does not contain', 'hustle' ),
+			'doesnt_match_pattern' => __( 'does not match a pattern', 'hustle' ),
+			'less_than'            => __( 'is less than', 'hustle' ),
+			'less_equal_than'      => __( 'is less or equal to', 'hustle' ),
+			'greater_than'         => __( 'is greater than', 'hustle' ),
+			'greater_equal_than'   => __( 'is greater or equal to', 'hustle' ),
+		);
+
 		$vars['roles']     = Opt_In_Utils::get_user_roles();
 		$vars['browsers']  = Opt_In_Utils::get_browsers();
 		$vars['countries'] = Opt_In_Utils::get_countries();
@@ -827,60 +882,169 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	}
 
 	/**
+	 * Gets the JS variables to be localized in Wizard for non-ssharing modules.
+	 * This method is overwritten in Hustle_Sshare_Admin.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return array
+	 */
+	protected function get_wizard_js_variables_to_localize() {
+		$is_optin = Hustle_Module_Model::OPTIN_MODE === $this->module->module_mode;
+
+		$variables = array(
+			'form_fields'    => $this->get_form_fields_js_vars(),
+			'schedule'       => $this->get_schedule_js_vars(),
+			'palettes'       => Hustle_Palettes_Helper::get_all_palettes( $is_optin ),
+			'integrations'   => array(
+				'action_nonce'  => wp_create_nonce( 'hustle_provider_action' ), // Also defined in integrations.
+				'fetching_list' => esc_html__( 'Fetching integration list…', 'hustle' ),
+			),
+			'typography'     => array(
+				'global_font_applied' => esc_html__( 'Your font was correctly applied to all elements', 'hustle' ),
+				'fetch_nonce'         => wp_create_nonce( 'hustle_fetch_font_families' ),
+			),
+			'media_uploader' => array(
+				'select_or_upload' => esc_html__( 'Select or Upload Image', 'hustle' ),
+				'use_this_image'   => esc_html__( 'Use this image', 'hustle' ),
+			),
+			'triggers'       => array(
+				'immediately_tag'       => esc_html__( 'Immediately', 'hustle' ),
+				'seconds'               => esc_html__( 'seconds', 'hustle' ),
+				'minutes'               => esc_html__( 'minutes', 'hustle' ),
+				'hours'                 => esc_html__( 'hours', 'hustle' ),
+				/* translators: 1. {time} tag to replace, 2. {unit} tag to replace */
+				'delayed_tag'           => sprintf( esc_html__( 'Delay %1$s %2$s', 'hustle' ), '{time}', '{unit}' ),
+				/* translators: {value}% tag to replace */
+				'scroll_percentage_tag' => sprintf( esc_html__( '%s page scroll', 'hustle' ), '{value}%' ),
+				/* translators: {value} tag to replace */
+				'scroll_element_tag'    => sprintf( esc_html__( 'Scroll to %s', 'hustle' ), '{value}' ),
+			),
+		);
+
+		$variables['defaults'] = $this->get_defaults_settings();
+
+		return $variables;
+	}
+
+	/**
+	 * Return default design settings
+	 *
+	 * @return array
+	 */
+	private function get_defaults_settings() {
+		$design_settings = $this->module->get_design()->to_array();
+		if ( ! empty( $design_settings['base_template'] ) ) {
+			// Return template settings if the module was created based on one.
+			$templates_helper  = new Hustle_Templates_Helper();
+			$template_settings = $templates_helper->get_template( $design_settings['base_template'], $this->module->module_mode );
+			$defaults          = ! empty( $template_settings['design'] ) ? $template_settings['design'] : array();
+
+			$defaults['base_template'] = $design_settings['base_template'];
+		}
+
+		if ( empty( $defaults ) ) {
+			$defaults  = $this->module->get_design()->get_border_spacing_shadow_defaults( 'desktop' );
+			$defaults += $this->module->get_design()->get_typography_defaults( 'desktop' );
+			$defaults += $this->module->get_design()->get_border_spacing_shadow_defaults( 'mobile' );
+			$defaults += $this->module->get_design()->get_typography_defaults( 'mobile' );
+		}
+
+		return $defaults;
+	}
+
+	/**
 	 * Include the form fields variables required in js side.
 	 * These used to be registered in Hustle_Module_Admin before 4.0.3.
 	 *
 	 * @since 4.0.3
 	 *
-	 * @param array $vars Current registered variables.
 	 * @return array
 	 */
-	protected function register_fields_js_vars( $vars ) {
+	private function get_form_fields_js_vars() {
+		$renderer = $this->get_renderer();
 
-		$vars['messages']['form_fields'] = array(
-			'errors'                      => array(
-				'no_fileds_info'             => '<div class="sui-notice"><p>' . __( 'You don\'t have any {field_type} field in your opt-in form.', 'hustle' ) . '</p></div>',
-				'custom_field_not_supported' => __( 'Custom fields are not supported by the active provider', 'hustle' ),
+		$no_fields_notice_args = array(
+			array(
+				'type'  => 'inline_notice',
+				'icon'  => 'info',
+				'value' => esc_html__( 'You don\'t have any {field_type} field in your opt-in form.', 'hustle' ),
 			),
-			'label'                       => array(
-				'placeholder'            => __( 'Enter placeholder here', 'hustle' ),
-				'name_label'             => __( 'Name', 'hustle' ),
-				'name_placeholder'       => __( 'E.g. John', 'hustle' ),
-				'email_label'            => __( 'Email Address', 'hustle' ),
-				'enail_placeholder'      => __( 'E.g. john@doe.com', 'hustle' ),
-				'phone_label'            => __( 'Phone Number', 'hustle' ),
-				'phone_placeholder'      => __( 'E.g. +1 300 400 500', 'hustle' ),
-				'address_label'          => __( 'Address', 'hustle' ),
+		);
+
+		$variables = array(
+			'no_fields_of_type_notice'     => $renderer->get_html_for_options( $no_fields_notice_args, true ),
+			'is_required'                  => esc_html__( '{field} is required.', 'hustle' ),
+			'cant_empty'                   => esc_html__( 'This field can\'t be empty.', 'hustle' ),
+			'url_required_error_message'   => esc_html__( 'Your website url is required.', 'hustle' ),
+			'required_error_message'       => esc_html__( 'Your {field} is required.', 'hustle' ),
+			'date_validation_message'      => esc_html__( 'Please enter a valid date.', 'hustle' ),
+			'time_validation_message'      => esc_html__( 'Please enter a valid time.', 'hustle' ),
+			'validation_message'           => esc_html__( 'Please enter a valid {field}.', 'hustle' ),
+			'recaptcha_error_message'      => esc_html__( 'reCAPTCHA verification failed. Please try again.', 'hustle' ),
+			'recaptcha_validation_message' => esc_html__( 'reCAPTCHA verification failed. Please try again.', 'hustle' ),
+			'gdpr_required_error_message'  => esc_html__( 'Please accept the terms and try again.', 'hustle' ),
+			/* translators: 1. opening 'a' tag, 2. closing 'a' tag */
+			'gdpr_message'                 => sprintf( esc_html__( 'I\'ve read and accept the %1$sterms & conditions%2$s', 'hustle' ), '<a href="#">', '</a>' ),
+			'label'                        => array(
+				'placeholder'            => esc_html__( 'Enter placeholder here', 'hustle' ),
+				'name_label'             => esc_html__( 'Name', 'hustle' ),
+				'name_placeholder'       => esc_html__( 'E.g. John', 'hustle' ),
+				'email_label'            => esc_html__( 'Email Address', 'hustle' ),
+				'enail_placeholder'      => esc_html__( 'E.g. john@doe.com', 'hustle' ),
+				'phone_label'            => esc_html__( 'Phone Number', 'hustle' ),
+				'phone_placeholder'      => esc_html__( 'E.g. +1 300 400 500', 'hustle' ),
+				'address_label'          => esc_html__( 'Address', 'hustle' ),
 				'address_placeholder'    => '',
-				'hidden_label'           => __( 'Hidden Field', 'hustle' ),
+				'hidden_label'           => esc_html__( 'Hidden Field', 'hustle' ),
 				'hidden_placeholder'     => '',
-				'url_label'              => __( 'Website', 'hustle' ),
-				'url_placeholder'        => __( 'E.g. https://example.com', 'hustle' ),
-				'text_label'             => __( 'Text', 'hustle' ),
-				'text_placeholder'       => __( 'E.g. Enter your nick name', 'hustle' ),
-				'number_label'           => __( 'Number', 'hustle' ),
-				'number_placeholder'     => __( 'E.g. 1', 'hustle' ),
-				'datepicker_label'       => __( 'Date', 'hustle' ),
-				'datepicker_placeholder' => __( 'Choose date', 'hustle' ),
-				'timepicker_label'       => __( 'Time', 'hustle' ),
+				'url_label'              => esc_html__( 'Website', 'hustle' ),
+				'url_placeholder'        => esc_html__( 'E.g. https://example.com', 'hustle' ),
+				'text_label'             => esc_html__( 'Text', 'hustle' ),
+				'text_placeholder'       => esc_html__( 'E.g. Enter your nick name', 'hustle' ),
+				'number_label'           => esc_html__( 'Number', 'hustle' ),
+				'number_placeholder'     => esc_html__( 'E.g. 1', 'hustle' ),
+				'datepicker_label'       => esc_html__( 'Date', 'hustle' ),
+				'datepicker_placeholder' => esc_html__( 'Choose date', 'hustle' ),
+				'timepicker_label'       => esc_html__( 'Time', 'hustle' ),
 				'timepicker_placeholder' => '',
 				'recaptcha_label'        => 'reCAPTCHA',
 				'recaptcha_placeholder'  => '',
-				'gdpr_label'             => __( 'GDPR', 'hustle' ),
+				'gdpr_label'             => esc_html__( 'GDPR', 'hustle' ),
 			),
-			'recaptcha_badge_replacement' => sprintf(
+			'recaptcha_badge_replacement'  => sprintf(
 				/* translators: 1: closing 'a' tag, 2: opening privacy 'a' tag, 3: opening terms 'a' tag */
 				esc_html__( 'This site is protected by reCAPTCHA and the Google %2$sPrivacy Policy%1$s and %3$sTerms of Service%1$s apply.', 'hustle' ),
 				'</a>',
 				'<a href="https://policies.google.com/privacy" target="_blank">',
 				'<a href="https://policies.google.com/terms" target="_blank">'
 			),
-			'recaptcha_error_message'     => esc_html__( 'reCAPTCHA verification failed. Please try again.', 'hustle' ),
-			/* translators: 1. opening 'a' tag, 2. closing 'a' tag */
-			'gdpr_message'                => sprintf( __( 'I\'ve read and accept the %1$sterms & conditions%2$s', 'hustle' ), '<a href="#">', '</a>' ),
 		);
 
-		return $vars;
+		return $variables;
+	}
+
+	/**
+	 * Includes the variables used for the Schedule functionality.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return array
+	 */
+	private function get_schedule_js_vars() {
+		$type_lowercase = Opt_In_Utils::get_module_type_display_name( $this->module_type );
+
+		return array(
+			'wp_gmt_offset'    => get_option( 'gmt_offset' ),
+			'new_schedule_set' => sprintf(
+				/* translators: 1. module type in lowercase */
+				esc_html__( 'Successfully added a schedule for your %1$s. However, make sure to save changes and publish your %1$s for it to start appearing as per your schedule.', 'hustle' ),
+				esc_html( $type_lowercase )
+			),
+			'months'           => Hustle_Time_Helper::get_months(),
+			'week_days'        => Hustle_Time_Helper::get_week_days( 'short' ),
+			'meridiem'         => Hustle_Time_Helper::get_meridiam_periods(),
+		);
 	}
 
 	/**
@@ -943,15 +1107,14 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			wp_enqueue_editor();
 		}
 
-		$main_class = implode( ' ', apply_filters( 'hustle_sui_wrap_class', null ) );
+		$main_class = $this->get_sui_wrap_class();
 
 		?>
 		<main class="<?php echo esc_attr( $main_class ); ?>">
 
 			<?php
-			$template_args  = $this->get_page_edit_template_args();
-			$this->renderer = new Hustle_Layout_Helper( $this );
-			$this->renderer->render( $this->page_edit_template_path, $template_args );
+			$renderer      = $this->get_renderer();
+			$renderer->render( $this->page_edit_template_path, $template_args );
 			?>
 
 		</main>
@@ -965,11 +1128,8 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	 * @return array
 	 */
 	protected function get_page_edit_template_args() {
-
-		$current_section = Hustle_Module_Admin::get_current_section();
-
 		return array(
-			'section'   => ( ! $current_section ) ? 'content' : $current_section,
+			'section'   => $this->get_current_section( 'content' ),
 			'module_id' => $this->module->module_id,
 			'module'    => $this->module,
 			'is_active' => (bool) $this->module->active,
@@ -1008,7 +1168,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	 */
 	public static function get_tracking_charts_markup( $module_id ) {
 
-		$module = Hustle_Module_Model::instance()->get( $module_id );
+		$module = Hustle_Model::get_module( $module_id );
 		if ( is_wp_error( $module ) ) {
 			return '';
 		}
@@ -1016,10 +1176,9 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		$tracking_model           = Hustle_Tracking_Model::get_instance();
 		$total_module_conversions = $tracking_model->count_tracking_data( $module_id, 'all_conversion' );
 		$total_module_views       = $tracking_model->count_tracking_data( $module_id, 'view' );
-		$last_entry_time          = Opt_In_Utils::get_latest_conversion_time_by_module_id( $module_id );
+		$last_entry_time          = $tracking_model->get_latest_conversion_time_by_module_id( $module_id );
 		$rate                     = $total_module_views ? round( ( $total_module_conversions * 100 ) / $total_module_views, 1 ) : 0;
 		$module_sub_types         = $module->get_sub_types( true );
-		$is_cta                   = ! empty( $module->get_content()->__get( 'show_cta' ) );
 
 		$multiple_charts = array();
 
@@ -1035,7 +1194,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 				$multiple_charts[ $slug ] = array(
 					'display_name'    => $display_name,
-					'last_entry_time' => Opt_In_Utils::get_latest_conversion_time_by_module_id( $module_id, $subtype ),
+					'last_entry_time' => $tracking_model->get_latest_conversion_time_by_module_id( $module_id, $subtype ),
 					'views'           => $views,
 					'conversions'     => $conversions,
 					'conversion_rate' => $conversion_rate,
@@ -1050,17 +1209,15 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			'tracking_types'           => $module->get_tracking_types(),
 			'last_entry_time'          => $last_entry_time,
 			'rate'                     => $rate,
-			'is_cta'                   => $is_cta,
 		);
 
-		if ( $is_cta ) {
+		if ( $module->get_content()->has_cta() ) {
 			$notice_for_old_data                     = $tracking_model->has_old_tracking_data( $module_id );
 			$render_arguments['notice_for_old_data'] = $notice_for_old_data;
 		}
 
 		ob_start();
 
-		// Temporary. Moving this somewhere else instead.
 		$renderer = new Hustle_Layout_Helper();
 
 		// ELEMENT: Tracking data.
@@ -1090,12 +1247,12 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	 * @since 4.0.4
 	 * @since 4.2.0 Move from Hustle_Module_Model to this class. $module param added.
 	 *
-	 * @param array               $sub_types Module's sub types.
-	 * @param int                 $views Module's views count.
-	 * @param Hustle_Module_Model $module Instance of the module to get the charts data for.
+	 * @param array        $sub_types Module's sub types.
+	 * @param int          $views Module's views count.
+	 * @param Hustle_Model $module Instance of the module to get the charts data for.
 	 * @return array
 	 */
-	private static function get_charts_data( $sub_types, $views, Hustle_Module_Model $module ) {
+	private static function get_charts_data( $sub_types, $views, Hustle_Model $module ) {
 
 		$sql_month_start_date = date( 'Y-m-d H:i:s', strtotime( '-30 days midnight' ) );
 		$tracking_model       = Hustle_Tracking_Model::get_instance();
@@ -1153,7 +1310,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 					$views_data  = array_merge( $default_array, array_intersect_key( $views_array, $default_array ) );
 				}
 
-				$query_sub_type        = 'overall' === $sub_type ? null : $sub_type;
+				$query_sub_type        = 'overall' === $sub_type ? null : $module->module_type . '_' . $sub_type;
 				$query_conversion_type = $conversion_type . '_conversion';
 				$sub_type_conversions  = $tracking_model->count_tracking_data( $module->module_id, $query_conversion_type, $query_sub_type );
 
@@ -1169,5 +1326,28 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Returns whether the current module is optin.
+	 * This method should be only used in Wizard pages
+	 * because $this->module is only defined within Wizards.
+	 *
+	 * @since 4.3.0
+	 * @return boolean
+	 */
+	public function is_optin_module() {
+		return ! empty( $this->module ) && 'optin' === $this->module->module_mode;
+	}
+
+	/**
+	 * Gets the font family names.
+	 * Used for rendering the selects.
+	 *
+	 * @since 4.3.0
+	 * @return array
+	 */
+	public function get_font_families() {
+		return Hustle_Meta_Base_Design::get_font_families_names();
 	}
 }

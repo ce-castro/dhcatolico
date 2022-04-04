@@ -26,9 +26,9 @@ class Opt_In_Condition_From_Referrer extends Opt_In_Condition_Abstract {
 		}
 
 		if ( 'true' === $this->args->filter_type ) {
-			return $this->utils()->test_referrer( $this->args->refs );
+			return Opt_In_Utils::test_referrer( $this->args->refs );
 		} else {
-			return ! ( $this->utils()->test_referrer( $this->args->refs ) );
+			return ! ( Opt_In_Utils::test_referrer( $this->args->refs ) );
 		}
 	}
 }

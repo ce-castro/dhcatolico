@@ -14,6 +14,28 @@
 class Hustle_Meta_Base_Settings extends Hustle_Meta {
 
 	/**
+	 * Returns the defaults for merging purposes.
+	 * Avoid overwritting the triggers when the saved value is an empty array.
+	 *
+	 * @since 4.4.1
+	 *
+	 * @return array
+	 */
+	protected function get_defaults_for_merge() {
+		$defaults = $this->get_defaults();
+
+		// Avoid overwritting the saved form elements when the default fields aren't present.
+		if ( ! empty( $this->data['triggers'] ) && isset( $defaults['triggers']['trigger'] ) && is_array( $this->data['triggers']['trigger'] ) ) {
+			unset( $defaults['triggers']['trigger'] );
+		}
+		// Avoid overwritting the empty after_close_trigger saved by the user.
+		if ( isset( $this->data['after_close_trigger'] ) ) {
+			unset( $defaults['after_close_trigger'] );
+		}
+		return $defaults;
+	}
+
+	/**
 	 * Retrieves the base defaults for the 'settings' meta.
 	 * Extended by embeds, popups, and slideins.
 	 *
@@ -24,8 +46,8 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 		return array(
 			'auto_close_success_message' => '0',
 			'triggers'                   => array(
-				'trigger'                     => 'time',
-				'on_time_delay'               => 0,
+				'trigger'                     => array( 'time' ),
+				'on_time_delay'               => '0',
 				'on_time_unit'                => 'seconds',
 				'on_scroll'                   => 'scrolled',
 				'on_scroll_page_percent'      => 20,
@@ -34,10 +56,10 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 				'on_click_element'            => '',
 				'enable_on_click_shortcode'   => '1',
 				'on_exit_intent_per_session'  => '1',
-				'on_exit_intent_delayed'      => '0',
-				'on_exit_intent_delayed_time' => 5,
+				'on_exit_intent_delayed_time' => '0',
 				'on_exit_intent_delayed_unit' => 'seconds',
-				'on_adblock'                  => '0',
+				'on_adblock_delay'            => '0',
+				'on_adblock_delay_unit'       => 'seconds',
 			),
 			'animation_in'               => 'no_animation',
 			'animation_out'              => 'no_animation',
@@ -102,7 +124,7 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 		$is_scheduled = $this->is_currently_scheduled();
 
 		if ( ! $is_scheduled ) {
-			$flags = $this->model->get_schedule_flags();
+			$flags = $this->module->get_schedule_flags();
 
 			// The module isn't shown now and won't be checked to show later on.
 			if ( '0' === $flags['check_schedule_at'] ) {
@@ -121,8 +143,7 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 	 */
 	public function is_currently_scheduled() {
 
-		$module         = $this->model;
-		$schedule_flags = $module->get_schedule_flags();
+		$schedule_flags = $this->module->get_schedule_flags();
 
 		$is_active         = '1' === $schedule_flags['is_currently_scheduled'];
 		$check_schedule_at = $schedule_flags['check_schedule_at'];
@@ -138,7 +159,7 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 		 * @param bool                $skip_cache Set to true if you want the schedule to be checked on each run.
 		 * @param Hustle_Module_Model $module
 		 */
-		$skip_cache = apply_filters( 'hustle_skip_schedule_cache', $skip_cache, $module );
+		$skip_cache = apply_filters( 'hustle_skip_schedule_cache', $skip_cache, $this->module );
 
 		// Run the check if the flag isn't set to "don't check again"
 		// and the time the "schedule" should be checked again already passed.
@@ -154,7 +175,7 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 		 * @param bool $is_currently_scheduled Whether the module should be shown.
 		 * @param Hustle_Module_Model $module This module's instance.
 		 */
-		return apply_filters( 'hustle_module_is_currently_scheduled', $is_active, $module );
+		return apply_filters( 'hustle_module_is_currently_scheduled', $is_active, $this->module );
 	}
 
 	/**
@@ -184,7 +205,7 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 		$flags = apply_filters( 'hustle_get_schedule_flags', $flags, $this );
 
 		// Store the flags for future use.
-		$this->model->set_schedule_flags( $flags );
+		$this->module->set_schedule_flags( $flags );
 
 		return ( '1' === $flags['is_currently_scheduled'] );
 	}
@@ -305,7 +326,7 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 
 		// Get today's week day as a number between 0 (Sun) and 6 (Mon).
 		$current_time = time();
-		$todays_day   = date( 'w', $current_time );
+		$todays_day   = $this->get_time_with_timezone( 'now', 'w' );
 		$week_days    = $schedule['week_days'];
 
 		if ( $check_day ) {
@@ -319,6 +340,10 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 					'is_currently_scheduled' => '0',
 					'check_schedule_at'      => $next_check,
 				);
+			} else {
+				// Run the check again the next day it should be hidden.
+				$next_check             = $this->get_schedule_next_week_day_timestamp( $todays_day, array_diff( array( 1, 2, 3, 4, 5, 6, 7 ), $week_days ) );
+				$is_currently_scheduled = '1';
 			}
 		}
 
@@ -330,6 +355,13 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 			$start_strtotime_str = "{$schedule['day_start_hour']}:{$schedule['day_start_minute']} {$schedule['day_start_meridiem_offset']}";
 			$start_timestamp     = $this->get_time_with_timezone( $start_strtotime_str );
 
+			// If start time is greater that end time swap them.
+			$swaptime = $start_timestamp > $end_timestamp ? true : false;
+			if ( $swaptime ) {
+				// swap start time and end time.
+				list( $start_strtotime_str, $end_strtotime_str ) = array( $end_strtotime_str, $start_strtotime_str );
+				list( $start_timestamp, $end_timestamp )         = array( $end_timestamp, $start_timestamp );
+			}
 			// End time already passed.
 			if ( $current_time > $end_timestamp ) {
 
@@ -339,9 +371,8 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 				} else {
 					$next_check = $this->get_time_with_timezone( 'tomorrow ' . $start_strtotime_str );
 				}
-
 				return array(
-					'is_currently_scheduled' => '0',
+					'is_currently_scheduled' => $swaptime ? '1' : '0',
 					'check_schedule_at'      => $next_check,
 				);
 			}
@@ -353,15 +384,21 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 				$next_check = $this->get_time_with_timezone( $start_strtotime_str );
 
 				return array(
-					'is_currently_scheduled' => '0',
+					'is_currently_scheduled' => $swaptime ? '1' : '0',
 					'check_schedule_at'      => $next_check,
 				);
 			}
 
 			// Start time already passed and end time hasn't passed.
 			return array(
-				'is_currently_scheduled' => '1',
+				'is_currently_scheduled' => $swaptime ? '0' : '1',
 				'check_schedule_at'      => $end_timestamp,
+			);
+		} elseif ( $is_currently_scheduled ) {
+			// Run the check again the next day it should be hidden.
+			return array(
+				'is_currently_scheduled' => $is_currently_scheduled,
+				'check_schedule_at'      => $next_check,
 			);
 		}
 
@@ -407,9 +444,10 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 	 *
 	 * @since 4.2.0
 	 * @param string $str Time as a human readable string.
+	 * @param string $format Optional. Date format.
 	 * @return string Timestamp.
 	 */
-	private function get_time_with_timezone( $str = 'now' ) {
+	private function get_time_with_timezone( $str = 'now', $format = 'U' ) {
 
 		$settings = $this->to_array(); // We can probably make this a property of this class.
 
@@ -422,9 +460,14 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 			$timezone_string   = $this->format_datetimezone_compatible_string( $selected_timezone );
 		}
 
-		$timezone_object    = new DateTimeZone( $timezone_string );
-		$date_time_instance = new DateTime( $str, $timezone_object );
-		return $date_time_instance->format( 'U' );
+		$timezone_object = new DateTimeZone( $timezone_string );
+		// return if the passed date is wrong.
+		try {
+			$date_time_instance = new DateTime( $str, $timezone_object );
+		} catch ( Exception $e ) {
+			return '';
+		}
+		return $date_time_instance->format( $format );
 	}
 
 	/**
@@ -500,5 +543,58 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 		$tz_offset = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
 
 		return $tz_offset;
+	}
+
+	/**
+	 * Check this module schedule has finished or not
+	 * Return true if schedule finished false otherwise
+	 *
+	 * @since 4.4.6
+	 * @return boolean
+	 */
+	public function is_schedule_finished() {
+		$settings = $this->to_array();
+		$schedule = $settings['schedule'];
+
+		// If schedule is not enabled.
+		if ( '0' === $settings['is_schedule'] ) {
+			return false;
+		}
+
+		// If `Never end the schedule` option is enabled.
+		if ( '1' === $schedule['not_schedule_end'] ) {
+			return false;
+		}
+
+		$end_time_string = "{$schedule['end_date']} {$schedule['end_hour']}:{$schedule['end_minute']} {$schedule['end_meridiem_offset']}";
+		$end_timestamp   = $this->get_time_with_timezone( $end_time_string );
+
+		// If time of today is already passed, then return true.
+		return ( time() > $end_timestamp );
+	}
+
+	/**
+	 * Return true if schedule is between start and end date
+	 *
+	 * @since 4.4.6
+	 * @return boolean
+	 */
+	public function is_between_start_and_end_date() {
+		$settings = $this->to_array();
+		$schedule = $settings['schedule'];
+
+		// If schedule is not enabled.
+		if ( '0' === $settings['is_schedule'] ) {
+			return false;
+		}
+
+		$start_time_string = "{$schedule['start_date']} {$schedule['start_hour']}:{$schedule['start_minute']} {$schedule['start_meridiem_offset']}";
+		$start_timestamp   = $this->get_time_with_timezone( $start_time_string );
+
+		$end_time_string = "{$schedule['end_date']} {$schedule['end_hour']}:{$schedule['end_minute']} {$schedule['end_meridiem_offset']}";
+		$end_timestamp   = $this->get_time_with_timezone( $end_time_string );
+
+		// If time has been started but not finished, then return true.
+		return ( time() >= $start_timestamp && time() <= $end_timestamp );
 	}
 }

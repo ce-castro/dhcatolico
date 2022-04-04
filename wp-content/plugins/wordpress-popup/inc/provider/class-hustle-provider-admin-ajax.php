@@ -439,7 +439,7 @@ class Hustle_Provider_Admin_Ajax {
 			$form_settings->disconnect_form( $sanitized_data );
 
 			$response = array(
-				'message' => sprintf( __( 'Successfully disconnected $1$s from this form', 'hustle' ), $provider_title ),
+				'message' => sprintf( __( 'Successfully disconnected %1$s from this form', 'hustle' ), $provider_title ),
 				'data'    => array(
 					'notification' => array(
 						'type' => 'success',
@@ -450,7 +450,7 @@ class Hustle_Provider_Admin_Ajax {
 			wp_send_json_success( $response );
 		} else {
 			$response = array(
-				'message' => sprintf( __( 'Failed to disconnect $1$s from this form', 'hustle' ), $provider_title ),
+				'message' => sprintf( __( 'Failed to disconnect %1$s from this form', 'hustle' ), $provider_title ),
 				'data'    => array(
 					'notification' => array(
 						'type' => 'error',
@@ -471,7 +471,7 @@ class Hustle_Provider_Admin_Ajax {
 		$this->validate_ajax();
 
 		$id     = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
-		$module = Hustle_Module_Model::instance()->get( $id );
+		$module = new Hustle_Module_Model( $id );
 
 		if ( 0 < $id && ! is_wp_error( $module ) ) {
 			$module->update_meta( 'local_list_provider_settings', array( 'local_list_name' => 'hustle-' . wp_rand() ) );
@@ -538,9 +538,10 @@ class Hustle_Provider_Admin_Ajax {
 		$module_data = array();
 		foreach ( $modules as $module ) {
 
-			$meta                              = $module->get_meta( 'integrations_settings' );
+			$meta = $module->get_meta( 'integrations_settings' );
+
 			$module_data[ $module->module_id ] = array(
-				'edit_url' => html_entity_decode( esc_url( $module->decorated->get_edit_url( 'integrations' ) ) ),
+				'edit_url' => esc_url_raw( $module->get_edit_url( 'integrations' ) ),
 				'name'     => $module->module_name,
 				'type'     => $module->module_type,
 				'active'   => json_decode( $meta ),
@@ -602,6 +603,16 @@ class Hustle_Provider_Admin_Ajax {
 			$arrays_filters = array_fill_keys( array_keys( $submitted_arrays ), $array_args );
 		}
 
+		// Implement trim for all incoming fields.
+		foreach ( $data as $data_key => $data_value ) {
+			// Check we are not trimming array value.
+			if ( is_array( $data_value ) ) {
+				continue;
+			}
+
+			$data[ $data_key ] = trim( $data_value );
+		}
+
 		// Implement FILTER_SANITIZE_STRING for all the other incoming fields.
 		$generic_filters = array_fill_keys( array_keys( $data ), 'FILTER_SANITIZE_STRING' );
 
@@ -610,6 +621,10 @@ class Hustle_Provider_Admin_Ajax {
 
 		// Aand filter.
 		$sanitized_data = filter_var_array( $data, $filters );
+
+		if ( ! empty( $sanitized_data['name'] ) ) {
+			$sanitized_data['name'] = wp_strip_all_tags( $sanitized_data['name'] );
+		}
 
 		return $sanitized_data;
 	}

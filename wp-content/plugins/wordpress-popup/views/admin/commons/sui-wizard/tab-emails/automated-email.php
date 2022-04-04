@@ -6,11 +6,152 @@
  * @since 4.0.0
  */
 
+// Tinymce editor styles.
 ob_start();
-
 require Opt_In::$plugin_path . 'assets/css/sui-editor.min.css';
 $editor_css = ob_get_clean();
 $editor_css = '<style>' . $editor_css . '</style>';
+
+// Delay tab content.
+ob_start();
+?>
+<div class="sui-row" >
+
+	<div class="sui-col-md-6">
+		<input type="number"
+			name="auto_email_time"
+			data-attribute="auto_email_time"
+			value="<?php echo esc_attr( $settings['auto_email_time'] ); ?>"
+			placeholder="0"
+			min="0"
+			class="sui-form-control" />
+	</div>
+
+	<div class="sui-col-md-6">
+		<select name="auto_email_unit" class="sui-select" data-attribute="auto_email_unit">
+			<option value="seconds" <?php selected( $settings['auto_email_unit'], 'seconds' ); ?>><?php esc_html_e( 'seconds', 'hustle' ); ?></option>
+			<option value="minutes" <?php selected( $settings['auto_email_unit'], 'minutes' ); ?>><?php esc_html_e( 'minutes', 'hustle' ); ?></option>
+			<option value="hours" <?php selected( $settings['auto_email_unit'], 'hours' ); ?>><?php esc_html_e( 'hours', 'hustle' ); ?></option>
+			<option value="days" <?php selected( $settings['auto_email_unit'], 'days' ); ?>><?php esc_html_e( 'days', 'hustle' ); ?></option>
+		</select>
+	</div>
+
+</div>
+<?php
+$delay_content = ob_get_clean();
+
+// Schedule tab content.
+ob_start();
+?>
+<?php /* translators: 1. opening 'b' tag, 2. closing 'b' tag */ ?>
+<label class="sui-description"><?php printf( esc_html__( 'Choose a fixed date and time for your email or select %1$sDatepicker and Timepicker%2$s fields of your form to schedule this email dynamically based on user input.', 'hustle' ), '<b>', '</b>' ); ?></label>
+
+<div class="sui-form-field">
+
+	<label for="hustle-email-day" class="sui-label"><?php esc_html_e( 'Day', 'hustle' ); ?></label>
+
+	<div class="sui-insert-variables">
+
+		<div class="sui-control-with-icon">
+
+			<input type="text"
+				name="day"
+				value="<?php echo esc_attr( $settings['day'] ); ?>"
+				placeholder="{date-1}"
+				id="hustle-email-day"
+				class="sui-form-control"
+				data-attribute="day"
+			/>
+
+			<span class="sui-icon-calendar" aria-hidden="true"></span>
+
+		</div>
+
+		<select
+			class="sui-variables hustle-field-options hustle-select-variables"
+			data-for="hustle-email-day"
+			data-type="datepicker"
+		></select>
+
+	</div>
+
+</div>
+
+<div class="sui-form-field">
+
+	<label for="hustle-email-time" class="sui-label"><?php esc_html_e( 'Time of Day', 'hustle' ); ?></label>
+
+	<div class="sui-insert-variables hustle-field">
+
+		<div class="sui-control-with-icon">
+
+			<input type="text"
+				name="time"
+				value="<?php echo esc_attr( $settings['time'] ); ?>"
+				placeholder="{time-1}"
+				id="hustle-email-time"
+				class="sui-form-control"
+				data-attribute="time"
+			/>
+
+			<span class="sui-icon-clock" aria-hidden="true"></span>
+
+		</div>
+
+		<select
+			class="sui-variables hustle-field-options hustle-select-variables"
+			data-for="hustle-email-time"
+			data-type="timepicker"
+		></select>
+
+	</div>
+
+</div>
+<div class="sui-form-field">
+	<label for="auto_email_time" class="sui-label"><?php esc_html_e( 'Delay', 'hustle' ); ?></label>
+
+	<div class="sui-row" >
+		<div class="sui-col-md-6">
+			<input type="number"
+				name="schedule_auto_email_time"
+				data-attribute="schedule_auto_email_time"
+				value="<?php echo esc_attr( $settings['schedule_auto_email_time'] ); ?>"
+				placeholder="0"
+				class="sui-form-control" />
+		</div>
+
+		<div class="sui-col-md-6">
+			<select name="schedule_auto_email_unit" class="sui-select" data-attribute="schedule_auto_email_unit">
+				<option value="seconds" <?php selected( $settings['schedule_auto_email_unit'], 'seconds' ); ?>><?php esc_html_e( 'seconds', 'hustle' ); ?></option>
+				<option value="minutes" <?php selected( $settings['schedule_auto_email_unit'], 'minutes' ); ?>><?php esc_html_e( 'minutes', 'hustle' ); ?></option>
+				<option value="hours" <?php selected( $settings['schedule_auto_email_unit'], 'hours' ); ?>><?php esc_html_e( 'hours', 'hustle' ); ?></option>
+				<option value="days" <?php selected( $settings['schedule_auto_email_unit'], 'days' ); ?>><?php esc_html_e( 'days', 'hustle' ); ?></option>
+			</select>
+		</div>
+
+	</div>
+</div>
+<?php
+$schedule_content = ob_get_clean();
+
+$options = array(
+	'instant'  => array(
+		'value' => 'instant',
+		'label' => esc_html__( 'Instant', 'hustle' ),
+	),
+	'delay'    => array(
+		'value'   => 'delay',
+		'label'   => esc_html__( 'Delay', 'hustle' ),
+		'boxed'   => true,
+		'content' => $delay_content,
+	),
+	'schedule' => array(
+		'value'   => 'schedule',
+		'label'   => esc_html__( 'Schedule', 'hustle' ),
+		'boxed'   => true,
+		'content' => $schedule_content,
+	),
+);
 ?>
 
 <div class="sui-box-settings-row">
@@ -46,159 +187,19 @@ $editor_css = '<style>' . $editor_css . '</style>';
 
 						<label class="sui-label"><?php esc_html_e( 'Email time', 'hustle' ); ?></label>
 
-						<div class="sui-side-tabs">
-
-							<div class="sui-tabs-menu">
-
-								<label class="sui-tab-item">
-									<input type="radio"
-										name="email_time"
-										data-attribute="email_time"
-										value="instant"
-										<?php checked( $settings['email_time'], 'instant' ); ?>
-									/>
-									<?php esc_html_e( 'Instant', 'hustle' ); ?>
-								</label>
-								<label class="sui-tab-item">
-									<input type="radio"
-										name="email_time"
-										data-attribute="email_time"
-										data-tab-menu="delay"
-										value="delay"
-										<?php checked( $settings['email_time'], 'delay' ); ?>
-									/>
-									<?php esc_html_e( 'Delay', 'hustle' ); ?>
-								</label>
-								<label class="sui-tab-item">
-									<input type="radio"
-										name="email_time"
-										data-attribute="email_time"
-										data-tab-menu="schedule"
-										value="schedule"
-										<?php checked( $settings['email_time'], 'schedule' ); ?>
-									/>
-									<?php esc_html_e( 'Schedule', 'hustle' ); ?>
-								</label>
-
-							</div>
-
-							<div class="sui-tabs-content">
-
-								<div class="sui-tab-content sui-tab-boxed" data-tab-content="delay">
-
-									<div class="sui-row" >
-
-										<div class="sui-col-md-6">
-											<input type="number"
-												name="auto_email_time"
-												data-attribute="auto_email_time"
-												value="<?php echo esc_attr( $settings['auto_email_time'] ); ?>"
-												placeholder="0"
-												min="0"
-												class="sui-form-control" />
-										</div>
-
-										<div class="sui-col-md-6">
-											<select name="auto_email_unit" data-attribute="auto_email_unit">
-												<option value="seconds" <?php selected( $settings['auto_email_unit'], 'seconds' ); ?>><?php esc_html_e( 'seconds', 'hustle' ); ?></option>
-												<option value="minutes" <?php selected( $settings['auto_email_unit'], 'minutes' ); ?>><?php esc_html_e( 'minutes', 'hustle' ); ?></option>
-												<option value="hours" <?php selected( $settings['auto_email_unit'], 'hours' ); ?>><?php esc_html_e( 'hours', 'hustle' ); ?></option>
-												<option value="days" <?php selected( $settings['auto_email_unit'], 'days' ); ?>><?php esc_html_e( 'days', 'hustle' ); ?></option>
-											</select>
-										</div>
-
-									</div>
-
-								</div>
-
-								<div class="sui-tab-content sui-tab-boxed" data-tab-content="schedule">
-									<?php /* translators: 1. opening 'b' tag, 2. closing 'b' tag */ ?>
-									<label class="sui-description"><?php printf( esc_html__( 'Choose a fixed date and time for your email or select %1$sDatepicker and Timepicker%2$s fields of your form to schedule this email dynamically based on user input.', 'hustle' ), '<b>', '</b>' ); ?></label>
-
-									<div class="sui-form-field">
-
-										<label for="hustle-email-day" class="sui-label"><?php esc_html_e( 'Day', 'hustle' ); ?></label>
-
-										<div class="sui-insert-variables">
-
-											<div class="sui-control-with-icon">
-
-												<input type="text"
-													name="day"
-													value="<?php echo esc_attr( $settings['day'] ); ?>"
-													placeholder="Datepicker {date-1}"
-													id="hustle-email-day"
-													class="sui-form-control"
-													data-attribute="day"
-												/>
-
-												<span class="sui-icon-calendar" aria-hidden="true"></span>
-
-											</div>
-
-											<select class="hustle-field-options" data-type="datepicker"></select>
-
-										</div>
-
-									</div>
-
-									<div class="sui-form-field">
-
-										<label for="hustle-email-time" class="sui-label"><?php esc_html_e( 'Time of Day', 'hustle' ); ?></label>
-
-										<div class="sui-insert-variables hustle-field">
-
-											<div class="sui-control-with-icon">
-
-												<input type="text"
-													name="time"
-													value="<?php echo esc_attr( $settings['time'] ); ?>"
-													<?php /* translators: timepicker name */ ?>
-													placeholder="<?php printf( esc_attr__( 'Timepicker %s', 'hustle' ), '{time-1}' ); ?>"
-													id="hustle-email-time"
-													class="sui-form-control"
-													data-attribute="time"
-												/>
-
-												<span class="sui-icon-clock" aria-hidden="true"></span>
-
-											</div>
-
-											<select class="hustle-field-options" data-type="timepicker"></select>
-
-										</div>
-
-									</div>
-									<div class="sui-form-field">
-										<label for="auto_email_time" class="sui-label"><?php esc_html_e( 'Delay', 'hustle' ); ?></label>
-
-										<div class="sui-row" >
-											<div class="sui-col-md-6">
-												<input type="number"
-													name="schedule_auto_email_time"
-													data-attribute="schedule_auto_email_time"
-													value="<?php echo esc_attr( $settings['schedule_auto_email_time'] ); ?>"
-													placeholder="0"
-													class="sui-form-control" />
-											</div>
-
-											<div class="sui-col-md-6">
-												<select name="schedule_auto_email_unit" data-attribute="schedule_auto_email_unit">
-													<option value="seconds" <?php selected( $settings['schedule_auto_email_unit'], 'seconds' ); ?>><?php esc_html_e( 'seconds', 'hustle' ); ?></option>
-													<option value="minutes" <?php selected( $settings['schedule_auto_email_unit'], 'minutes' ); ?>><?php esc_html_e( 'minutes', 'hustle' ); ?></option>
-													<option value="hours" <?php selected( $settings['schedule_auto_email_unit'], 'hours' ); ?>><?php esc_html_e( 'hours', 'hustle' ); ?></option>
-													<option value="days" <?php selected( $settings['schedule_auto_email_unit'], 'days' ); ?>><?php esc_html_e( 'days', 'hustle' ); ?></option>
-												</select>
-											</div>
-
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-
-						</div>
+						<?php
+						$this->render(
+							'admin/global/sui-components/sui-tabs',
+							array(
+								'name'        => 'email_time',
+								'radio'       => true,
+								'saved_value' => $settings['email_time'],
+								'sidetabs'    => true,
+								'content'     => true,
+								'options'     => $options,
+							)
+						);
+						?>
 
 					</div>
 
@@ -217,7 +218,11 @@ $editor_css = '<style>' . $editor_css . '</style>';
 								data-attribute="recipient"
 							/>
 
-							<select class="hustle-field-options" data-type="email"></select>
+							<select
+								class="sui-variables hustle-field-options hustle-select-variables"
+								data-for="hustle-email-recipient"
+								data-type="email"
+							></select>
 
 						</div>
 
@@ -227,13 +232,23 @@ $editor_css = '<style>' . $editor_css . '</style>';
 
 						<label for="hustle-email-copy-subject" class="sui-label"><?php esc_html_e( 'Subject', 'hustle' ); ?></label>
 
-						<input type="text"
-							placeholder="<?php esc_html_e( 'Email copy subject', 'hustle' ); ?>"
-							name="email_subject"
-							data-attribute="email_subject"
-							value="<?php echo esc_attr( $settings['email_subject'] ); ?>"
-							id="hustle-email-copy-subject"
-							class="sui-form-control" />
+						<div class="sui-insert-variables">
+
+							<input type="text"
+								placeholder="<?php esc_html_e( 'Email copy subject', 'hustle' ); ?>"
+								name="email_subject"
+								data-attribute="email_subject"
+								value="<?php echo esc_attr( $settings['email_subject'] ); ?>"
+								id="hustle-email-copy-subject"
+								class="sui-form-control" />
+
+							<select
+								class="sui-variables hustle-field-options hustle-select-variables"
+								data-for="hustle-email-copy-subject"
+								data-behavior="insert"
+							></select>
+
+						</div>
 
 					</div>
 
@@ -252,6 +267,8 @@ $editor_css = '<style>' . $editor_css . '</style>';
 								'tinymce'          => array(
 									'content_css' => self::$plugin_url . 'assets/css/sui-editor.min.css',
 								),
+								// remove more tag from text tab.
+								'quicktags'        => $this->tinymce_quicktags,
 								'editor_height'    => 192,
 								'drag_drop_upload' => false,
 							)

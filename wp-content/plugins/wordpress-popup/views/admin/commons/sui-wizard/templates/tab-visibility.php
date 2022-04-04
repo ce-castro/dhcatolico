@@ -8,6 +8,7 @@
  * @since 4.0.0
  */
 
+$hide = apply_filters( 'wpmudev_branding_hide_doc_link', false );
 ?>
 <div class="sui-box" <?php echo 'visibility' !== $section ? 'style="display: none;"' : ''; ?> data-tab="visibility">
 
@@ -27,16 +28,15 @@
 				<?php /* translators: module type in small caps and in singular */ ?>
 				<span class="sui-description"><?php printf( esc_html__( 'By default, your %s is set to appear everywhere on your website. Alternately, you can add more specific visibility rules to suit your needs.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
-				<?php if ( isset( $description_line1 ) && '' !== $description_line1 ) { ?>
+				<?php if ( ! $hide ) { ?>
+				<span class="sui-description">
 
-					<?php
-					if ( isset( $description_line2 ) && '' !== $description_line2 ) {
-						$line2 = '<br />&nbsp;<br />' . $description_line2;
-					}
-					?>
-
-					<span class="sui-description"><?php echo esc_attr( $description_line1 ); ?><?php echo $line2; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-
+					<script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/E-v1.js" async></script>
+						<div class="wistia_embed wistia_async_0rjgdi57kv popover=true popoverContent=link popoverOverlayOpacity=0.8 stillUrl=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+						style="display:inline-block; white-space:nowrap;">
+							<a href="#"><?php esc_html_e( 'How does it work (video)', 'hustle' ); ?></a></span>
+						</div>
+				</span>
 				<?php } ?>
 
 			</div>

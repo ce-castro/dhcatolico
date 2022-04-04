@@ -1,6 +1,6 @@
 <?php
 
-class Hustle_SShare_Model extends Hustle_Module_Model {
+class Hustle_SShare_Model extends Hustle_Model {
 
 	const SETTINGS_KEY       = 'sshare_counters';
 	const COUNTER_META_KEY   = 'hustle_shares';
@@ -11,6 +11,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	const FLOAT_MODULE       = 'floating';
 
 	public static function instance() {
+		_deprecated_function( __METHOD__, '4.3.0', 'new Hustle_SShare_Model' );
 		return new self();
 	}
 
@@ -35,11 +36,11 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	}
 
 	public function get_content() {
-		return new Hustle_SShare_Content( $this->get_settings_meta( self::KEY_CONTENT, '{}', true ), $this );
+		return new Hustle_SShare_Content( $this->get_settings_meta( self::KEY_CONTENT ), $this );
 	}
 
 	public function get_design() {
-		return new Hustle_SShare_Design( $this->get_settings_meta( self::KEY_DESIGN, '{}', true ), $this );
+		return new Hustle_SShare_Design( $this->get_settings_meta( self::KEY_DESIGN ), $this );
 	}
 
 	/**
@@ -50,7 +51,190 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 	 * @return Hustle_SShare_Display
 	 */
 	public function get_display() {
-		return new Hustle_SShare_Display( $this->get_settings_meta( self::KEY_DISPLAY_OPTIONS, '{}', true ), $this );
+		return new Hustle_SShare_Display( $this->get_settings_meta( self::KEY_DISPLAY_OPTIONS ), $this );
+	}
+
+	/**
+	 * Gets the instance of the decorator class for this module type.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return Hustle_Decorator_Sshare
+	 */
+	public function get_decorator_instance() {
+		return new Hustle_Decorator_Sshare( $this );
+	}
+	/**
+	 * Create a new module of the provided mode and type.
+	 *
+	 * @since 4.0
+	 *
+	 * @param array $data Must contain the Module's 'mode', 'name' and 'type.
+	 * @return int|false Module ID if successfully saved. False otherwise.
+	 */
+	public function create_new( $data ) {
+		// Verify it's a valid module type.
+		if ( self::SOCIAL_SHARING_MODULE !== $data['module_type'] ) {
+			return false;
+		}
+
+		// Save to modules table.
+		$this->module_name = sanitize_text_field( $data['module_name'] );
+		$this->module_type = $data['module_type'];
+		$this->active      = 0;
+		$this->module_mode = '';
+		$this->save();
+
+		// Save the new module's meta.
+		$this->store_new_module_meta( $data );
+
+		return $this->id;
+	}
+
+	/**
+	 * Store the defaults meta when creating a new module.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param array $data Data to store.
+	 */
+	private function store_new_module_meta( $data ) {
+		$def_content  = apply_filters( 'hustle_module_get_' . self::KEY_CONTENT . '_defaults', $this->get_content()->to_array(), $this, $data );
+		$content_data = empty( $data['content'] ) ? $def_content : array_merge( $def_content, $data['content'] );
+
+		$def_design  = apply_filters( 'hustle_module_get_' . self::KEY_DESIGN . '_defaults', $this->get_design()->to_array(), $this, $data );
+		$design_data = empty( $data['design'] ) ? $def_design : array_merge( $def_design, $data['design'] );
+
+		// Visibility settings.
+		$def_visibility  = apply_filters( 'hustle_module_get_' . self::KEY_VISIBILITY . '_defaults', $this->get_visibility()->to_array(), $this, $data );
+		$visibility_data = empty( $data['visibility'] ) ? $def_visibility : array_merge( $def_visibility, $data['visibility'] );
+
+		// Display options.
+		$def_display  = apply_filters( 'hustle_module_get_' . self::KEY_DISPLAY_OPTIONS . '_defaults', $this->get_display()->to_array(), $this, $data );
+		$display_data = empty( $data['display'] ) ? $def_display : array_merge( $def_display, $data['display'] );
+
+		// Save to meta table.
+		$this->update_meta( self::KEY_CONTENT, $content_data );
+		$this->update_meta( self::KEY_DESIGN, $design_data );
+		$this->update_meta( self::KEY_VISIBILITY, $visibility_data );
+		$this->update_meta( self::KEY_DISPLAY_OPTIONS, $display_data );
+
+		$this->enable_type_track_mode( $this->module_type, true );
+	}
+
+	/**
+	 * Sanitize/Replace the module's data.
+	 *
+	 * @param array $data Data to sanitize.
+	 * @return array Sanitized data.
+	 */
+	public function sanitize_module( $data ) {
+		return $data;
+	}
+
+	/**
+	 * Validates the module's data.
+	 *
+	 * @since 4.0.3
+	 *
+	 * @param array $data Data to validate.
+	 * @return array
+	 */
+	public function validate_module( $data ) {
+
+		$icons    = isset( $data['content']['social_icons'] ) ? $data['content']['social_icons'] : array();
+		$display  = $data['display'];
+		$selector = array(
+			'desktop' => isset( $display['float_desktop_offset'] ) ? $display['float_desktop_offset'] : '',
+			'mobile'  => isset( $display['float_mobile_offset'] ) ? $display['float_mobile_offset'] : '',
+		);
+
+		$errors = array();
+
+		// Name validation.
+		if ( empty( sanitize_text_field( $data['module']['module_name'] ) ) ) {
+			$errors['error']['name_error'] = __( 'This field is required', 'hustle' );
+		}
+
+		// Social platform url check.
+		if ( ! empty( $icons ) ) {
+			foreach ( $icons as $key => $icon ) {
+				$icon_with_enpoints = self::get_sharing_endpoints();
+				if ( ! in_array( $icon['platform'], $icon_with_enpoints, true ) && empty( $icon['link'] ) ) {
+					$errors['error']['icon_error'][] = $icon['platform'];
+				}
+			}
+		}
+
+		// css selector check
+		if ( ! empty( $selector ) ) {
+			if ( 'css_selector' === $selector['desktop'] && empty( $display['float_desktop_css_selector'] )
+			&& ! empty( $display['float_desktop_enabled'] ) ) {
+				$errors['error']['selector_error'][] = 'float_desktop';
+			}
+			if ( 'css_selector' === $selector['mobile'] && empty( $display['float_mobile_css_selector'] ) && ! empty( $display['float_mobile_enabled'] ) ) {
+				$errors['error']['selector_error'][] = 'float_mobile';
+			}
+		}
+
+		// return errors if any.
+		if ( ! empty( $errors ) ) {
+			$errors['success'] = false;
+			return $errors;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Updates the metas specific for Social Sharing modules.
+	 *
+	 * @since 4.3.0
+	 * @param array $data Data to save.
+	 * @return void
+	 */
+	protected function update_module_metas( $data ) {
+		// Meta used in all module types.
+		if ( isset( $data['content'] ) ) {
+			$this->update_meta( self::KEY_CONTENT, $data['content'] );
+		}
+		// Meta used in all module types.
+		if ( isset( $data['visibility'] ) ) {
+			$this->update_meta( self::KEY_VISIBILITY, $data['visibility'] );
+		}
+
+		if ( isset( $data['design'] ) ) {
+			$this->update_meta( self::KEY_DESIGN, $data['design'] );
+		}
+
+		if ( isset( $data['display'] ) ) {
+			$this->update_meta( self::KEY_DISPLAY_OPTIONS, $data['display'] );
+		}
+
+		// Force all counters to retrieve the data from the APIs.
+		self::refresh_all_counters();
+	}
+
+	/**
+	 * Get the module's data. Used to display it.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return array
+	 */
+	public function get_module_data_to_display() {
+		return $this->get_data();
+	}
+
+	/**
+	 * Get the sub-types for this module.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return array
+	 */
+	public function get_sub_types( $with_titles = false ) {
+		return self::get_sshare_types( $with_titles );
 	}
 
 	/**
@@ -68,6 +252,39 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Get social patform names
+	 *
+	 * @return array
+	 */
+	public static function get_social_platform_names() {
+		$social_platform_names = array(
+			'facebook'      => esc_html__( 'Facebook', 'hustle' ),
+			'twitter'       => esc_html__( 'Twitter', 'hustle' ),
+			'pinterest'     => esc_html__( 'Pinterest', 'hustle' ),
+			'reddit'        => esc_html__( 'Reddit', 'hustle' ),
+			'linkedin'      => esc_html__( 'LinkedIn', 'hustle' ),
+			'vkontakte'     => esc_html__( 'Vkontakte', 'hustle' ),
+			'fivehundredpx' => esc_html__( '500px', 'hustle' ),
+			'houzz'         => esc_html__( 'Houzz', 'hustle' ),
+			'instagram'     => esc_html__( 'Instagram', 'hustle' ),
+			'twitch'        => esc_html__( 'Twitch', 'hustle' ),
+			'youtube'       => esc_html__( 'YouTube', 'hustle' ),
+			'telegram'      => esc_html__( 'Telegram', 'hustle' ),
+			'whatsapp'      => esc_html__( 'WhatsApp', 'hustle' ),
+			'email'         => esc_html__( 'Email', 'hustle' ),
+		);
+
+		/**
+		 * Social networks list
+		 *
+		 * @since 4.0.4
+		 *
+		 * @param array $social_platform_names {slug} => {name}
+		 */
+		return apply_filters( 'hustle_social_platform_names', $social_platform_names );
 	}
 
 	/**
@@ -164,6 +381,8 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 		$post_id = apply_filters( 'hustle_network_shares_post_id', $post_id );
 
 		$current_link = ( 0 !== $post_id && get_permalink( $post_id ) ) ? get_permalink( $post_id ) : home_url();
+		// We share URL without trailing slash, So we need to remove slash when we fetch from API.
+		$current_link = untrailingslashit( $current_link );
 		$current_link = apply_filters( 'hustle_network_shares_from_url', $current_link );
 
 		// If we should use the stored values instead of retrieving them from the API.
@@ -283,7 +502,7 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 		if ( $networks_only ) {
 			return apply_filters(
 				'hustle_networks_with_counter_endpoint',
-				array( 'facebook', 'twitter', 'pinterest', 'reddit', 'vkontakte' )
+				array( 'twitter', 'reddit', 'vkontakte' )
 			);
 		}
 
@@ -292,12 +511,12 @@ class Hustle_SShare_Model extends Hustle_Module_Model {
 		return apply_filters(
 			'hustle_native_share_counter_enpoints',
 			array(
-				'facebook'  => 'https://graph.facebook.com/?fields=og_object{engagement{count}}&id=' . $current_link,
+				// FB stopped working without an app token.
+				// 'facebook'  => 'https://graph.facebook.com/?fields=og_object{engagement{count}}&id=' . $current_link,
 				// There's no official twitter api for doing this. This alternative requires signing in.
 				'twitter'   => 'https://counts.twitcount.com/counts.php?url=' . $current_link,
-				'pinterest' => 'https://api.pinterest.com/v1/urls/count.json?url=' . $current_link,
 				'reddit'    => 'https://www.reddit.com/api/info.json?url=' . $current_link,
-				'vkontakte' => 'https://vk.com/share.php?act=count&url=' . $current_link,
+				'vkontakte' => 'https://vk.com/share.php?act=count&url=' . untrailingslashit( $current_link ),
 			)
 		);
 	}

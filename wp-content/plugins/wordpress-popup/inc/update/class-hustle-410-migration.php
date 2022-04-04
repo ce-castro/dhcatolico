@@ -390,7 +390,7 @@ class Hustle_410_Migration {
 	 * @throws Exception When there's no data to restore or the restore failed.
 	 * @return bool
 	 */
-	public function restore( $check_if_exists = true ) {
+	private function restore( $check_if_exists = true ) {
 
 		try {
 
@@ -407,6 +407,10 @@ class Hustle_410_Migration {
 			$backup_result = $this->wpdb->get_results( $backup_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			$backup_modules_id = array_column( $backup_result, 'module_id' );
+
+			if ( empty( $backup_modules_id ) ) {
+				throw new Exception( __( "There's no backup to restore.", 'hustle' ) );
+			}
 
 			// Delete the visibility conditions created for 4.1.x migration.
 			$modules_id_holder = implode( ', ', array_fill( 0, count( $backup_modules_id ), '%s' ) );

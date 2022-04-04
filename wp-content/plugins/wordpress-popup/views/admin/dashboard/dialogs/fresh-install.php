@@ -11,6 +11,9 @@ $slide_one_2x = self::$plugin_url . 'assets/images/onboard-welcome@2x.png';
 
 $slide_two_1x = self::$plugin_url . 'assets/images/onboard-welcome.png';
 $slide_two_2x = self::$plugin_url . 'assets/images/onboard-welcome@2x.png';
+
+$user     = wp_get_current_user();
+$username = ! empty( $user->user_firstname ) ? $user->user_firstname : $user->user_login;
 ?>
 
 <div class="sui-modal sui-modal-sm">
@@ -39,7 +42,9 @@ $slide_two_2x = self::$plugin_url . 'assets/images/onboard-welcome@2x.png';
 
 						<?php
 						if ( ! $this->is_branding_hidden ) :
-							echo Opt_In_Utils::render_image_markup( $slide_one_1x, $slide_one_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo $this->render_image_markup( $slide_one_1x, $slide_one_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						else :
+							echo $this->render_image_markup( $this->branding_image, '', 'sui-image sui-image-center', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						endif;
 						?>
 					</figure>
@@ -88,7 +93,9 @@ $slide_two_2x = self::$plugin_url . 'assets/images/onboard-welcome@2x.png';
 					<figure class="sui-box-banner" role="banner" aria-hidden="true">
 						<?php
 						if ( ! $this->is_branding_hidden ) :
-							echo Opt_In_Utils::render_image_markup( $slide_two_1x, $slide_two_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo $this->render_image_markup( $slide_two_1x, $slide_two_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						else :
+							echo $this->render_image_markup( $this->branding_image, '', 'sui-image sui-image-center', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						endif;
 						?>
 					</figure>

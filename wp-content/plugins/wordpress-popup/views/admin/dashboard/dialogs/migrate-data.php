@@ -16,11 +16,10 @@ $slide_three_1x = self::$plugin_url . 'assets/images/onboard-create.png';
 $slide_three_2x = self::$plugin_url . 'assets/images/onboard-create@2x.png';
 
 $is_first_time_opening = empty( filter_input( INPUT_GET, 'show-migrate', FILTER_VALIDATE_BOOLEAN ) );
-$support_link          = 'https://premium.wpmudev.org/get-support/';
+$support_link          = Opt_In_Utils::get_link( 'support' );
 
-if ( Opt_In_Utils::_is_free() ) {
-	$support_link = 'https://wordpress.org/support/plugin/wordpress-popup/';
-}
+$user     = wp_get_current_user();
+$username = ! empty( $user->user_firstname ) ? $user->user_firstname : $user->user_login;
 ?>
 
 <div class="sui-modal sui-modal-md">
@@ -30,7 +29,7 @@ if ( Opt_In_Utils::_is_free() ) {
 		id="hustle-dialog--migrate"
 		class="sui-modal-content"
 		aria-modal="true"
-		aria-label="<?php esc_html_e( 'Nice work on updating the Hustle! All your modules are already in place. However, you need to migrate the data of your existing modules such as tracking data and email list manually', 'hustle' ); ?>"
+		aria-label="<?php esc_html_e( 'Modal for migrating your existing tracking data to the latest Hustle version.', 'hustle' ); ?>"
 		aria-live="polite"
 		data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle_dismiss_notification' ) ); ?>"
 		data-is-first="<?php echo $is_first_time_opening ? '1' : '0'; ?>"
@@ -45,7 +44,7 @@ if ( Opt_In_Utils::_is_free() ) {
 
 					<?php if ( ! $this->is_branding_hidden ) : ?>
 						<figure class="sui-box-banner" role="banner" aria-hidden="true">
-							<?php echo Opt_In_Utils::render_image_markup( $slide_one_1x, $slide_one_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php echo $this->render_image_markup( $slide_one_1x, $slide_one_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</figure>
 					<?php endif; ?>
 
@@ -85,10 +84,11 @@ if ( Opt_In_Utils::_is_free() ) {
 				<div class="sui-box-header sui-flatten sui-content-center sui-spacing-top--60">
 
 					<figure class="sui-box-banner" role="banner" aria-hidden="true">
-						<?php echo Opt_In_Utils::render_image_markup( $slide_two_1x, $slide_two_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo $this->render_image_markup( $slide_two_1x, $slide_two_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</figure>
 
 					<h3
+						id="hustle-dialog--migrate-slide-2-title"
 						class="sui-box-title sui-lg"
 						data-done-text="<?php esc_html_e( 'Migration complete', 'hustle' ); ?>"
 					>
@@ -96,6 +96,7 @@ if ( Opt_In_Utils::_is_free() ) {
 					</h3>
 
 					<p
+						id="hustle-dialog--migrate-slide-2-description"
 						class="sui-description"
 						style="margin-bottom: 0;"
 						data-default-text="<?php esc_html_e( 'Nice work on updating the Hustle! All your modules are already in place. However, you need to migrate the data of your existing modules such as tracking data and email list manually.', 'hustle' ); ?>"
@@ -155,10 +156,20 @@ if ( Opt_In_Utils::_is_free() ) {
 
 				<div class="sui-box-body sui-content-center" style="display:none;" aria-hidden="true" hidden data-migrate-failed>
 
-					<div class="sui-notice sui-notice-error">
-						<?php /* translators: 1. opening 'a' tag to support link, 2. closing 'a' tag */ ?>
-						<p><?php printf( esc_html__( 'There was an error while migrating your data. Please retry again or contact our %1$ssupport%2$s team for help.', 'hustle' ), '<a href="' . esc_url( $support_link ) . '" target="_blank">', '</a>' ); ?></p>
-					</div>
+					<?php
+					$notice_options = array(
+						array(
+							'type'       => 'inline_notice',
+							'id'         => 'hustle-dialog--migrate-error-notice',
+							'value'      => '',
+							'attributes' => array(
+								/* translators: 1. opening 'a' tag to support link, 2. closing 'a' tag */
+								'data-message' => sprintf( esc_html__( 'There was an error while migrating your data. Please retry again or contact our %1$ssupport%2$s team for help.', 'hustle' ), '<a href="' . esc_url( $support_link ) . '" target="_blank">', '</a>' ),
+							),
+						),
+					);
+					$this->get_html_for_options( $notice_options );
+					?>
 
 					<button
 						id="hustle-migrate-start"
@@ -207,7 +218,7 @@ if ( Opt_In_Utils::_is_free() ) {
 					</button>
 
 					<figure class="sui-box-banner" role="banner" aria-hidden="true">
-						<?php echo Opt_In_Utils::render_image_markup( $slide_three_1x, $slide_three_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo $this->render_image_markup( $slide_three_1x, $slide_three_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</figure>
 
 					<h3 class="sui-box-title sui-lg"><?php esc_html_e( 'Create Module', 'hustle' ); ?></h3>

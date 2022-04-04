@@ -66,7 +66,7 @@ if ( 'permissions' !== $section ) {
 				'roles'         => $roles,
 				'form_id'       => $form_id,
 				'label'         => __( 'Edit Integrations', 'hustle' ),
-				'description'   => __( 'Choose the user roles which can access the Integrations page and connect or disconnect Hustle to 3rd party apps.', 'hustle' ),
+				'description'   => __( 'Choose the user roles which can access the Integrations page and connect or disconnect Hustle to third-party apps.', 'hustle' ),
 				'input_name'    => 'edit_integrations[]',
 				'current_value' => $settings['edit_integrations'],
 			)

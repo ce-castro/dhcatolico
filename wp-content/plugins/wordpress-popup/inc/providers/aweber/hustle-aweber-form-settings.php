@@ -156,8 +156,8 @@ if ( ! class_exists( 'Hustle_Aweber_Form_Settings' ) ) :
 					}
 					$response = $api->get_account_lists( $account_id, $args );
 
-					$_lists = $response->entries;
-					$total  = $response->total_size;
+					$_lists = ! empty( $response->entries ) ? $response->entries : array();
+					$total  = ! empty( $response->total_size ) ? $response->total_size : 0;
 					if ( is_array( $_lists ) ) {
 						$lists += wp_list_pluck( $_lists, 'name', 'id' );
 					}

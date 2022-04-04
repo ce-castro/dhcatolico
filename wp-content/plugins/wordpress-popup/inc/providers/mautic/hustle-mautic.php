@@ -119,7 +119,7 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 				include_once 'hustle-mautic-api.php';
 			}
 			try {
-				return Hustle_Mautic_Api::get_instance( $base_url, $username, $password );
+				return Hustle_Mautic_Api::get_instance( $username, $base_url, $password );
 			} catch ( Exception $e ) {
 				return $e;
 			}
@@ -149,10 +149,10 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 			$app_url_valid = $api_username_valid = $api_password_valid = true;
 			if ( $is_submit ) {
 
-				$app_url_valid      = ! empty( trim( $current_data['url'] ) );
-				$api_username_valid = ! empty( trim( $current_data['username'] ) )
+				$app_url_valid      = ! empty( $current_data['url'] );
+				$api_username_valid = ! empty( $current_data['username'] )
 									  && sanitize_email( $current_data['username'] ) === $current_data['username'];
-				$api_password_valid = ! empty( trim( $current_data['password'] ) );
+				$api_password_valid = ! empty( $current_data['password'] );
 				$api_key_validated  = $app_url_valid
 									 && $api_username_valid
 									 && $api_password_valid
@@ -298,17 +298,26 @@ if ( ! class_exists( 'Hustle_Mautic' ) ) :
 				),
 			);
 
+			if ( $has_errors ) {
+				$error_notice = array(
+					'type'  => 'notice',
+					'icon'  => 'info',
+					'class' => 'sui-notice-error',
+					'value' => esc_html( $error_message ),
+				);
+				array_unshift( $options, $error_notice );
+			}
+
 			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup(
 				__( 'Configure Mautic', 'hustle' ),
 				sprintf(
+					/* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */
 					__( 'Enable API and HTTP Basic Auth in your Mautic configuration API settings. %1$sRemember:%2$s Your Mautic installation URL must start with either http or https.', 'hustle' ),
 					'<strong>',
 					'</strong>'
 				)
 			);
-			if ( $has_errors ) {
-				$step_html .= '<span class="sui-notice sui-notice-error"><p>' . esc_html( $error_message ) . '</p></span>';
-			}
+
 			$step_html .= Hustle_Provider_Utils::get_html_for_options( $options );
 
 			$is_edit = $this->settings_are_completed( $global_multi_id );

@@ -21,7 +21,7 @@ class Hustle_ConvertKit_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
 		$addon     = $this->addon;
 		$module_id = $this->module_id;
-		$module    = Hustle_Module_Model::instance()->get( $module_id );
+		$module    = new Hustle_Module_Model( $module_id );
 		if ( is_wp_error( $module ) ) {
 			return;
 		}
@@ -136,7 +136,13 @@ class Hustle_ConvertKit_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				if ( false !== $existing_member ) {
 					$res = $api->update_subscriber( $existing_member, $subscribe_data );
 				} else {
-					$res = $api->subscribe( $list_id, $subscribe_data );
+					$forms = $api->get_forms();
+					$lists = is_array( $forms ) ? wp_list_pluck( $forms, 'id' ) : array();
+					if ( in_array( (int) $list_id, $lists, true ) ) {
+						$res = $api->subscribe( $list_id, $subscribe_data );
+					} else {
+						$res = new WP_Error( 'convertkit_list_doesnt_exist', __( 'ConvertKit list doesn\'t exist.', 'hustle' ) );
+					}
 				}
 
 				/**
@@ -159,14 +165,16 @@ class Hustle_ConvertKit_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
 				if ( is_wp_error( $res ) ) {
 					$details = $res->get_error_message();
+				} elseif ( empty( $res ) ) {
+					$details = __( 'Something went wrong', 'hustle' );
 				} else {
 					$is_sent = true;
 					$details = __( 'Successfully added or updated member on ConvertKit list', 'hustle' );
 
 				}
 
-				if ( ! empty( $res->subscription->subscriber->state ) ) {
-					$member_status = $res->subscription->subscriber->state;
+				if ( ! empty( $res->subscription->state ) ) {
+					$member_status = $res->subscription->state;
 				}
 			}
 

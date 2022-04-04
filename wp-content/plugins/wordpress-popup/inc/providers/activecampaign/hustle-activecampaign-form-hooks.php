@@ -54,7 +54,7 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 
 			// check module.
 			// used for custom field label
-			$module = Hustle_Module_Model::instance()->get( $module_id );
+			$module = new Hustle_Module_Model( $module_id );
 			if ( is_wp_error( $module ) ) {
 				return $module;
 			}
@@ -92,12 +92,12 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 				$form_fields     = $module->get_form_fields();
 				$field_labels    = wp_list_pluck( $form_fields, 'label', 'name' );
 				$prepared_fields = array();
-				$module          = Hustle_Module_Model::instance()->get( $module_id );
+				$module          = new Hustle_Module_Model( $module_id );
 
 				foreach ( $extra_custom_fields as $new_field ) {
 
 					if ( ! in_array( strtoupper( $new_field ), $reserved_fields, true ) ) {
-						$type = isset( $form_fields[ $new_field ] ) ? $this->get_field_type( $form_fields[ $new_field ]['type'] ) : 1;
+						$type                          = isset( $form_fields[ $new_field ] ) ? $this->get_field_type( $form_fields[ $new_field ]['type'] ) : 1;
 						$prepared_fields[ $new_field ] = array(
 							'label' => ! empty( $field_labels[ $new_field ] ) ? $field_labels[ $new_field ] : $new_field,
 							'type'  => $type,

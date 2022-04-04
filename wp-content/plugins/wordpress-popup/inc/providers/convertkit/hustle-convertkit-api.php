@@ -30,7 +30,7 @@ class Hustle_ConvertKit_Api {
 	 * @param array  $args
 	 * @return object|WP_Error
 	 */
-	private function _request( $verb = 'GET', $action, $args = array() ) {
+	private function _request( $action, $verb = 'GET', $args = array() ) {
 		$url = trailingslashit( $this->_endpoint ) . $action;
 
 		$_args = array(
@@ -77,7 +77,7 @@ class Hustle_ConvertKit_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _get( $action, $args = array() ) {
-		return $this->_request( 'GET', $action, $args );
+		return $this->_request( $action, 'GET', $args );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class Hustle_ConvertKit_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _post( $action, $args = array() ) {
-		return $this->_request( 'POST', $action, $args );
+		return $this->_request( $action, 'POST', $args );
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Hustle_ConvertKit_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _put( $action, $args = array() ) {
-		return $this->_request( 'PUT', $action, $args );
+		return $this->_request( $action, 'PUT', $args );
 	}
 
 	/**

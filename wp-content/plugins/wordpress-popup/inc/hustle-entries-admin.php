@@ -8,6 +8,14 @@
 class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 
 	/**
+	 * Module types with titles.
+	 *
+	 * @since 4.3.1
+	 * @var array
+	 */
+	private $module_types;
+
+	/**
 	 * Merged default parameter with $_REQUEST
 	 *
 	 * @since 4.0
@@ -110,6 +118,34 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 		$this->page_capability = 'hustle_access_emails';
 
 		$this->page_template_path = 'admin/entries';
+
+		// Show the first page if current page doesn't have entries.
+		add_filter( 'removable_query_args', array( $this, 'maybe_remove_paged' ) );
+	}
+
+	/**
+	 * Remove paged get attribute if there aren't entries and it's not the first page
+	 *
+	 * @since 4.3.1
+	 * @param array $removable_query_args URL query args to be removed.
+	 * @return array
+	 */
+	public function maybe_remove_paged( $removable_query_args ) {
+		$paged = filter_input( INPUT_GET, 'paged', FILTER_VALIDATE_INT );
+
+		if ( $paged && 1 !== $paged && 'hustle_entries' === $this->current_page ) {
+			$per_page      = Hustle_Settings_Admin::get_per_page( 'submission' );
+			$offset        = ( $paged - 1 ) * $per_page;
+			$module_id     = filter_input( INPUT_GET, 'module_id', FILTER_VALIDATE_INT );
+			$total_entries = Hustle_Entry_Model::count_entries( $module_id );
+			if ( $total_entries <= $offset ) {
+				$_SERVER['REQUEST_URI'] = remove_query_arg( 'paged' );
+				$removable_query_args[] = 'paged';
+				unset( $_GET['paged'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			}
+		}
+
+		return $removable_query_args;
 	}
 
 	/**
@@ -151,7 +187,8 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 		);
 	}
 
-	public function run_action_on_page_load() {
+	public function current_page_loaded() {
+		parent::current_page_loaded();
 		$this->before_render();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -180,50 +217,33 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 			'3.0.5',
 			true
 		);
-
-		// Use inline script to allow hooking into this.
-		$daterangepicker_ranges = sprintf(
-			"
-			var hustle_entries_datepicker_ranges = {
-				'%s': [moment(), moment()],
-				'%s': [moment().subtract(1,'days'), moment().subtract(1,'days')],
-				'%s': [moment().subtract(6,'days'), moment()],
-				'%s': [moment().subtract(29,'days'), moment()],
-				'%s': [moment().startOf('month'), moment().endOf('month')],
-				'%s': [moment().subtract(1,'month').startOf('month'), moment().subtract(1,'month').endOf('month')]
-			};",
-			__( 'Today', 'hustle' ),
-			__( 'Yesterday', 'hustle' ),
-			__( 'Last 7 Days', 'hustle' ),
-			__( 'Last 30 Days', 'hustle' ),
-			__( 'This Month', 'hustle' ),
-			__( 'Last Month', 'hustle' )
-		);
-
-		/**
-		 * Filter ranges to be used on submissions date range
-		 *
-		 * @since 4.0.0
-		 *
-		 * @param string $daterangepicker_ranges
-		 */
-		$daterangepicker_ranges = apply_filters( 'hustle_entries_datepicker_ranges', $daterangepicker_ranges );
-
-		wp_add_inline_script( 'hustle-entries-datepicker-range', $daterangepicker_ranges );
 	}
 
 	/**
 	 * Register the js variables to be localized for this page.
 	 *
-	 * @since 4.2.0
+	 * @since 4.3.1
 	 *
-	 * @param array $current_array The already registered js variables.
 	 * @return array
 	 */
-	public function register_current_json( $current_array ) {
+	protected function get_vars_to_localize() {
+		$current_array = parent::get_vars_to_localize();
+
+		// These labels are used in getDaterangepickerRanges(), entries.js.
+		// These keys must match the keys from there.
+		$datepicker_ranges = array(
+			'today'            => esc_html__( 'Today', 'hustle' ),
+			'yesterday'        => esc_html__( 'Yesterday', 'hustle' ),
+			'last_seven_days'  => esc_html__( 'Last 7 Days', 'hustle' ),
+			'last_thirty_days' => esc_html__( 'Last 30 Days', 'hustle' ),
+			'this_month'       => esc_html__( 'This Month', 'hustle' ),
+			'last_month'       => esc_html__( 'Last Month', 'hustle' ),
+		);
+
 		$current_array['daterangepicker'] = array(
-			'daysOfWeek' => Opt_In_Utils::get_short_days_names(),
-			'monthNames' => Opt_In_Utils::get_months(),
+			'daysOfWeek' => Hustle_Time_Helper::get_week_days( 'min' ),
+			'monthNames' => Hustle_Time_Helper::get_months(),
+			'ranges'     => $datepicker_ranges,
 		);
 
 		return $current_array;
@@ -257,20 +277,24 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 	/**
 	 * Get the module types for the entries page.
 	 *
-	 * @todo make the types dynamic.
-	 *
-	 * @since 4.0
+	 * @since 4.0.0
 	 *
 	 * @return array
 	 */
 	public function get_module_types() {
-		$module_types = array(
-			'popup'    => __( 'Pop-up', 'hustle' ),
-			'embedded' => __( 'Embed', 'hustle' ),
-			'slidein'  => __( 'Slide-in', 'hustle' ),
-		);
+		if ( empty( $this->module_types ) ) {
+			$module_types = Hustle_Data::get_module_types();
 
-		return $module_types;
+			unset( $module_types[ Hustle_Model::SOCIAL_SHARING_MODULE ] );
+
+			$types_with_title = array();
+			foreach ( $module_types as $type ) {
+				$types_with_title[ $type ] = Opt_In_Utils::get_module_type_display_name( $type, false, true );
+			}
+			$this->module_types = $types_with_title;
+		}
+
+		return $this->module_types;
 	}
 
 	/**
@@ -306,14 +330,14 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 
 		$modules = $this->get_modules();
 
-		$html = '<select name="module_id" class="sui-select sui-select-sm sui-select-inline">';
-
 		// TODO: get the module types from the right place.
 		$module_types = $this->get_module_types();
 		$current_type = $this->get_current_module_type();
 		$empty_option = isset( $module_types[ $current_type ] ) ? $module_types[ $current_type ] : $module_types['popup'];
 
-		$html .= '<option value="" ' . selected( 0, $this->get_current_module_id(), false ) . '>' . __( 'Choose', 'hustle' ) . ' ' . $empty_option . '</option>';
+		$html = '<select name="module_id" class="sui-select sui-select-sm sui-select-inline" data-width="250" data-search="true" data-placeholder="' . __( 'Choose', 'hustle' ) . ' ' . $empty_option . '">';
+
+		$html .= '<option></option>';
 
 		foreach ( $modules as $module ) {
 
@@ -357,7 +381,7 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 
 		if ( $this->get_current_module_id() ) {
 
-			$module = Hustle_Module_Model::instance()->get( $this->get_current_module_id() );
+			$module = new Hustle_Module_Model( $this->get_current_module_id() );
 
 			if ( is_wp_error( $module ) ) {
 				return null;
@@ -442,24 +466,28 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 		return $this->filtered_total_entries;
 	}
 
-	// admin_page_entries as 'before_render'
+	/**
+	 * Prepare email list page
+	 * admin_page_entries as 'before_render'
+	 */
 	private function prepare_page() {
+		$this->module_id = (int) $this->module->module_id;
 
 		$this->parse_filters();
 		$this->parse_order();
 
-		$this->per_page    = Hustle_Settings_Admin::get_per_page( 'submission' );
-		$pagenum           = isset( $_REQUEST['paged'] ) ? absint( $_REQUEST['paged'] ) : 0; // WPCS: CSRF OK
+		$this->per_page = Hustle_Settings_Admin::get_per_page( 'submission' );
+
+		// don't use filter_input() here, because of see maybe_remove_paged() method.
+		$pagenum           = ! empty( $_GET['paged'] ) ? (int) $_GET['paged'] : 1; // phpcs:ignore
 		$this->page_number = max( 1, $pagenum );
 
-		$module_id    = (int) $this->module_id;
-		$module_model = $this->module;
 		/**
 		 * Fires on custom form page entries render before request and result processed
 		 *
 		 * @since 4.0
 		 */
-		do_action( 'hustle_admin_page_entries', $module_id, $module_model, $pagenum );
+		do_action( 'hustle_admin_page_entries', $this->module_id, $this->module, $pagenum );
 
 		$this->process_request();
 		$this->prepare_results();
@@ -513,6 +541,16 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 				return;
 		}
 
+		$url_params = array(
+			'page'        => isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : 'hustle_entries',
+			'module_type' => isset( $_REQUEST['module_type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['module_type'] ) ) : '',
+			'module_id'   => $this->module_id,
+			'paged'       => isset( $_REQUEST['paged'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['paged'] ) ) : 1,
+		);
+
+		$url = add_query_arg( $url_params, 'admin.php' );
+		wp_safe_redirect( $url ); // Redirect to the first entry page.
+		exit;
 	}
 
 	/**
@@ -527,7 +565,6 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 			$per_page = $this->per_page;
 			$offset   = ( $paged - 1 ) * $per_page;
 
-			$this->module_id     = $this->module->module_id;
 			$this->total_entries = Hustle_Entry_Model::count_entries( $this->module_id );
 
 			$args = array(
@@ -1065,7 +1102,7 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 			return;
 		}
 
-		$module   = Hustle_Module_Model::instance()->get( $id );
+		$module   = new Hustle_Module_Model( $id );
 		$filename = sprintf(
 			'hustle-%s-%s-%s-%s-emails.csv',
 			$module->module_type,
@@ -1094,8 +1131,13 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 		// print BOM Char for Excel Compatible
 		echo chr( 239 ) . chr( 187 ) . chr( 191 );// wpcs xss ok. excel generated content
 
-		// Send the generated csv lines to the browser
-		fpassthru( $fp );
+		// Send the generated csv lines to the browser.
+		if ( function_exists( 'fpassthru' ) ) {
+			fpassthru( $fp );
+		} elseif ( function_exists( 'stream_get_contents' ) ) {
+			echo stream_get_contents( $fp ); // phpcs:ignore xss ok.
+		}
+
 		exit();
 
 	}

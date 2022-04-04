@@ -26,6 +26,8 @@ class Opt_In_Condition_Shown_Less_Than extends Opt_In_Condition_Abstract {
 			return false;
 		}
 
+		$module::$use_count_cookie = true;
+
 		$cookie_key = $this->get_cookie_key( $module->module_type ) . $module->id;
 
 		$show_count = isset( $_COOKIE[ $cookie_key ] ) ? (int) $_COOKIE[ $cookie_key ] : 0;

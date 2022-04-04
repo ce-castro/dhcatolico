@@ -32,6 +32,14 @@
 		?>
 
 		<?php
+		// SETTINGS: Responsive Options.
+		$this->render(
+			'admin/settings/general/responsiveness',
+			array( 'settings' => $settings )
+		);
+		?>
+
+		<?php
 		// SETTINGS: Pagination.
 		$this->render(
 			'admin/settings/general/pagination',

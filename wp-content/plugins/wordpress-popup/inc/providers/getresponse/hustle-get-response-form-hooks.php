@@ -8,6 +8,12 @@
  */
 class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
+	/**
+	 * Existing contact ID.
+	 *
+	 * @var string
+	 */
+	private $existing_member;
 
 	/**
 	 * Add Get_Response data to entry.
@@ -56,6 +62,9 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 			$email = $submitted_data['email'];
 
 			$name = array();
+			if ( ! empty( $submitted_data['name'] ) ) {
+				$name['name'] = $submitted_data['name'];
+			}
 			if ( ! empty( $submitted_data['first_name'] ) ) {
 				$name['first_name'] = $submitted_data['first_name'];
 			}
@@ -73,13 +82,15 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 			);
 
 			if ( count( $name ) ) {
-				$new_data['name'] = implode( ' ', $name ); }
+				$new_data['name'] = implode( ' ', $name );
+			}
 
-			// Extra fields
+			// Extra fields.
 			$extra_data    = array_diff_key(
 				$submitted_data,
 				array(
 					'email'      => '',
+					'name'       => '',
 					'first_name' => '',
 					'last_name'  => '',
 				)
@@ -92,12 +103,19 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 				$new_data['customFieldValues'] = array();
 
 				$cf = $api->get_custom_fields();
+
 				if ( is_wp_error( $cf ) ) {
 					throw new Exception( $cf->get_error_message() );
 				}
 
 				$custom_fields = wp_list_pluck( $cf, 'name', 'customFieldId' );
-				$module        = Hustle_Module_Model::instance()->get( $module_id );
+				$phone_fields  = array_filter(
+					wp_list_pluck( $cf, 'type', 'name' ),
+					function ( $var ) {
+						return 'phone' === $var;
+					}
+				);
+				$module        = new Hustle_Module_Model( $module_id );
 				$form_fields   = $module->get_form_fields();
 
 				foreach ( $extra_data as $key => $value ) {
@@ -106,18 +124,30 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 					if ( in_array( $key, $custom_fields, true ) ) {
 						$custom_field_id = array_search( $key, $custom_fields, true );
 					} else {
-						$type            = isset( $form_fields[ $key ] ) ? $this->get_field_type( $form_fields[ $key ]['type'] ) : 'text';
-						$custom_field    = array(
+						$type         = isset( $form_fields[ $key ] ) ? $this->get_field_type( $form_fields[ $key ]['type'] ) : 'text';
+						$custom_field = array(
 							'name'   => $key,
 							'type'   => $type,
 							'hidden' => false,
 							'values' => array(),
 						);
+
 						$custom_field_id = $api->add_custom_field( $custom_field );
 						if ( is_wp_error( $custom_field_id ) ) {
 							throw new Exception( $custom_field_id->get_error_message() );
 						}
 					}
+
+					if ( in_array( $key, $phone_fields, true ) ) {
+						$value = $this->filter_phone_number( $value );
+
+						if ( empty( $value ) ) {
+							// If the phone number is probably wrong than we skip sending it to GetResponse.
+							$details = __( 'Member was added without the phone number.', 'hustle' );
+							continue;
+						}
+					}
+
 					$new_data['customFieldValues'][] = array(
 						'customFieldId' => $custom_field_id,
 						'value'         => array( $value ),
@@ -141,7 +171,11 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 				$form_settings_instance
 			);
 
-			$res = $api->subscribe( $new_data );
+			if ( $this->existing_member ) {
+				$res = $api->update_contact( $this->existing_member, $new_data );
+			} else {
+				$res = $api->subscribe( $new_data );
+			}
 
 			/**
 			 * Fires after adding subscriber
@@ -171,8 +205,9 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 					$details = $res->get_error_message();
 				}
 			} else {
+				$details       = ( ! empty( $details ) ) ? $details : __( 'Successfully added or updated member on Get_Response list', 'hustle' );
 				$is_sent       = true;
-				$details       = __( 'Successfully added or updated member on Get_Response list', 'hustle' );
+				$details       = $details;
 				$member_status = __( 'OK', 'hustle' );
 			}
 
@@ -225,37 +260,34 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 			return __( 'Required Field "email" was not filled by the user.', 'hustle' );
 		}
 
-		if ( ! $allow_subscribed ) {
+		/**
+		 * Filter submitted form data to be processed
+		 *
+		 * @since 4.0
+		 *
+		 * @param array                                    $submitted_data
+		 * @param int                                      $module_id                current module_id
+		 * @param Hustle_Get_Response_Form_Settings $form_settings_instance
+		 */
+		$submitted_data = apply_filters(
+			'hustle_provider_get_response_form_submitted_data_before_validation',
+			$submitted_data,
+			$module_id,
+			$form_settings_instance
+		);
 
-			/**
-			 * Filter submitted form data to be processed
-			 *
-			 * @since 4.0
-			 *
-			 * @param array                                    $submitted_data
-			 * @param int                                      $module_id                current module_id
-			 * @param Hustle_Get_Response_Form_Settings $form_settings_instance
-			 */
-			$submitted_data = apply_filters(
-				'hustle_provider_get_response_form_submitted_data_before_validation',
-				$submitted_data,
-				$module_id,
-				$form_settings_instance
-			);
+		// triggers exception if not found.
+		$global_multi_id = $addon_setting_values['selected_global_multi_id'];
+		$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
+		$api             = $addon::api( $api_key );
+		$args            = array(
+			'email'   => $submitted_data['email'],
+			'list_id' => $addon_setting_values['list_id'],
+		);
+		$this->existing_member = $this->get_subscriber( $api, $args );
 
-			// triggers exception if not found.
-			$global_multi_id = $addon_setting_values['selected_global_multi_id'];
-			$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
-			$api             = $addon::api( $api_key );
-			$args            = array(
-				'email'   => $submitted_data['email'],
-				'list_id' => $addon_setting_values['list_id'],
-			);
-			$existing_member = $this->get_subscriber( $api, $args );
-
-			if ( $existing_member ) {
-				$is_success = self::ALREADY_SUBSCRIBED_ERROR;
-			}
+		if ( $this->existing_member && ! $allow_subscribed ) {
+			$is_success = self::ALREADY_SUBSCRIBED_ERROR;
 		}
 
 		/**
@@ -305,7 +337,7 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 	 */
 	protected function get_subscriber( $api, $data ) {
 		$key = md5( wp_json_encode( $data ) );
-		if ( empty ( $this->_subscriber ) && ! isset( $this->_subscriber[ $key ] ) ) {
+		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ $key ] ) ) {
 			$this->_subscriber[ $key ] = $api->get_contact( $data );
 		}
 		return $this->_subscriber[ $key ];
@@ -341,4 +373,22 @@ class Hustle_Get_Response_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract
 
 		return $type;
 	}
+
+	/**
+	 * Checks if phone number is proably correct.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	private function filter_phone_number( $value ) {
+		// We remove unnsesary letters.
+		$value = preg_replace( '/[^+0-9]/', '', $value );
+
+		if ( strpos( $value, '+' ) === false || ! ( strlen( $value ) >= 5 && strlen( $value ) < 16 ) ) {
+			return null;
+		}
+
+		return $value;
+	}
+
 }

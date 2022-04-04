@@ -72,14 +72,14 @@ $sshare_count = Hustle_Module_Collection::instance()->get_all(
 
 	<div class="sui-box-footer"<?php echo ( $sshare_count && count( $sshare_per_page_data ) ) ? '' : ' style="padding-top: 0; border-top: 0;"'; ?>>
 
-		<?php $query_array = array( 'page' => Hustle_Module_Admin::get_listing_page_by_module_type( $widget_type ) ); ?>
+		<?php $query_array = array( 'page' => Hustle_Data::get_listing_page_by_module_type( $widget_type ) ); ?>
 
 		<?php if ( $capability['hustle_create'] ) { ?>
 			<a
 				href="
 					<?php
-					$query_array = array( 'page' => Hustle_Module_Admin::get_listing_page_by_module_type( $widget_type ) );
-					if ( Hustle_Module_Admin::can_create_new_module( $widget_type ) ) {
+					$query_array = array( 'page' => Hustle_Data::get_listing_page_by_module_type( $widget_type ) );
+					if ( ! Hustle_Data::was_free_limit_reached( $widget_type ) ) {
 						$args = array_merge( $query_array, array( 'create-module' => 'true' ) );
 					} else {
 						$args = array_merge( $query_array, array( 'requires-pro' => 'true' ) );

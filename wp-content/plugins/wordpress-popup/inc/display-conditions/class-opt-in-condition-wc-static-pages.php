@@ -27,13 +27,13 @@ class Opt_In_Condition_Wc_Static_Pages extends Opt_In_Condition_Abstract {
 		if ( isset( $this->args->wc_static_pages ) ) {
 			$conditions = (array) $this->args->wc_static_pages;
 
-			if ( is_cart() ) {
+			if ( self::check( 'is_cart' ) ) {
 				$allowed = in_array( 'is_cart', $conditions, true );
-			} elseif ( is_wc_endpoint_url( 'order-received' ) ) {
+			} elseif ( self::check( 'is_order_received' ) ) {
 				$allowed = in_array( 'is_order_received', $conditions, true );
-			} elseif ( is_checkout() ) {
+			} elseif ( self::check( 'is_checkout' ) ) {
 				$allowed = in_array( 'is_checkout', $conditions, true );
-			} elseif ( is_account_page() ) {
+			} elseif ( self::check( 'is_account_page' ) ) {
 				$allowed = in_array( 'is_account_page', $conditions, true );
 			}
 

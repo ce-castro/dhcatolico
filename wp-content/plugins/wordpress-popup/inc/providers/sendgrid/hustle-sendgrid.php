@@ -136,7 +136,7 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 
 				$api_key_validated = $this->validate_api_key( $submitted_data['api_key'], $submitted_data['new_campaigns'] );
 				if ( ! $api_key_validated ) {
-					$error_message = __( 'The API key is invalid for the selected Marketing Campaign. Please enter a valid API key or choose the correct Marketing Campaign version below.', 'hustle' );
+					$error_message = __( 'The API key is invalid for the selected Marketing Campaign. Please enter a valid API key or try with a different "Marketing Campaign" version below.', 'hustle' );
 					$has_errors    = true;
 				}
 
@@ -242,17 +242,26 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 				),
 			);
 
+			if ( $has_errors ) {
+				$error_notice = array(
+					'type'  => 'notice',
+					'icon'  => 'info',
+					'class' => 'sui-notice-error',
+					'value' => esc_html( $error_message ),
+				);
+				array_unshift( $options, $error_notice );
+			}
+
 			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup(
 				__( 'Configure SendGrid', 'hustle' ),
 				sprintf(
+					/* translators: 1. opening 'a' tag to Sendgrid API page, 2. closing 'a' tag */
 					__( 'Log in to your %1$sSendGrid account%2$s to get your API Key v3.', 'hustle' ),
 					'<a href="https://app.sendgrid.com/settings/api_keys" target="_blank">',
 					'</a>'
 				)
 			);
-			if ( $has_errors ) {
-				$step_html .= '<span class="sui-notice sui-notice-error"><p>' . esc_html( $error_message ) . '</p></span>';
-			}
+
 			$step_html .= Hustle_Provider_Utils::get_html_for_options( $options );
 
 			$is_edit = $this->settings_are_completed( $global_multi_id );

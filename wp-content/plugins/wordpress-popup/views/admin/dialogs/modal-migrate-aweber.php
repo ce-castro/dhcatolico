@@ -50,7 +50,7 @@ $aweber = Hustle_Aweber::get_instance();
 
 						<?php
 						$api      = $aweber->get_api();
-						$auth_url = $api->get_authorization_uri( 0, true, Hustle_Module_Admin::INTEGRATIONS_PAGE );
+						$auth_url = $api->get_authorization_uri( 0, true, Hustle_Data::INTEGRATIONS_PAGE );
 
 						if ( $auth_url ) :
 						?>

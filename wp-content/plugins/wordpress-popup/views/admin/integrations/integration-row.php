@@ -21,6 +21,7 @@ $global_multi_id = 0;
 $multi_name      = false;
 
 $advertising = false;
+$hide        = apply_filters( 'wpmudev_branding_hide_doc_link', false );
 
 if ( ! empty( $module_id ) ) {
 
@@ -152,9 +153,9 @@ if ( true === $advertising ) {
 								class="sui-image"
 							/>
 
-							<?php
-						} else {
+						<?php } else { ?>
 
+							<?php
 							$banner = '';
 
 							if ( ! empty( $provider['banner_1x'] ) ) {
@@ -184,7 +185,7 @@ if ( true === $advertising ) {
 
 						<span><?php echo esc_html( $provider['title'] ) . ( ! empty( $provider['multi_name'] ) ? ' – ' . esc_html( $provider['multi_name'] ) : '' ); ?></span>
 
-						<?php if ( ! empty( $provider['documentation_url'] ) ) { ?>
+						<?php if ( ! empty( $provider['documentation_url'] ) && ! $hide ) { ?>
 							<a href="<?php echo esc_url( $provider['documentation_url'] ); ?>" target="_blank"><?php esc_html_e( 'View Docs', 'hustle' ); ?></a>
 						<?php } ?>
 
@@ -216,7 +217,7 @@ if ( true === $advertising ) {
 
 				<?php
 				if ( ! empty( $provider['icon_2x'] ) ) {
-					echo Opt_In_Utils::render_image_markup( $provider['icon_2x'], '', 'sui-image', '', '' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo $this->render_image_markup( $provider['icon_2x'], '', 'sui-image', '', '' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} else {
 					echo '<span class="hui-noicon" aria-hidden="true">' . esc_html__( 'Icon', 'hustle' ) . '</span>';
 				}

@@ -230,8 +230,8 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 
 			$data = wp_remote_retrieve_body( $response );
 
-			if ( is_wp_error( $data ) ) {
-				return $data;
+			if ( is_wp_error( $response ) ) {
+				return $response;
 			}
 
 			return json_decode( $data, true );
@@ -285,7 +285,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 				$this->error = $contact;
 				throw new Exception( $error_message );
 			} else {
-				if ( is_array( $contact ) && is_array( $contact['contacts'] ) ) {
+				if ( is_array( $contact ) && ! empty( $contact['contacts'] ) && is_array( $contact['contacts'] ) ) {
 					$contact_id = $contact['contacts'][0]['contactId'];
 
 					$subscription_array = array(
@@ -306,6 +306,8 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 
 					if ( is_wp_error( $subscriptions ) ) {
 						return $subscriptions;
+					} elseif ( ! empty( $subscriptions['warnings'] ) && ! empty( $subscriptions['warnings'][0] ) ) {
+						return new WP_Error( 'icontact_error', $subscriptions['warnings'][0] );
 					} else {
 						return __( 'Successful subscription', 'hustle' );
 					}

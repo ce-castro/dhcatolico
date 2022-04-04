@@ -11,8 +11,10 @@
 <div class="sui-header">
 
 	<h1 class="sui-header-title"><?php esc_html_e( 'Integrations', 'hustle' ); ?></h1>
-	<?php $this->render( 'admin/commons/view-documentation' ); ?>
+	<?php $this->render( 'admin/commons/view-documentation', array( 'docs_section' => 'integrations' ) ); ?>
 </div>
+
+<div id="hustle-floating-notifications-wrapper" class="sui-floating-notices"></div>
 
 <!-- BOX: Summary -->
 <?php $this->render( 'admin/integrations-page/summary', array( 'sui' => $sui ) ); ?>
@@ -49,7 +51,7 @@
 
 <?php
 // Global Footer.
-$this->render( 'admin/footer/footer' );
+$this->render( 'admin/global/sui-components/sui-footer' );
 ?>
 
 <?php

@@ -13,9 +13,8 @@ class Hustle_Deletion {
 	 * @since 4.0.3
 	 */
 	public static function hustle_reset_notifications() {
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE `meta_key` = 'hustle_dismissed_notifications'" );
+		$meta_key = 'hustle_dismissed_notifications';
+		delete_metadata( 'user', '', $meta_key, '', true );
 	}
 
 	/**
@@ -24,6 +23,8 @@ class Hustle_Deletion {
 	 * @since 4.0.3
 	 */
 	public static function hustle_delete_custom_options() {
+		delete_option( 'hustle_version' );
+		delete_site_option( 'hustle_version' );
 		delete_option( 'hustle_color_index' );
 		delete_option( 'hustle_database_version' );
 		delete_option( 'hustle_unsubscribe_nonces' );
@@ -44,6 +45,7 @@ class Hustle_Deletion {
 		delete_option( 'opt_in_database_version' );
 		delete_option( 'hustle_custom_palettes' );
 		delete_option( 'hustle_notice_stop_support_m2' );
+		delete_option( 'hustle-hide_tutorials' );
 	}
 
 	/**
@@ -102,6 +104,8 @@ class Hustle_Deletion {
 			for ( $i = 1; $i <= $max_module_id; $i ++ ) {
 				wp_cache_delete( $i, 'hustle_model_data' );
 				wp_cache_delete( $i, 'hustle_module_meta' );
+				wp_cache_delete( $i, 'hustle_subscribed_emails' );
+				wp_cache_delete( $i, 'hustle_module_type' );
 			}
 		}
 
@@ -225,4 +229,13 @@ class Hustle_Deletion {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}optins" );
 	}
 
+	/**
+	 * Removes cronjobs.
+	 *
+	 * @since 4.3.3
+	 */
+	public static function clear_cronjobs() {
+		// Remove the cron for refreshing Aweber's token.
+		wp_clear_scheduled_hook( 'hustle_aweber_token_refresh' );
+	}
 }

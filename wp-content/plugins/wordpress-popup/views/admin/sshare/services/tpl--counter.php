@@ -11,7 +11,7 @@
 
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Counter', 'hustle' ); ?></span>
-		<span class="sui-description"><?php esc_html_e( 'Display the number of clicks or shares on the social plaforms.', 'hustle' ); ?></span>
+		<span class="sui-description"><?php esc_html_e( 'Display the number of clicks or shares on the social platforms.', 'hustle' ); ?></span>
 	</div>
 
 	<div class="sui-box-settings-col-2">
@@ -31,7 +31,7 @@
 
 				<span id="hustle-settings--counter-enable-label" class="sui-toggle-label"><?php esc_html_e( 'Enable counter', 'hustle' ); ?></span>
 
-				<span id="hustle-settings--counter-enable-description" class="sui-description"><?php esc_html_e( "You can either show the number of times a social icon has been clicked or retrieve the number of shares from each network's API when available.", 'hustle' ); ?></span>
+				<span id="hustle-settings--counter-enable-description" class="sui-description"><?php esc_html_e( 'You can either show the number of times a social icon has been clicked or retrieve the number of shares from each network\'s API when available. Note that this counts and displays the total number of clicks on each social icon throughout the site; it does not count shares of individual posts.', 'hustle' ); ?></span>
 			</label>
 		</div>
 

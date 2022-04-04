@@ -6,6 +6,11 @@
  * @since 4.0.0
  */
 
+$hide_after_subscription_desc = $is_optin ?
+	/* translators: module type in small caps and in singular */
+	__( 'Choose the %s visibility after opt-in.', 'hustle' ) :
+	/* translators: module type in small caps and in singular */
+	__( 'Choose the %1$s visibility after opt-in, including conversion of external forms in your %1$s. Supported external form plugins include Forminator, Ninja Forms, Gravity Forms (for AJAX forms), and Contact Form 7.', 'hustle' );
 ?>
 <div class="sui-box-settings-row">
 
@@ -26,70 +31,61 @@
 				<label class="sui-settings-label"><?php esc_html_e( 'Page scrolling', 'hustle' ); ?></label>
 
 				<?php /* translators: module type in small caps and in singular */ ?>
-				<span class="sui-description"><?php printf( esc_html__( 'Choose whether to enable page scrolling in the background while the %s is visible to the users.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+				<span class="sui-description" style="margin-bottom: 10px;"><?php printf( esc_html__( 'Choose whether to enable page scrolling in the background while the %s is visible to the users.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
-				<div class="sui-side-tabs" style="margin-top: 10px;">
-
-					<div class="sui-tabs-menu">
-
-						<label for="hustle-settings--scroll-on" class="sui-tab-item">
-							<input
-								type="radio"
-								name="allow_scroll_page"
-								data-attribute="allow_scroll_page"
-								value="1"
-								id="hustle-settings--scroll-on"
-								<?php checked( $settings['allow_scroll_page'], '1' ); ?>
-							/>
-							<?php esc_html_e( 'Enable', 'hustle' ); ?>
-						</label>
-
-						<label for="hustle-settings--scroll-off" class="sui-tab-item">
-							<input
-								type="radio"
-								name="allow_scroll_page"
-								data-attribute="allow_scroll_page"
-								value="0"
-								id="hustle-settings--scroll-off"
-								<?php checked( $settings['allow_scroll_page'], '0' ); ?>
-							/>
-							<?php esc_html_e( 'Disable', 'hustle' ); ?>
-						</label>
-
-					</div>
-
-				</div>
+				<?php
+				$this->render(
+					'admin/global/sui-components/sui-tabs',
+					array(
+						'name'        => 'allow_scroll_page',
+						'radio'       => true,
+						'saved_value' => $settings['allow_scroll_page'],
+						'sidetabs'    => true,
+						'content'     => false,
+						'options'     => array(
+							'1' => array(
+								'value' => '1',
+								'label' => __( 'Enable', 'hustle' ),
+							),
+							'0' => array(
+								'value' => '0',
+								'label' => __( 'Disable', 'hustle' ),
+							),
+						),
+					)
+				);
+				?>
 
 			</div>
 
 		<?php endif; ?>
 
-		<?php
-		if ( $is_optin ) :
-			// SETTINGS: Visibility after opt-in.
-			?>
-			<div class="sui-form-field">
+		<?php // SETTINGS: Visibility after opt-in. ?>
+		<div class="sui-form-field">
 
-				<label class="sui-settings-label"><?php esc_html_e( 'Visibility after opt-in', 'hustle' ); ?></label>
+			<label class="sui-settings-label"><?php esc_html_e( 'Visibility after opt-in', 'hustle' ); ?></label>
 
-				<?php /* translators: module type in small caps and in singular */ ?>
-				<span class="sui-description" style="margin-bottom: 10px;"><?php printf( esc_html__( "Choose the %s visibility once a visitor has opted-in Hustle's form.", 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+			<span class="sui-description" style="margin-bottom: 10px;">
+				<?php printf( esc_html( $hide_after_subscription_desc ), esc_html( $smallcaps_singular ) ); ?>
+			</span>
 
-				<select data-attribute="hide_after_subscription">
-					<option value="keep_show" <?php selected( $settings['hide_after_subscription'], 'keep_show' ); ?>>
-						<?php esc_html_e( 'Keep showing this module', 'hustle' ); ?>
-					</option>
-					<option value="no_show_all" <?php selected( $settings['hide_after_subscription'], 'no_show_all' ); ?>>
-						<?php esc_html_e( 'No longer show this module across the site', 'hustle' ); ?>
-					</option>
-					<option value="no_show_on_post" <?php selected( $settings['hide_after_subscription'], 'no_show_on_post' ); ?>>
-						<?php esc_html_e( 'No longer show this module on this post/page', 'hustle' ); ?>
-					</option>
-				</select>
+			<select class="sui-select hustle-select-with-container" data-attribute="hide_after_subscription" name="hide_after_subscription" data-content-on="no_show_on_post,no_show_all">
+				<option value="keep_show" <?php selected( $settings['hide_after_subscription'], 'keep_show' ); ?>>
+					<?php esc_html_e( 'Keep showing this module', 'hustle' ); ?>
+				</option>
+				<option value="no_show_all" <?php selected( $settings['hide_after_subscription'], 'no_show_all' ); ?>>
+					<?php esc_html_e( 'No longer show this module across the site', 'hustle' ); ?>
+				</option>
+				<option value="no_show_on_post" <?php selected( $settings['hide_after_subscription'], 'no_show_on_post' ); ?>>
+					<?php esc_html_e( 'No longer show this module on this post/page', 'hustle' ); ?>
+				</option>
+			</select>
 
+			<div style="margin-top: 10px;" data-field-content="hide_after_subscription">
+				<?php Opt_In_Utils::get_cookie_saving_notice(); ?>
 			</div>
 
-		<?php endif; ?>
+		</div>
 
 		<?php // SETTINGS: Visibility after CTA conversion. ?>
 		<div class="sui-form-field" data-toggle-content="show-cta">
@@ -99,11 +95,15 @@
 			<?php /* translators: module type in small caps and in singular */ ?>
 			<span class="sui-description" style="margin-bottom: 10px;"><?php printf( esc_html__( 'Choose the %s visibility once a visitor has clicked on the CTA button.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
-			<select data-attribute="hide_after_cta">
+			<select class="sui-select hustle-select-with-container" data-attribute="hide_after_cta" name="hide_after_cta" data-content-on="no_show_on_post,no_show_all">
 				<option value="keep_show" <?php selected( $settings['hide_after_cta'], 'keep_show' ); ?>><?php esc_html_e( 'Keep showing this module', 'hustle' ); ?></option>
 				<option value="no_show_all" <?php selected( $settings['hide_after_cta'], 'no_show_all' ); ?>><?php esc_html_e( 'No longer show this module across the site', 'hustle' ); ?></option>
 				<option value="no_show_on_post" <?php selected( $settings['hide_after_cta'], 'no_show_on_post' ); ?>><?php esc_html_e( 'No longer show this module on this post/page', 'hustle' ); ?></option>
 			</select>
+
+			<div style="margin-top: 10px;" data-field-content="hide_after_cta">
+				<?php Opt_In_Utils::get_cookie_saving_notice(); ?>
+			</div>
 
 		</div>
 
@@ -113,13 +113,13 @@
 
 			<label class="sui-settings-label"><?php esc_html_e( 'External form conversion behavior', 'hustle' ); ?></label>
 
-			<span class="sui-description"><?php printf( esc_html__( "If you have an external form in your %1\$s, choose how your %1\$s will behave on conversion of that form. Note that this doesn't affect your external form submission behavior.", 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+			<span class="sui-description"><?php printf( esc_html__( "If you have an external form in your %1\$s, choose how your %1\$s will behave on the conversion of that form. Note that this doesn't affect your external form submission behavior.", 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 
 			<div style="margin-top: 10px;">
 
 				<div style="margin-bottom: 10px;">
 
-					<select data-attribute="on_submit" >
+					<select class="sui-select" data-attribute="on_submit" >
 
 						<?php if ( 'embedded' !== $module_type ) { ?>
 							<option value="close"

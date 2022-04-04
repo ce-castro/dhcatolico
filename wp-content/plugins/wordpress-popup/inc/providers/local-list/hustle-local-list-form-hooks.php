@@ -115,7 +115,7 @@ class Hustle_Local_List_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
 	// $submitted_data = $this->check_legacy( $submitted_data );
 
-	// $module = Hustle_Module_Model::instance()->get( $module_id );
+	// $module = new Hustle_Module_Model( $module_id );
 
 	// $local_subscription_data = wp_parse_args( $submitted_data, array(
 	// 'module_type' => $module->module_type,

@@ -1,8 +1,8 @@
 <?php
 
 class Opt_In_WPMUDEV_API {
-	const DOMAIN       = 'https://premium.wpmudev.org';
-	const REDIRECT_URI = 'https://premium.wpmudev.org/api/hustle/v1/provider';
+	const DOMAIN       = 'https://wpmudev.com';
+	const REDIRECT_URI = 'https://wpmudev.com/api/hustle/v1/provider';
 
 	/**
 	 * @var string
@@ -15,7 +15,7 @@ class Opt_In_WPMUDEV_API {
 	 * @return string The unique nonce value.
 	 */
 	public function get_nonce_value() {
-		$nonce = is_multisite() ? get_option( $this->nonce_option_name ) : get_option( $this->nonce_option_name );
+		$nonce = get_option( $this->nonce_option_name );
 
 		if ( empty( $nonce ) ) {
 			/**
@@ -24,10 +24,7 @@ class Opt_In_WPMUDEV_API {
 			 */
 			$nonce = wp_generate_password( 40, false, false );
 
-			if ( is_multisite() ) {
-				update_option( $this->nonce_option_name, $nonce );
-			} else {
-				update_option( $this->nonce_option_name, $nonce ); }
+			update_option( $this->nonce_option_name, $nonce );
 		}
 
 		return $nonce;

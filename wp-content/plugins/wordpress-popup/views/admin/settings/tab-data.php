@@ -23,11 +23,13 @@ if ( $section && 'data' !== $section ) {
 	<form id="hustle-data-settings-form" class="sui-box-body">
 
 		<?php
-		// SECTION: Uninstallation.
-		$this->render(
-			'admin/settings/data/uninstallation-settings',
-			array( 'settings' => $settings )
-		);
+		if ( is_main_site() ) {
+			// SECTION: Uninstallation.
+			$this->render(
+				'admin/settings/data/uninstallation-settings',
+				array( 'settings' => $settings )
+			);
+		}
 		?>
 
 		<?php

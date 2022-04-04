@@ -23,7 +23,7 @@ if ( $section && 'analytics' !== $section ) {
 
 	<form id="hustle-analytics-settings-form" class="sui-box-body">
 
-		<p><?php esc_html_e( "Add analytics tracking for your Hustle modules that doesn't require any third party integration, and display the data in the WordPress Admin Dashboard area.", 'hustle' ); ?>
+		<p><?php esc_html_e( "Add analytics tracking for your Hustle modules that doesn't require any third-party integration, and display the data in the WordPress Admin Dashboard area.", 'hustle' ); ?>
 
 		<?php if ( $is_enabled ) { ?>
 
@@ -36,7 +36,8 @@ if ( $section && 'analytics' !== $section ) {
 						array(
 							array(
 								'type'  => 'inline_notice',
-								'class' => 'sui-notice-info',
+								'class' => 'sui-notice-success',
+								'icon'  => 'check-tick',
 								'value' => esc_html__( 'Analytics tracking is enabled, and the widget is visible to the selected user roles in their dashboard.', 'hustle' ),
 							),
 						)

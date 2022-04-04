@@ -104,7 +104,6 @@
 				'settings'           => $settings,
 				'module_type'        => $module_type,
 				'is_optin'           => $is_optin,
-				'show_cta'           => $show_cta,
 				'smallcaps_singular' => $smallcaps_singular,
 			)
 		);

@@ -7,10 +7,13 @@
  */
 
 $is_embedded_or_social = Hustle_Module_Model::EMBEDDED_MODULE === $module->module_type || Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module->module_type;
-$free_limit_reached    = ! Hustle_Module_Admin::can_create_new_module( $module->module_type );
+$free_limit_reached    = Hustle_Data::was_free_limit_reached( $module->module_type );
 
 $can_edit   = Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module->id );
 $can_create = current_user_can( 'hustle_create' );
+$can_emails = current_user_can( 'hustle_access_emails' );
+
+$is_tracking_disabled = empty( $module->get_tracking_types() );
 
 // BUTTON: Open dropdown list. ?>
 <button class="sui-button-icon sui-dropdown-anchor" aria-expanded="false">
@@ -30,7 +33,7 @@ $can_create = current_user_can( 'hustle_create' );
 	if ( ! empty( $dashboard ) && $can_edit ) :
 		?>
 
-		<li><a href="<?php echo esc_url( $module->decorated->get_edit_url() ); ?>" class="hustle-onload-icon-action">
+		<li><a href="<?php echo esc_url( $module->get_edit_url() ); ?>" class="hustle-onload-icon-action">
 			<span class="sui-icon-pencil" aria-hidden="true"></span>
 			<?php esc_html_e( 'Edit', 'hustle' ); ?>
 		</a></li>
@@ -41,13 +44,15 @@ $can_create = current_user_can( 'hustle_create' );
 
 	<?php
 	// Preview module.
-	if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) :
+	if ( empty( $edit_page ) && Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) :
 		?>
 
 		<li><button
-			class="hustle-preview-module-button hustle-onload-icon-action"
+			class="hustle-preview-module-button"
 			data-id="<?php echo esc_attr( $module->id ); ?>"
-			data-type="<?php echo esc_attr( $module->module_type ); ?>">
+			data-type="<?php echo esc_attr( $module->module_type ); ?>"
+			data-name="<?php echo esc_attr( $module->module_name ); ?>"
+		>
 			<span class="sui-icon-eye" aria-hidden="true"></span>
 			<?php esc_html_e( 'Preview', 'hustle' ); ?>
 		</button></li>
@@ -72,18 +77,19 @@ $can_create = current_user_can( 'hustle_create' );
 
 	<?php
 	// Toggle Status button.
-	if ( $can_edit ) :
+	if ( $can_edit && empty( $edit_page ) ) :
 		?>
 		<li><button
 			class="hustle-single-module-button-action hustle-onload-icon-action"
 			data-module-id="<?php echo esc_attr( $module->id ); ?>"
 			data-hustle-action="toggle-status"
+			data-active="0"
 		>
-			<span class="hustle-toggle-status-button-description<?php echo $module->active ? '' : ' sui-hidden'; ?>">
+			<span class="hustle-toggle-status-button-description<?php echo $module->active || ! empty( $edit_page ) ? '' : ' sui-hidden'; ?>">
 				<span class="sui-icon-unpublish" aria-hidden="true"></span>
 				<?php esc_html_e( 'Unpublish', 'hustle' ); ?>
 			</span>
-			<span class="hustle-toggle-status-button-description <?php echo $module->active ? ' sui-hidden' : ''; ?>">
+			<span class="hustle-toggle-status-button-description <?php echo $module->active || ! empty( $edit_page ) ? ' sui-hidden' : ''; ?>">
 				<span class="sui-icon-web-globe-world" aria-hidden="true"></span>
 				<?php esc_html_e( 'Publish', 'hustle' ); ?>
 			</span>
@@ -94,12 +100,12 @@ $can_create = current_user_can( 'hustle_create' );
 // View Email List.
 if (
 		Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type
-		&& $capability['hustle_access_emails']
+		&& $can_emails
 		&& 'optin' === $module->module_mode
 	) {
 	$url = add_query_arg(
 		array(
-			'page'        => Hustle_Module_Admin::ENTRIES_PAGE,
+			'page'        => Hustle_Data::ENTRIES_PAGE,
 			'module_type' => $module->module_type,
 			'module_id'   => $module->module_id,
 		),
@@ -129,25 +135,22 @@ if ( empty( $dashboard ) && $can_create ) :
 <?php
 // Tracking.
 if ( empty( $dashboard ) && $can_edit ) :
-	?>
+	if ( empty( $edit_page ) ) :
+		?>
 
 	<li>
-		<?php
-		if ( ! $is_embedded_or_social ) :
-
-			$is_tracking_enabled = $module->is_tracking_enabled( $module->module_type );
-			?>
+		<?php if ( ! $is_embedded_or_social ) : ?>
 
 			<button
 				class="hustle-single-module-button-action hustle-onload-icon-action"
 				data-module-id="<?php echo esc_attr( $module->id ); ?>"
 				data-hustle-action="toggle-tracking"
 			>
-				<span class="<?php echo $is_tracking_enabled ? '' : 'sui-hidden'; ?>">
+				<span class="hustle-toggle-tracking-button-description<?php echo $is_tracking_disabled ? ' sui-hidden' : ''; ?>">
 					<span class="sui-icon-tracking-disabled" aria-hidden="true"></span>
 					<?php esc_html_e( 'Disable Tracking', 'hustle' ); ?>
 				</span>
-				<span class="<?php echo $is_tracking_enabled ? ' sui-hidden' : ''; ?>">
+				<span class="hustle-toggle-tracking-button-description<?php echo $is_tracking_disabled ? '' : ' sui-hidden'; ?>">
 					<span class="sui-icon-graph-line" aria-hidden="true"></span>
 					<?php esc_html_e( 'Enable Tracking', 'hustle' ); ?>
 				</span>
@@ -168,6 +171,8 @@ if ( empty( $dashboard ) && $can_edit ) :
 			</button>
 		<?php endif; ?>
 	</li>
+
+	<?php endif; ?>
 
 	<li>
 		<button class="hustle-module-tracking-reset-button"
@@ -196,7 +201,7 @@ if ( empty( $dashboard ) && $can_edit ) :
 
 	<?php
 	// Import.
-	if ( empty( $dashboard ) && $can_edit ) :
+	if ( empty( $edit_page ) && empty( $dashboard ) && $can_edit ) :
 		?>
 
 		<li><button

@@ -32,6 +32,13 @@ class Opt_In_Infusionsoft_Api {
 	public $struct;
 
 	/**
+	 * Store the values getting from custom field request.
+	 *
+	 * @var array
+	 */
+	public $custom_fields_with_data_type;
+
+	/**
 	 * Opt_In_Infusionsoft_Api constructor.
 	 *
 	 * @param $api_key
@@ -145,15 +152,28 @@ class Opt_In_Infusionsoft_Api {
 			return $res;
 		}
 
-		$builtin_custom_fields = $this->builtin_custom_fields();
-		$extra_custom_fields   = array();
+		$builtin_custom_fields              = $this->builtin_custom_fields();
+		$extra_custom_fields                = array();
+		$this->custom_fields_with_data_type = array();
+
 		foreach ( $res->get_value()->data->value as $custom_field ) {
+			$name  = '';
+			$value = '';
+
 			foreach ( $custom_field->struct->member as $info ) {
 				if ( 'Name' === (string) $info->name ) {
 					$extra_custom_fields[] = (string) $info->value;
+					$name = (string) $info->value;
+				}
+
+				if ( 'DataType' === (string) $info->name ) {
+					$value = (int) $info->value->i4;
 				}
 			}
+
+			$this->custom_fields_with_data_type[ $name ] = $value;
 		}
+
 		$custom_fields = array_merge( $builtin_custom_fields, $extra_custom_fields );
 
 		return $custom_fields;
@@ -242,6 +262,7 @@ class Opt_In_Infusionsoft_Api {
 
 			return $res->get_value( 'i4' );
 		} else {
+			$err = new WP_Error();
 			$err->add( 'email_exist', __( 'This email address has already subscribed.', 'hustle' ) );
 			return $err;
 		}

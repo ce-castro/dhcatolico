@@ -30,6 +30,8 @@ $editor_css = '<style>' . $editor_css . '</style>';
 				'tinymce'          => array(
 					'content_css' => self::$plugin_url . 'assets/css/sui-editor.min.css',
 				),
+				// remove more tag from text tab.
+				'quicktags'        => $this->tinymce_quicktags,
 				'editor_height'    => 192,
 				'drag_drop_upload' => false,
 			)

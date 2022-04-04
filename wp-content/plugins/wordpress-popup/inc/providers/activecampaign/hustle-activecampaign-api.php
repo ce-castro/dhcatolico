@@ -22,7 +22,7 @@ class Hustle_Activecampaign_Api {
 	 * @param array  $args
 	 * @return object|WP_Error
 	 */
-	private function _request( $verb = 'GET', $action, $args = array() ) {
+	private function _request( $action, $verb = 'GET', $args = array() ) {
 
 		$utils = Hustle_Provider_Utils::get_instance();
 
@@ -114,7 +114,7 @@ class Hustle_Activecampaign_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _get( $action, $args = array() ) {
-		return $this->_request( 'GET', $action, $args );
+		return $this->_request( $action, 'GET', $args );
 	}
 
 	/**
@@ -125,7 +125,7 @@ class Hustle_Activecampaign_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _post( $action, $args = array() ) {
-		return $this->_request( 'POST', $action, $args );
+		return $this->_request( $action, 'POST', $args );
 	}
 
 	/**
@@ -237,6 +237,9 @@ class Hustle_Activecampaign_Api {
 		if ( false === $this->email_exist( $data['email'], $id, $sign_up_to ) ) {
 			if ( 'list' === $sign_up_to ) {
 				if ( (int) $id > 0 ) {
+					$data['instantresponders'] = array( $id => 1 );
+					$data['noresponders']      = array( $id => 0 );
+
 					$data['p']      = array( $id => $id );
 					$data['status'] = array( $id => 1 );
 					$res            = $this->_post( 'contact_sync', $data );
@@ -309,7 +312,7 @@ class Hustle_Activecampaign_Api {
 	public function add_custom_fields( $custom_fields, $list, Hustle_Module_Model $module ) {
 		if ( ! empty( $custom_fields ) ) {
 			foreach ( $custom_fields as $key => $value ) {
-				
+
 				$field_data = array(
 					'title'   => $value['label'],
 					'type'    => $value['type'], // support for text and date field,

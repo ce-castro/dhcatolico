@@ -3,121 +3,161 @@
  * File for Hustle_Data class.
  *
  * @package Hustle
- * @since 1.0.0
+ * @since unknown
  */
 
 /**
- * Abstract class for optin model and stats
- *
- * Class Opt_In_Data
+ * Class for.
  */
-abstract class Hustle_Data {
+class Hustle_Data {
 
-	const KEY_CONTENT = 'content';
-	const KEY_EMAILS  = 'emails';
-
-	/**
-	 * Per provider settings. Used as {slug}_provider_settings.
-	 *
-	 * @since 4.0.0
-	 */
-	const KEY_PROVIDER        = '_provider_settings';
-	const KEY_DESIGN          = 'design';
-	const KEY_DISPLAY_OPTIONS = 'display';
-	const KEY_VISIBILITY      = 'visibility';
-
-	/**
-	 * Per module settings applied to all integrations.
-	 *
-	 * @since 4.0.0
-	 */
-	const KEY_INTEGRATIONS_SETTINGS   = 'integrations_settings';
-	const KEY_SETTINGS                = 'settings';
-	const KEY_TYPES                   = 'types';
-	const KEY_VIEW                    = 'view';
-	const KEY_CONVERSION              = 'conversion';
-	const KEY_PAGE_SHARES             = 'page_shares';
-	const KEY_SHORTCODE_ID            = 'shortcode_id';
-	const TEST_TYPES                  = 'test_types';
-	const TRACK_TYPES                 = 'track_types';
-	const KEY_SERVICES                = 'services';
-	const KEY_FLOATING_SOCIAL         = 'floating_social';
-	const ACTIVE_FOR_ADMIN            = 'active_for_admin';
-	const ACTIVE_FOR_LOGGED_IN        = 'active_for_logged_in_user';
-	const KEY_UNSUBSCRIBE_NONCES      = 'hustle_unsubscribe_nonces';
-	const KEY_MODULE_META_PERMISSIONS = 'edit_roles';
+	const ADMIN_PAGE                  = 'hustle';
+	const DASHBOARD_PAGE              = 'hustle_dashboard';
+	const POPUP_LISTING_PAGE          = 'hustle_popup_listing';
+	const POPUP_WIZARD_PAGE           = 'hustle_popup';
+	const SLIDEIN_LISTING_PAGE        = 'hustle_slidein_listing';
+	const SLIDEIN_WIZARD_PAGE         = 'hustle_slidein';
+	const EMBEDDED_LISTING_PAGE       = 'hustle_embedded_listing';
+	const EMBEDDED_WIZARD_PAGE        = 'hustle_embedded';
+	const SOCIAL_SHARING_LISTING_PAGE = 'hustle_sshare_listing';
+	const SOCIAL_SHARING_WIZARD_PAGE  = 'hustle_sshare';
+	const INTEGRATIONS_PAGE           = 'hustle_integrations';
+	const ENTRIES_PAGE                = 'hustle_entries';
+	const UPSELL_PRO                  = 'hustle_pro';
+	const TUTORIALS                   = 'hustle_tutorials';
+	const SETTINGS_PAGE               = 'hustle_settings';
 
 	/**
-	 * Data.
+	 * Get the possible module types.
 	 *
-	 * @since 1.0.0
-	 *
-	 * @var array $data
-	 */
-	protected $data;
-
-	/**
-	 * Reference to $wpdb global var
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var $wpdb WPDB
-	 * @access private
-	 */
-	protected $wpdb;
-
-	/**
-	 *
-	 * Opt_In_Data constructor.
-	 */
-	public function __construct() {
-		global $wpdb;
-		$this->wpdb = $wpdb;
-	}
-
-	/**
-	 * Returns format for optin table
-	 *
-	 * @since 1.0.0
+	 * @since 4.3.1
 	 *
 	 * @return array
 	 */
-	protected function get_format() {
+	public static function get_module_types() {
 		return array(
-			'module_name' => '%s',
-			'module_type' => '%s',
-			'active'      => '%d',
-			'module_mode' => '%s',
+			Hustle_Model::POPUP_MODULE,
+			Hustle_Model::SLIDEIN_MODULE,
+			Hustle_Model::EMBEDDED_MODULE,
+			Hustle_Model::SOCIAL_SHARING_MODULE,
 		);
 	}
 
 	/**
-	 * Implements setter magic method
+	 * Get the listing page for the given module type.
 	 *
-	 * @since 1.0.0
+	 * @since 4.3.1
 	 *
-	 * @param string $property Property name.
-	 * @param mixed  $val Property value.
+	 * @param string $module_type Given module type.
+	 * @return string
 	 */
-	public function __set( $property, $val ) {
-		$this->{$property} = $val;
+	public static function get_listing_page_by_module_type( $module_type ) {
+
+		switch ( $module_type ) {
+			case Hustle_Module_Model::POPUP_MODULE:
+				return self::POPUP_LISTING_PAGE;
+
+			case Hustle_Module_Model::SLIDEIN_MODULE:
+				return self::SLIDEIN_LISTING_PAGE;
+
+			case Hustle_Module_Model::EMBEDDED_MODULE:
+				return self::EMBEDDED_LISTING_PAGE;
+
+			case Hustle_Module_Model::SOCIAL_SHARING_MODULE:
+				return self::SOCIAL_SHARING_LISTING_PAGE;
+
+			default:
+				return self::POPUP_LISTING_PAGE;
+		}
 	}
 
 	/**
-	 * Implements getter magic method
+	 * Get the wizard page for the given module type.
 	 *
-	 * @since 1.0.0
+	 * @since 4.3.1
 	 *
-	 * @param string $field Property name.
-	 * @return mixed
+	 * @param string $module_type Given module type.
+	 * @return string
 	 */
-	public function __get( $field ) {
+	public static function get_wizard_page_by_module_type( $module_type ) {
 
-		if ( method_exists( $this, 'get_' . $field ) ) {
-			return $this->{'get_' . $field}(); }
+		switch ( $module_type ) {
+			case Hustle_Module_Model::POPUP_MODULE:
+				return self::POPUP_WIZARD_PAGE;
 
-		if ( ! empty( $this->data ) && isset( $this->data->{$field} ) ) {
-			return $this->data->{$field}; }
+			case Hustle_Module_Model::SLIDEIN_MODULE:
+				return self::SLIDEIN_WIZARD_PAGE;
 
+			case Hustle_Module_Model::EMBEDDED_MODULE:
+				return self::EMBEDDED_WIZARD_PAGE;
+
+			case Hustle_Module_Model::SOCIAL_SHARING_MODULE:
+				return self::SOCIAL_SHARING_WIZARD_PAGE;
+
+			default:
+				return self::POPUP_WIZARD_PAGE;
+		}
+	}
+
+	/**
+	 * Retrieves a list with all hustle pages names.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return array
+	 */
+	public static function get_hustle_pages() {
+		return array(
+			self::ADMIN_PAGE,
+			self::DASHBOARD_PAGE,
+			self::POPUP_LISTING_PAGE,
+			self::POPUP_WIZARD_PAGE,
+			self::SLIDEIN_LISTING_PAGE,
+			self::SLIDEIN_WIZARD_PAGE,
+			self::EMBEDDED_LISTING_PAGE,
+			self::EMBEDDED_WIZARD_PAGE,
+			self::SOCIAL_SHARING_LISTING_PAGE,
+			self::SOCIAL_SHARING_WIZARD_PAGE,
+			self::INTEGRATIONS_PAGE,
+			self::ENTRIES_PAGE,
+			self::UPSELL_PRO,
+			self::SETTINGS_PAGE,
+			self::TUTORIALS,
+		);
+	}
+
+	/**
+	 * Check whether a new module of this type can be created based on Free limits.
+	 * If it's free and there's already 3 modules of this type, then it's a nope.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param string $module_type Module type to check the limits for.
+	 * @return boolean
+	 */
+	public static function was_free_limit_reached( $module_type ) {
+
+		// If it's Pro, the sky's the limit.
+		if ( ! Opt_In_Utils::_is_free() ) {
+			return false;
+		}
+
+		// Check the Module's type is valid.
+		if ( ! in_array( $module_type, self::get_module_types(), true ) ) {
+			return true;
+		}
+
+		$collection_args = array(
+			'module_type' => $module_type,
+			'count_only'  => true,
+		);
+		$total_modules   = Hustle_Module_Collection::instance()->get_all( null, $collection_args );
+
+		// If we have less than 3 modules of this type, can create another one.
+		if ( $total_modules >= 3 ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

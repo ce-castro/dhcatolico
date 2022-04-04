@@ -6,12 +6,12 @@
  * @since 4.1.0
  */
 
-$modules_data       = Hustle_Module_Collection::instance()->get_all_paginated();
-$filter             = $modules_data['filter'];
-$modules            = $modules_data['modules'];
-$modules_total      = $modules_data['total'];
-$entries_per_page      = $modules_data['entries_per_page'];
-$modules_ids        = array();
+$modules_data     = Hustle_Module_Collection::instance()->get_all_paginated();
+$filter           = $modules_data['filter'];
+$modules          = $modules_data['modules'];
+$modules_total    = $modules_data['total'];
+$entries_per_page = $modules_data['entries_per_page'];
+$modules_ids      = array();
 
 ?>
 <div class="sui-box-settings-row">
@@ -36,6 +36,7 @@ $modules_ids        = array();
 				array(
 					array(
 						'type'  => 'inline_notice',
+						'icon'  => 'info',
 						'value' => esc_html__( "You haven't created any module yet.", 'hustle' ),
 					),
 				)
@@ -50,11 +51,11 @@ $modules_ids        = array();
 			$this->render(
 				'admin/commons/pagination',
 				array(
-					'total' => $modules_total,
+					'total'            => $modules_total,
 					'entries_per_page' => $entries_per_page,
-					'filterclass' => 'sui-pagination-open-filter',
-					'filter'      => $filter,
-					'section'     => 'permissions',
+					'filterclass'      => 'sui-pagination-open-filter',
+					'filter'           => $filter,
+					'section'          => 'permissions',
 				)
 			);
 
@@ -216,7 +217,7 @@ $modules_ids        = array();
 					array(
 						array(
 							'type'  => 'inline_notice',
-							'class' => 'sui-notice-info',
+							'icon'  => 'info',
 							'value' => esc_html__( "You don't have any module corresponding to these filter parameters.", 'hustle' ),
 						),
 					)

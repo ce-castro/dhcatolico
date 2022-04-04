@@ -77,6 +77,8 @@ if ( ! class_exists( 'Hustle_Mailchimp' ) ) :
 		 */
 		private $_connected_account = array();
 
+		private static $connection_error = '';
+
 		/**
 		 * Provider constructor.
 		 *
@@ -194,8 +196,8 @@ if ( ! class_exists( 'Hustle_Mailchimp' ) ) :
 				$api = $this->get_api( $api_key );
 
 				$delete_status = $api->delete_email( $list_id, $email );
-				// Mailchimp returns WP error if can't find member on a list
-				if ( is_wp_error( $member_info ) && 404 === $delete_status->get_error_code() ) {
+				// Mailchimp returns WP error if can't find member on a list.
+				if ( is_wp_error( $delete_status ) && 404 === $delete_status->get_error_code() ) {
 					return false;
 				}
 				return $delete_status;
@@ -245,8 +247,11 @@ if ( ! class_exists( 'Hustle_Mailchimp' ) ) :
 
 				$api_key_validated = $this->validate_api_key( $current_data['api_key'] );
 				if ( ! $api_key_validated ) {
-					$error_message = $this->provider_connection_falied();
 					$has_errors    = true;
+					$error_message = $this->provider_connection_falied();
+					if ( ! empty( self::$connection_error ) ) {
+						$error_message = self::$connection_error;
+					}
 				}
 
 				if ( ! $has_errors ) {
@@ -340,10 +345,26 @@ if ( ! class_exists( 'Hustle_Mailchimp' ) ) :
 				),
 			);
 
-			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup( __( 'Configure Mailchimp', 'hustle' ), sprintf( __( 'Log in to your %1$sMailchimp account%2$s to get your API Key.', 'hustle' ), '<a href="https://admin.mailchimp.com/account/api/" target="_blank">', '</a>' ) );
 			if ( $has_errors ) {
-				$step_html .= '<span class="sui-notice sui-notice-error"><p>' . esc_html( $error_message ) . '</p></span>';
+				$error_notice = array(
+					'type'  => 'notice',
+					'icon'  => 'info',
+					'class' => 'sui-notice-error',
+					'value' => esc_html( $error_message ),
+				);
+				array_unshift( $options, $error_notice );
 			}
+
+			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup(
+				__( 'Configure Mailchimp', 'hustle' ),
+				sprintf(
+					/* translators: 1. opening 'a' tag to Mailchimp API page, 2. closing 'a' tag */
+					__( 'Log in to your %1$sMailchimp account%2$s to get your API Key.', 'hustle' ),
+					'<a href="https://admin.mailchimp.com/account/api/" target="_blank">',
+					'</a>'
+				)
+			);
+
 			$step_html .= Hustle_Provider_Utils::get_html_for_options( $options );
 
 			$is_edit = $this->settings_are_completed( $global_multi_id );
@@ -402,6 +423,13 @@ if ( ! class_exists( 'Hustle_Mailchimp' ) ) :
 				$info = $this->get_api( $api_key )->get_info();
 
 				if ( is_wp_error( $info ) ) {
+					$error_data = json_decode( $info->get_error_data(), true );
+					if ( ! empty( $error_data['title'] ) ) {
+						self::$connection_error = $error_data['title'];
+					}
+					if ( ! empty( $error_data['detail'] ) ) {
+						self::$connection_error .= ( ! empty( self::$connection_error ) ? ' - ' : '' ) . $error_data['detail'];
+					}
 					Hustle_Provider_Utils::maybe_log( __METHOD__, $info->get_error_message() );
 					return false;
 				}
@@ -575,7 +603,7 @@ if ( ! class_exists( 'Hustle_Mailchimp' ) ) :
 				}
 			}
 			if ( ! empty( $new_fields ) ) {
-				$module = Hustle_Module_Model::instance()->get( $module_id );
+				$module = new Hustle_Module_Model( $module_id );
 				if ( is_wp_error( $module ) ) {
 					return $module;
 				}

@@ -1,5 +1,12 @@
 <?php
 /**
+ * File for the Hustle_Db class.
+ *
+ * @package Hustle
+ * @since unknown
+ */
+
+/**
  * File for Hustle_Db class.
  *
  * @package Hustle

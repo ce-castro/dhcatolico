@@ -74,14 +74,14 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 
 			$entries_page = add_query_arg(
 				array(
-					'page' => Hustle_Module_Admin::ENTRIES_PAGE,
+					'page' => Hustle_Data::ENTRIES_PAGE,
 				),
 				get_admin_url( get_current_blog_id(), 'admin.php' )
 			);
 			$step_html    = Hustle_Provider_Utils::get_integration_modal_title_markup(
 				__( 'Hustle\'s Local List', 'hustle' ),
 				sprintf(
-					__( 'Save the submissions in your database so you can access them or export them from the %1$sEmail Lists%2$s page. Local list (when active) also stores the status of active third party apps for each submission.', 'hustle' ),
+					__( 'Save the submissions in your database so you can access them or export them from the %1$sEmail Lists%2$s page. Local list (when active) also stores the status of active third-party apps for each submission.', 'hustle' ),
 					'<a href="' . $entries_page . '" target="_blank">',
 					'</a>'
 				)
@@ -92,7 +92,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 			if ( ! isset( $error_message ) ) {
 				$has_errors = false;
 			} else {
-				$step_html .= '<span class="sui-error-message">' . $error_message . '</span>';
+				$step_html .= '<span id="local_list_name-error" role="alert" class="sui-error-message">' . $error_message . '</span>';
 				$has_errors = true;
 			}
 
@@ -136,6 +136,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 					'style'    => 'margin-bottom: 0;',
 					'elements' => array(
 						'label'           => array(
+							'id'    => 'local_list_name-label',
 							'type'  => 'label',
 							'for'   => 'local_list_name',
 							'value' => __( 'Email List name', 'hustle' ),
@@ -146,8 +147,11 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 							'value'       => $name,
 							'id'          => 'local_list_name',
 							'placeholder' => __( 'Choose a name for this email list', 'hustle' ),
+							'labelledby'  => 'local_list_name-label',
+							'describedby' => 'local_list_name-error local_list_name-description',
 						),
 						'description'     => array(
+							'id'    => 'local_list_name-description',
 							'type'  => 'description',
 							'value' => __( 'This will be visible to the visitors while unsubscribing.', 'hustle' ),
 						),

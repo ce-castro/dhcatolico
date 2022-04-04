@@ -24,6 +24,13 @@ class Hustle_Tracking_Model {
 	 */
 	private static $instance = null;
 
+	/**
+	 * WordPress' wpdb class.
+	 *
+	 * @since 4.2.1
+	 * @var Object
+	 */
+	private $wpdb;
 
 	/**
 	 * Return the Tracking_Model instance
@@ -44,7 +51,10 @@ class Hustle_Tracking_Model {
 	 * @since 4.0
 	 */
 	public function __construct() {
+		global $wpdb;
+
 		$this->table_name = Hustle_Db::tracking_table();
+		$this->wpdb       = $wpdb;
 	}
 
 	/**
@@ -68,7 +78,7 @@ class Hustle_Tracking_Model {
 			$ip       = $ip ? $ip : Opt_In_Geo::get_user_ip();
 			$ip_query = ' AND `ip` = %s';
 		}
-		if ( ! in_array( $action, array( 'conversion', 'cta_conversion', 'optin_conversion' ), true ) ) {
+		if ( ! in_array( $action, array( 'conversion', 'cta_conversion', 'cta_1_conversion', 'cta_2_conversion', 'optin_conversion' ), true ) ) {
 			$action = 'view';
 		}
 		// Store the subtype for embeddeds and social sharing. Whether they're "widget", "embedded", etc.
@@ -77,7 +87,11 @@ class Hustle_Tracking_Model {
 		}
 		$sql = "SELECT `tracking_id` FROM {$this->table_name} WHERE `module_id` = %d AND `page_id` = %d {$ip_query} AND `action` = %s AND `module_type` = %s AND `date_created` BETWEEN ";
 		if ( empty( $date_created ) ) {
-			$sql .= ' utc_date() AND utc_timestamp()';
+			$sql .= sprintf(
+				" '%s' AND '%s' ",
+				current_time( 'Y-m-d' ),
+				current_time( 'Y-m-d H:i:s' )
+			);
 		} else {
 			$sql .= sprintf(
 				"'%s' AND '%s 23:59:59'",
@@ -118,7 +132,7 @@ class Hustle_Tracking_Model {
 		global $wpdb;
 		$db = $wpdb;
 
-		$date_created = Opt_In_Utils::get_current_date();
+		$date_created = Hustle_Time_Helper::get_current_date();
 
 		$db->insert(
 			$this->table_name,
@@ -154,7 +168,7 @@ class Hustle_Tracking_Model {
 			$db = $wpdb;
 		}
 		if ( empty( $date_created ) ) {
-			$date_created = Opt_In_Utils::get_current_date();
+			$date_created = current_time( 'Y-m-d H:i:s' );
 		}
 		$db->insert(
 			$this->table_name,
@@ -182,7 +196,7 @@ class Hustle_Tracking_Model {
 			global $wpdb;
 			$db = $wpdb;
 		}
-		$date = Opt_In_Utils::get_current_date();
+		$date = current_time( 'Y-m-d H:i:s' );
 		$db->query(
 			$db->prepare(
 				"UPDATE {$this->table_name} SET `counter` = `counter`+1, `date_updated` = %s WHERE `tracking_id` = %d",
@@ -205,7 +219,7 @@ class Hustle_Tracking_Model {
 	 * @return int - total views based on parameters
 	 */
 	public function count_tracking_data( $module_id, $action, $module_subtype = null, $starting_date = null, $ending_date = null ) {
-		if ( ! in_array( $action, array( 'all_conversion', 'cta_conversion', 'optin_conversion' ), true ) ) {
+		if ( ! in_array( $action, array( 'all_conversion', 'cta_conversion', 'cta_1_conversion', 'cta_2_conversion', 'optin_conversion' ), true ) ) {
 			$action = 'view';
 		}
 		return $this->_count( $action, $module_id, $module_subtype, $starting_date, $ending_date );
@@ -242,7 +256,7 @@ class Hustle_Tracking_Model {
 	private function _count( $action, $module_id = null, $module_subtype = null, $starting_date = null, $ending_date = null ) {
 		global $wpdb;
 		if ( 'all_conversion' === $action ) {
-			$where_query = "WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion' )";
+			$where_query = "WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion', 'cta_1_conversion', 'cta_2_conversion' )";
 		} else {
 			$where_query = $wpdb->prepare( 'WHERE `action` = %s', $action );
 		}
@@ -303,12 +317,12 @@ class Hustle_Tracking_Model {
 	public function get_form_latest_tracking_data_count_grouped_by_day( $module_id, $date_created, $action, $module_type = null, $module_sub_type = null ) {
 		global $wpdb;
 		$table_name = $this->table_name;
-		if ( ! in_array( $action, array( 'all_conversion', 'cta_conversion', 'optin_conversion' ), true ) ) {
+		if ( ! in_array( $action, array( 'all_conversion', 'cta_conversion', 'cta_1_conversion', 'cta_2_conversion', 'optin_conversion' ), true ) ) {
 			$action = 'view';
 		}
 
 		if ( 'all_conversion' === $action ) {
-			$and_action = "AND e.action IN ( 'conversion', 'optin_conversion', 'cta_conversion' )";
+			$and_action = "AND e.action IN ( 'conversion', 'optin_conversion', 'cta_conversion', 'cta_1_conversion', 'cta_2_conversion' )";
 		} else {
 			$and_action = $wpdb->prepare( 'AND e.action = %s', $action );
 		}
@@ -438,7 +452,7 @@ class Hustle_Tracking_Model {
 		global $wpdb;
 
 		$table_name = $this->table_name;
-		if ( ! in_array( $module_type, Hustle_Module_Model::get_module_types(), true ) ) {
+		if ( ! in_array( $module_type, Hustle_Data::get_module_types(), true ) ) {
 			$module_type = '';
 		}
 
@@ -494,7 +508,7 @@ class Hustle_Tracking_Model {
 		global $wpdb;
 
 		$table_name = $this->table_name;
-		if ( ! in_array( $module_type, Hustle_Module_Model::get_module_types(), true ) ) {
+		if ( ! in_array( $module_type, Hustle_Data::get_module_types(), true ) ) {
 			$module_type = '';
 		}
 
@@ -584,7 +598,7 @@ class Hustle_Tracking_Model {
 	public function get_today_conversions() {
 		global $wpdb;
 		$sql   = sprintf(
-			'SELECT COUNT(*) FROM `%s` WHERE `action` = "conversion" AND `date_created` > DATE_SUB( NOW(), INTERVAL 24 hour )',
+			'SELECT COUNT(*) FROM `%s` WHERE `action` IN ( "conversion", "optin_conversion", "cta_conversion" ) AND `date_created` > DATE_SUB( NOW(), INTERVAL 24 hour )',
 			$this->table_name
 		);
 		$value = intval( $wpdb->get_var( $sql ) );
@@ -601,7 +615,7 @@ class Hustle_Tracking_Model {
 	public function get_last_week_conversions() {
 		global $wpdb;
 		$sql   = sprintf(
-			'SELECT COUNT(*) FROM `%s` WHERE `action` = "conversion" AND `date_created` > DATE_SUB( NOW(), INTERVAL 7 DAY )',
+			'SELECT COUNT(*) FROM `%s` WHERE `action` IN ( "conversion", "optin_conversion", "cta_conversion" ) AND `date_created` > DATE_SUB( NOW(), INTERVAL 7 DAY )',
 			$this->table_name
 		);
 		$value = intval( $wpdb->get_var( $sql ) );
@@ -618,7 +632,7 @@ class Hustle_Tracking_Model {
 	public function get_last_month_conversions() {
 		global $wpdb;
 		$sql   = sprintf(
-			'SELECT COUNT(*) FROM `%s` WHERE `action` = "conversion" AND `date_created` > DATE_SUB( NOW(), INTERVAL 1 MONTH )',
+			'SELECT COUNT(*) FROM `%s` WHERE `action` IN ( "conversion", "optin_conversion", "cta_conversion" ) AND `date_created` > DATE_SUB( NOW(), INTERVAL 1 MONTH )',
 			$this->table_name
 		);
 		$value = intval( $wpdb->get_var( $sql ) );
@@ -770,121 +784,101 @@ class Hustle_Tracking_Model {
 	}
 
 	/**
-	 * Get analytics stats
+	 * Gets the daily data for the WP Dashboard analytics stats widget.
+	 * This data is used and cached by Hustle_Wp_Dashboard_Page::get_wp_dashboard_widget_data().
+	 * Make sure to handle the cache properly if using this method somewhere else.
 	 *
-	 * @since 4.1
+	 * @since 4.1.0
 	 *
-	 * @global object $wpdb
-	 * @param int $days_ago
+	 * @param int $days_ago Retrieve the data from how many days ago.
 	 * @return array
 	 */
-	public static function analytics_stats( $days_ago ) {
-		$transient_key = 'hustle_analytics_stats_' . current_time( 'Y-m-d' ) . '_' . $days_ago;
-		$cached        = get_transient( $transient_key );
-		if ( false !== $cached ) {
-			return $cached;
-		}
-
+	public function get_wp_dash_daily_stats_data( $days_ago ) {
 		global $wpdb;
-		$tracking_table = Hustle_Db::tracking_table();
-		$ranges         = array_keys( Opt_In_Utils::get_analytic_ranges() );
-		$days_ago       = in_array( $days_ago, $ranges, true ) ? $days_ago : 7;
-		$today          = new DateTime( current_time( 'Y-m-d' ) );
-		$end_date       = date( 'Y-m-d H:i:s', $today->format( 'U' ) - 1 );
-		$start_date     = date( 'Y-m-d H:i:s', $today->format( 'U' ) - $days_ago * DAY_IN_SECONDS );
-		$mysql_format   = '%Y-%m-%d %H:%i:%s';
 
-		$result = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT module_type, action, date_created, counter '
-				. "FROM {$tracking_table} " // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				. 'WHERE date_created BETWEEN STR_TO_DATE( %s, %s ) AND STR_TO_DATE( %s, %s)',
-				$start_date,
-				$mysql_format,
-				$end_date,
-				$mysql_format
-			),
-			ARRAY_A
+		$tracking_table = $this->table_name;
+
+		// Get the data from today to $days_ago before.
+		$query = $wpdb->prepare(
+			"SELECT module_type, action, date_created, counter
+			FROM {$wpdb->prefix}hustle_tracking
+			WHERE date_created > subdate( current_date, %d )",
+			$days_ago
 		);
 
-		$final_data = self::get_default_analytics_stats( $days_ago );
+		$result = $this->wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		foreach ( $result as $data ) {
-			$day = explode( ' ', $data['date_created'] )[0];
-			$final_data[ $data['module_type'] ][ $data['action'] ][ $day ] += $data['counter'];
-			$final_data['overall'][ $data['action'] ][ $day ]              += $data['counter'];
-			if ( 0 === strpos( $data['module_type'], 'embedded_' ) ) {
-				$final_data['embedded'][ $data['action'] ][ $day ] += $data['counter'];
-			}
-			if ( 0 === strpos( $data['module_type'], 'social_sharing_' ) ) {
-				$final_data['social_sharing'][ $data['action'] ][ $day ] += $data['counter'];
-			}
-		}
-		// count rates
-		foreach ( $final_data as $block => $types ) {
-			foreach ( $types as $type => $days ) {
-				if ( 'rate' !== $type ) {
-					continue;
-				}
-				foreach ( $days as $day => $val ) {
-					if ( ! empty( $final_data[ $block ]['view'][ $day ] ) && ! empty( $final_data[ $block ]['conversion'][ $day ] ) ) {
-						$final_data[ $block ]['rate'][ $day ] = round( 100 * $final_data[ $block ]['conversion'][ $day ] / $final_data[ $block ]['view'][ $day ], 2 );
-					}
-				}
-			}
-		}
-
-		// cache for later.
-		set_transient( $transient_key, $final_data, DAY_IN_SECONDS );
-
-		return $final_data;
+		return $result;
 	}
 
 	/**
-	 * Get default analitics stats with zero values
+	 * Gets the total count per tracking action per modules type for the WP Dashboard analytics stats widget.
+	 * This data is used and cached by Hustle_Wp_Dashboard_Page::get_wp_dashboard_widget_data().
+	 * Make sure to handle the cache properly if using this method somewhere else.
 	 *
-	 * @since 4.1
-	 *
-	 * @param int $days_ago
+	 * @since 4.2.1
+	 * @param integer $days_ago Amount of the last days to check.
 	 * @return array
 	 */
-	public static function get_default_analytics_stats( $days_ago ) {
-		$days = array();
-		for ( $i = 1; $i <= $days_ago; $i++ ) {
-			$days[] = date( 'Y-m-d', current_time( 'U' ) - $i * DAY_IN_SECONDS );
-		}
-		$all_blocks = array(
-			'overall',
-			'popup',
-			'slidein',
-			'embedded',
-			'embedded_inline',
-			'embedded_widget',
-			'embedded_shortcode',
-			'social_sharing',
-			'social_sharing_floating',
-			'social_sharing_inline',
-			'social_sharing_widget',
-			'social_sharing_shortcode',
+	public function get_per_module_type_totals_prev_range( $days_ago ) {
+
+		$sql = $this->wpdb->prepare(
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			"SELECT module_type, action, SUM(counter) AS tracked_count
+			FROM {$this->table_name}
+			WHERE date_created > subdate( current_date, %d )
+			AND date_created < subdate( current_date, %d )
+			GROUP BY module_type, action",
+			$days_ago * 2,
+			$days_ago
+			// phpcs:enable
 		);
 
-		$all_types  = array(
-			'view',
-			'conversion',
-			'cta_conversion',
-			'optin_conversion',
-			'rate',
-		);
-		$final_data = array();
-		foreach ( $all_blocks as $block ) {
-			foreach ( $all_types as $type ) {
-				foreach ( $days as $day ) {
-					$final_data[ $block ][ $type ][ $day ] = 0;
-				}
-			}
-		}
+		$result = $this->wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		return $final_data;
+		return $result;
 	}
 
+	/**
+	 * Get Time of latest tracked conversion based on $module_id
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param $module_id
+	 * @param string    $subtype
+	 * @param string    $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion
+	 * @return string
+	 */
+	public function get_latest_conversion_time_by_module_id( $module_id, $subtype = '', $cta_or_optin = 'all_conversion' ) {
+		$latest_entry = $this->get_latest_conversion_date_by_module_id( $module_id, $subtype, $cta_or_optin );
+		if ( $latest_entry ) {
+			$entry_date = date_i18n( 'j M Y @ H:i A', strtotime( $latest_entry ) );
+			return $entry_date;
+		} else {
+			return esc_html__( 'Never', 'hustle' );
+		}
+	}
+
+	/**
+	 * Get the time of the latest tracked conversion based on $entry_type
+	 * [popup,slide-in,embedded]
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param $entry_type
+	 * @return string
+	 */
+	public function get_latest_conversion_time( $entry_type ) {
+		$date = $this->get_latest_conversion_date( $entry_type );
+
+		if ( $date ) {
+			$last_entry_time = mysql2date( 'U', $date );
+			$time_diff       = human_time_diff( current_time( 'timestamp' ), $last_entry_time );
+			$last_entry_time = sprintf( __( '%s ago', 'hustle' ), $time_diff );
+
+			return $last_entry_time;
+		} else {
+			return __( 'Never', 'hustle' );
+		}
+	}
 }

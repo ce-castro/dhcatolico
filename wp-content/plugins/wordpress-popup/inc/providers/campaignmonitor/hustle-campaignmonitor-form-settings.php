@@ -7,6 +7,14 @@ if ( ! class_exists( 'Hustle_Campaignmonitor_Form_Settings' ) ) :
 	class Hustle_Campaignmonitor_Form_Settings extends Hustle_Provider_Form_Settings_Abstract {
 
 		/**
+		 * Options that must be set in order to consider the integration as "connected" to the form.
+		 *
+		 * @since 4.3.1
+		 * @var array
+		 */
+		protected $form_completion_options = array( 'selected_global_multi_id', 'list_id' );
+
+		/**
 		 * For settings Wizard steps
 		 *
 		 * @since 3.0.5

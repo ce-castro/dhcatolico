@@ -108,7 +108,7 @@ class Hustle_Campaignmonitor_API {
 	 * @return array|mixed|object
 	 * @return Exception
 	 */
-	private function _request( $verb = 'GET', $path, $args = array() ) {
+	private function _request( $path, $verb = 'GET', $args = array() ) {
 		// Adding extra user agent for wp remote request
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
@@ -242,8 +242,8 @@ class Hustle_Campaignmonitor_API {
 	public function post_( $args ) {
 
 		return $this->_request(
-			'POST',
 			'',
+			'POST',
 			$args
 		);
 	}
@@ -264,8 +264,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'primarycontact.json',
+			'GET',
 			$args
 		);
 	}
@@ -286,8 +286,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'systemdate.json',
+			'GET',
 			$args
 		);
 	}
@@ -309,8 +309,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'lists/' . rawurlencode( trim( $list_id ) ) . '.json',
+			'GET',
 			$args
 		);
 	}
@@ -332,8 +332,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'clients/' . rawurlencode( trim( $client_id ) ) . '/lists.json',
+			'GET',
 			$args
 		);
 	}
@@ -354,8 +354,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'clients.json',
+			'GET',
 			$args
 		);
 	}
@@ -377,8 +377,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'clients/' . rawurlencode( trim( $client_id ) ) . '.json',
+			'GET',
 			$args
 		);
 	}
@@ -400,8 +400,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'lists/' . rawurlencode( trim( $list_id ) ) . '/customfields.json',
+			'GET',
 			$args
 		);
 	}
@@ -425,8 +425,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'POST',
 			'lists/' . rawurlencode( trim( $list_id ) ) . '/customfields.json',
+			'POST',
 			$args
 		);
 	}
@@ -444,8 +444,8 @@ class Hustle_Campaignmonitor_API {
 	 */
 	public function add_subscriber( $list_id, $args = array() ) {
 		return $this->_request(
-			'POST',
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json',
+			'POST',
 			$args
 		);
 	}
@@ -463,8 +463,8 @@ class Hustle_Campaignmonitor_API {
 	 */
 	public function update_subscriber( $list_id, $args = array() ) {
 		return $this->_request(
-			'PUT',
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json?email=' . $args['EmailAddress'],
+			'PUT',
 			$args
 		);
 	}
@@ -489,8 +489,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'GET',
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json',
+			'GET',
 			$args
 		);
 	}
@@ -515,8 +515,8 @@ class Hustle_Campaignmonitor_API {
 		$args = array_merge( $default_args, $args );
 
 		return $this->_request(
-			'DELETE',
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json',
+			'DELETE',
 			$args
 		);
 	}

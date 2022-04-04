@@ -72,7 +72,7 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 	 * Details of the subscriber from api
 	 *
 	 * @since 4.0.2
-	 * @var Hustle_Provider_Form_Settings_Abstract|null
+	 * @var mixed
 	 */
 	protected $_subscriber = array();
 
@@ -205,7 +205,7 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 
 		// Set a common error message for when an already subscribed user can't subscribe again.
 		if ( self::ALREADY_SUBSCRIBED_ERROR === $error_message ) {
-			$module = Hustle_Module_Model::instance()->get( $module_id );
+			$module = new Hustle_Module_Model( $module_id );
 			if ( ! is_wp_error( $module ) ) {
 				$integrations_settings = $module->get_integrations_settings()->to_array();
 			}

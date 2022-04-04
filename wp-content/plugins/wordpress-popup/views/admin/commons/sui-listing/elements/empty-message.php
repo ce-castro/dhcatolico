@@ -15,7 +15,9 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-welcome@2x.png';
 
 	<?php
 	if ( ! $this->is_branding_hidden ) :
-		echo Opt_In_Utils::render_image_markup( $image_1x, $image_2x, 'sui-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $this->render_image_markup( $image_1x, $image_2x, 'sui-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	else :
+		echo $this->render_image_markup( $this->branding_image, '', 'sui-image', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	endif;
 	?>
 

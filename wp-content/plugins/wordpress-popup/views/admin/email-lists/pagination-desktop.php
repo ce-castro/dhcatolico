@@ -8,7 +8,7 @@
  * @since 4.0.0
  */
 
-$total = $this->admin->filtered_total_entries();
+$total             = $this->admin->filtered_total_entries();
 $is_filter_enabled = $this->admin->is_filter_box_enabled();
 $date_range        = '';
 $date_created      = isset( $this->admin->filters['date_created'] ) ? $this->admin->filters['date_created'] : '';
@@ -42,10 +42,11 @@ if ( isset( $actions_class ) ) {
 
 			<select
 				name="hustle_action"
-				class="sui-select-sm"
 				id="hustle-select-bulk-actions-<?php echo $is_bottom ? 'bottom' : 'top'; ?>"
+				class="sui-select sui-select-sm"
+				data-placeholder="<?php esc_html_e( 'Bulk actions', 'hustle' ); ?>"
 			>
-				<option value=""><?php esc_html_e( 'Bulk actions', 'hustle' ); ?></option>
+				<option></option>
 				<option value="delete-all"><?php esc_html_e( 'Delete', 'hustle' ); ?></option>
 			</select>
 
@@ -75,10 +76,10 @@ if ( isset( $actions_class ) ) {
 			$this->render(
 				'admin/commons/pagination',
 				array(
-					'total' => $total,
+					'total'            => $total,
 					'entries_per_page' => $entries_per_page,
-					'filterclass' => 'hustle-open-inline-filter',
-					'filter'      => array(),
+					'filterclass'      => 'hustle-open-inline-filter',
+					'filter'           => array(),
 				)
 			);
 			?>
@@ -140,7 +141,9 @@ if ( isset( $actions_class ) ) {
 								name="date_range"
 								value="<?php echo esc_attr( $date_range ); ?>"
 								placeholder="<?php esc_html_e( 'Pick a date range', 'hustle' ); ?>"
-								class="hustle-entries-filter-date sui-form-control" />
+								class="hustle-entries-filter-date sui-form-control"
+								autocomplete="off"
+								/>
 						</div>
 					</div>
 

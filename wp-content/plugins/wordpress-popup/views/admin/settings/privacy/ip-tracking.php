@@ -12,33 +12,29 @@ $ip_tracking = 'on' === $settings['ip_tracking']; ?>
 
 	<label class="sui-settings-label"><?php esc_html_e( 'IP Tracking', 'hustle' ); ?></label>
 
-	<span class="sui-description"><?php esc_html_e( 'Choose whether you want to track the IP address of your visitors while collecting tracking data and submissions.', 'hustle' ); ?></span>
+	<span class="sui-description" style="margin-bottom: 10px;"><?php esc_html_e( 'Choose whether you want to track the IP address of your visitors while collecting tracking data and submissions.', 'hustle' ); ?></span>
 
-	<div class="sui-side-tabs" style="margin-top: 10px;">
-
-		<div class="sui-tabs-menu">
-
-			<label class="sui-tab-item">
-				<input type="radio"
-				name="ip_tracking"
-				id="hustle-ip-tracking--on"
-				value="on"
-				data-tab-menu="exclude-ips"
-				<?php checked( $ip_tracking, true ); ?> />
-				<?php esc_html_e( 'Enable', 'hustle' ); ?>
-			</label>
-
-			<label class="sui-tab-item">
-				<input type="radio"
-				name="ip_tracking"
-				id="hustle-ip-tracking--off"
-				value="off"
-				<?php checked( $ip_tracking, false ); ?> />
-				<?php esc_html_e( 'Disable', 'hustle' ); ?>
-			</label>
-
-		</div>
-
-	</div>
+	<?php
+	$this->render(
+		'admin/global/sui-components/sui-tabs',
+		array(
+			'name'        => 'ip_tracking',
+			'radio'       => true,
+			'saved_value' => $settings['ip_tracking'],
+			'sidetabs'    => true,
+			'content'     => false,
+			'options'     => array(
+				'on'  => array(
+					'value' => 'on',
+					'label' => esc_html__( 'Enable', 'hustle' ),
+				),
+				'off' => array(
+					'value' => 'off',
+					'label' => esc_html__( 'Disable', 'hustle' ),
+				),
+			),
+		)
+	);
+	?>
 
 </fieldset>

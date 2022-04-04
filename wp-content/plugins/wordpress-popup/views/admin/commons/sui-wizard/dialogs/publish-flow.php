@@ -7,12 +7,22 @@
  */
 
 ob_start();
-?>
-<div id="hustle-published-notice-with-schedule-end" class="sui-notice" style="display: none;">
-	<?php /* translators: module type in small caps and in singular */ ?>
-	<p><?php printf( esc_html__( 'Note that once the schedule is over, your visitors will stop seeing this %s' ), esc_html( $smallcaps_singular ) ); ?></p>
-</div>
-<?php
+
+/* translators: module type in small caps and in singular */
+$notice_message = sprintf( esc_html__( 'Note that once the schedule is over, your visitors will stop seeing this %s' ), esc_html( $smallcaps_singular ) );
+$notice_options = array(
+	array(
+		'id'         => 'hustle-published-notice-with-schedule-end',
+		'type'       => 'inline_notice',
+		'icon'       => 'info',
+		'value'      => $notice_message,
+		'attributes' => array(
+			'style' => 'display: none;',
+		),
+	),
+);
+$this->get_html_for_options( $notice_options );
+
 $body_content = ob_get_clean();
 
 $attributes = array(
@@ -48,7 +58,9 @@ if ( ! $this->is_branding_hidden ) {
 	$image_1x = self::$plugin_url . 'assets/images/hustle-summary.png';
 	$image_2x = self::$plugin_url . 'assets/images/hustle-summary@2x.png';
 
-	$attributes['after_body_content'] = Opt_In_Utils::render_image_markup( $image_1x, $image_2x, 'sui-image sui-image-center', 'auto', '120px' );
+	$attributes['after_body_content'] = $this->render_image_markup( $image_1x, $image_2x, 'sui-image sui-image-center', 'auto', '120px' );
+} else {
+	$attributes['after_body_content'] = $this->render_image_markup( $this->branding_image, '', 'sui-image sui-image-center', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped;
 }
 
 $this->render_modal( $attributes );

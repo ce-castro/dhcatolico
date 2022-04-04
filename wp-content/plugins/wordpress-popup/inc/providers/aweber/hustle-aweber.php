@@ -454,11 +454,18 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 
 			$api = $this->get_api();
 
-			$auth_url = $api->get_authorization_uri( 0, true, Hustle_Module_Admin::INTEGRATIONS_PAGE );
+			$auth_url = $api->get_authorization_uri( 0, true, Hustle_Data::INTEGRATIONS_PAGE );
 
 			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup( __( 'Configure Aweber', 'hustle' ), sprintf( __( 'Please %1$sclick here%2$s to connect to Aweber service to get your authorization code.', 'hustle' ), '<a href="' . esc_url( $auth_url ) . '" target="_blank">', '</a>' ) );
 			if ( $has_errors ) {
-				$step_html .= '<span class="sui-notice sui-notice-error"><p>' . esc_html( $error_message ) . '</p></span>';
+
+				$error_notice = array(
+					'type'  => 'notice',
+					'icon'  => 'info',
+					'class' => 'sui-notice-error',
+					'value' => esc_html( $error_message ),
+				);
+				array_unshift( $options, $error_notice );
 			}
 			$step_html .= Hustle_Provider_Utils::get_html_for_options( $options );
 
@@ -643,6 +650,27 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 			return array(
 				'api_key' => 'api_key',
 			);
+		}
+
+		/**
+		 * Refreshes the token for the registered multi-ids.
+		 *
+		 * @since 4.3.3
+		 */
+		public static function refresh_token() {
+			$aweber_instance = self::get_instance();
+
+			// Aweber is supposed to be connected if we're executing this, but check just in case.
+			if ( ! $aweber_instance->is_connected() ) {
+				return;
+			}
+
+			$multi_ids = wp_list_pluck( $aweber_instance->get_global_multi_ids(), 'id' );
+
+			foreach ( $multi_ids as $multi_id ) {
+				$api_instance = $aweber_instance->get_api( $multi_id );
+				$api_instance->validate_auth_token_lifespan( $multi_id );
+			}
 		}
 	}
 

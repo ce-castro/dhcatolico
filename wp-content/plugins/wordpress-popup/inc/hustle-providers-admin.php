@@ -39,15 +39,15 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 	 * Used for when an integration comes back from an external redirect.
 	 * For example, when doing oAuth with Hubspot.
 	 *
-	 * @since 4.0.2
+	 * @since 4.3.1
 	 *
-	 * @param array $current_array
 	 * @return array
 	 */
-	public function register_current_json( $current_array ) {
+	protected function get_vars_to_localize() {
+		$current_array = parent::get_vars_to_localize();
 
 		$current_array['integration_redirect'] = $this->grab_integration_external_redirect();
-		$current_array['integrations_url']     = add_query_arg( 'page', Hustle_Module_Admin::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
+		$current_array['integrations_url']     = add_query_arg( 'page', Hustle_Data::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
 		$current_array['integrations_migrate'] = $this->grab_integration_external_redirect_migration();
 
 		// Also defined wizards.

@@ -37,7 +37,7 @@
 
 			<div class="sui-toggle-content" data-toggle-content="widget-enabled">
 				<?php /* translators: 1. opening 'strong' tags, 2. opening 'a' tag to the widgets page, 3. closing 'a' and 'strong' tags */ ?>
-				<span class="sui-description"><?php printf( esc_html__( 'Enabling this will add a new widget named "Hustle" under the Available Widgets list. You can go to %1$sAppearance > %2$sWidgets%3$s and configure this widget to show your social bar in the sidebars.', 'hustle' ), '<strong>', '<a href="' . esc_url( admin_url( 'widgets.php' ) ) . '">', '</a></strong>' ); ?></span>
+				<span class="sui-description"><?php printf( esc_html__( 'Enabling this will add this module to widget named "Hustle" under the Available Widgets list as a possible option. You can go to %1$sAppearance > %2$sWidgets%3$s and configure this widget to show your social bar in the sidebars.', 'hustle' ), '<strong>', '<a href="' . esc_url( admin_url( 'widgets.php' ) ) . '">', '</a></strong>' ); ?></span>
 			</div>
 
 		</div>

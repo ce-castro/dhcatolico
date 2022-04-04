@@ -37,7 +37,7 @@ class Hustle_Mailchimp_Api {
 	 * @param array  $args
 	 * @return object|WP_Error
 	 */
-	private function _request( $verb = 'GET', $action, $args = array() ) {
+	private function _request( $action, $verb = 'GET', $args = array() ) {
 		$url = trailingslashit( $this->_endpoint ) . $action;
 
 		$_args = array(
@@ -51,7 +51,7 @@ class Hustle_Mailchimp_Api {
 
 		if ( 'GET' === $verb ) {
 			$url .= ( '?' . http_build_query( $args ) );
-		} else {
+		} elseif ( ! empty( $args['body'] ) ) {
 			$_args['body'] = wp_json_encode( $args['body'] );
 		}
 
@@ -83,7 +83,7 @@ class Hustle_Mailchimp_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _get( $action, $args = array() ) {
-		return $this->_request( 'GET', $action, $args );
+		return $this->_request( $action, 'GET', $args );
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Hustle_Mailchimp_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _delete( $action, $args = array() ) {
-		return $this->_request( 'DELETE', $action, $args );
+		return $this->_request( $action, 'DELETE', $args );
 	}
 
 	/**
@@ -105,7 +105,7 @@ class Hustle_Mailchimp_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _post( $action, $args = array() ) {
-		return $this->_request( 'POST', $action, $args );
+		return $this->_request( $action, 'POST', $args );
 	}
 
 	 /**
@@ -116,7 +116,7 @@ class Hustle_Mailchimp_Api {
 	  * @return array|mixed|object|WP_Error
 	  */
 	private function _put( $action, $args = array() ) {
-		return $this->_request( 'PUT', $action, $args );
+		return $this->_request( $action, 'PUT', $args );
 	}
 
 	 /**
@@ -127,7 +127,7 @@ class Hustle_Mailchimp_Api {
 	  * @return array|mixed|object|WP_Error
 	  */
 	private function _patch( $action, $args = array() ) {
-		return $this->_request( 'PATCH', $action, $args );
+		return $this->_request( $action, 'PATCH', $args );
 	}
 
 	/**
@@ -142,8 +142,8 @@ class Hustle_Mailchimp_Api {
 		}
 
 		return $this->_request(
-			'GET',
 			'',
+			'GET',
 			array(
 				'fields' => implode( ',', $fields ),
 			)
@@ -187,25 +187,26 @@ class Hustle_Mailchimp_Api {
 
 	/**
 	 * Gets all the GDPR fields under a list
+	 *
 	 * @param $list_id
 	 *
 	 * @return array
 	 */
 	public function get_gdpr_fields( $list_id ) {
-		$gdpr_fieds = [];
-		$members = $this->get_members( $list_id );
+		$gdpr_fieds = array();
+		$members    = $this->get_members( $list_id );
 		if ( ! $members ) {
 			$email = 'dummy@incsub.com';
-			$args = [
+			$args  = array(
 				'email_address' => $email,
-				'status' => 'unsubscribed',
-			];
+				'status'        => 'unsubscribed',
+			);
 			$this->subscribe( $list_id, $args );
 			$members = $this->get_members( $list_id );
 			$this->delete_email( $list_id, $email );
 		}
 
-		if ( empty( $members ) || !is_array( $members ) || empty( $members[0]->marketing_permissions ) || !is_array( $members[0]->marketing_permissions ) ) {
+		if ( empty( $members ) || ! is_array( $members ) || empty( $members[0]->marketing_permissions ) || ! is_array( $members[0]->marketing_permissions ) ) {
 			return $gdpr_fieds;
 		}
 
@@ -226,11 +227,14 @@ class Hustle_Mailchimp_Api {
 	 * @return array
 	 */
 	private function get_members( $list_id ) {
-		$data = $this->_get( 'lists/' . $list_id . '/members' , array(
-			'user' => $this->_user . ':' . $this->_api_key,
-		) );
+		$data = $this->_get(
+			'lists/' . $list_id . '/members',
+			array(
+				'user' => $this->_user . ':' . $this->_api_key,
+			)
+		);
 
-		return $data && is_object( $data ) && ! empty( $data->members ) ? $data->members : [];
+		return $data && is_object( $data ) && ! empty( $data->members ) ? $data->members : array();
 	}
 
 	/**

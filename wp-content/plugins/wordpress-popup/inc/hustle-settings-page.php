@@ -29,7 +29,8 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 	 *
 	 * @since 4.1.0
 	 */
-	public function run_action_on_page_load() {
+	public function current_page_loaded() {
+		parent::current_page_loaded();
 
 		// Set up all the filters and buttons for tinymce editors.
 		$this->set_up_tinymce();
@@ -39,11 +40,6 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 		add_action( 'admin_enqueue_scripts', array( 'Hustle_Module_Front', 'add_hui_scripts' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-
-		$restore = filter_input( INPUT_GET, 'hustle-restore-40x', FILTER_VALIDATE_BOOLEAN );
-		if ( $restore ) {
-			$this->trigger_restore_40x_visibility();
-		}
 	}
 
 	/**
@@ -52,7 +48,18 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 	 * @since 4.2.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'wp-color-picker-alpha', Opt_In::$plugin_url . 'assets/js/vendor/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), '1.2.2', true );
+		wp_register_script( 'wp-color-picker-alpha', Opt_In::$plugin_url . 'assets/js/vendor/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), '3.0.2', true );
+
+		$color_picker_strings = array(
+			'clear'            => __( 'Clear', 'hustle' ),
+			'clearAriaLabel'   => __( 'Clear color', 'hustle' ),
+			'defaultString'    => __( 'Default', 'hustle' ),
+			'defaultAriaLabel' => __( 'Select default color', 'hustle' ),
+			'pick'             => __( 'Select Color', 'hustle' ),
+			'defaultLabel'     => __( 'Color value', 'hustle' ),
+		);
+		wp_localize_script( 'wp-color-picker-alpha', 'wpColorPickerL10n', $color_picker_strings );
+		wp_enqueue_script( 'wp-color-picker-alpha' );
 	}
 
 	public function get_page_template_args() {
@@ -67,20 +74,19 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 			'unsubscription_messages' => Hustle_Settings_Admin::get_unsubscribe_messages(),
 			'unsubscription_email'    => Hustle_Settings_Admin::get_unsubscribe_email_settings(),
 			'hustle_settings'         => Hustle_Settings_Admin::get_hustle_settings(),
-			'section'                 => Hustle_Module_Admin::get_current_section( 'general' ),
-			'has_40x_backup'          => $migration->migration_410->is_backup_created(),
+			'section'                 => $this->get_current_section( 'general' ),
 		);
 	}
 
 	/**
 	 * Add data to the current json array.
 	 *
-	 * @since 4.0.4
+	 * @since 4.3.1
 	 *
-	 * @param array $current_array Registered variables.
 	 * @return array
 	 */
-	public function register_current_json( $current_array ) {
+	protected function get_vars_to_localize() {
+		$current_array = parent::get_vars_to_localize();
 
 		// Error messages for 4.0.x restoring.
 		$current_array['messages']['restricted_access']  = __( "You can't perform this action", 'hustle' );
@@ -88,12 +94,12 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 
 		$current_array['settings_palettes_action_nonce'] = wp_create_nonce( 'hustle_palette_action' );
 
-		$current_array['palettes'] = Hustle_Meta_Base_Design::get_all_palettes();
+		$current_array['palettes'] = Hustle_Palettes_Helper::get_all_palettes();
 
 		$saved_id = filter_input( INPUT_GET, 'saved-id', FILTER_SANITIZE_STRING );
 		if ( $saved_id ) {
 
-			$saved_palettes = Hustle_Meta_Base_Design::get_all_palettes_slug_and_name();
+			$saved_palettes = Hustle_Palettes_Helper::get_all_palettes_slug_and_name();
 			if ( ! empty( $saved_palettes[ $saved_id ] ) ) {
 
 				$saved_name = '<span style="color:#333;"><strong>' . $saved_palettes[ $saved_id ] . '</strong></span>';
@@ -140,64 +146,5 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 		$external_plugins = array();
 
 		return $external_plugins;
-	}
-
-	/**
-	 * Triggers the restore if the request is valid.
-	 *
-	 * Checks for nonce and capabilities before triggering the restore.
-	 * It also handles the response of the restore.
-	 *
-	 * @since 4.1.0
-	 */
-	private function trigger_restore_40x_visibility() {
-
-		$error_base_args = array(
-			'page'        => $this->page,
-			'section'     => 'data',
-			'show-notice' => 'error',
-		);
-
-		try {
-
-			// Checking nonce and capabilities.
-			$nonce        = filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
-			$valid_nonce  = wp_verify_nonce( $nonce, 'hustle-restore-40x-visibility' );
-			$user_allowed = current_user_can( 'hustle_edit_settings' );
-
-			if ( ! $valid_nonce || ! $user_allowed ) {
-				$error_base_args['notice'] = 'restricted_access';
-
-				$url = add_query_arg( $error_base_args, 'admin.php' );
-				throw new Exception( $url );
-			}
-
-			// Do the restore.
-			$migration_401 = new Hustle_410_Migration();
-			$success       = $migration_401->restore();
-
-			// The restoring failed. Display a message and abort.
-			if ( ! $success ) {
-
-				// This could be because there was nothing to restore, or the restoring per se failed.
-				$error_base_args['notice'] = 'restore_40x_failed';
-
-				$url = add_query_arg( $error_base_args, 'admin.php' );
-				throw new Exception( $url );
-			}
-
-			// All good. Deactivate the plugin.
-			deactivate_plugins( Opt_In::$plugin_base_file );
-
-			// Redirecting to site's plugins pages. In MU, non-super admins can't install plugins.
-			throw new Exception( admin_url( 'plugins.php' ) );
-
-		} catch ( Exception $e ) {
-
-			$url = esc_url_raw( $e->getMessage() );
-			if ( wp_safe_redirect( $url ) ) {
-				exit;
-			}
-		}
 	}
 }

@@ -9,6 +9,9 @@
 $banner_1x    = esc_url( self::$plugin_url . 'assets/images/review-condition.png' );
 $banner_2x    = esc_url( self::$plugin_url . 'assets/images/review-condition@2x.png' );
 $banner_class = 'sui-image sui-image-center';
+
+$version     = Opt_In_Utils::_is_free() ? '7.1' : '4.1';
+$support_url = Opt_In_Utils::_is_free() ? 'https://wordpress.org/support/plugin/wordpress-popup/' : 'https://wpmudev.com/hub/support/#wpmud-chat-pre-survey-modal';
 ?>
 <div class="sui-modal sui-modal-md">
 
@@ -32,7 +35,7 @@ $banner_class = 'sui-image sui-image-center';
 				</button>
 
 				<figure class="sui-box-banner" role="banner" aria-hidden="true">
-					<?php echo Opt_In_Utils::render_image_markup( $banner_1x, $banner_2x, $banner_class ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo $this->render_image_markup( $banner_1x, $banner_2x, $banner_class ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</figure>
 
 				<h3 id="hustle-dialog--review_conditions-title" class="sui-box-title sui-lg"><?php esc_html_e( "We've fixed visibility conditions!", 'hustle' ); ?></h3>

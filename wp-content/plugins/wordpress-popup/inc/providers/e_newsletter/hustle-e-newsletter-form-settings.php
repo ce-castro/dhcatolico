@@ -177,7 +177,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 			if ( $is_submit ) {
 
 				$module_id = $this->module_id;
-				$module    = Hustle_Module_Model::instance()->get( $module_id );
+				$module    = new Hustle_Module_Model( $module_id );
 
 				if ( ! is_wp_error( $module ) ) {
 					$synced           = Hustle_E_Newsletter::get_synced( $module );

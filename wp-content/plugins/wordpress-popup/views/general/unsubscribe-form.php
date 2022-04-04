@@ -7,6 +7,8 @@
  */
 
 if ( ! $ajax_step ) : ?>
+	<?php $button_text = ! empty( $skip_confirmation ) ? $messages['submit_button_text'] : $messages['get_lists_button_text']; ?>
+	<?php $step = ! empty( $skip_confirmation ) ? 'choose_list' : 'enter_email'; ?>
 	<form class="hustle-unsubscribe-form">
 
 		<span
@@ -25,13 +27,17 @@ if ( ! $ajax_step ) : ?>
 			</div>
 
 			<button type="submit" class="hustle-unsub-button">
-				<span class="hustle-loading-text"><?php echo esc_html( $messages['get_lists_button_text'] ); ?></span>
+				<span class="hustle-loading-text"><?php echo esc_html( $button_text ); ?></span>
 				<span class="hustle-loading-icon"></span>
 			</button>
-			<input type="hidden" name="form_step" value="enter_email">
+			<input type="hidden" name="form_step" value="<?php echo esc_attr( $step ); ?>">
 
 			<input type="hidden" name="form_module_id" value="<?php echo esc_attr( $shortcode_attr_id ); ?>">
 			<input type="hidden" name="current_url" value="<?php echo esc_attr( Opt_In_Utils::get_current_url() ); ?>">
+
+			<?php if ( ! empty( $skip_confirmation ) ) { ?>
+				<input type="hidden" name="skip_confirmation" value="true">
+			<?php } ?>
 
 		</div>
 
@@ -43,7 +49,7 @@ if ( ! $ajax_step ) : ?>
 
 	<?php foreach ( $modules_id as $module_id ) : ?>
 		<?php
-			$current_module = $module->get( $module_id );
+			$current_module = new Hustle_Module_Model( $module_id );
 			$list_name      = __( 'Undefined', 'hustle' );
 		if ( ! is_wp_error( $current_module ) ) {
 			$local_list = $current_module->get_provider_settings( 'local_list' );

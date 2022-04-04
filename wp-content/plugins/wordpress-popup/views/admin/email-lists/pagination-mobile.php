@@ -27,14 +27,14 @@ $order_by_array = array(
 ?>
 
 <?php
-$entries_per_page        = $this->admin->get_per_page();
+$entries_per_page = $this->admin->get_per_page();
 
 $this->render(
 	'admin/commons/pagination',
 	array(
-		'total'       => $total,
-		'entries_per_page'       => $entries_per_page,
-		'filterclass' => 'hustle-open-dialog-filter',
-		'filter'      => array(),
+		'total'            => $total,
+		'entries_per_page' => $entries_per_page,
+		'filterclass'      => 'hustle-open-dialog-filter',
+		'filter'           => array(),
 	)
 );

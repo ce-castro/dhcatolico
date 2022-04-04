@@ -35,7 +35,7 @@ class Hustle_Get_Response_Api {
 	 * @param array  $args
 	 * @return object|WP_Error
 	 */
-	private function _request( $verb = 'GET', $action, $args = array() ) {
+	private function _request( $action, $verb = 'GET', $args = array() ) {
 		$url = trailingslashit( $this->_endpoint ) . $action;
 
 		$_args = array(
@@ -88,7 +88,7 @@ class Hustle_Get_Response_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _get( $action, $args = array() ) {
-		return $this->_request( 'GET', $action, $args );
+		return $this->_request( $action, 'GET', $args );
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Hustle_Get_Response_Api {
 	 * @return array|mixed|object|WP_Error
 	 */
 	private function _post( $action, $args = array() ) {
-		return $this->_request( 'POST', $action, $args );
+		return $this->_request( $action, 'POST', $args );
 	}
 
 	/**
@@ -118,11 +118,11 @@ class Hustle_Get_Response_Api {
 	}
 
 	/**
-	 * Retrieves contacts as array of objects
+	 * Retrieves contactID
 	 *
 	 * @since 4.0
 	 * @param array $data
-	 * @return boolen
+	 * @return string
 	 */
 	public function get_contact( $data ) {
 		$res = $this->_get(
@@ -132,8 +132,13 @@ class Hustle_Get_Response_Api {
 				'query[campaignId]' => $data['list_id'],
 			)
 		);
+		$contact_id = '';
 
-		return empty( $res ) ? false : true;
+		if ( ! empty( $res[ 0 ] ) && ! empty( $res[ 0 ]->contactId ) ) {
+			$contact_id = $res[ 0 ]->contactId;
+		}
+
+		return $contact_id;
 	}
 
 	/**
@@ -152,8 +157,25 @@ class Hustle_Get_Response_Api {
 		return empty( $res ) ? __( 'Successful subscription', 'hustle' ) : $res;
 	}
 
+	/**
+	 * Update contact
+	 *
+	 * @param string $contact_id Contact ID.
+	 * @param array  $data New data.
+	 * @return array|mixed|object|WP_Error
+	 */
+	public function update_contact( $contact_id, $data ) {
+		$url  = 'contacts/' . $contact_id;
+		$args = array(
+			'body' => $data,
+		);
+		$res  = $this->_post( $url, $args );
+
+		return empty( $res ) ? __( 'Successful subscription', 'hustle' ) : $res;
+	}
+
 	public function get_custom_fields() {
-		$args = array( 'fields' => 'name' );
+		$args = array( 'fields' => 'name, type' );
 		$res  = $this->_get( 'custom-fields', $args );
 
 		return $res;

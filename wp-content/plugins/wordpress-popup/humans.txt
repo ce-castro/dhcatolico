@@ -1,9 +1,9 @@
 /* TEAM */
-	Lead Developer: Danae Millan
-	Location: Uruguay
+	Lead Developer: Ivan Svyrskyi
+	Location: Kharkiv, Ukraine
 
 	Front Developer: Leighton Sapir
 	Location: Ecuador
 
-    Designer: Victor Ivanov
-    Location: Melbourne, Australia
+    Designer: Afia Udofia
+    Location: Lagos, Nigeria

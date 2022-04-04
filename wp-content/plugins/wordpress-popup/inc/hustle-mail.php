@@ -190,7 +190,7 @@ class Hustle_Mail {
 			return false;
 		}
 
-		$module = Hustle_Module_Model::instance();
+		$module = new Hustle_Module_Model();
 		$nonce  = $module->create_unsubscribe_nonce( $email, $modules_id );
 		if ( ! $nonce ) {
 			Opt_In_Utils::maybe_log( __METHOD__, 'There was an error getting the nonce.' );

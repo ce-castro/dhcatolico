@@ -40,11 +40,12 @@ $this->render(
 				'name'     => esc_html__( 'Content', 'hustle' ),
 				'template' => 'admin/commons/sui-wizard/templates/tab-content',
 				'support'  => array(
-					'section'            => $section,
-					'settings'           => $content_settings,
-					'is_optin'           => $is_optin,
-					'module_type'        => $module_type,
-					'smallcaps_singular' => $smallcaps_singular,
+					'section'             => $section,
+					'settings'            => $content_settings,
+					'is_optin'            => $is_optin,
+					'module_type'         => $module_type,
+					'smallcaps_singular'  => $smallcaps_singular,
+					'capitalize_singular' => $capitalize_singular,
 				),
 			),
 			'emails'       => array(

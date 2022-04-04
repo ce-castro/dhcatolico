@@ -6,6 +6,38 @@
  * @since 4.0.0
  */
 
+ob_start();
+?>
+<div class="sui-form-field" id="hustle-<?php echo esc_attr( $key ); ?>-icons-custom-background">
+
+	<label class="sui-label"><?php esc_html_e( 'Icon background', 'hustle' ); ?></label>
+
+	<?php $this->sui_colorpicker( $key . '_icon_bg_color', $key . '_icon_bg_color', 'true', false, $settings[ $key . '_icon_bg_color' ] ); ?>
+
+</div>
+
+<div class="sui-form-field">
+
+	<label class="sui-label"><?php esc_html_e( 'Icon color', 'hustle' ); ?></label>
+
+	<?php $this->sui_colorpicker( $key . '_icon_color', $key . '_icon_color', 'true', false, $settings[ $key . '_icon_color' ] ); ?>
+
+</div>
+
+<?php
+$custom_content = ob_get_clean();
+
+$options = array(
+	'0' => array(
+		'value' => '0',
+		'label' => __( 'Use default colors', 'hustle' ),
+	),
+	'1' => array(
+		'value'   => '1',
+		'label'   => __( 'Custom', 'hustle' ),
+		'content' => $custom_content,
+	),
+);
 ?>
 <div id="hustle-appearance-<?php echo esc_attr( $key ); ?>-icons-row" class="sui-box-settings-row" <?php echo ! $is_enabled ? ' style="display: none;"' : ''; ?>>
 
@@ -64,67 +96,20 @@
 
 								<label class="sui-label"><?php esc_html_e( 'Colors', 'hustle' ); ?></label>
 
-								<div class="sui-side-tabs">
-
-									<div class="sui-tabs-menu">
-
-										<label for="hustle-<?php echo esc_attr( $key ); ?>--default-colors" class="sui-tab-item" >
-
-											<input
-												type="radio"
-												value="0"
-												name="hustle-<?php echo esc_attr( $key ); ?>--colors"
-												id="hustle-<?php echo esc_attr( $key ); ?>--default-colors"
-												data-attribute="<?php echo esc_attr( $key ); ?>_customize_colors"
-												<?php checked( $settings[ $key . '_customize_colors' ], '0' ); ?>
-											/>
-											<?php esc_html_e( 'Use default colors', 'hustle' ); ?>
-										</label>
-
-										<label for="hustle-<?php echo esc_attr( $key ); ?>--custom-colors" class="sui-tab-item">
-											<input
-												type="radio"
-												value="1"
-												name="hustle-<?php echo esc_attr( $key ); ?>--colors"
-												id="hustle-<?php echo esc_attr( $key ); ?>--custom-colors"
-												data-attribute="<?php echo esc_attr( $key ); ?>_customize_colors"
-												data-tab-menu="hustle-<?php echo esc_attr( $key ); ?>--custom-palette"
-												<?php checked( $settings[ $key . '_customize_colors' ], '1' ); ?>
-											/>
-											<?php esc_html_e( 'Custom', 'hustle' ); ?>
-										</label>
-
-									</div>
-
-									<div class="sui-tabs-content sui-tabs-content-lg">
-
-										<div class="sui-tab-content" data-tab-content="hustle-<?php echo esc_attr( $key ); ?>--custom-palette">
-
-											<div id="hustle-<?php echo esc_attr( $key ); ?>-icons-custom-background" class="sui-form-field{{ ( 'flat' === icon_style ) ? ' sui-hidden' : '' }}">
-
-												<?php if ( 'outline' === $settings['icon_style'] ) { ?>
-													<label class="sui-label"><?php esc_html_e( 'Icon border', 'hustle' ); ?></label>
-												<?php } else { ?>
-													<label class="sui-label"><?php esc_html_e( 'Icon background', 'hustle' ); ?></label>
-												<?php } ?>
-
-												<?php Opt_In_Utils::sui_colorpicker( $key . '_icon_bg_color', $key . '_icon_bg_color', 'true', false, $settings[ $key . '_icon_bg_color' ] ); ?>
-
-											</div>
-
-											<div class="sui-form-field">
-
-												<label class="sui-label"><?php esc_html_e( 'Icon color', 'hustle' ); ?></label>
-
-												<?php Opt_In_Utils::sui_colorpicker( $key . '_icon_color', $key . '_icon_color', 'true', false, $settings[ $key . '_icon_color' ] ); ?>
-
-											</div>
-
-										</div>
-
-									</div>
-
-								</div>
+								<?php
+								$this->render(
+									'admin/global/sui-components/sui-tabs',
+									array(
+										'name'          => $key . '_customize_colors',
+										'radio'         => true,
+										'saved_value'   => $settings[ $key . '_customize_colors' ],
+										'sidetabs'      => true,
+										'content'       => true,
+										'content_class' => 'sui-tabs-content-lg',
+										'options'       => $options,
+									)
+								);
+								?>
 
 							</div>
 
@@ -155,11 +140,11 @@
 
 							<div class="sui-box-body">
 
-								<div id="hustle-<?php echo esc_html( $key ); ?>-counter-border" class="sui-form-field{{ ( 'outline' === icon_style || '0' === eval( '<?php echo esc_html( $key ); ?>' +  '_customize_colors' ) ) ? ' sui-hidden' : '' }}">
+								<div class="sui-form-field">
 
 									<label class="sui-label"><?php esc_html_e( 'Border', 'hustle' ); ?></label>
 
-									<?php Opt_In_Utils::sui_colorpicker( $key . '_counter_border', $key . '_counter_border', 'true', false, $settings[ $key . '_counter_border' ] ); ?>
+									<?php $this->sui_colorpicker( $key . '_counter_border', $key . '_counter_border', 'true', false, $settings[ $key . '_counter_border' ] ); ?>
 
 								</div>
 
@@ -167,7 +152,7 @@
 
 									<label class="sui-label"><?php esc_html_e( 'Text', 'hustle' ); ?></label>
 
-									<?php Opt_In_Utils::sui_colorpicker( $key . '_counter_color', $key . '_counter_color', 'true', false, $settings[ $key . '_counter_color' ] ); ?>
+									<?php $this->sui_colorpicker( $key . '_counter_color', $key . '_counter_color', 'true', false, $settings[ $key . '_counter_color' ] ); ?>
 
 								</div>
 
@@ -204,7 +189,7 @@
 
 									<label class="sui-label"><?php esc_html_e( 'Background color', 'hustle' ); ?></label>
 
-									<?php Opt_In_Utils::sui_colorpicker( $key . '_bg_color', $key . '_bg_color', 'true', false, $settings[ $key . '_bg_color' ] ); ?>
+									<?php $this->sui_colorpicker( $key . '_bg_color', $key . '_bg_color', 'true', false, $settings[ $key . '_bg_color' ] ); ?>
 
 								</div>
 
@@ -334,7 +319,7 @@
 
 							<label class="sui-label"><?php esc_html_e( 'Color', 'hustle' ); ?></label>
 
-							<?php Opt_In_Utils::sui_colorpicker( $key . '_drop_shadow_color', $key . '_drop_shadow_color', 'true', false, $settings[ $key . '_drop_shadow_color' ] ); ?>
+							<?php $this->sui_colorpicker( $key . '_drop_shadow_color', $key . '_drop_shadow_color', 'true', false, $settings[ $key . '_drop_shadow_color' ] ); ?>
 
 						</div>
 
@@ -415,7 +400,16 @@
 
 	<div class="sui-box-settings-col-2">
 		<div class="sui-notice">
-			<p><?php echo esc_html( $disabled_message ); ?></p>
+
+			<div class="sui-notice-content">
+
+				<div class="sui-notice-message">
+
+					<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+					<p><?php echo esc_html( $disabled_message ); ?></p>
+
+				</div>
+			</div>
 		</div>
 	</div>
 

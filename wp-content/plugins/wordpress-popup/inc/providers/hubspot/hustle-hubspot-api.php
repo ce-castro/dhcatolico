@@ -9,6 +9,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Api' ) ) :
 		const HAPIKEY       = 'db9600bf-648c-476c-be42-6621d7a1f96a';
 		const BASE_URL      = 'https://app.hubspot.com/';
 		const API_URL       = 'https://api.hubapi.com/';
+		const SCOPE         = 'oauth crm.objects.contacts.write crm.lists.read crm.objects.contacts.read crm.schemas.contacts.write crm.schemas.contacts.read crm.lists.write';
 
 		const REFERER     = 'hustle_hubspot_referer';
 		const CURRENTPAGE = 'hustle_hubspot_current_page';
@@ -161,7 +162,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Api' ) ) :
 			$args = array(
 				'client_id'     => self::CLIENT_ID,
 				'client_secret' => self::CLIENT_SECRET,
-				'scope'         => 'contacts',
+				'scope'         => self::SCOPE,
 			);
 			$args = wp_parse_args( $args, $query_args );
 
@@ -284,7 +285,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Api' ) ) :
 		public function get_authorization_uri( $module_id = 0, $log_referrer = true, $page = 'hustle_embedded' ) {
 			$args = array(
 				'client_id'    => self::CLIENT_ID,
-				'scope'        => 'contacts',
+				'scope'        => self::SCOPE,
 				'redirect_uri' => $this->get_redirect_uri(),
 			);
 			$args = http_build_query( $args );
@@ -358,10 +359,9 @@ if ( ! class_exists( 'Hustle_HubSpot_Api' ) ) :
 		 * @return bool|mixed
 		 */
 		public function email_exists( $email ) {
-			$args     = array( 'showListMemberships' => true );
 			$endpoint = 'contacts/v1/contact/email/' . $email . '/profile';
 
-			$res = $this->send_authenticated_get( $endpoint, $args );
+			$res = $this->send_authenticated_get( $endpoint );
 
 			if ( ! is_wp_error( $res ) && ! empty( $res->vid ) ) {
 				return $res; }

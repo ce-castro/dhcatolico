@@ -77,17 +77,22 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 * Provider constructor.
 		 */
 		public function __construct() {
+			$hide = apply_filters( 'wpmudev_branding_hide_doc_link', false );
+
 			$this->_icon_2x           = plugin_dir_url( __FILE__ ) . 'images/icon.png';
 			$this->_logo_2x           = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 			$this->_banner_1x         = plugin_dir_url( __FILE__ ) . 'images/banner.png';
 			$this->_banner_2x         = plugin_dir_url( __FILE__ ) . 'images/banner@2x.png';
-			$this->_documentation_url = 'https://premium.wpmudev.org/docs/wpmu-dev-plugins/forminator/#zapier';
+			$this->_documentation_url = Opt_In_Utils::get_link( 'docs' ) . '#zapier';
 			$this->_short_description = sprintf(
-				esc_html__( 'Zapier connects Hustle with %1$s1000+ apps%2$s. You can use it to send your leads to third party apps not natively supported in Hustle and automate your after-submission workflows. Refer to this %3$sarticle%4$s for tips and tricks on using Zapier integration and creating automated workflows. Happy automating!', 'hustle' ),
+				esc_html__( 'Zapier connects Hustle with %1$s1000+ apps%2$s. You can use it to send your leads to third-party apps not natively supported in Hustle and automate your after-submission workflows. %3$sHappy automating!', 'hustle' ),
 				'<a href="https://zapier.com/apps" target="_blank">',
 				'</a>',
-				'<a href="https://premium.wpmudev.org/blog/zapier-wordpress-form-integrations/" target="_blank">',
-				'</a>'
+				( ! $hide ? sprintf(
+					esc_html__( 'Refer to this %1$sarticle%2$s for tips and tricks on using Zapier integration and creating automated workflows.', 'hustle' ),
+					'<a href="' . Opt_In_Utils::get_link( 'blog' ) . 'zapier-wordpress-form-integrations/" target="_blank">',
+					'</a>'
+				) : '' )
 			);
 		}
 

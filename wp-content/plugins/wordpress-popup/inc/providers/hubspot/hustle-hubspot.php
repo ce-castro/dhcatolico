@@ -147,11 +147,11 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 			$api = $this->api();
 
 			if ( ! $module_id ) {
-				$auth_url = $api->get_authorization_uri( 0, true, Hustle_Module_Admin::INTEGRATIONS_PAGE );
+				$auth_url = $api->get_authorization_uri( 0, true, Hustle_Data::INTEGRATIONS_PAGE );
 
 			} else {
 
-				$module = Hustle_Module_Model::instance()->get( $module_id );
+				$module = new Hustle_Module_Model( $module_id );
 				if ( ! is_wp_error( $module ) ) {
 					$auth_url = $api->get_authorization_uri( $module_id, true, $module->get_wizard_page() );
 				}
@@ -202,13 +202,16 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 					$account_details = $this->save_account_details();
 				}
 
-				$account = ! empty( $account_details['hub_domain'] ) ? '<b>' . $account_details['user'] . ' - ' . $account_details['hub_domain'] . '</b>' : '<b>' . $account_details['user'] . '</b>';
+				$account = ! empty( $account_details['hub_domain'] ) ? $account_details['user'] . ' - ' . $account_details['hub_domain'] : $account_details['user'];
+				$account = '<b>' . esc_html( $account ) . '</b>';
 
 				$step_html .= Hustle_Provider_Utils::get_html_for_options(
 					array(
 						array(
 							'type'  => 'notice',
-							'value' => sprintf( __( 'You are connected to %s', 'hustle' ), $account ),
+							'icon'  => 'info',
+							/* translators: account the provider is connected to */
+							'value' => sprintf( esc_html__( 'You are connected to %s', 'hustle' ), $account ),
 							'class' => 'sui-notice-success',
 						),
 					)

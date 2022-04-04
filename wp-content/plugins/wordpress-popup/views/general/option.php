@@ -9,6 +9,7 @@
 $element_type = strtolower( $type );
 $type_class   = 'optin_' . $element_type . '_' . $element_type . ' ' . $element_type;
 $for          = ( isset( $for ) ) ? $for : '';
+$attributes   = isset( $attributes ) ? $attributes : array();
 
 // FIELD TYPE: Label.
 if ( 'label' === $element_type ) { ?>
@@ -31,10 +32,28 @@ if ( 'label' === $element_type ) { ?>
 
 	<?php
 	// FIELD TYPE: Notice.
-} elseif ( 'notice' === $element_type ) { // Type textarea.
+} elseif ( 'notice' === $element_type ) {
 	?>
-	<div <?php $this->render_attributes( isset( $attributes ) ? $attributes : array() ); ?> class="sui-notice <?php echo isset( $class ) ? esc_attr( $class ) : ''; ?>">
-		<p><?php echo $value; // phpcs:ignore ?></p>
+
+	<div
+		<?php echo ! empty( $id ) ? 'id="' . esc_attr( $id ) . '"' : ''; ?>
+		class="sui-notice <?php echo isset( $class ) ? esc_attr( $class ) : ''; ?>"
+		<?php $this->render_attributes( $attributes ); ?>
+	>
+
+		<div class="sui-notice-content">
+
+			<div class="sui-notice-message">
+
+				<?php if ( ! empty( $icon ) ) : ?>
+					<span class="sui-notice-icon sui-icon-<?php echo esc_attr( $icon ); ?> sui-md" aria-hidden="true"></span>
+				<?php endif; ?>
+				<p><?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, Make sure $value is properly escaped! We're not escaping it in here. ?></p>
+
+			</div>
+
+		</div>
+
 	</div>
 
 	<?php
@@ -117,7 +136,14 @@ if ( 'label' === $element_type ) { ?>
 	>
 		<?php
 		foreach ( (array) $elements as $element ) {
+			static $previous_id;
+			if ( ! empty( $previous_id ) ) {
+				$element['previous_id'] = $previous_id;
+			}
 			$this->render( 'general/option', $element );
+			if ( ! empty( $element['id'] ) ) {
+				$previous_id = $element['id'];
+			}
 		}
 		?>
 	</div>
@@ -324,10 +350,12 @@ if ( 'label' === $element_type ) { ?>
 	<?php
 	// FIELD TYPE: Error label.
 } elseif ( 'error' === $element_type ) {
+	$error_id = isset( $id ) ? $id : ( ! empty( $previous_id ) ? $previous_id . '-error' : '' );
 	?>
 	<span
 		<?php $this->render_attributes( isset( $attributes ) ? $attributes : array() ); ?>
-		<?php echo ( isset( $id ) ? 'id="' . esc_attr( $id ) . '"' : '' ); ?>
+		<?php echo ( ! empty( $error_id ) ? 'id="' . esc_attr( $error_id ) . '"' : '' ); ?>
+		role="alert"
 		class="sui-error-message<?php echo isset( $class ) ? ' ' . esc_attr( $class ) : ''; ?>"
 	>
 		<?php echo $value; // phpcs:ignore ?>
@@ -394,6 +422,9 @@ if ( 'label' === $element_type ) { ?>
 	<?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 <?php } else { ?>
 	<?php echo isset( $icon ) ? '<div class="sui-control-with-icon">' : ''; ?>
+		<?php if ( empty( $describedby ) && ! empty( $id ) ) { ?>
+			<?php $describedby = $id . '-error'; ?>
+		<?php } ?>
 
 		<input
 			<?php $this->render_attributes( isset( $attributes ) ? $attributes : array() ); ?>
@@ -401,6 +432,8 @@ if ( 'label' === $element_type ) { ?>
 			<?php echo isset( $name ) ? 'name="' . esc_attr( $name ) . '"' : ''; ?>
 			value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>"
 			<?php echo isset( $placeholder ) ? 'placeholder="' . esc_attr( $placeholder ) . '"' : ''; ?>
+			<?php echo ! empty( $labelledby ) ? 'aria-labelledby="' . esc_attr( $labelledby ) . '"' : ''; ?>
+			<?php echo ! empty( $describedby ) ? 'aria-describedby="' . esc_attr( $describedby ) . '"' : ''; ?>
 			id="<?php echo isset( $id ) ? esc_attr( $id ) : ''; ?>"
 			class="sui-form-control <?php echo esc_attr( $type_class ); ?> <?php echo isset( $class ) ? esc_attr( $class ) : ''; ?>"
 		/>

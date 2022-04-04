@@ -87,13 +87,13 @@
 	<p class="privacy-policy-tutorial">
 		<?php
 		esc_html_e(
-			'If your forms use either built-in or external third party services, in this section you should mention any third parties and its privacy policy.',
+			'If your forms use either built-in or external third-party services, in this section you should mention any third parties and its privacy policy.',
 			'hustle'
 		);
 		?>
 	</p>
 	<p class="privacy-policy-tutorial">
-		<?php esc_html_e( 'By default Hustle optionally use these third party integrations:', 'hustle' ); ?>
+		<?php esc_html_e( 'By default Hustle optionally use these third-party integrations:', 'hustle' ); ?>
 	</p>
 	<ul class="privacy-policy-tutorial">
 		<li><?php esc_html_e( 'ActiveCampaign. Enabled when you activate and setup ActiveCampaign on Email Collection settings.', 'hustle' ); ?></li>
@@ -110,6 +110,8 @@
 		<li><?php esc_html_e( 'Mailchimp. Enabled when you activate and setup Mailchimp on Email Collection settings.', 'hustle' ); ?></li>
 		<li><?php esc_html_e( 'MailerLite. Enabled when you activate and setup MailerLite on Email Collection settings.', 'hustle' ); ?></li>
 		<li><?php esc_html_e( 'Mautic. Enabled when you activate and setup Mautic on Email Collection settings.', 'hustle' ); ?></li>
+		<li><?php esc_html_e( 'reCAPTCHA. Enabled when you activate and setup reCAPTCHA on non-Social sharing modules.', 'hustle' ); ?></li>
+		<li><?php esc_html_e( 'Pinterest. Enabled when you activate and setup Pinterest in Social Share Module.', 'hustle' ); ?></li>
 		<li><?php esc_html_e( 'SendGrid. Enabled when you activated and setup SendGrid on Email Collection settings.', 'hustle' ); ?></li>
 		<li><?php esc_html_e( 'SendinBlue. Enabled when you activated and setup SendinBlue on Email Collection settings.', 'hustle' ); ?></li>
 		<li><?php esc_html_e( 'Sendy. Enabled when you activated and setup Sendy on Email Collection settings.', 'hustle' ); ?></li>
@@ -123,7 +125,7 @@
 	<p><?php esc_html_e( 'We use Campaign Monitor to manage our subscriber. Their privacy policy can be found here : https://www.campaignmonitor.com/policies/#privacy-policy.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use Constant Contact to manage our subscriber. Their privacy policy can be found here : https://www.endurance.com/privacy.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use ConvertKit to manage our subscriber. Their privacy policy can be found here : https://convertkit.com/privacy/.', 'hustle' ); ?></p>
-	<p><?php esc_html_e( 'We use e-Newsletter to manage our subscriber. You can learn more about it here https://premium.wpmudev.org/project/e-newsletter/.', 'hustle' ); ?></p>
+	<p><?php esc_html_e( 'We use e-Newsletter to manage our subscriber. You can learn more about it here https://wpmudev.com/project/e-newsletter/.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use GetResponse to manage our subscriber lists. Their privacy policy can be found here : https://www.getresponse.com/legal/privacy.html?lang=en.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use HubSpot to manage our subscriber. Their privacy policy can be found here : https://legal.hubspot.com/legal-stuff.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use iContact to manage our subscriber. Their privacy policy can be found here : https://www.icontact.com/legal/privacy.', 'hustle' ); ?></p>
@@ -132,6 +134,8 @@
 	<p><?php esc_html_e( 'We use Mailchimp to manage our subscriber list. Their privacy policy can be found here : https://mailchimp.com/legal/privacy/.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use MailerLite to manage our subscriber. Their privacy policy can be found here : https://www.mailerlite.com/privacy-policy.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use Mautic to manage our subscriber. Their privacy policy can be found here : https://www.mautic.org/privacy-policy/.', 'hustle' ); ?></p>
+	<p><?php esc_html_e( 'We use Pinterest to share media. Their privacy policy can be found here : https://policy.pinterest.com/privacy-policy/.', 'hustle' ); ?></p>
+	<p><?php esc_html_e( 'We use reCAPTCHA to protect your website from fraud and abuse. Their privacy policy can be found here : https://policies.google.com/privacy.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use SendGrid to manage our subscriber. Their privacy policy can be found here : https://sendgrid.com/policies/privacy/.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use SendinBlue to manage our subscriber. Their privacy policy can be found here : https://www.sendinblue.com/legal/privacypolicy/.', 'hustle' ); ?></p>
 	<p><?php esc_html_e( 'We use Sendy to manage our subscriber. Their privacy policy can be found here : https://sendy.co/privacy-policy.', 'hustle' ); ?></p>

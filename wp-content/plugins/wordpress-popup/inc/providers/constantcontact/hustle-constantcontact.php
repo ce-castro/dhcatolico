@@ -156,11 +156,11 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 			$api = $this->api();
 
 			if ( ! $module_id ) {
-				$auth_url = $api->get_authorization_uri( 0, true, Hustle_Module_Admin::INTEGRATIONS_PAGE );
+				$auth_url = $api->get_authorization_uri( 0, true, Hustle_Data::INTEGRATIONS_PAGE );
 
 			} else {
 
-				$module = Hustle_Module_Model::instance()->get( $module_id );
+				$module = new Hustle_Module_Model( $module_id );
 				if ( ! is_wp_error( $module ) ) {
 					$auth_url = $api->get_authorization_uri( $module_id, true, $module->get_wizard_page() );
 				}
@@ -213,7 +213,9 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 					array(
 						array(
 							'type'  => 'notice',
-							'value' => sprintf( __( 'You are connected to %s', 'hustle' ), '<strong>' . $account_email . '</strong>' ),
+							'icon'  => 'info',
+							/* translators: email associated to the account */
+							'value' => sprintf( esc_html__( 'You are connected to %s', 'hustle' ), '<strong>' . esc_html( $account_email ) . '</strong>' ),
 							'class' => 'sui-notice-success',
 						),
 					)
@@ -249,7 +251,7 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 				$this->save_settings_values( $account_details );
 
 			} catch ( Exception $e ) {
-				$account_email = '';
+				$account_email = __( 'The associated email could not be retrieved', 'hustle' );
 			}
 
 			return $account_email;

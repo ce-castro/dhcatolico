@@ -15,10 +15,28 @@
 class Hustle_Meta_Base_Emails extends Hustle_Meta {
 
 	/**
+	 * Returns the defaults for merging purposes.
+	 * Avoid overwritting the saved form elements when the default fields aren't present.
+	 *
+	 * @since 4.4.1
+	 *
+	 * @return array
+	 */
+	protected function get_defaults_for_merge() {
+		$defaults = $this->get_defaults();
+
+		// Avoid overwritting the saved form elements when the default fields aren't present.
+		if ( isset( $defaults['form_elements'] ) && ! empty( $this->data['form_elements'] ) ) {
+			unset( $defaults['form_elements'] );
+		}
+		return $defaults;
+	}
+
+	/**
 	 * Get the defaults for this meta.
 	 *
-	 * @since 4.0.0
-	 * @since 4.2.0 Moved from Hustle_Popup_Emails to this class.
+	 * @since 4.2.0
+	 *
 	 * @return array
 	 */
 	public function get_defaults() {

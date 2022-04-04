@@ -1,4 +1,11 @@
 <?php
+/**
+ * File for the Hustle_Init class.
+ *
+ * @package Hustle
+ * @since unknown
+ */
+
 if ( ! class_exists( 'Hustle_Init' ) ) {
 
 	/**
@@ -13,11 +20,19 @@ if ( ! class_exists( 'Hustle_Init' ) ) {
 
 			Hustle_Db::maybe_create_tables();
 
+			new Hustle_Installer();
+
 			// Hustle Migration.
 			new Hustle_Migration();
 
 			// Admin.
 			if ( is_admin() ) {
+
+				if ( is_multisite() ) {
+					// Add multisite class.
+					new Hustle_Multisite();
+				}
+
 				new Hustle_Module_Admin();
 
 				new Hustle_Dashboard_Admin();
@@ -37,6 +52,14 @@ if ( ! class_exists( 'Hustle_Init' ) ) {
 
 				new Hustle_Settings_Page();
 
+				$hide_docs = apply_filters( 'wpmudev_branding_hide_doc_link', false );
+				if ( ! $hide_docs ) {
+					new Hustle_Tutorials_Page();
+				}
+
+				if ( Opt_In_Utils::_is_free() ) {
+					new Hustle_Upsell_Page();
+				}
 				new Hustle_General_Data_Protection();
 			}
 

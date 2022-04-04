@@ -69,7 +69,7 @@
 				class="hustle-select2"
 				data-rtl-support="false"
 				data-language="en"
-				data-placeholder="-"
+				data-placeholder="<?php echo esc_html( $dropdown_placeholder ); ?>"
 			>
 
 				<?php
@@ -80,7 +80,7 @@
 				 * @since 4.0.3
 				 */
 				?>
-				<option><?php echo esc_html( $dropdown_placeholder ); ?></option>
+				<option value=""></option>
 
 				<?php foreach ( $interest_options as $option_id => $option_name ) { ?>
 

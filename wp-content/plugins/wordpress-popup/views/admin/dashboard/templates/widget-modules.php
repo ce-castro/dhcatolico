@@ -90,7 +90,6 @@
 											'admin/commons/sui-listing/elements/actions',
 											array(
 												'module' => $module,
-												'capability' => $capability,
 												'dashboard' => true,
 												'smallcaps_singular' => $smallcaps_singular,
 												'capitalize_singular' => $capitalize_singular,
@@ -115,13 +114,13 @@
 
 		<?php } ?>
 
-		<?php $query_array = array( 'page' => Hustle_Module_Admin::get_listing_page_by_module_type( $widget_type ) ); ?>
+		<?php $query_array = array( 'page' => Hustle_Data::get_listing_page_by_module_type( $widget_type ) ); ?>
 
 		<?php if ( $capability['hustle_create'] ) { ?>
 			<a
 				href="
 					<?php
-					if ( Hustle_Module_Admin::can_create_new_module( $widget_type ) ) {
+					if ( ! Hustle_Data::was_free_limit_reached( $widget_type ) ) {
 						$args = array_merge( $query_array, array( 'create-module' => 'true' ) );
 					} else {
 						$args = array_merge( $query_array, array( 'requires-pro' => 'true' ) );

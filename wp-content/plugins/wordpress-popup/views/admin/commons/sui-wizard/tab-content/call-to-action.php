@@ -6,11 +6,6 @@
  * @since 4.0.0
  */
 
-ob_start();
-
-require Opt_In::$plugin_path . 'assets/css/sui-editor.min.css';
-$editor_css = ob_get_clean();
-$editor_css = '<style>' . $editor_css . '</style>';
 ?>
 
 <div class="sui-box-settings-row">
@@ -18,7 +13,7 @@ $editor_css = '<style>' . $editor_css . '</style>';
 	<div class="sui-box-settings-col-1">
 		<span class="sui-settings-label"><?php esc_html_e( 'Call to Action', 'hustle' ); ?></span>
 		<?php /* translators: module type in small caps and in singular */ ?>
-		<span class="sui-description"><?php printf( esc_html__( 'Add a call to action button on your %s to take your visitors to another web page on your site or any other site.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
+		<span class="sui-description"><?php printf( esc_html__( 'Add a call to action button on your pop-up to take your visitors to another web page on your site or any other site.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></span>
 	</div>
 
 	<div class="sui-box-settings-col-2">
@@ -66,35 +61,28 @@ $editor_css = '<style>' . $editor_css . '</style>';
 
 							<label class="sui-label"><?php esc_html_e( 'Open link in', 'hustle' ); ?></label>
 
-							<div class="sui-side-tabs">
-
-								<div class="sui-tabs-menu">
-
-									<label for="hustle-cta-target-blank" class="sui-tab-item">
-										<input type="radio"
-											name="cta_target"
-											value="blank"
-											data-attribute="cta_target"
-											id="hustle-cta-target-blank"
-											<?php checked( $settings['cta_target'], 'blank' ); ?>
-										/>
-										<?php esc_html_e( 'New Tab', 'hustle' ); ?>
-									</label>
-
-									<label for="hustle-cta-target-self" class="sui-tab-item">
-										<input type="radio"
-											name="cta_target"
-											value="self"
-											data-attribute="cta_target"
-											id="hustle-cta-target-self"
-											<?php checked( $settings['cta_target'], 'self' ); ?>
-										/>
-										<?php esc_html_e( 'Same Tab', 'hustle' ); ?>
-									</label>
-
-								</div>
-
-							</div>
+							<?php
+							$this->render(
+								'admin/global/sui-components/sui-tabs',
+								array(
+									'name'        => 'cta_target',
+									'radio'       => true,
+									'saved_value' => $settings['cta_target'],
+									'sidetabs'    => true,
+									'content'     => false,
+									'options'     => array(
+										'blank' => array(
+											'value' => 'blank',
+											'label' => __( 'New Tab', 'hustle' ),
+										),
+										'self'  => array(
+											'value' => 'self',
+											'label' => __( 'Same Tab', 'hustle' ),
+										),
+									),
+								)
+							);
+							?>
 
 						</div>
 
@@ -104,7 +92,7 @@ $editor_css = '<style>' . $editor_css . '</style>';
 
 				<div class="sui-form-field">
 
-					<label for="hustle-cta-url" class="sui-label">Redirect URL</label>
+					<label for="hustle-cta-url" class="sui-label"><?php esc_html_e( 'Redirect URL or CSS ID', 'hustle' ); ?></label>
 
 					<input type="url"
 						name="cta_url"

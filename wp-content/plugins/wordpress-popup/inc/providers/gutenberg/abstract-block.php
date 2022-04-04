@@ -132,20 +132,20 @@ abstract class Hustle_GHBlock_Abstract {
 	 * Check for dependencies in each block type.
 	 * To be overridden as required.
 	 *
-	 * @param Hustle_Module_Model $module Module to be checked.
+	 * @param Hustle_Model $module Module to be checked.
 	 * @return void
 	 */
-	protected function check_dependencies( Hustle_Module_Model $module ) {}
+	protected function check_dependencies( Hustle_Model $module ) {}
 
 	/**
 	 * Check in every block type if this module should be available.
 	 *
-	 * @since 4.0
+	 * @since 4.0.0
 	 *
-	 * @param Hustle_Module_Model $module
+	 * @param Hustle_Model $module Instance of the current module.
 	 * @return bool
 	 */
-	protected function is_module_included( Hustle_Module_Model $module ) {
+	protected function is_module_included( Hustle_Model $module ) {
 		return true;
 	}
 }

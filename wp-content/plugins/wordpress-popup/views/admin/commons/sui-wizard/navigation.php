@@ -52,63 +52,13 @@
 
 		</ul>
 
-		<?php if ( 'social_sharing' !== $module_type ) { ?>
-
-			<div class="sui-sidenav-settings">
-
-				<button id="hustle-preview-module" class="sui-button sui-sidenav-hide-md">
-					<span class="sui-loading-text">
-						<span class="sui-icon-eye" aria-hidden="true"></span>
-						<span class="button-text"><?php esc_html_e( 'Preview', 'hustle' ); ?></span>
-					</span>
-					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
-				</button>
-
-			</div>
-
-		<?php } ?>
-
-	</div>
-
-	<div class="sui-sidenav-settings">
-
-		<div id="hustle-module-name-wrapper" class="sui-form-field sui-with-floating-input">
-
-			<input type="text"
-				id="hustle-module-name"
-				name="module_name"
-				data-attribute="module_name"
-				value="<?php echo esc_attr( $module_name ); ?>"
-				placeholder="<?php esc_html_e( 'E.g. Newsletter', 'hustle' ); ?>"
-				class="sui-form-control" />
-
-			<span id="hustle-module-name-error" class="sui-error-message" style="display: none;"><?php esc_html_e( 'This field is required.', 'hustle' ); ?></span>
-
-		</div>
-
-		<?php if ( 'social_sharing' !== $module_type ) { ?>
-
-			<div class="sui-sidenav-hide-lg">
-
-				<button id="hustle-preview-module" class="sui-button">
-					<span class="sui-loading-text">
-						<span class="sui-icon-eye" aria-hidden="true"></span>
-						<span class="button-text"><?php esc_html_e( 'Preview', 'hustle' ); ?></span>
-					</span>
-					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
-				</button>
-
-			</div>
-
-		<?php } ?>
-
 	</div>
 
 	<div class="sui-sidenav-hide-lg">
 
 		<label class="sui-label"><?php esc_html_e( 'Navigate', 'hustle' ); ?></label>
 
-		<select class="sui-mobile-nav" style="display: none;">
+		<select class="sui-mobile-nav" style="margin-bottom: 20px;">
 			<?php
 			foreach ( $wizard_tabs as $key => $data ) {
 

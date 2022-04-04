@@ -20,7 +20,7 @@ class Opt_In_Condition_Posts extends Opt_In_Condition_Abstract {
 	 * @since unknown
 	 */
 	public function is_allowed() {
-		global $post;
+		$post = self::get_post();
 
 		$all         = false;
 		$none        = false;
@@ -28,7 +28,7 @@ class Opt_In_Condition_Posts extends Opt_In_Condition_Abstract {
 		$filter_type = isset( $this->args->filter_type ) && in_array( $this->args->filter_type, array( 'only', 'except' ), true )
 				? $this->args->filter_type : 'except';
 
-		if ( ! isset( $post ) || ! ( $post instanceof WP_Post ) || 'post' !== $post->post_type || ! is_single() ) {
+		if ( ! isset( $post ) || ! ( $post instanceof WP_Post ) || 'post' !== $post->post_type || ! self::check( 'is_single' ) ) {
 			return false;
 		}
 		if ( empty( $posts ) ) {

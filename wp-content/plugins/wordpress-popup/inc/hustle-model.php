@@ -8,7 +8,32 @@
  * @property string $module_type
  * @property int $active
  */
-abstract class Hustle_Model extends Hustle_Data {
+abstract class Hustle_Model {
+
+	const KEY_EMAILS  = 'emails';
+	const KEY_CONTENT = 'content';
+
+	/**
+	 * Per provider settings. Used as {slug}_provider_settings.
+	 *
+	 * @since 4.0.0
+	 */
+	const KEY_PROVIDER        = '_provider_settings';
+	const KEY_DESIGN          = 'design';
+	const KEY_DISPLAY_OPTIONS = 'display';
+	const KEY_VISIBILITY      = 'visibility';
+
+	/**
+	 * Per module settings applied to all integrations.
+	 *
+	 * @since 4.0.0
+	 */
+	const KEY_INTEGRATIONS_SETTINGS   = 'integrations_settings';
+	const KEY_SETTINGS                = 'settings';
+	const KEY_SHORTCODE_ID            = 'shortcode_id';
+	const TRACK_TYPES                 = 'track_types';
+	const KEY_UNSUBSCRIBE_NONCES      = 'hustle_unsubscribe_nonces';
+	const KEY_MODULE_META_PERMISSIONS = 'edit_roles';
 
 	const POPUP_MODULE          = 'popup';
 	const SLIDEIN_MODULE        = 'slidein';
@@ -34,97 +59,122 @@ abstract class Hustle_Model extends Hustle_Data {
 
 	protected $_decorator = false;
 
-	public function __get( $field ) {
-		$from_parent = parent::__get( $field );
-		if ( ! empty( $from_parent ) ) {
-			return $from_parent;
+	/**
+	 * Data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array $data
+	 */
+	protected $data;
+
+	/**
+	 * Reference to $wpdb global var
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var $wpdb WPDB
+	 * @access private
+	 */
+	protected $wpdb;
+
+	public static $use_count_cookie;
+
+	/**
+	 *
+	 * Opt_In_Data constructor.
+	 */
+	public function __construct( $id = null ) {
+		global $wpdb;
+		$this->wpdb = $wpdb;
+
+		if ( empty( $id ) ) {
+			return;
 		}
 
-		$meta = $this->get_meta( $field );
-		if ( ! is_null( $meta ) ) {
-			return $meta;
+		$cache_group = 'hustle_model_data';
+		$data        = wp_cache_get( $id, $cache_group );
+		$id          = (int) $id;
+
+		if ( false === $data ) {
+			global $wpdb;
+			$data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'hustle_modules WHERE module_id = %d', $id ), OBJECT );
+			if ( empty( $data ) ) {
+				return new WP_Error( 'hustle-module', __( 'Module does not exist!', 'hustle' ) );
+			}
+
+			wp_cache_set( $id, $data, $cache_group );
 		}
+
+		$this->data = $data;
+		$this->populate();
 	}
 
 	/**
-	 * Returns optin based on provided id
+	 * Returns the module's model by the given ID.
 	 *
-	 * @param $id
-	 * @return $this
+	 * @since 4.3.0
+	 *
+	 * @param int $id Module ID.
+	 * @return Hustle_Model|WP_Error
+	 */
+	public static function get_module( $id ) {
+		$module_type = self::get_module_type_by_module_id( $id );
+		if ( empty( $module_type ) ) {
+			$module = new WP_Error( '404', 'Module not found' );
+		} elseif ( self::SOCIAL_SHARING_MODULE === $module_type ) {
+			$module = new Hustle_SShare_Model( $id );
+		} else {
+			$module = new Hustle_Module_Model( $id );
+		}
+
+		return $module;
+	}
+
+	/**
+	 * Returns a module based on the provided ID.
+	 *
+	 * @since unknown
+	 *
+	 * @param integer $id Module ID.
+	 * @return Hustle_Model
 	 */
 	public function get( $id ) {
+		_deprecated_function( __METHOD__, '4.3.0', 'new ' . get_class( $this ) );
+
+		global $wpdb;
+
 		$cache_group = 'hustle_model_data';
 		$this->data  = wp_cache_get( $id, $cache_group );
-		$this->id    = (int) $id;
+		$id          = (int) $id;
+
 		if ( false === $this->data ) {
-			$data = $this->wpdb->get_row( $this->wpdb->prepare( 'SELECT * FROM  ' . Hustle_Db::modules_table() . ' WHERE `module_id`=%d', $this->id ), OBJECT );
+			$data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'hustle_modules WHERE module_id = %d', $id ), OBJECT );
 			if ( empty( $data ) ) {
 				return new WP_Error( 'hustle-module', __( 'Module does not exist!', 'hustle' ) );
 			}
 			$this->data = $data;
 			wp_cache_set( $id, $this->data, $cache_group );
 		}
-		$this->_populate();
+		$this->populate();
 		return $this;
 	}
 
-	private function _populate() {
+	/**
+	 * Sets the core properties of the module as properties of the instance.
+	 * These are module_id, module_name, module_type, active, and blog_id.
+	 *
+	 * @since unknown
+	 */
+	private function populate() {
 		if ( $this->data ) {
 			$this->id = $this->data->module_id;
 			foreach ( $this->data as $key => $data ) {
-				$method       = 'get_' . $key;
-				$_d           = method_exists( $this, $method ) ? $this->{$method}() : $data;
-				$this->{$key} = $_d;
+				$this->{$key} = $data;
 			}
 		}
 		$this->get_tracking_types();
 	}
-
-	/**
-	 * Returns optin based on shortcode id
-	 *
-	 * @todo make this return an instance of Hustle_Module_Model, or Hustle_SShare_Model when it should.
-	 *
-	 * @param string $shortcode_id
-	 * @param bool   $enforce_type Whether to get only embeds or sshares.
-	 * @return $this
-	 */
-	public function get_by_shortcode( $shortcode_id, $enforce_type = true ) {
-		$shortcode_id = trim( $shortcode_id );
-
-		$cache_group = 'hustle_shortcode_data';
-		// $key = "hustle_shortcode_data_" . $shortcode_id;
-		$this->data = wp_cache_get( $shortcode_id, $cache_group );
-
-		// If not cached.
-		if ( false === $this->data ) {
-			// Enforce embedded/social_sharing type or not.
-			$and_force = $enforce_type ? "AND (`module_type` = 'embedded' OR `module_type` = 'social_sharing')" : '';
-
-			$sql       = $this->wpdb->prepare(
-				'SELECT modules.`module_id` FROM  `' . Hustle_Db::modules_table() . '` as modules
-				JOIN `' . Hustle_Db::modules_meta_table() . "` as meta
-				ON modules.`module_id`=meta.`module_id`
-				WHERE `meta_key`='shortcode_id'
-				$and_force
-				AND `meta_value`=%s",
-				$shortcode_id
-			);
-			$module_id = $this->wpdb->get_var( $sql );
-
-			if ( empty( $module_id ) ) {
-				$module_id = $shortcode_id;
-			}
-
-			$this->get( $module_id );
-			wp_cache_set( $shortcode_id, $this->data, $cache_group );
-		} else {
-			$this->_populate();
-		}
-
-		return $this;
-	}
-
 
 	/**
 	 * Saves or updates optin
@@ -173,74 +223,21 @@ abstract class Hustle_Model extends Hustle_Data {
 	/**
 	 * Update the module's data.
 	 *
-	 * @since 4.0
+	 * @since 4.0.0
 	 *
-	 * @param array $data
+	 * @param array $data Data to save.
 	 * @return bool|int
 	 */
 	public function update_module( $data ) {
 
-		// TODO: Sanitize!
-
-		// Save to modules table
+		// Save to modules table.
 		if ( isset( $data['module'] ) ) {
 			$this->module_name = $data['module']['module_name'];
 			$this->active      = (int) $data['module']['active'];
 			$this->save();
 		}
 
-		// All modules types except Social sharing modules.
-		if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $this->module_type ) {
-
-			// emails tab
-			if ( isset( $data['emails'] ) ) {
-				$emails = $data['emails'];
-				if ( isset( $emails['form_elements'] ) ) {
-					$emails['form_elements'] = $this->sanitize_form_elements( $emails['form_elements'] );
-				}
-				$this->update_meta( self::KEY_EMAILS, $emails );
-			}
-
-			// Settings tab.
-			if ( isset( $data['settings'] ) ) {
-				// Clear flags to skip cached schedule values.
-				$this->set_schedule_flags( array() );
-				$this->update_meta( self::KEY_SETTINGS, $data['settings'] );
-			}
-
-			// integrations tab
-			if ( isset( $data['integrations_settings'] ) ) {
-				$this->update_meta( self::KEY_INTEGRATIONS_SETTINGS, $data['integrations_settings'] );
-			}
-		}
-
-		// save to meta table
-		if ( isset( $data['content'] ) ) {
-			$this->update_meta( self::KEY_CONTENT, $data['content'] );
-		}
-		if ( isset( $data['design'] ) ) {
-			$this->update_meta( self::KEY_DESIGN, $data['design'] );
-		}
-		if ( isset( $data['visibility'] ) ) {
-			$this->update_meta( self::KEY_VISIBILITY, $data['visibility'] );
-		}
-
-		// Embedded only meta.
-		if ( Hustle_Module_Model::EMBEDDED_MODULE === $this->module_type || Hustle_Module_Model::SOCIAL_SHARING_MODULE === $this->module_type ) {
-			if ( isset( $data['display'] ) ) {
-				$this->update_meta( self::KEY_DISPLAY_OPTIONS, $data['display'] );
-			}
-
-			// Force all counters to retrieve the data from the APIs.
-			if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $this->module_type ) {
-				Hustle_SShare_Model::refresh_all_counters();
-			}
-		}
-
-		// Activate integrations if passed.
-		if ( isset( $data['integrations'] ) ) {
-			$this->activate_providers( $data );
-		}
+		$this->update_module_metas( $data );
 
 		$this->clean_module_cache();
 
@@ -248,57 +245,92 @@ abstract class Hustle_Model extends Hustle_Data {
 	}
 
 	/**
-	 * validates the module's data.
+	 * Duplicate a module.
 	 *
-	 * @since 4.0.3
+	 * @since 3.0.5
+	 * @since 4.0 moved from Hustle_Popup_Admin_Ajax to here. New settings added.
 	 *
-	 * @param array $data
-	 * @return array
+	 * @return bool
 	 */
-	public function validate_module( $data ) {
-		// validation for sshare module
-		if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $this->module_type ) {
+	public function duplicate_module() {
+		if ( ! $this->id ) {
+			return false;
+		}
+		// clone module data.
+		$data = $this->clone_module();
 
-			// validation
-			$icons    = isset( $data['content']['social_icons'] ) ? $data['content']['social_icons'] : array();
-			$display  = $data['display'];
-			$selector = array(
-				'desktop' => isset( $display['float_desktop_offset'] ) ? $display['float_desktop_offset'] : '',
-				'mobile'  => isset( $display['float_mobile_offset'] ) ? $display['float_mobile_offset'] : '',
+		// rename
+		$this->module_name .= __( ' (copy)', 'hustle' );
+
+		// Turn status off.
+		$this->active = 0;
+
+		// Save.
+		$result = $this->save();
+
+		if ( $result && ! is_wp_error( $result ) ) {
+
+			$this->update_module( $data );
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Clone the module data.
+	 *
+	 * @since 4.4.7
+	 *
+	 * @return array $data - data of the module.
+	 */
+	public function clone_module() {
+
+		// TODO: make use of the sshare model to extend this instead.
+		if ( self::SOCIAL_SHARING_MODULE !== $this->module_type ) {
+
+			$data = array(
+				'content'                       => $this->get_content()->to_array(),
+				'emails'                        => $this->get_emails()->to_array(),
+				'design'                        => $this->get_design()->to_array(),
+				'settings'                      => $this->get_settings()->to_array(),
+				'visibility'                    => $this->get_visibility()->to_array(),
+				self::KEY_INTEGRATIONS_SETTINGS => $this->get_integrations_settings()->to_array(),
 			);
 
-			$errors = array();
+			if ( self::EMBEDDED_MODULE === $this->module_type ) {
+				$data['display'] = $this->get_display()->to_array();
+			}
 
-			// Social platform url check.
-			if ( ! empty( $icons ) ) {
-				foreach ( $icons as $key => $icon ) {
-					$icon_with_enpoints = Hustle_SShare_Model::get_sharing_endpoints();
-					if ( ! in_array( $icon['platform'], $icon_with_enpoints, true ) && empty( $icon['link'] ) ) {
-						$errors['error']['icon_error'][] = $icon['platform'];
+			// Pass integrations.
+			if ( 'optin' === $this->module_mode ) {
+				$integrations = array();
+				$providers    = Hustle_Providers::get_instance()->get_providers();
+				foreach ( $providers as $slug => $provider ) {
+					$provider_data = $this->get_provider_settings( $slug, false );
+					// if ( 'local_list' !== $slug && $provider_data && $provider->is_connected()
+					if ( $provider_data && $provider->is_connected()
+							&& $provider->is_form_connected( $this->module_id ) ) {
+						$integrations[ $slug ] = $provider_data;
 					}
 				}
-			}
 
-			// css selector check
-			if ( ! empty( $selector ) ) {
-				if ( 'css_selector' === $selector['desktop'] && empty( $display['float_desktop_css_selector'] )
-				&& ! empty( $display['float_desktop_enabled'] ) ) {
-					$errors['error']['selector_error'][] = 'float_desktop';
-				}
-				if ( 'css_selector' === $selector['mobile'] && empty( $display['float_mobile_css_selector'] ) && ! empty( $display['float_mobile_enabled'] ) ) {
-					$errors['error']['selector_error'][] = 'float_mobile';
-				}
+				$data['integrations'] = $integrations;
 			}
-		}
-
-		// return errors if any.
-		if ( ! empty( $errors ) ) {
-			$errors['success'] = false;
-			return $errors;
 		} else {
-			return $res['success'] = true;
+			$data = array(
+				'content'    => $this->get_content()->to_array(),
+				'display'    => $this->get_display()->to_array(),
+				'design'     => $this->get_design()->to_array(),
+				'visibility' => $this->get_visibility()->to_array(),
+			);
 		}
 
+		// unset module id.
+		unset( $this->id );
+
+		return $data;
 	}
 
 	/**
@@ -503,71 +535,48 @@ abstract class Hustle_Model extends Hustle_Data {
 	 * @return array
 	 */
 	public function get_data() {
-		return (array) $this->data;
-	}
+		$data = (array) $this->data;
 
-	/**
-	 * Toggles state of optin or optin type
-	 *
-	 * @param null $environment
-	 * @return false|int|WP_Error
-	 */
-	public function toggle_state( $environment = null ) {
-		// Clear cache.
-		$this->clean_module_cache( 'data' );
-
-		if ( is_null( $environment ) ) { // so we are toggling state of the optin
-			return $this->wpdb->update(
-				Hustle_Db::modules_table(),
-				array(
-					'active' => ( 1 - $this->active ),
-				),
-				array(
-					'module_id' => $this->id,
-				),
-				array(
-					'%d',
-				)
-			);
+		$avoid_static_cache = Opt_In_Utils::is_static_cache_enabled();
+		if ( $avoid_static_cache ) {
+			$data['avoidStaticCache'] = true;
 		}
+
+		return $data;
 	}
 
 	/**
 	 * Deactivate module
 	 *
-	 * @param null $environment
+	 * @since unknwon
 	 */
-	public function deactivate( $environment = null ) {
+	public function deactivate() {
 		// Clear cache.
 		$this->clean_module_cache( 'data' );
 
-		if ( is_null( $environment ) ) { // so we are toggling state of the optin
-			return $this->wpdb->update(
-				Hustle_Db::modules_table(),
-				array( 'active' => 0 ),
-				array( 'module_id' => $this->id ),
-				array( '%d' )
-			);
-		}
+		return $this->wpdb->update(
+			Hustle_Db::modules_table(),
+			array( 'active' => 0 ),
+			array( 'module_id' => $this->id ),
+			array( '%d' )
+		);
 	}
 
 	/**
 	 * Activate module
 	 *
-	 * @param null $environment
+	 * @since unknwon
 	 */
-	public function activate( $environment = null ) {
+	public function activate() {
 		// Clear cache.
 		$this->clean_module_cache( 'data' );
 
-		if ( is_null( $environment ) ) { // so we are toggling state of the optin
-			return $this->wpdb->update(
-				Hustle_Db::modules_table(),
-				array( 'active' => 1 ),
-				array( 'module_id' => $this->id ),
-				array( '%d' )
-			);
-		}
+		return $this->wpdb->update(
+			Hustle_Db::modules_table(),
+			array( 'active' => 1 ),
+			array( 'module_id' => $this->id ),
+			array( '%d' )
+		);
 	}
 
 	/**
@@ -714,16 +723,59 @@ abstract class Hustle_Model extends Hustle_Data {
 	 * @param integer $module_id
 	 * @return string|null
 	 */
-	public function get_module_type_by_module_id( $module_id ) {
+	public static function get_module_type_by_module_id( $module_id ) {
+		$cache_group = 'hustle_module_type';
+		$module_type = wp_cache_get( $module_id, $cache_group );
+		if ( false === $module_type ) {
+			global $wpdb;
+			$query = $wpdb->prepare(
+				'
+				SELECT module_type FROM `' . Hustle_Db::modules_table() . '`
+				WHERE `module_id`=%s',
+				$module_id
+			);
 
-		$query = $this->wpdb->prepare(
-			'
-			SELECT module_type FROM `' . Hustle_Db::modules_table() . '`
-			WHERE `module_id`=%s',
-			$module_id
-		);
+			$module_type = $wpdb->get_var( $query );
+			wp_cache_set( $module_id, $module_type, $cache_group );
+		}
 
-		return $this->wpdb->get_var( $query );
+		return $module_type;
+	}
+
+	/**
+	 * Get the module ID by the shortcode ID.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param string $shortcode_id ID used in the shortcode.
+	 * @return int
+	 */
+	public static function get_module_id_by_shortcode_id( $shortcode_id ) {
+		global $wpdb;
+
+		$cache_group = 'hustle_id_from_shortcode';
+		$module_id   = wp_cache_get( $shortcode_id, $cache_group );
+
+		if ( empty( $module_id ) ) {
+			// Retrieve the shortcode_id from the db for backwards compatibility.
+			$module_id = $wpdb->get_var(
+				$wpdb->prepare(
+					'SELECT module_id FROM ' . $wpdb->prefix . "hustle_modules_meta
+					WHERE meta_key = 'shortcode_id'
+					AND meta_value = %s",
+					$shortcode_id
+				)
+			);
+
+			// Since 4.2.1, the modules are retrieved by their ID, not by a shortcode ID.
+			if ( empty( $module_id ) && is_numeric( $shortcode_id ) ) {
+				$module_id = $shortcode_id;
+			}
+
+			wp_cache_set( $shortcode_id, $module_id, $cache_group );
+		}
+
+		return $module_id;
 	}
 
 	/**
@@ -821,38 +873,41 @@ abstract class Hustle_Model extends Hustle_Data {
 	}
 
 	/**
-	 * Returns settings saved as meta
+	 * Returns the value of the requested meta.
 	 *
 	 * @since 2.0
-	 * @param string $key
-	 * @param string $default json string
-	 * @return object|array
+	 *
+	 * @param string $key Meta key.
+	 * @param array  $default Value to return if no meta was found.
+	 * @param bool   $get_cached Whether to use the value stored in cache.
+	 *
+	 * @return array
 	 */
-	protected function get_settings_meta( $key, $default = '{}', $as_array = false, $get_cached = true ) {
+	protected function get_settings_meta( $key, $default = array(), $get_cached = true ) {
 		$settings_json = $this->get_meta( $key, null, $get_cached );
 
 		if ( $settings_json ) {
-			$settings = json_decode( $settings_json, $as_array );
+			$settings = json_decode( $settings_json, true );
 
 			if ( ! empty( $settings ) ) {
 				return $settings;
 			}
 		}
 
-		return is_string( $default ) ? json_decode( $default, $as_array ) : $default;
+		return $default;
 	}
 
 	/**
 	 * Load the model with the data to preview.
 	 *
-	 * @since 4.0
+	 * @since 4.0.0
 	 *
-	 * @param array $data
+	 * @param array $data Preview data.
 	 * @return Hustle_Module_Model
 	 */
 	public function load_preview( $data ) {
 
-		if ( ! $this->module_id ) {
+		if ( is_null( $this->module_id ) ) {
 			return false;
 		}
 
@@ -878,6 +933,11 @@ abstract class Hustle_Model extends Hustle_Data {
 
 			// Merge the passed value with the default.
 			if ( isset( $data[ $meta ] ) ) {
+
+				// "Settings" comes as a json encoded strings to allow empty arrays for triggers.
+				if ( 'settings' === $meta && ! is_array( $data[ $meta ] ) ) {
+					$data[ $meta ] = json_decode( $data[ $meta ], true );
+				}
 				$new_meta = array_merge( $default, $data[ $meta ] );
 			} else {
 				$new_meta = $default;
@@ -914,6 +974,121 @@ abstract class Hustle_Model extends Hustle_Data {
 	}
 
 	/**
+	 * Returns the link to the wizard page into the defined tab.
+	 *
+	 * @since unknown
+	 * @since 4.3.0 Moved from Hustle_Module_Decorator to this class.
+	 *
+	 * @param string $section Slug of the section to go to.
+	 * @return string
+	 */
+	public function get_edit_url( $section = '' ) {
+		$url = 'admin.php?page=' . $this->get_wizard_page() . '&id=' . $this->module_id;
+
+		if ( ! empty( $section ) ) {
+			$url .= '&section=' . $section;
+		}
+
+		return admin_url( $url );
+	}
+
+	/**
+	 * Get the listing page for this module type.
+	 *
+	 * @since 4.0
+	 * @return string
+	 */
+	public function get_listing_page() {
+		return Hustle_Data::get_listing_page_by_module_type( $this->module_type );
+	}
+
+	/**
+	 * Get wizard page for this module type.
+	 *
+	 * @since 4.0
+	 * @return string
+	 */
+	public function get_wizard_page() {
+		return Hustle_Data::get_wizard_page_by_module_type( $this->module_type );
+	}
+
+	/**
+	 * Gets the shortcode ID of the current module.
+	 * It used to retrieve a custom string before 4.2.1. Now we use the module ID.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return int
+	 */
+	public function get_shortcode_id() {
+		return $this->id;
+	}
+
+	/**
+	 * Decorates current model
+	 *
+	 * @return Hustle_Module_Decorator
+	 */
+	public function get_decorated() {
+		if ( ! $this->_decorator ) {
+			$this->_decorator = $this->get_decorator_instance();
+		}
+
+		return $this->_decorator;
+	}
+
+	/**
+	 * Return whether the module's sub_type is active.
+	 *
+	 * @since the beginning of time
+	 * @since 4.0 method name changed.
+	 *
+	 * @param string $type Module's display type.
+	 * @return boolean
+	 */
+	public function is_display_type_active( $type ) {
+		$settings = $this->get_display()->to_array();
+
+		if ( isset( $settings[ $type . '_enabled' ] ) && in_array( $settings[ $type . '_enabled' ], array( '1', 1, 'true' ), true ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Render the module.
+	 *
+	 * @since 4.0
+	 *
+	 * @param string $sub_type
+	 * @param string $custom_classes
+	 * @param bool   $is_preview
+	 * @return string
+	 */
+	public function display( $sub_type = null, $custom_classes = '', $is_preview = false ) {
+		if ( ! $this->id ) {
+			return;
+		}
+
+		$this->load();
+
+		$renderer = $this->get_renderer();
+		return $renderer->display( $this, $sub_type, $custom_classes, $is_preview );
+	}
+
+	/**
+	 * Get the stored settings for the "Visibility" tab.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return Hustle_Popup_Visibility
+	 */
+	public function get_visibility() {
+		return new Hustle_Meta_Base_Visibility( $this->get_settings_meta( self::KEY_VISIBILITY ), $this );
+	}
+
+	/**
 	 * Get the module's meta values.
 	 * Note: it's not including the shortcode id, integrations' settings, nor edit roles.
 	 *
@@ -929,17 +1104,20 @@ abstract class Hustle_Model extends Hustle_Data {
 	public function get_module_meta_names( $module_type = '', $module_mode = '', $with_display_name = false ) {
 
 		$module_type = empty( $module_type ) ? $this->module_type : $module_type;
-		$module_mode = empty( $module_mode ) ? $this->module_mode : $module_mode;
+
+		if ( self::SOCIAL_SHARING_MODULE !== $module_type ) {
+			$module_mode = empty( $module_mode ) ? $this->module_mode : $module_mode;
+		}
 
 		if ( ! $with_display_name ) {
 			$metas = array( self::KEY_CONTENT, self::KEY_DESIGN, self::KEY_VISIBILITY );
 
-			if ( 'optin' === $module_mode ) {
-				$metas[] = self::KEY_EMAILS;
-				$metas[] = self::KEY_INTEGRATIONS_SETTINGS;
-			}
-
 			if ( self::SOCIAL_SHARING_MODULE !== $module_type ) {
+				if ( 'optin' === $module_mode ) {
+					$metas[] = self::KEY_EMAILS;
+					$metas[] = self::KEY_INTEGRATIONS_SETTINGS;
+				}
+
 				$metas[] = self::KEY_SETTINGS;
 			}
 
@@ -971,20 +1149,19 @@ abstract class Hustle_Model extends Hustle_Data {
 				'label' => __( 'Visibility', 'hustle' ),
 			);
 
-			if ( 'optin' === $module_mode ) {
-
-				$metas[1] = array(
-					'name'  => self::KEY_EMAILS,
-					'label' => __( 'Emails', 'hustle' ),
-				);
-
-				$metas[2] = array(
-					'name'  => self::KEY_INTEGRATIONS_SETTINGS,
-					'label' => __( 'Integrations', 'hustle' ),
-				);
-			}
-
 			if ( self::SOCIAL_SHARING_MODULE !== $module_type ) {
+				if ( 'optin' === $module_mode ) {
+
+					$metas[1] = array(
+						'name'  => self::KEY_EMAILS,
+						'label' => __( 'Emails', 'hustle' ),
+					);
+
+					$metas[2] = array(
+						'name'  => self::KEY_INTEGRATIONS_SETTINGS,
+						'label' => __( 'Integrations', 'hustle' ),
+					);
+				}
 
 				$metas[6] = array(
 					'name'  => self::KEY_SETTINGS,
@@ -1048,6 +1225,22 @@ abstract class Hustle_Model extends Hustle_Data {
 	}
 
 	/**
+	 * Returns format for optin table
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
+	 */
+	private function get_format() {
+		return array(
+			'module_name' => '%s',
+			'module_type' => '%s',
+			'active'      => '%d',
+			'module_mode' => '%s',
+		);
+	}
+
+	/**
 	 * Special save used in migration.
 	 * It keeps the passed module id when saving a new module.
 	 * It's useful when adding old modules in new tables in MU.
@@ -1084,4 +1277,54 @@ abstract class Hustle_Model extends Hustle_Data {
 		return $this->id;
 	}
 
+	/**
+	 * Check Visibility conditions. Returns true if conditions are matched
+	 *
+	 * @return boolean
+	 */
+	public function is_condition_allow() {
+		$allow    = true;
+		$sub_type = ! empty( $this->sub_type ) ? $this->sub_type : null;
+		if ( ! $this->get_visibility()->is_allowed_to_display( $this->module_type, $sub_type ) ) {
+			$allow = false;
+		}
+
+		return $allow;
+	}
+
+	/**
+	 * Get featured image alt text
+	 *
+	 * @return string
+	 */
+	public function get_feature_image_alt() {
+		if ( isset( $this->content->feature_image_alt ) ) {
+			return $this->content->feature_image_alt;
+		}
+
+		$alt = ! empty( $this->content->feature_image ) ? $this->update_feature_image_alt( $this->content->feature_image ) : '';
+
+		return $alt;
+	}
+
+	/**
+	 * Update feature image alt text
+	 *
+	 * @param string  $image Image URL.
+	 * @param boolean $force_save Save module data.
+	 * @return type
+	 */
+	public function update_feature_image_alt( $image, $force_save = true ) {
+		$thumb_id = attachment_url_to_postid( $image );
+		$text     = $thumb_id ? get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ) : '';
+
+		if ( $force_save ) {
+			$content = $this->get_content()->to_array();
+
+			$content['feature_image_alt'] = $text;
+			$this->update_meta( self::KEY_CONTENT, $content );
+		}
+
+		return $text;
+	}
 }

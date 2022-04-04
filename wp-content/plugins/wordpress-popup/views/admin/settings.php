@@ -19,9 +19,9 @@ $sections = array(
 			'palettes' => Hustle_Settings_Admin::get_custom_color_palettes(),
 		),
 	),
-	//'analytics'     => array(
-	//	'label' => __( 'Dashboard Analytics', 'hustle' ),
-	//),
+	'analytics'     => array(
+		'label' => __( 'Dashboard Analytics', 'hustle' ),
+	),
 	'data'          => array(
 		'label' => __( 'Data', 'hustle' ),
 	),
@@ -57,8 +57,10 @@ $sections = array(
 
 <div class="sui-header">
 	<h1 class="sui-header-title"><?php esc_html_e( 'Settings', 'hustle' ); ?></h1>
-	<?php $this->render( 'admin/commons/view-documentation' ); ?>
+	<?php $this->render( 'admin/commons/view-documentation', array( 'docs_section' => 'settings' ) ); ?>
 </div>
+
+<div id="hustle-floating-notifications-wrapper" class="sui-floating-notices"></div>
 
 <div class="sui-row-with-sidenav">
 
@@ -88,7 +90,9 @@ $sections = array(
 
 		<div class="sui-sidenav-hide-lg">
 
-			<select class="sui-mobile-nav" style="display: none;">
+			<label class="sui-label"><?php esc_html_e( 'Navigate', 'hustle' ); ?></label>
+
+			<select class="sui-mobile-nav" style="margin-bottom: 20px;">
 				<?php
 				foreach ( $sections as $key => $value ) {
 
@@ -126,7 +130,7 @@ $sections = array(
 
 <?php
 // Global Footer.
-$this->render( 'admin/footer/footer' );
+$this->render( 'admin/global/sui-components/sui-footer' );
 
 // DIALOG: Delete.
 $this->render( 'admin/commons/sui-listing/dialogs/delete-module' );
@@ -146,12 +150,7 @@ $this->render( 'admin/settings/dialogs/data-reset-data-dialog' );
 $this->render(
 	'admin/settings/dialogs/palettes-edit-palette',
 	array(
-		'palettes' => Hustle_Meta_Base_Design::get_all_palettes_slug_and_name(),
+		'palettes' => Hustle_Palettes_Helper::get_all_palettes_slug_and_name(),
 	)
 );
-
-// DIALOG: Downgrade to 4.0.4.
-if ( $has_40x_backup ) {
-	$this->render( 'admin/settings/dialogs/modal-404-downgrade' );
-}
 ?>

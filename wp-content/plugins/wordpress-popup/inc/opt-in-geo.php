@@ -16,14 +16,29 @@ class Opt_In_Geo {
 	const COUNTRY_IP_MAP = 'wpoi-county-id-map';
 
 	/**
+	 * Default GeoIP provider key
+	 *
+	 * @var DEFAULT_GEOIP_PROVIDER
+	 */
+	const DEFAULT_GEOIP_PROVIDER = 'geoplugin';
+
+	/**
 	 * Tries to get the public IP address of the current user.
 	 *
 	 * @return string The IP Address
 	 */
 	public static function get_user_ip() {
-		// check for bot
+		// check for bot.
 		if ( self::_is_crawler() ) {
 			return false;
+		}
+
+		// Check if request is from CloudFlare.
+		if ( self::is_cloudflare() ) {
+			$cf_ip = $_SERVER['HTTP_CF_CONNECTING_IP']; // We already make sure this is set in the checks.
+			if ( filter_var( $cf_ip, FILTER_VALIDATE_IP ) ) {
+				return apply_filters( 'hustle_user_ip', $cf_ip );
+			}
 		}
 
 		$result = (object) array(
@@ -77,6 +92,112 @@ class Opt_In_Geo {
 	}
 
 	/**
+	 * Validates that the IP that made the request is from cloudflare
+	 *
+	 * @param String $ip - the ip to check.
+	 * @return bool
+	 */
+	private static function validate_cloudflare_ip( $ip ) {
+		$cloudflare_ips = array(
+			'199.27.128.0/21',
+			'173.245.48.0/20',
+			'103.21.244.0/22',
+			'103.22.200.0/22',
+			'103.31.4.0/22',
+			'141.101.64.0/18',
+			'108.162.192.0/18',
+			'190.93.240.0/20',
+			'188.114.96.0/20',
+			'197.234.240.0/22',
+			'198.41.128.0/17',
+			'162.158.0.0/15',
+			'104.16.0.0/12',
+		);
+		$is_cf_ip       = false;
+		foreach ( $cloudflare_ips as $cloudflare_ip ) {
+			if ( self::cloudflare_ip_in_range( $ip, $cloudflare_ip ) ) {
+				$is_cf_ip = true;
+				break;
+			}
+		}
+
+		return $is_cf_ip;
+	}
+
+	/**
+	 * Check if the cloudflare IP is in range
+	 *
+	 * @param String $ip - the current IP.
+	 * @param String $range - the allowed range of cloudflare ips.
+	 * @return bool
+	 */
+	private static function cloudflare_ip_in_range( $ip, $range ) {
+		if ( strpos( $range, '/' ) === false ) {
+			$range .= '/32';
+		}
+
+		// $range is in IP/CIDR format eg 127.0.0.1/24.
+		list( $range, $netmask ) = explode( '/', $range, 2 );
+		$range_decimal           = ip2long( $range );
+		$ip_decimal              = ip2long( $ip );
+		$wildcard_decimal        = pow( 2, ( 32 - $netmask ) ) - 1;
+		$netmask_decimal         = ~$wildcard_decimal;
+
+		return ( ( $ip_decimal & $netmask_decimal ) === ( $range_decimal & $netmask_decimal ) );
+	}
+
+	/**
+	 * Check if there are any cloudflare headers in the request
+	 *
+	 * @return bool
+	 */
+	private static function cloudflare_requests_check() {
+		$flag = true;
+
+		if ( ! isset( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
+			$flag = false;
+		}
+		if ( ! isset( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) {
+			$flag = false;
+		}
+		if ( ! isset( $_SERVER['HTTP_CF_RAY'] ) ) {
+			$flag = false;
+		}
+		if ( ! isset( $_SERVER['HTTP_CF_VISITOR'] ) ) {
+			$flag = false;
+		}
+
+		return $flag;
+	}
+
+	/**
+	 * Check if the request is from cloudflare. If it is, we get the IP
+	 *
+	 * @return bool
+	 */
+	private static function is_cloudflare() {
+		if ( isset( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} else {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+		if ( isset( $ip ) ) {
+			$request_check = self::cloudflare_requests_check();
+			if ( ! $request_check ) {
+				return false;
+			}
+
+			$ip_check = self::validate_cloudflare_ip( $ip );
+
+			return $ip_check;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Checks if the users IP address belongs to a certain country.
 	 *
 	 * @return bool
@@ -121,19 +242,6 @@ class Opt_In_Geo {
 				'type'  => 'text',
 			);
 
-			$geo_service['telize'] = (object) array(
-				'label' => 'Telize',
-				'url'   => 'http://www.telize.com/geoip/%ip%',
-				'type'  => 'json',
-				'field' => 'country_code',
-			);
-
-			$geo_service['nekudo']    = (object) array(
-				'label' => 'Free Geo IP',
-				'url'   => 'http://geoip.nekudo.com/api/json/%ip%',
-				'type'  => 'json',
-				'field' => array( 'country', 'code' ),
-			);
 			$geo_service['geoplugin'] = (object) array(
 				'label' => 'GeoPlugin',
 				'url'   => 'http://www.geoplugin.net/json.gp?ip=%ip%',
@@ -146,6 +254,30 @@ class Opt_In_Geo {
 			 */
 			$geo_service = apply_filters( 'wpoi-geo-services', $geo_service );
 		}
+
+		return $geo_service;
+	}
+
+	/**
+	 * Returns a list of deprecated geo ip-resolution services.
+	 *
+	 * @since 4.2.1
+	 * @return array List of deprecated webservices.
+	 */
+	private function get_deprecated_geo_services() {
+		$geo_service = array(
+			'telize',
+			'nekudo',
+		);
+
+		/**
+		 * Hook to filter the list of depracated geo ip-resolution services.
+		 *
+		 * @since 4.2.1
+		 *
+		 * @param array
+		 */
+		$geo_service = apply_filters( 'hustle_depracated_geo_services', $geo_service );
 
 		return $geo_service;
 	}
@@ -163,7 +295,7 @@ class Opt_In_Geo {
 			if ( ! empty( $remote_ip_url ) ) {
 				$type = '';
 			} else {
-				$type = 'geoplugin';
+				$type = self::DEFAULT_GEOIP_PROVIDER;
 			}
 
 			/**
@@ -185,9 +317,33 @@ class Opt_In_Geo {
 				'type'  => 'text',
 			);
 		} else {
-			$geo_service = $this->_get_geo_services();
+			$geo_service            = $this->_get_geo_services();
+			$deprecated_geo_service = $this->get_deprecated_geo_services();
 
-			$service = isset( $geo_service[ $type ] ) ? $geo_service[ $type ] : null;
+			if ( in_array( $type, $deprecated_geo_service, true ) ) {
+				$message = sprintf(
+					/* translators: %s: geoip provider name. */
+					__( 'GeoIP provider %s is no longer available. Switching to default.', 'hustle' ),
+					$type
+				);
+				_deprecated_argument( __FUNCTION__, '4.2.1', $message );
+
+				$service = $geo_service[ self::DEFAULT_GEOIP_PROVIDER ];
+			} else {
+				if ( isset( $geo_service[ $type ] ) ) {
+					$service = $geo_service[ $type ];
+				} else {
+					if ( WP_DEBUG ) {
+						$message = sprintf(
+							/* translators: %s: geoip provider name. */
+							__( 'GeoIP provider %s does not exist. Switching to default.', 'hustle' ),
+							$type
+						);
+						trigger_error( $message, E_USER_NOTICE );
+					}
+					$service = $geo_service[ self::DEFAULT_GEOIP_PROVIDER ];
+				}
+			}
 		}
 
 		return $service;

@@ -8,6 +8,32 @@
  * @since 4.0.0
  */
 
+$options = array(
+	'flat'    => array(
+		'value'     => 'flat',
+		'label'     => __( 'Default', 'hustle' ),
+		'hui-icon'  => 'social-facebook',
+		'icon-size' => 'sm',
+	),
+	'outline' => array(
+		'value'     => 'outline',
+		'label'     => __( 'Outlined', 'hustle' ),
+		'hui-icon'  => 'social-facebook hui-icon-outlined',
+		'icon-size' => 'sm',
+	),
+	'rounded' => array(
+		'value'     => 'rounded',
+		'label'     => __( 'Circle', 'hustle' ),
+		'hui-icon'  => 'social-facebook hui-icon-circle',
+		'icon-size' => 'sm',
+	),
+	'squared' => array(
+		'value'     => 'squared',
+		'label'     => __( 'Square', 'hustle' ),
+		'hui-icon'  => 'social-facebook hui-icon-square',
+		'icon-size' => 'sm',
+	),
+);
 ?>
 <div id="hustle-appearance-icons-style" class="sui-box-settings-row"<?php echo $is_empty ? ' style="display: none;"' : ''; ?>>
 
@@ -20,65 +46,19 @@
 
 	<div class="sui-box-settings-col-2">
 
-		<div class="sui-side-tabs">
-
-			<div class="sui-tabs-menu">
-
-				<label for="hustle-social-icon--default" class="sui-tab-item" >
-					<input
-						type="radio"
-						name="icon_style"
-						data-attribute="icon_style"
-						value="flat"
-						id="hustle-social-icon--default"
-						<?php checked( $icon_style, 'flat' ); ?>
-					/>
-					<span class="hui-icon-social-facebook hui-sm" aria-hidden="true"></span>
-					<span class="sui-screen-reader-text"><?php esc_html_e( 'Default', 'hustle' ); ?></span>
-				</label>
-
-				<label for="hustle-social-icon--outlined" class="sui-tab-item" >
-					<input
-						type="radio"
-						name="icon_style"
-						data-attribute="icon_style"
-						value="outline"
-						id="hustle-social-icon--outlined"
-						<?php checked( $icon_style, 'outline' ); ?>
-					/>
-					<span class="hui-icon-social-facebook hui-icon-outlined hui-sm" aria-hidden="true"></span>
-					<span class="sui-screen-reader-text"><?php esc_html_e( 'Outlined', 'hustle' ); ?></span>
-				</label>
-
-				<label for="hustle-social-icon--circle" class="sui-tab-item">
-					<input
-						type="radio"
-						name="icon_style"
-						data-attribute="icon_style"
-						value="rounded"
-						id="hustle-social-icon--circle"
-						<?php checked( $icon_style, 'rounded' ); ?>
-					/>
-					<span class="hui-icon-social-facebook hui-icon-circle hui-sm" aria-hidden="true"></span>
-					<span class="sui-screen-reader-text"><?php esc_html_e( 'Circle', 'hustle' ); ?></span>
-				</label>
-
-				<label for="hustle-social-icon--square" class="sui-tab-item" >
-					<input
-						type="radio"
-						name="icon_style"
-						data-attribute="icon_style"
-						value="squared"
-						id="hustle-social-icon--square"
-						<?php checked( $icon_style, 'squared' ); ?>
-					/>
-					<span class="hui-icon-social-facebook hui-icon-square hui-sm" aria-hidden="true"></span>
-					<span class="sui-screen-reader-text"><?php esc_html_e( 'Square', 'hustle' ); ?></span>
-				</label>
-
-			</div>
-
-		</div>
+		<?php
+		$this->render(
+			'admin/global/sui-components/sui-tabs',
+			array(
+				'name'        => 'icon_style',
+				'radio'       => true,
+				'saved_value' => $icon_style,
+				'sidetabs'    => true,
+				'content'     => false,
+				'options'     => $options,
+			)
+		);
+		?>
 
 	</div>
 

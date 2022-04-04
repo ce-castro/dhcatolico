@@ -39,22 +39,38 @@
 
 		<div class="sui-actions">
 
-			<button id="hustle-draft-button"
-				class="sui-button hustle-action-save"
-				data-active="0">
-				<span class="sui-loading-text">
+			<button class="sui-button sui-button-ghost hustle-action-save" data-active="0" style="border-color: transparent;">
+				<span id="hustle-draft-button-save-draft-text" class="sui-loading-text<?php echo $is_active ? ' sui-hidden-important' : ''; ?>">
 					<span class="sui-icon-save" aria-hidden="true"></span>
-					<span class="button-text"><?php $is_active ? esc_html_e( 'Unpublish', 'hustle' ) : esc_html_e( 'Save draft', 'hustle' ); ?></span>
+					<span class="button-text"><?php esc_html_e( 'Save draft', 'hustle' ); ?></span>
+				</span>
+				<span id="hustle-draft-button-unpublish-text" class="sui-loading-text <?php echo $is_active ? '' : ' sui-hidden-important'; ?>">
+					<span class="sui-icon-unpublish" aria-hidden="true"></span>
+					<span class="button-text"><?php esc_html_e( 'Unpublish', 'hustle' ); ?></span>
 				</span>
 				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>
 
+			<?php if ( 'social_sharing' !== $module_type ) : ?>
+
+				<button id="hustle-preview-module" class="sui-button">
+					<span class="sui-loading-text">
+						<span class="sui-icon-eye" aria-hidden="true"></span>
+						<span class="button-text"><?php esc_html_e( 'Preview', 'hustle' ); ?></span>
+					</span>
+					<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
+				</button>
+
+			<?php endif; ?>
+
 			<button
 				class="hustle-publish-button sui-button sui-button-blue hustle-action-save"
+				data-publish="<?php esc_attr_e( 'Publish', 'hustle' ); ?>"
+				data-update="<?php esc_attr_e( 'Update', 'hustle' ); ?>"
 				data-active="1">
 				<span class="sui-loading-text">
 					<span class="sui-icon-web-globe-world" aria-hidden="true"></span>
-					<span class="button-text"><?php $is_active ? esc_html_e( 'Save changes', 'hustle' ) : esc_html_e( 'Publish', 'hustle' ); ?></span>
+					<span class="button-text"><?php $is_active ? esc_html_e( 'Update', 'hustle' ) : esc_html_e( 'Publish', 'hustle' ); ?></span>
 				</span>
 				<span class="sui-icon-loader sui-loading" aria-hidden="true"></span>
 			</button>

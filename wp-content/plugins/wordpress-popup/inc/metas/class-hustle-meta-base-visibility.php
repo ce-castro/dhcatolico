@@ -115,7 +115,7 @@ class Hustle_Meta_Base_Visibility extends Hustle_Meta {
 				if ( $condition ) {
 					$some_conditions = true;
 					$condition->set_type( $module_type );
-					$condition->module = $this->model;
+					$condition->module = $this->module;
 					$current           = (bool) $condition->is_allowed();
 					if ( false === $current ) {
 						$any_false = true;

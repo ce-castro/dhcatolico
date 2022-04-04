@@ -72,7 +72,7 @@ class Opt_In_Condition_On_Browser extends Opt_In_Condition_Abstract {
 				throw new Exception( 'opera' );
 			}
 
-			if ( strpos( $user_agent, 'Edge' ) ) {
+			if ( strpos( $user_agent, 'Edg' ) ) {
 				throw new Exception( 'edge' );
 			}
 

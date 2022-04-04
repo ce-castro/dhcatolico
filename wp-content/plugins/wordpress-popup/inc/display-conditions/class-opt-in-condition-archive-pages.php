@@ -25,15 +25,15 @@ class Opt_In_Condition_Archive_Pages extends Opt_In_Condition_Abstract {
 		if ( isset( $this->args->archive_pages ) ) {
 			$archive_pages = (array) $this->args->archive_pages;
 
-			if ( is_tag() ) {
+			if ( self::check( 'is_tag' ) ) {
 				$allowed = in_array( 'is_tag', $archive_pages, true );
-			} elseif ( is_category() ) {
+			} elseif ( self::check( 'is_category' ) ) {
 				$allowed = in_array( 'is_category', $archive_pages, true );
-			} elseif ( is_author() ) {
+			} elseif ( self::check( 'is_author' ) ) {
 				$allowed = in_array( 'is_author', $archive_pages, true );
-			} elseif ( is_date() ) {
+			} elseif ( self::check( 'is_date' ) ) {
 				$allowed = in_array( 'is_date', $archive_pages, true );
-			} elseif ( is_post_type_archive() ) {
+			} elseif ( self::check( 'is_post_type_archive' ) ) {
 				$allowed = in_array( 'is_post_type_archive', $archive_pages, true );
 			}
 

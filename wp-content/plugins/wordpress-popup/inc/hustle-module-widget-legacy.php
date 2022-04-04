@@ -67,7 +67,7 @@ class Hustle_Module_Widget_Legacy extends WP_Widget {
 			$show_select = true;
 		}
 		if ( ! $show_select ) {
-			$module = Hustle_Module_Model::instance()->get( $instance['module_id'] );
+			$module = new Hustle_Module_Model( $instance['module_id'] );
 			if ( is_wp_error( $module ) ) {
 				$show_select = true;
 			}
@@ -95,8 +95,8 @@ class Hustle_Module_Widget_Legacy extends WP_Widget {
 		}
 
 		$widget_css_class = ( 'social_sharing' === $module->module_type )
-			? Hustle_Module_Front::SSHARE_WIDGET_CSS_CLASS
-			: Hustle_Module_Front::WIDGET_CSS_CLASS;
+			? 'hustle_sshare_module_widget_wrap'
+			: 'hustle_module_widget_wrap';
 
 		?>
 
@@ -136,7 +136,7 @@ class Hustle_Module_Widget_Legacy extends WP_Widget {
 				<?php
 					$types = array( 'embedded', 'social_sharing' );
 				foreach ( Hustle_Module_Collection::instance()->get_embed_id_names( $types ) as $mod ) :
-					$module = Hustle_Module_Model::instance()->get( $mod->module_id );
+					$module = new Hustle_Module_Model( $mod->module_id );
 					if ( is_wp_error( $module ) ) {
 						continue;
 					}

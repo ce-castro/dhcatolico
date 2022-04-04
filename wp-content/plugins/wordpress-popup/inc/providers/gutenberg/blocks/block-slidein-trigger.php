@@ -64,7 +64,7 @@ class Hustle_GHBlock_slidein_Trigger extends Hustle_GHBlock_Abstract {
 			'hustle-block-slidein-trigger',
 			'hustle_slidein_trigger_data',
 			array(
-				'wizard_page'   => Hustle_Module_Admin::SLIDEIN_WIZARD_PAGE,
+				'wizard_page'   => Hustle_Data::SLIDEIN_WIZARD_PAGE,
 				'modules'       => $this->get_modules(),
 				'admin_url'     => admin_url( 'admin.php' ),
 				'nonce'         => wp_create_nonce( 'hustle_gutenberg_get_module' ),

@@ -8,6 +8,14 @@ if ( ! class_exists( 'Hustle_ConvertKit_Form_Settings' ) ) :
 	class Hustle_ConvertKit_Form_Settings extends Hustle_Provider_Form_Settings_Abstract {
 
 		/**
+		 * Options that must be set in order to consider the integration as "connected" to the form.
+		 *
+		 * @since 4.3.1
+		 * @var array
+		 */
+		protected $form_completion_options = array( 'selected_global_multi_id', 'list_id' );
+
+		/**
 		 * For settings Wizard steps
 		 *
 		 * @since 3.0.5
@@ -64,7 +72,7 @@ if ( ! class_exists( 'Hustle_ConvertKit_Form_Settings' ) ) :
 			$current_data              = $this->get_current_data( $current_data, $submitted_data );
 			$is_submit                 = ! empty( $submitted_data['hustle_is_submit'] );
 
-			if ( $is_submit && empty( $submitted_data['list_id'] ) ) {
+			if ( $is_submit && ( empty( $submitted_data['list_id'] ) ) ) {
 				$error_message = __( 'The email list is required.', 'hustle' );
 			}
 
@@ -104,7 +112,6 @@ if ( ! class_exists( 'Hustle_ConvertKit_Form_Settings' ) ) :
 				'buttons'    => $buttons,
 				'has_errors' => $has_errors,
 			);
-
 			// Save only after the step has been validated and there are no errors
 			if ( $is_submit && ! $has_errors ) {
 				// Save additional data for submission's entry

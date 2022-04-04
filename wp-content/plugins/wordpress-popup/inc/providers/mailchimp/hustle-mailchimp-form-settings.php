@@ -70,12 +70,12 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			$groups = $this->get_groups( $this->addon_form_settings['list_id'] );
 
 			// If the selected list doesn't have groups, close the modal. No need for this step.
-			if( ! empty( $groups ) && is_array( $groups ) ) {
-				$this->steps[] = [
+			if ( ! empty( $groups ) && is_array( $groups ) ) {
+				$this->steps[] = array(
 					// 1 - Select Group and Interests
 					'callback'     => array( $this, 'third_step_callback' ),
 					'is_completed' => array( $this, 'step_is_completed' ),
-				];
+				);
 			}
 
 			// If GDPR isn't selected on form, close the modal. No need for this step.
@@ -83,20 +83,20 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 				$gdpr_fields = $this->get_gdpr_fields( $this->addon_form_settings['list_id'] );
 
 				// If the selected list doesn't have GDPR fields - no need for this step.
-				if( ! empty( $gdpr_fields ) && is_array( $gdpr_fields ) ) {
-					$this->steps[] = [
+				if ( ! empty( $gdpr_fields ) && is_array( $gdpr_fields ) ) {
+					$this->steps[] = array(
 						'callback'     => array( $this, 'fourth_step_callback' ),
 						'is_completed' => array( $this, 'step_is_completed' ),
-					];
+					);
 				}
 			}
 		}
 
 		// return successful message
-		$this->steps[] = [
+		$this->steps[] = array(
 			'callback'     => array( $this, 'get_successful_message' ),
 			'is_completed' => array( $this, 'step_is_completed' ),
-		];
+		);
 
 		return $this->steps;
 	}
@@ -252,12 +252,12 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 */
 	public function get_successful_message() {
 		return array(
-			'html' => '',
+			'html'         => '',
 			'notification' => array(
 				'type' => 'success',
 				'text' => '<strong>' . $this->provider->get_title() . '</strong> ' . __( 'successfully connected to your form', 'hustle' ),
 			),
-			'is_close' => true,
+			'is_close'     => true,
 		);
 	}
 
@@ -329,12 +329,12 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			'cancel' => array(
 				'markup' => Hustle_Provider_Utils::get_provider_button_markup( __( 'Back', 'hustle' ), '', 'prev', true ),
 			),
-			'save' => array(
+			'save'   => array(
 				'markup' => Hustle_Provider_Utils::get_provider_button_markup( __( 'Continue', 'hustle' ), '', 'next', true ),
 			),
 		);
 		return array(
-			'html' => $html,
+			'html'    => $html,
 			'buttons' => $buttons,
 		);
 	}
@@ -354,26 +354,25 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 
 		$gdpr_fields = $this->get_gdpr_fields( $this->addon_form_settings['list_id'] );
 
-
 		$is_submit = ! empty( $submitted_data );
 
-		//check gdpr_fields
+		// check gdpr_fields
 		if ( $is_submit ) {
-			$selected_gdpr_fields = isset( $submitted_data['gdpr_fields'] ) ? $submitted_data['gdpr_fields'] : [];
+			$selected_gdpr_fields = isset( $submitted_data['gdpr_fields'] ) ? $submitted_data['gdpr_fields'] : array();
 		} elseif ( isset( $this->addon_form_settings['gdpr_fields'] ) ) {
 			$selected_gdpr_fields = $this->addon_form_settings['gdpr_fields'];
 		} else {
-			$selected_gdpr_fields = [];
+			$selected_gdpr_fields = array();
 		}
 		$html = '';
 
 		if ( ! empty( $gdpr_fields ) && is_array( $gdpr_fields ) ) {
 			$options = $this->get_fourth_step_options( $gdpr_fields, $selected_gdpr_fields );
-			$html .= Hustle_Provider_Utils::get_integration_modal_title_markup(
+			$html   .= Hustle_Provider_Utils::get_integration_modal_title_markup(
 				__( 'Mailchimp GDPR Permissions', 'hustle' ),
 				__( 'You can optionally opt-in the subscribers into your Mailchimp audience\'s GDPR permissions. Choose the GDPR permissions to opt-in your subscribers into.', 'hustle' )
 			);
-			$html .= Hustle_Provider_Utils::get_html_for_options( $options );
+			$html   .= Hustle_Provider_Utils::get_html_for_options( $options );
 		}
 
 		if ( $is_submit ) {
@@ -386,7 +385,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			'cancel' => array(
 				'markup' => Hustle_Provider_Utils::get_provider_button_markup( __( 'Back', 'hustle' ), '', 'prev', true ),
 			),
-			'save' => array(
+			'save'   => array(
 				'markup' => Hustle_Provider_Utils::get_provider_button_markup( __( 'Save', 'hustle' ), '', 'next', true ),
 			),
 		);
@@ -402,7 +401,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 * @return boolean
 	 */
 	private function is_optin_gpdr() {
-		$module = Hustle_Module_Model::instance()->get( $this->module_id );
+		$module = new Hustle_Module_Model( $this->module_id );
 		if ( is_wp_error( $module ) ) {
 			return false;
 		}
@@ -546,7 +545,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			$response = $api->get_lists( $offset, $limit );
 
 			if ( is_wp_error( $response ) ) {
-				$integrations_global_url = add_query_arg( 'page', Hustle_Module_Admin::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
+				$integrations_global_url = add_query_arg( 'page', Hustle_Data::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
 				$message                 = sprintf( __( 'There was an error fetching the lists. Please make sure the %1$sselected account settings%2$s are correct.', 'hustle' ), '<a href="' . $integrations_global_url . '" target="_blank">', '</a>' );
 
 				// TODO: handle errors from here on all providers gracefully.
@@ -652,34 +651,34 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.1.1
 	 *
-	 * @param array $gdpr_fields GDPR fields
+	 * @param array  $gdpr_fields GDPR fields
 	 * @param string $selected_gdpr_fields
 	 * @return array
 	 */
-	private function get_fourth_step_options( $gdpr_fields, $selected_gdpr_fields = [] ) {
+	private function get_fourth_step_options( $gdpr_fields, $selected_gdpr_fields = array() ) {
 
 		return array(
 			'gdpr_setup' => array(
 				'type'     => 'wrapper',
 				'style'    => 'margin-bottom: 0;',
 				'elements' => array(
-					'label' => array(
+					'label'       => array(
 						'type'  => 'label',
 						'for'   => 'gdpr_fields',
 						'value' => __( 'GDPR Permissions (optional)', 'hustle' ),
 					),
 					'gdpr_fields' => array(
-						'type'      => 'checkboxes',
-						'name'      => 'gdpr_fields[]',
-						'value'     => $selected_gdpr_fields,
-						'id'        => 'gdpr_fields',
-						'class'     => 'sui-checkbox-sm sui-checkbox-stacked',
-						'options'   => $gdpr_fields,
-						'nonce'     => wp_create_nonce( 'hustle_mailchimp_gdpr_fields' ),
-						'selected'  => $selected_gdpr_fields,
+						'type'     => 'checkboxes',
+						'name'     => 'gdpr_fields[]',
+						'value'    => $selected_gdpr_fields,
+						'id'       => 'gdpr_fields',
+						'class'    => 'sui-checkbox-sm sui-checkbox-stacked',
+						'options'  => $gdpr_fields,
+						'nonce'    => wp_create_nonce( 'hustle_mailchimp_gdpr_fields' ),
+						'selected' => $selected_gdpr_fields,
 					),
-				)
-			)
+				),
+			),
 		);
 	}
 
@@ -823,7 +822,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 
 			case 'dropdown':
 				$field_type = 'select';
-				$class      = 'sui-select';
+				$class      = '';
 				break;
 
 			case 'checkboxes':
@@ -843,7 +842,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 				break;
 
 			case 'hidden':
-				$class         = 'sui-select';
+				$class         = '';
 				$choose_prompt = __( 'Default Interest', 'hustle' );
 				break;
 
@@ -919,18 +918,18 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	private function get_gdpr_fields( $list_id, $api_key = '' ) {
 
 		if ( empty( $api_key ) ) {
-			$settings = $this->get_form_settings_values( false );
+			$settings        = $this->get_form_settings_values( false );
 			$global_multi_id = $settings['selected_global_multi_id'];
-			$api_key = $this->provider->get_setting( 'api_key', '', $global_multi_id );
+			$api_key         = $this->provider->get_setting( 'api_key', '', $global_multi_id );
 		}
 
 		try {
-			$api = $this->provider->get_api( $api_key );
+			$api         = $this->provider->get_api( $api_key );
 			$gdpr_fields = $api->get_gdpr_fields( $list_id );
 
 			return $gdpr_fields;
 
-		} catch (Exception $e){
+		} catch ( Exception $e ) {
 			// TODO: handle exception
 			return array();
 		}

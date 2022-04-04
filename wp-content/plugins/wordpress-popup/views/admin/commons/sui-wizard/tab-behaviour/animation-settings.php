@@ -30,7 +30,7 @@ $animation_in = $settings['animation_in'];
 					<?php /* translators: module type capitalized and in singular */ ?>
 					<label class="sui-label"><?php printf( esc_html__( '%s entrance animation', 'hustle' ), esc_html( $capitalize_singular ) ); ?></label>
 
-					<select class="sui-select" name="animation_in" data-attribute="animation_in">
+					<select class="sui-select" name="animation_in" data-search="true" data-attribute="animation_in">
 
 						<option value="no_animation"
 							<?php selected( ( 'no_animation' === $animation_in || '' === $animation_in ) ); ?>>
@@ -188,7 +188,7 @@ $animation_in = $settings['animation_in'];
 						<?php /* translators: module type capitalized and in singular */ ?>
 						<label class="sui-label"><?php printf( esc_html__( '%s exit animation', 'hustle' ), esc_html( $capitalize_singular ) ); ?></label>
 
-						<select class="sui-select" data-attribute="animation_out">
+						<select class="sui-select" data-search="true" data-attribute="animation_out">
 
 							<option value="no_animation"
 								<?php selected( ( 'no_animation' === $animation_out || '' === $animation_out ) ); ?>>

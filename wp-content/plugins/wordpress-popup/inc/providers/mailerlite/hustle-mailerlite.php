@@ -212,17 +212,26 @@ if ( ! class_exists( 'Hustle_MailerLite' ) ) :
 				),
 			);
 
+			if ( $has_errors ) {
+				$error_notice = array(
+					'type'  => 'notice',
+					'icon'  => 'info',
+					'class' => 'sui-notice-error',
+					'value' => esc_html( $error_message ),
+				);
+				array_unshift( $options, $error_notice );
+			}
+
 			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup(
 				__( 'Configure MailerLite', 'hustle' ),
 				sprintf(
+					/* translators: 1. opening 'a' tag to MailerLite API page, 2. closing 'a' tag */
 					__( 'Log in to %1$sMailerLite Integrations%2$s page to get your API Key.', 'hustle' ),
 					'<a href="https://app.mailerlite.com/integrations/api/" target="_blank">',
 					'</a>'
 				)
 			);
-			if ( $has_errors ) {
-				$step_html .= '<span class="sui-notice sui-notice-error"><p>' . esc_html( $error_message ) . '</p></span>';
-			}
+
 			$step_html .= Hustle_Provider_Utils::get_html_for_options( $options );
 
 			$is_edit = $this->settings_are_completed( $global_multi_id );
@@ -342,7 +351,7 @@ if ( ! class_exists( 'Hustle_MailerLite' ) ) :
 			$existing_field_keys = wp_list_pluck( $existing_fields, 'key' );
 
 			foreach ( $fields as $field ) {
-				if ( ! in_array( $field['name'], $existing_field_keys, true ) ) {
+				if ( $existing_field_keys && ! in_array( $field['name'], $existing_field_keys, true ) ) {
 					$api->add_custom_field(
 						array(
 							'title' => $field['name'],

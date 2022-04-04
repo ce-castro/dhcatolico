@@ -13,8 +13,10 @@ $choose_image = self::$plugin_url . 'assets/images/hustle-email-lists';
 
 <div class="sui-header">
 	<h1 class="sui-header-title"><?php esc_html_e( 'Email Lists', 'hustle' ); ?></h1>
-	<?php $this->render( 'admin/commons/view-documentation' ); ?>
+	<?php $this->render( 'admin/commons/view-documentation', array( 'docs_section' => 'email-lists' ) ); ?>
 </div>
+
+<div id="hustle-floating-notifications-wrapper" class="sui-floating-notices"></div>
 
 <?php
 // Search Bar.
@@ -74,9 +76,13 @@ if ( $is_module_selected ) :
 	<?php elseif ( $no_local_list ) : ?>
 
 		<div class="sui-box sui-message">
-
-			<?php Opt_In_Utils::hustle_image( $empty_image, 'png', '', true ); ?>
-
+			<?php
+			if ( $this->is_branding_hidden ) :
+				echo $this->render_image_markup( $this->branding_image, '', 'sui-image', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			else :
+				$this->hustle_image( $empty_image, 'png', '', true );
+			endif;
+			?>
 			<div class="sui-message-content">
 
 				<h2><?php esc_html_e( 'Local List is Inactive!', 'hustle' ); ?></h2>
@@ -90,9 +96,13 @@ if ( $is_module_selected ) :
 	<?php else : ?>
 
 		<div class="sui-box sui-message">
-
-			<?php Opt_In_Utils::hustle_image( $empty_image, 'png', '', true ); ?>
-
+			<?php
+			if ( $this->is_branding_hidden ) :
+				echo $this->render_image_markup( $this->branding_image, '', 'sui-image', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			else :
+				$this->hustle_image( $empty_image, 'png', '', true );
+			endif;
+			?>
 			<div class="sui-message-content">
 
 				<h2><?php esc_html_e( 'No Emails Collected!', 'hustle' ); ?></h2>
@@ -111,9 +121,13 @@ if ( $is_module_selected ) :
 	<?php if ( 0 === $global_entries ) { ?>
 
 		<div class="sui-box sui-message">
-
-			<?php Opt_In_Utils::hustle_image( $empty_image, 'png', '', true ); ?>
-
+			<?php
+			if ( $this->is_branding_hidden ) :
+				echo $this->render_image_markup( $this->branding_image, '', 'sui-image', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			else :
+				$this->hustle_image( $empty_image, 'png', '', true );
+			endif;
+			?>
 			<div class="sui-message-content">
 
 				<h2><?php esc_html_e( 'Email Lists', 'hustle' ); ?></h2>
@@ -127,9 +141,13 @@ if ( $is_module_selected ) :
 	<?php } else { ?>
 
 		<div class="sui-box sui-message">
-
-			<?php Opt_In_Utils::hustle_image( $choose_image, 'png', '', true ); ?>
-
+			<?php
+			if ( $this->is_branding_hidden ) :
+				echo $this->render_image_markup( $this->branding_image, '', 'sui-image', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			else :
+				$this->hustle_image( $choose_image, 'png', '', true );
+			endif;
+			?>
 			<div class="sui-message-content">
 
 				<h2><?php esc_html_e( 'Almost there!', 'hustle' ); ?></h2>
@@ -146,7 +164,7 @@ if ( $is_module_selected ) :
 
 <?php
 // Global Footer.
-$this->render( 'admin/footer/footer' );
+$this->render( 'admin/global/sui-components/sui-footer' );
 ?>
 
 <?php

@@ -107,7 +107,7 @@ class Hustle_GHBlock_Social_Share extends Hustle_GHBlock_Abstract {
 		);
 	}
 
-	protected function is_module_included( Hustle_Module_Model $module ) {
+	protected function is_module_included( Hustle_Model $module ) {
 		return $module->is_display_type_active( Hustle_Module_Model::SHORTCODE_MODULE );
 	}
 }

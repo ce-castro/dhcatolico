@@ -40,7 +40,7 @@ $inline_both  = self::$plugin_url . 'assets/images/embed-position-both';
 
 				<span id="hustle-module-inline-label" class="sui-toggle-label"><?php esc_html_e( 'Inline Content', 'hustle' ); ?></span>
 
-				<span class="sui-description" style="display: none;" data-toggle-content="inline-enabled"><?php esc_html_e( 'Enable this to add your embed above, below or at both positions within the content of your posts and pages.', 'hustle' ); ?></span>
+				<span class="sui-description" style="display: none;" data-toggle-content="inline-enabled"><?php /* translators: strong HTML-tag. */ printf( esc_html__( 'Add your Embed above the page content, below it, or at both locations on any page that uses the %1$s"the_content()"%2$s method (e.g. Posts, Pages, etc.) for displaying content.', 'hustle' ), '<strong>', '</strong>' ); ?></span>
 			</label>
 
 			<div id="hustle-inline-toggle-wrapper" class="sui-toggle-content sui-border-frame" style="display: none;" data-toggle-content="inline-enabled">
@@ -50,7 +50,7 @@ $inline_both  = self::$plugin_url . 'assets/images/embed-position-both';
 
 				<label for="hustle-inline-below" class="sui-radio-image">
 
-					<?php Opt_In_Utils::hustle_image( $inline_below, 'png', '', true ); ?>
+					<?php $this->hustle_image( $inline_below, 'png', '', true ); ?>
 
 					<span class="sui-radio sui-radio-sm">
 						<input
@@ -69,7 +69,7 @@ $inline_both  = self::$plugin_url . 'assets/images/embed-position-both';
 
 				<label for="hustle-inline-above" class="sui-radio-image">
 
-					<?php Opt_In_Utils::hustle_image( $inline_above, 'png', '', true ); ?>
+					<?php $this->hustle_image( $inline_above, 'png', '', true ); ?>
 
 					<span class="sui-radio sui-radio-sm">
 						<input
@@ -88,7 +88,7 @@ $inline_both  = self::$plugin_url . 'assets/images/embed-position-both';
 
 				<label for="hustle-inline-both" class="sui-radio-image">
 
-					<?php Opt_In_Utils::hustle_image( $inline_both, 'png', 'sui-graphic', true ); ?>
+					<?php $this->hustle_image( $inline_both, 'png', 'sui-graphic', true ); ?>
 
 					<span class="sui-radio sui-radio-sm">
 						<input type="radio"
@@ -128,7 +128,7 @@ $inline_both  = self::$plugin_url . 'assets/images/embed-position-both';
 					<?php
 					printf(
 						/* translators: 'Appearance' string linked to the widgets lists */
-						esc_html__( 'Enabling this will add a new widget named "Hustle" under the Available Widgets list. You can go to %s and configure this widget to show your embed in the sidebars.', 'hustle' ),
+						esc_html__( 'Enabling this will add this embed to widget named "Hustle" under the Available Widgets list as a possible option. You can go to %s and configure this widget to show your embed in the sidebars.', 'hustle' ),
 						sprintf(
 							'<strong>%1$s > %2$s</strong>',
 							esc_html__( 'Appearance', 'hustle' ),

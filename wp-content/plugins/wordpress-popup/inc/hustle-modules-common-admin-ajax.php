@@ -11,11 +11,10 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		private $module_model_instance;
 
 		public function __construct() {
-
-			$this->module_model_instance = Hustle_Module_Model::instance();
-
 			add_action( 'wp_ajax_hustle_save_module', array( $this, 'save_module' ) );
-			add_action( 'wp_ajax_hustle_validate_module', array( $this, 'validate_module' ) );
+
+			add_action( 'wp_ajax_hustle_fetch_font_families', array( $this, 'fetch_font_families' ) );
+
 			add_action( 'wp_ajax_hustle_create_new_module', array( $this, 'create_new_module' ) );
 			add_action( 'wp_ajax_hustle_preview_module', array( $this, 'preview_module' ) );
 			add_action( 'wp_ajax_hustle_tracking_data', array( $this, 'get_tracking_data' ) );
@@ -41,144 +40,137 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		 */
 		public function save_module() {
 
-			// TODO: sanitize!
 			Opt_In_Utils::validate_ajax_call( 'hustle_save_module_wizard' );
 
-			$id = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
-			Opt_In_Utils::is_user_allowed_ajax( 'hustle_edit_module', $id );
+			$module_id = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+			Opt_In_Utils::is_user_allowed_ajax( 'hustle_edit_module', $module_id );
 
-			$_post = stripslashes_deep( $_POST ); // CSRF: ok
+			$_post = stripslashes_deep( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-			if ( ! isset( $_post['id'] ) ) {
-				return false;
+			$error_array = array();
+
+			try {
+				if ( empty( $module_id ) ) {
+					throw new Exception();
+				}
+
+				$module = Hustle_Module_Collection::instance()->return_model_from_id( $module_id );
+				if ( is_wp_error( $module ) ) {
+					throw new Exception();
+				}
+
+				$_post      = $module->sanitize_module( $_post );
+				$validation = $module->validate_module( $_post );
+				if ( true !== $validation ) {
+					$error_array = array( 'data' => $validation['error'] );
+					throw new Exception();
+				}
+
+				$updated = $module->update_module( $_post );
+
+				if ( isset( $updated['success'] ) && false === $updated['success'] ) {
+					$error_array = array( 'data' => $updated['error'] );
+					throw new Exception();
+				}
+
+				if ( false === $updated ) {
+					$error_array = array( 'data' => $updated );
+					throw new Exception();
+				}
+			} catch ( Exception $e ) {
+				wp_send_json_error( $error_array );
 			}
-			$module = Hustle_Module_Model::instance()->get( $_post['id'] );
-			if ( is_wp_error( $module ) ) {
-				return false;
-			}
 
-			$res = $module->update_module( $_post );
-
-			$module->maybe_update_custom_fields();
-
-			if ( isset( $res['success'] ) && false === $res['success'] ) {
-				wp_send_json_error(
-					array(
-						'data' => $res['error'],
-					)
-				);
-			}
-
-			wp_send_json(
-				array(
-					'success' => false === $res ? false : true,
-					'data'    => $res,
-				)
-			);
+			wp_send_json_success();
 		}
 
 		/**
-		 * Validates SShare module before saving
+		 * Gets custom font families for the Appearance settings in wizard.
 		 *
-		 * @since 4.0.3
+		 * @since 4.3.0
+		 * @return void
 		 */
-		public function validate_module() {
+		public function fetch_font_families() {
+			Opt_In_Utils::validate_ajax_call( 'hustle_fetch_font_families' );
 
-			// TODO: sanitize!
-			// using same nonce as the save.
-			Opt_In_Utils::validate_ajax_call( 'hustle_save_module_wizard' );
+			$families = Hustle_Meta_Base_Design::get_font_families_names();
 
-			$id = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
-			Opt_In_Utils::is_user_allowed_ajax( 'hustle_edit_module', $id );
-
-			$_post = stripslashes_deep( $_POST ); // CSRF: ok
-
-			if ( ! isset( $_post['id'] ) ) {
-				return false;
-			}
-			$module = Hustle_Module_Model::instance()->get( $_post['id'] );
-			if ( is_wp_error( $module ) ) {
-				return false;
-			}
-
-			$res = $module->validate_module( $_post );
-
-			if ( isset( $res['success'] ) && false === $res['success'] ) {
-				wp_send_json_error(
-					array(
-						'data' => $res['error'],
-					)
-				);
-			}
-
-			wp_send_json(
-				array(
-					'success' => false === $res ? false : true,
-					'data'    => $res,
-				)
-			);
+			wp_send_json_success( $families );
 		}
 
 		/**
 		 * Create a new module of any type
 		 *
 		 * @since 4.0.0
+		 * @throws Exception When the module could not be created.
 		 */
 		public function create_new_module() {
 			Opt_In_Utils::validate_ajax_call( 'hustle_create_new_module' );
 			Opt_In_Utils::is_user_allowed_ajax( 'hustle_create' );
 
-			$data = stripslashes_deep( $_POST['data'] ); // CSRF: ok.
-			$data = Opt_In_Utils::validate_and_sanitize_fields( $data, array( 'module_name', 'module_type' ) );
-			if ( isset( $data['errors'] ) ) {
-				wp_send_json_error();
-			}
+			$error_array = array( 'message' => __( 'Something went wrong while creating your pop-up. Please try again.', 'hustle' ) );
 
-			// If it's Free, check we're not passing the limits.
-			if ( ! Hustle_Module_Admin::can_create_new_module( $data['module_type'] ) ) {
+			try {
+				$module_type = filter_input( INPUT_POST, 'module_type', FILTER_SANITIZE_STRING );
+				$module_name = filter_input( INPUT_POST, 'module_name', FILTER_SANITIZE_STRING );
 
-				$listing_page = Hustle_Module_Admin::get_listing_page_by_module_type( $data['module_type'] );
+				if ( empty( $module_type ) || empty( $module_name ) ) {
+					$error_array['message'] = __( 'The module name or module type is missing. Please make sure you added a name for the module.' );
+					throw new Exception();
+				}
 
-				$url = add_query_arg(
-					array(
-						'page' => $listing_page,
+				// Check we're not passing the free limits.
+				if ( Hustle_Data::was_free_limit_reached( $module_type ) ) {
+					$url_args = array(
 						Hustle_Module_Admin::UPGRADE_MODAL_PARAM => 'true',
-					),
-					'admin.php'
+						'page' => Hustle_Data::get_listing_page_by_module_type( $module_type ),
+					);
+
+					$error_url   = add_query_arg( $url_args, 'admin.php' );
+					$error_array = array( 'redirect_url' => $error_url );
+					throw new Exception();
+				}
+
+				// All good so far, let's create the module.
+				$module_data = array(
+					'module_name' => $module_name,
+					'module_type' => $module_type,
 				);
 
-				wp_send_json_error(
-					array(
-						'redirect_url' => $url,
-					)
-				);
+				if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ) {
+					$module_mode = filter_input( INPUT_POST, 'module_mode', FILTER_SANITIZE_STRING );
+					$module_mode = Hustle_Module_Model::OPTIN_MODE === $module_mode ? Hustle_Module_Model::OPTIN_MODE : Hustle_Module_Model::INFORMATIONAL_MODE;
 
+					$module_data['module_mode'] = $module_mode;
+
+					$template = filter_input( INPUT_POST, 'module_template', FILTER_SANITIZE_STRING );
+
+					$module_data['base_template'] = $template;
+
+					$templates_helper = new Hustle_Templates_Helper();
+					$module_data     += $templates_helper->get_template( $template, $module_mode );
+
+					$module_model = new Hustle_Module_Model();
+				} else {
+					$module_model = new Hustle_SShare_Model();
+				}
+
+				$module_id = $module_model->create_new( $module_data );
+				if ( ! $module_id ) {
+					throw new Exception();
+				}
+			} catch ( Exception $e ) {
+				wp_send_json_error( $error_array );
 			}
 
-			$module_id = $this->module_model_instance->create_new( $data );
+			$success_url_args = array(
+				'page' => Hustle_Data::get_wizard_page_by_module_type( $module_type ),
+				'id'   => $module_id,
+				'new'  => 'true',
+			);
+			$success_url      = add_query_arg( $success_url_args, 'admin.php' );
 
-			if ( $module_id ) {
-
-				$wizard_page = Hustle_Module_Admin::get_wizard_page_by_module_type( $data['module_type'] );
-				$url         = add_query_arg(
-					array(
-						'page' => $wizard_page,
-						'id'   => $module_id,
-						'new'  => 'true',
-					),
-					'admin.php'
-				);
-
-				wp_send_json_success(
-					array(
-						'redirect_url' => $url,
-					)
-				);
-
-			} else {
-				wp_send_json_error();
-			}
-
+			wp_send_json_success( array( 'redirect_url' => $success_url ) );
 		}
 
 		/**
@@ -201,8 +193,6 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 			Opt_In_Utils::validate_ajax_call( 'module_get_tracking_data' . $id );
 
 			$data = Hustle_Module_Page_Abstract::get_tracking_charts_markup( $id );
-			//$module = Hustle_Module_Model::instance()->get( $id );
-			//$data   = $module->get_tracking_data();
 
 			wp_send_json_success( $data );
 		}
@@ -223,11 +213,12 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 			Opt_In_Utils::validate_ajax_call( 'hustle_single_action' );
 
 			$module_id = filter_input( INPUT_POST, 'moduleId', FILTER_SANITIZE_STRING );
-			$module    = Hustle_Module_Model::instance()->get( $module_id );
+			$module    = Hustle_Model::get_module( $module_id );
 			$action    = filter_input( INPUT_POST, 'hustleAction', FILTER_SANITIZE_STRING );
 
 			try {
 
+				// Only move forward with an invalid $module when we're importing a new one.
 				if ( is_wp_error( $module ) && 'import' !== $action ) {
 					throw new Exception( __( 'Invalid module.', 'hustle' ) );
 				}
@@ -240,7 +231,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 						break;
 
 					case 'clone':
-						$this->action_duplicate_module( $module );
+						$this->action_duplicate_module( $module, $context );
 						break;
 
 					case 'import':
@@ -256,7 +247,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 						break;
 
 					case 'reset-tracking':
-						$this->action_reset_tracking( $module );
+						$this->action_reset_tracking( $module, $context );
 						break;
 
 					default:
@@ -282,18 +273,18 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		 *
 		 * @since 4.0.3
 		 *
-		 * @param Hustle_Module_Model $module
+		 * @param Hustle_Model $module Hustle_Module_Model or Hustle_SShare_Model.
 		 * @throws Exception
 		 */
-		private function action_toggle_module_status( Hustle_Module_Model $module ) {
+		private function action_toggle_module_status( Hustle_Model $module ) {
 
 			if ( ! Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module->module_id ) ) {
 				throw new Exception( 'invalid_permissions' );
 			}
 
-			$is_published = '1' === $module->active;
+			$was_published = '1' === $module->active;
 
-			if ( $is_published ) {
+			if ( $was_published ) {
 				$module->deactivate();
 			} else {
 				$module->activate();
@@ -301,8 +292,9 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			wp_send_json_success(
 				array(
-					'callback'           => 'actionToggleStatus',
-					'was_module_enabled' => $is_published,
+					'callback'            => 'actionToggleStatus',
+					'is_active'           => ! $was_published,
+					'is_tracking_enabled' => ! empty( $module->get_tracking_types() ),
 				)
 			);
 		}
@@ -312,10 +304,11 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		 *
 		 * @since 4.0.3
 		 *
-		 * @param Hustle_Module_Model $module
+		 * @param Hustle_Model $module Hustle_Module_Model or Hustle_SShare_Model.
+		 * @param string       $context dashboard|listing|edit_page.
 		 * @throws Exception
 		 */
-		private function action_duplicate_module( Hustle_Module_Model $module ) {
+		private function action_duplicate_module( Hustle_Model $module, $context ) {
 
 			if ( ! current_user_can( 'hustle_create' ) ) {
 				throw new Exception( 'invalid_permissions' );
@@ -323,13 +316,24 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			$module->duplicate_module();
 
-			$url_params = array(
-				'page'        => Hustle_Module_Admin::get_listing_page_by_module_type( $module->module_type ),
-				'show-notice' => 'success',
-				'notice'      => 'module_duplicated',
-			);
+			if ( 'edit_page' !== $context ) {
+				$url_params = array(
+					'page'        => Hustle_Data::get_listing_page_by_module_type( $module->module_type ),
+					'show-notice' => 'success',
+					'notice'      => 'module_duplicated',
+				);
 
-			wp_send_json_success( array( 'url' => add_query_arg( $url_params, 'admin.php' ) ) );
+				$args = array( 'url' => add_query_arg( $url_params, 'admin.php' ) );
+			} else {
+				$args = array(
+					'notification' => array(
+						'status'  => 'success',
+						'message' => esc_html__( 'Module successfully duplicated.', 'hustle' ),
+					),
+				);
+			}
+
+			wp_send_json_success( $args );
 		}
 
 		/**
@@ -352,16 +356,16 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			$module_type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING );
 
-			if ( ! $module_type || ! in_array( $module_type, Hustle_Module_Model::get_module_types(), true ) ) {
+			if ( ! $module_type || ! in_array( $module_type, Hustle_Data::get_module_types(), true ) ) {
 				throw new Exception( __( "The module's type is not valid.", 'hustle' ) );
 			}
 
 			// Send error if the user can't create new modules but is importing a new one.
-			if ( $is_new_module && ! Hustle_Module_Admin::can_create_new_module( $module_type ) ) {
+			if ( $is_new_module && Hustle_Data::was_free_limit_reached( $module_type ) ) {
 
 				$url = add_query_arg(
 					array(
-						'page' => Hustle_Module_Admin::get_listing_page_by_module_type( $module_type ),
+						'page' => Hustle_Data::get_listing_page_by_module_type( $module_type ),
 						Hustle_Module_Admin::UPGRADE_MODAL_PARAM => 'true',
 					),
 					'admin.php'
@@ -382,11 +386,19 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 				}
 
 				// Get the file's content.
-				$overrides    = array(
+				$overrides = array(
 					'test_form' => false,
 					'test_type' => false,
 				);
-				$wp_file      = wp_handle_upload( $file, $overrides );
+
+				$wp_file = wp_handle_upload( $file, $overrides );
+				if ( isset( $wp_file['error'] ) ) {
+					throw new Exception( __( 'The file could not be uploaded.check your upload folder permissions.', 'hustle' ) );
+				}
+				if ( empty( $wp_file['file'] ) ) {
+					throw new Exception( __( "The file can't be empty", 'hustle' ) );
+				}
+
 				$filename     = $wp_file['file'];
 				$file_content = file_get_contents( $filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 
@@ -437,7 +449,34 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 							$data['meta']['design']['subtitle_color_alt'] = $data['meta']['design']['subtitle_color'];
 						}
 					}
+				} else {
+					if ( version_compare( $data['plugin']['version'], '4.4.9', '<' ) &&
+							! empty( $data['meta']['design']['icon_style'] ) &&
+							'outline' === $data['meta']['design']['icon_style'] ) {
+						if ( isset( $data['meta']['design']['widget_icon_bg_color'] ) ) {
+							$data['meta']['design']['widget_counter_border'] = $data['meta']['design']['widget_icon_bg_color'];
+						}
+						if ( isset( $data['meta']['design']['floating_icon_bg_color'] ) ) {
+							$data['meta']['design']['floating_counter_border'] = $data['meta']['design']['floating_icon_bg_color'];
+						}
+					}
 				}
+
+				// validate Schedule start/end date and replace it with empty if is invalid.
+				// ======================================================================.
+				$schedule_start_date = $data['meta']['settings']['schedule']['start_date'];
+				$schedule_end_date   = $data['meta']['settings']['schedule']['end_date'];
+				// Unset start_date & Set start immediately if start_date is invalid.
+				if ( date( 'n/j/Y', strtotime( $schedule_start_date ) ) !== $schedule_start_date ) :
+					unset( $data['meta']['settings']['schedule']['start_date'] );
+					$data['meta']['settings']['schedule']['not_schedule_start'] = 1;
+				endif;
+				// Unset end_date & Set never end if end_date is invalid.
+				if ( date( 'n/j/Y', strtotime( $schedule_end_date ) ) !== $schedule_end_date ) :
+					unset( $data['meta']['settings']['schedule']['end_date'] );
+					$data['meta']['settings']['schedule']['not_schedule_end'] = 1;
+				endif;
+				// ==================================================================.
 
 				// Import a new module.
 				if ( $is_new_module ) {
@@ -450,7 +489,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 			} catch ( Exception $e ) {
 				wp_send_json_error(
 					array(
-						'callback' => 'actionDisplayError',
+						'callback' => 'actionImportDisplayError',
 						'message'  => $e->getMessage(),
 					)
 				);
@@ -475,13 +514,13 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			$module->delete();
 
-			$page = 'listing' === $context ? Hustle_Module_Admin::get_listing_page_by_module_type( $module->module_type ) : Hustle_Module_Admin::ADMIN_PAGE;
+			$page = 'dashboard' !== $context ? Hustle_Data::get_listing_page_by_module_type( $module->module_type ) : Hustle_Data::ADMIN_PAGE;
 
-			$url_params = array(
-				'page'        => $page,
-				'show-notice' => 'success',
-				'notice'      => 'module_deleted',
-			);
+				$url_params = array(
+					'page'        => $page,
+					'show-notice' => 'success',
+					'notice'      => 'module_deleted',
+				);
 
 			wp_send_json_success( array( 'url' => add_query_arg( $url_params, 'admin.php' ) ) );
 		}
@@ -491,10 +530,10 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		 *
 		 * @since 4.0.3
 		 *
-		 * @param Hustle_Module_Model $module
+		 * @param Hustle_Model $module Hustle_Module_Model or Hustle_SShare_Model.
 		 * @throws Exception
 		 */
-		private function action_toggle_tracking( Hustle_Module_Model $module ) {
+		private function action_toggle_tracking( Hustle_Model $module ) {
 
 			if ( ! Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module->module_id ) ) {
 				throw new Exception( 'invalid_permissions' );
@@ -506,6 +545,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			$response = array(
 				'is_embed_or_sshare' => $is_embed_or_sshare,
+				'is_active'          => '1' === $module->active,
 				'callback'           => 'actionToggleTracking',
 			);
 
@@ -551,10 +591,11 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		 *
 		 * @since 4.0.3
 		 *
-		 * @param Hustle_Module_Model $module
+		 * @param Hustle_Model $module Hustle_Module_Model or Hustle_SShare_Model.
+		 * @param string       $context dashboard|listing|edit_page.
 		 * @throws Exception
 		 */
-		private function action_reset_tracking( Hustle_Module_Model $module ) {
+		private function action_reset_tracking( Hustle_Model $module, $context ) {
 
 			if ( ! Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module->module_id ) ) {
 				throw new Exception( 'invalid_permissions' );
@@ -563,13 +604,24 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 			$tracking = Hustle_Tracking_Model::get_instance();
 			$tracking->delete_data( $module->module_id );
 
-			$url_params = array(
-				'page'        => Hustle_Module_Admin::get_listing_page_by_module_type( $module->module_type ),
-				'show-notice' => 'success',
-				'notice'      => 'module_tracking_reset',
-			);
+			if ( 'edit_page' !== $context ) {
+				$url_params = array(
+					'page'        => Hustle_Data::get_listing_page_by_module_type( $module->module_type ),
+					'show-notice' => 'success',
+					'notice'      => 'module_tracking_reset',
+				);
 
-			wp_send_json_success( array( 'url' => add_query_arg( $url_params, 'admin.php' ) ) );
+				$args = array( 'url' => add_query_arg( $url_params, 'admin.php' ) );
+			} else {
+				$args = array(
+					'notification' => array(
+						'status'  => 'success',
+						'message' => esc_html__( "Module's tracking data successfully reset.", 'hustle' ),
+					),
+				);
+			}
+
+			wp_send_json_success( $args );
 		}
 
 
@@ -659,7 +711,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			$url = add_query_arg(
 				array(
-					'page'        => Hustle_Module_Admin::get_listing_page_by_module_type( $module_type ),
+					'page'        => Hustle_Data::get_listing_page_by_module_type( $module_type ),
 					'show-notice' => 'success',
 					'notice'      => 'module_imported',
 				),
@@ -694,15 +746,21 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			$module_data = array_merge( $data['data'], $data['meta'] );
 
-			$module_id = $this->module_model_instance->create_new( $module_data );
+			if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ) {
+				$module_model = new Hustle_Module_Model();
+			} else {
+				$module_model = new Hustle_SShare_Model();
+			}
+
+			$module_id = $module_model->create_new( $module_data );
 
 			if ( ! empty( $module_id ) ) {
-				$module = Hustle_Module_Model::instance()->get( $module_id );
+				$module = new Hustle_Module_Model( $module_id );
 				$module->clean_module_cache();
 
 				$url = add_query_arg(
 					array(
-						'page'        => Hustle_Module_Admin::get_listing_page_by_module_type( $module_type ),
+						'page'        => Hustle_Data::get_listing_page_by_module_type( $module_type ),
 						'show-notice' => 'success',
 						'notice'      => 'module_imported',
 					),
@@ -754,7 +812,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 						break;
 
 					case 'clone':
-						if ( $can_create ) {
+						if ( $can_create && ! Hustle_Data::was_free_limit_reached( $module->module_type ) ) {
 							$module->duplicate_module();
 						}
 						break;
@@ -795,14 +853,13 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 			Opt_In_Utils::validate_ajax_call( 'hustle_gutenberg_get_module' );
 
 			$shortcode_id = filter_input( INPUT_GET, 'shortcode_id', FILTER_SANITIZE_STRING );
-			$module_type  = filter_input( INPUT_GET, 'type', FILTER_SANITIZE_STRING );
 
 			if ( ! $shortcode_id ) {
 				wp_send_json_error();
 			}
 
-			$enforce_type = ( 'embedded' === $module_type || 'social_sharing' === $module_type ) ? true : false;
-			$module       = Hustle_Module_Model::instance()->get_by_shortcode( $shortcode_id, $enforce_type );
+			$module_id = Hustle_Model::get_module_id_by_shortcode_id( $shortcode_id );
+			$module    = Hustle_Model::get_module( $module_id );
 
 			if ( is_wp_error( $module ) ) {
 				wp_send_json_error();
@@ -810,11 +867,6 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			if ( Hustle_Module_Model::EMBEDDED_MODULE === $module->module_type || Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module->module_type ) {
 				$sub_type = Hustle_Module_Model::SHORTCODE_MODULE;
-
-				// TODO: improve the get_by_shortcode() method so this isn't needed.
-				if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module->module_type ) {
-					$module = Hustle_SShare_Model::instance()->get( $module->module_id );
-				}
 			} else {
 				$sub_type = '';
 			}
@@ -850,10 +902,9 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 			Opt_In_Utils::validate_ajax_call( 'hustle_gutenberg_get_module' );
 
 			$shortcode_id = filter_input( INPUT_GET, 'shortcode_id', FILTER_SANITIZE_STRING );
-			$module_type  = filter_input( INPUT_GET, 'type', FILTER_SANITIZE_STRING );
 
-			$enforce_type = ( 'embedded' === $module_type || 'social_sharing' === $module_type ) ? true : false;
-			$module       = Hustle_Module_Model::instance()->get_by_shortcode( $shortcode_id, $enforce_type );
+			$module_id = Hustle_Model::get_module_id_by_shortcode_id( $shortcode_id );
+			$module    = Hustle_Model::get_module( $module_id );
 			if ( is_wp_error( $module ) ) {
 				wp_send_json_error();
 			}

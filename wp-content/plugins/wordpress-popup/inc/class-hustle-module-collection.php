@@ -190,22 +190,23 @@ class Hustle_Module_Collection {
 		$query .= $module_type_condition . ' ';
 
 		// Order.
-		if ( ! isset( $args['count_only'] ) || ! $args['count_only'] ) {
+		if ( empty( $args['count_only'] ) ) {
 			$query .= 'ORDER BY ';
-			if (
-				isset( $args['filter'] )
-				&& isset( $args['filter']['sort'] )
-				&& ! empty( $args['filter']['sort'] )
-				&& 'module_name' !== $args['filter']['sort']
-			) {
-				$query .= $this->wpdb->prepare( 'm.%s, ', $args['filter']['sort'] );
+
+			$allowed_fields = array(
+				'module_name',
+				'module_type',
+				'module_mode',
+			);
+			if ( ! empty( $args['filter']['sort'] ) && in_array( $args['filter']['sort'], $allowed_fields, true ) ) {
+				$query .= 'm.' . $args['filter']['sort'] . ', ';
 			}
-			$query .= 'm.`module_name` ';
+			$query .= 'm.`module_id` DESC ';
 		}
 		$query .= $limit . ' ' . $offset;
 
 		// Return count only.
-		if ( isset( $args['count_only'] ) && $args['count_only'] ) {
+		if ( ! empty( $args['count_only'] ) ) {
 			return $this->wpdb->get_var( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
 
@@ -293,26 +294,7 @@ class Hustle_Module_Collection {
 	 * @return Hustle_Module_Model|WP_Error
 	 */
 	public function return_model_from_id( $id ) {
-
-		$error = new WP_Error( 'not_found', __( 'Module not found.', 'hustle' ) );
-		if ( empty( $id ) ) {
-			return $error;
-		}
-
-		$module      = Hustle_Module_Model::instance();
-		$module_type = $module->get_module_type_by_module_id( $id );
-
-		if ( 'social_sharing' === $module_type ) {
-			$model_instance = Hustle_SShare_Model::instance()->get( $id );
-		} else {
-			$model_instance = $module->get( $id );
-		}
-
-		if ( ! is_wp_error( $model_instance ) ) {
-			return $model_instance;
-		}
-
-		return $error;
+		return Hustle_Model::get_module( $id );
 	}
 
 	/**

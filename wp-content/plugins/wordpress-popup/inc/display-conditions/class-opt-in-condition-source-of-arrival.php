@@ -25,20 +25,20 @@ class Opt_In_Condition_Source_Of_Arrival extends Opt_In_Condition_Abstract {
 
 		// Check is source is external one.
 		if ( ! $is_allowed && isset( $this->args->source_direct ) && 'true' === $this->args->source_direct ) {
-			$is_allowed = $is_allowed || '' === $this->utils()->get_referrer();
+			$is_allowed = $is_allowed || '' === Opt_In_Utils::get_referrer();
 		}
 
 		// Check is source is external one.
 		if ( ! $is_allowed && isset( $this->args->source_external ) && 'true' === $this->args->source_external ) {
 			$internal = preg_replace( '#^https?://#', '', get_option( 'home' ) );
 			// If not direct and not internal source.
-			$is_allowed = $is_allowed || '' !== $this->utils()->get_referrer() && ! $this->utils()->test_referrer( $internal );
+			$is_allowed = $is_allowed || '' !== Opt_In_Utils::get_referrer() && ! Opt_In_Utils::test_referrer( $internal );
 		}
 
 		// Check is source is internal one.
 		if ( ! $is_allowed && isset( $this->args->source_internal ) && 'true' === $this->args->source_internal ) {
 			$internal   = preg_replace( '#^https?://#', '', get_option( 'home' ) );
-			$is_allowed = $is_allowed || $this->utils()->test_referrer( $internal );
+			$is_allowed = $is_allowed || Opt_In_Utils::test_referrer( $internal );
 		}
 
 		// Check is source is a search.
@@ -66,7 +66,7 @@ class Opt_In_Condition_Source_Of_Arrival extends Opt_In_Condition_Abstract {
 	 */
 	public function is_from_searchengine_ref() {
 		$response = false;
-		$referrer = $this->utils()->get_referrer();
+		$referrer = Opt_In_Utils::get_referrer();
 
 		$patterns = array(
 			'/search?',

@@ -31,11 +31,33 @@ class Hustle_Layout_Helper {
 	private $is_branding_hidden = false;
 
 	/**
+	 * White labeling branding image.
+	 *
+	 * @since 4.4.7
+	 * @var string
+	 */
+	private $branding_image;
+
+	/** Array list of quicktags for tinymce editor.
+	 *
+	 * @since 4.4.7
+	 * @var array
+	 */
+	private $tinymce_quicktags;
+
+	/**
 	 * To be removed.
 	 *
 	 * @var string something.
 	 */
 	public static $plugin_url;
+
+	/**
+	 * Flag for letting SUI doesn't run auto init selects to suiSelect.
+	 *
+	 * @var bool
+	 */
+	private static $dont_init_selects;
 
 	/**
 	 * Hustle_Layout_Helper class constructor.
@@ -49,6 +71,11 @@ class Hustle_Layout_Helper {
 
 		$this->is_branding_hidden = apply_filters( 'wpmudev_branding_hide_branding', $this->is_branding_hidden );
 
+		// White label custom branding image.
+		$this->branding_image = apply_filters( 'wpmudev_branding_hero_image', null );
+
+		// init common config for tinymce editor.
+		$this->tinymce_init();
 		/**
 		 * Sets the referer class as a property.
 		 * This allows us to access the referer class' properties if needed
@@ -67,10 +94,10 @@ class Hustle_Layout_Helper {
 	 * @return object
 	 */
 	public function get_referer() {
-		if ( ! $this->referer ) {
+		if ( ! $this->admin ) {
 			return false;
 		}
-		return $this->referer;
+		return $this->admin;
 	}
 
 	/**
@@ -119,7 +146,7 @@ class Hustle_Layout_Helper {
 		} else {
 			$template_path = Opt_In::$template_path . $opt_in_to_be_file_name . '.php';
 
-			// Render file located outside the plugin's folder. Useful when adding third party integrations.
+			// Render file located outside the plugin's folder. Useful when adding third-party integrations.
 			$external_path = $opt_in_to_be_file_name . '.php';
 
 			if ( file_exists( $template_path ) ) {
@@ -147,44 +174,45 @@ class Hustle_Layout_Helper {
 	 *
 	 * @since 1.0.0
 	 * @since 4.2.0 Moved from Opt_In to this class.
+	 * @since 4.3.0 Removed the $echo parameter.
 	 *
-	 * @param array   $html_options Attributes as an array to be renderd.
-	 * @param boolean $echo Whether to return or echo the attributes.
+	 * @param array $html_options Attributes as an array to be renderd.
 	 * @return string
 	 */
-	public function render_attributes( $html_options, $echo = true ) {
+	public function render_attributes( $html_options ) {
 
-		$special_attributes = array(
-			'async'          => 1,
-			'autofocus'      => 1,
-			'autoplay'       => 1,
-			'checked'        => 1,
-			'controls'       => 1,
-			'declare'        => 1,
-			'default'        => 1,
-			'defer'          => 1,
-			'disabled'       => 1,
-			'formnovalidate' => 1,
-			'hidden'         => 1,
-			'ismap'          => 1,
-			'loop'           => 1,
-			'multiple'       => 1,
-			'muted'          => 1,
-			'nohref'         => 1,
-			'noresize'       => 1,
-			'novalidate'     => 1,
-			'open'           => 1,
-			'readonly'       => 1,
-			'required'       => 1,
-			'reversed'       => 1,
-			'scoped'         => 1,
-			'seamless'       => 1,
-			'selected'       => 1,
-			'typemustmatch'  => 1,
-		);
 		if ( array() === $html_options ) {
 			return '';
 		}
+
+		$special_attributes = array(
+			'async',
+			'autofocus',
+			'autoplay',
+			'checked',
+			'controls',
+			'declare',
+			'default',
+			'defer',
+			'disabled',
+			'formnovalidate',
+			'hidden',
+			'ismap',
+			'loop',
+			'multiple',
+			'muted',
+			'nohref',
+			'noresize',
+			'novalidate',
+			'open',
+			'readonly',
+			'required',
+			'reversed',
+			'scoped',
+			'seamless',
+			'selected',
+			'typemustmatch',
+		);
 
 		$html = '';
 		if ( isset( $html_options['encode'] ) ) {
@@ -194,7 +222,7 @@ class Hustle_Layout_Helper {
 			$raw = false;
 		}
 		foreach ( $html_options as $name => $value ) {
-			if ( isset( $special_attributes[ $name ] ) ) {
+			if ( in_array( $name, $special_attributes, true ) ) {
 				if ( $value ) {
 					$html .= ' ' . $name;
 					$html .= '="' . $name . '"';
@@ -203,11 +231,7 @@ class Hustle_Layout_Helper {
 				$html .= ' ' . esc_attr( $name ) . '="' . ( $raw ? $value : esc_attr( $value ) ) . '"'; }
 		}
 
-		if ( $echo ) {
-			echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			return $html;
-		}
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -218,5 +242,166 @@ class Hustle_Layout_Helper {
 	 */
 	private function render_modal( $arguments ) {
 		$this->render( '/admin/commons/modal-template', $arguments );
+	}
+
+	/**
+	 * Image function
+	 * Return image element with 2x and 1x support.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param string      $image_path URL for the given image.
+	 * @param string      $image_suffix Image format, like png, jpg, etc.
+	 * @param string      $image_class Class for the image HTML element.
+	 * @param string|bool $support Whether the image has retina support.
+	 */
+	private function hustle_image( $image_path, $image_suffix, $image_class, $support ) {
+		$image = '';
+
+		$image_name = esc_html__( 'Hustle image', 'hustle' );
+		if ( ( true === $support ) || ( '2x' === $support ) ) {
+			if ( '' !== $image_class ) {
+				$image = '<img src="' . $image_path . '.' . $image_suffix . '" srcset="' . $image_path . '.' . $image_suffix . ' 1x, ' . $image_path . '@2x.' . $image_suffix . ' 2x" alt="' . $image_name . '" class="' . $image_class . '" aria-hidden="true">';
+			} else {
+				$image = '<img src="' . $image_path . '.' . $image_suffix . '" srcset="' . $image_path . '.' . $image_suffix . ' 1x, ' . $image_path . '@2x.' . $image_suffix . ' 2x" alt="' . $image_name . '" aria-hidden="true">';
+			}
+		} else {
+			if ( '' !== $image_class ) {
+				$image = '<img src="' . $image_path . '.' . $image_suffix . '" alt="' . $image_name . '" class="' . $image_class . '" aria-hidden="true">';
+			} else {
+				$image = '<img src="' . $image_path . '.' . $image_suffix . '" alt="' . $image_name . '" aria-hidden="true">';
+			}
+		}
+		echo $image; // phpcs:ignore
+	}
+
+	/**
+	 * Return the image markup for retina and no retina images
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param string $image_path URL for the given image.
+	 * @param string $image_retina_path URL for the given image for retina.
+	 * @param string $image_class Class for the image HTML element.
+	 * @param string $image_width Image max width.
+	 * @param string $image_height Image max height.
+	 *
+	 * @return string
+	 */
+	private function render_image_markup( $image_path, $image_retina_path = '', $image_class = '', $image_width = '', $image_height = '' ) {
+
+		$image        = '';
+		$image_path   = esc_url( $image_path );
+		$image_srcset = '';
+		$image_styles = '';
+
+		// If image is not set return empty string.
+		if ( empty( $image_path ) ) {
+			return '';
+		}
+		if ( ! empty( $image_retina_path ) || '' !== $image_retina_path ) {
+			$image_srcset = $image_path . ' 1x, ' . esc_url( $image_retina_path ) . ' 2x';
+		}
+
+		if ( '' !== $image_width || '' !== $image_height ) {
+
+			$image_styles .= ' style="';
+
+			if ( '' !== $image_width ) {
+				$image_styles .= 'max-width: ' . $image_width . 'px;';
+			}
+
+			if ( '' !== $image_height ) {
+				$image_styles .= 'max-height: ' . $image_height . 'px;';
+			}
+
+			$image_styles .= '"';
+
+		}
+
+		$image .= '<img';
+
+		$image .= ' src="' . $image_path . '"';
+
+		if ( '' !== $image_srcset ) {
+			$image .= ' srcset="' . $image_srcset . '"';
+		}
+
+		$image .= ' title="' . esc_attr__( 'Hustle image', 'hustle' ) . '"';
+		$image .= ' alt="' . esc_attr__( 'Hustle image commonly Hustle-Man doing something fun', 'hustle' ) . '"';
+
+		if ( ! empty( $image_class ) || '' !== $image_class ) {
+			$image .= ' class="' . $image_class . '"';
+		}
+
+		// Add styles to image.
+		$image .= $image_styles;
+
+		$image .= ' aria-hidden="true"';
+
+		$image .= '/>';
+
+		return $image;
+	}
+
+	/**
+	 * Color Picker
+	 *
+	 * Return the correct color picker markup that's compatible with Shared UI 2.0
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param string $id "id" attribute of the input.
+	 * @param string $name "name" attribute of the input.
+	 * @param string $alpha "false"/"true". Enables or disables the alpha selector in the colorpicker.
+	 * @param bool   $is_js_template whether this colorpicker will be filled via js templating.
+	 * @param string $value Value to be used when js templating isn't used.
+	 */
+	private function sui_colorpicker( $id, $name, $alpha = 'false', $is_js_template = true, $value = false ) {
+
+		$value = ( ! $is_js_template && $value ) ? $value : '{{ ' . $name . ' }}';
+
+		echo '<div class="sui-colorpicker-wrap">
+
+			<div class="sui-colorpicker" aria-hidden="true">
+				<div class="sui-colorpicker-value">
+					<span role="button">
+						<span style="background-color: ' . esc_attr( $value ) . '"></span>
+					</span>
+					<input class="hustle-colorpicker-input" type="text" value="' . esc_attr( $value ) . '"/>
+					<button><span class="sui-icon-close" aria-hidden="true"></span></button>
+				</div>
+				<button class="sui-button">' . esc_html__( 'Select', 'hustle' ) . '</button>
+			</div>
+
+			<input type="text"
+				name="' . esc_attr( $name ) . '"
+				value="' . esc_attr( $value ) . '"
+				id="' . esc_attr( $id ) . '"
+				class="sui-colorpicker-input"
+				data-alpha-enabled="' . esc_attr( $alpha ) . '"
+				data-attribute="' . esc_attr( $name ) . '" />
+
+		</div>';
+
+	}
+
+	/**
+	 * Common init config for tinymce editor.
+	 *
+	 * @since 4.4.7
+	 * @return void
+	 */
+	private function tinymce_init() {
+		// remove add more tag from visual tab.
+		add_filter(
+			'mce_buttons',
+			function( $mce_buttons ) {
+				$remove = array( 'wp_more' );
+				return array_diff( $mce_buttons, $remove );
+			}
+		);
+		// remove more tag from text tab.
+		$this->tinymce_quicktags = array( 'buttons' => 'strong,em,link,block,del,ins,img,ul,ol,li,code,close' );
 	}
 }

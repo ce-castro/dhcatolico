@@ -117,7 +117,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @return Mixed|Array|String|
 		 * @throws Exception
 		 */
-		private function _request( $verb = 'GET', $action, $args, $migrate = false ) {
+		private function _request( $action, $args, $verb = 'GET', $migrate = false ) {
 
 			// Adding extra user agent for wp remote request
 			add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
@@ -245,7 +245,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 */
 		private function _get( $endpoint, $args ) {
-			return $this->_request( 'GET', $endpoint, $args );
+			return $this->_request( $endpoint, $args, 'GET' );
 		}
 
 		/**
@@ -254,7 +254,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 */
 		private function _post( $endpoint, $args, $migrate = false ) {
-			return $this->_request( 'POST', $endpoint, $args, $migrate );
+			return $this->_request( $endpoint, $args, 'POST', $migrate );
 		}
 
 		/**
@@ -263,7 +263,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 */
 		private function _put( $endpoint, $args ) {
-			return $this->_request( 'PUT', $endpoint, $args );
+			return $this->_request( $endpoint, $args, 'PUT' );
 		}
 
 		/**

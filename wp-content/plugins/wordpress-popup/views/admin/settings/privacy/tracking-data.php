@@ -6,10 +6,26 @@
  * @since 4.0.3
  */
 
-$retain_tracking_forever   = '1' === $settings['retain_tracking_forever'];
-$tracking_retention_number = $settings['tracking_retention_number'];
-$tracking_retention_unit   = $settings['tracking_retention_number_unit'];
+ob_start();
 ?>
+<div class="sui-row">
+	<div class="sui-col-md-6">
+		<input type="number"
+			name="tracking_retention_number"
+			value="<?php echo esc_attr( $settings['tracking_retention_number'] ); ?>"
+			placeholder="0"
+			class="sui-form-control" />
+	</div>
+	<div class="sui-col-md-6" >
+		<select name="tracking_retention_number_unit" id="hustle-select-tracking_retention_number_unit">
+			<option value="days" <?php selected( 'days', $settings['tracking_retention_number_unit'] ); ?>><?php esc_html_e( 'day(s)', 'hustle' ); ?></option>
+			<option value="weeks"  <?php selected( 'weeks', $settings['tracking_retention_number_unit'] ); ?>><?php esc_html_e( 'week(s)', 'hustle' ); ?></option>
+			<option value="months" <?php selected( 'months', $settings['tracking_retention_number_unit'] ); ?>><?php esc_html_e( 'month(s)', 'hustle' ); ?></option>
+			<option value="years" <?php selected( 'years', $settings['tracking_retention_number_unit'] ); ?>><?php esc_html_e( 'year(s)', 'hustle' ); ?></option>
+		</select>
+	</div>
+</div>
+<?php $custom_tab_content = ob_get_clean(); ?>
 
 <div class="sui-box-settings-row">
 
@@ -21,56 +37,32 @@ $tracking_retention_unit   = $settings['tracking_retention_number_unit'];
 	<div class="sui-box-settings-col-2">
 
 		<label class="sui-settings-label"><?php esc_html_e( 'Tracking Data Retention', 'hustle' ); ?></label>
-		<span class="sui-description"><?php esc_html_e( 'Choose how long to retain the tracking data of your modules.', 'hustle' ); ?></span>
+		<span class="sui-description" style="margin-bottom: 10px;"><?php esc_html_e( 'Choose how long to retain the tracking data of your modules.', 'hustle' ); ?></span>
 
-		<div class="sui-side-tabs" style="margin-top: 10px;">
-
-			<div class="sui-tabs-menu">
-
-				<label class="sui-tab-item">
-					<input type="radio"
-					name="retain_tracking_forever"
-					id="hustle-retain-tracking-forever--on"
-					value="1"
-					<?php checked( $retain_tracking_forever, true ); ?> />
-					<?php esc_html_e( 'Forever', 'hustle' ); ?>
-				</label>
-
-				<label class="sui-tab-item">
-					<input type="radio"
-					name="retain_tracking_forever"
-					id="hustle-retain-tracking-forever--off"
-					data-tab-menu="tracking-retention-number"
-					value="0"
-					<?php checked( $retain_tracking_forever, false ); ?> />
-					<?php esc_html_e( 'Custom', 'hustle' ); ?>
-				</label>
-			</div>
-
-			<div class="sui-tabs-content">
-				<div class="sui-tab-boxed" data-tab-content="tracking-retention-number">
-					<div class="sui-row">
-						<div class="sui-col-md-6">
-							<input type="number"
-								name="tracking_retention_number"
-								value="<?php echo esc_attr( $tracking_retention_number ); ?>"
-								placeholder="0"
-								class="sui-form-control" />
-						</div>
-						<div class="sui-col-md-6" >
-							<select name="tracking_retention_number_unit" id="hustle-select-tracking_retention_number_unit">
-								<option value="days" <?php selected( 'days', $tracking_retention_unit, true ); ?>><?php esc_html_e( 'day(s)', 'hustle' ); ?></option>
-								<option value="weeks"  <?php selected( 'weeks', $tracking_retention_unit, true ); ?>><?php esc_html_e( 'week(s)', 'hustle' ); ?></option>
-								<option value="months" <?php selected( 'months', $tracking_retention_unit, true ); ?>><?php esc_html_e( 'month(s)', 'hustle' ); ?></option>
-								<option value="years" <?php selected( 'years', $tracking_retention_unit, true ); ?>><?php esc_html_e( 'year(s)', 'hustle' ); ?></option>
-							</select>
-						</div>
-					</div>
-				</div>
-
-			</div>
-
-		</div>
+		<?php
+		$this->render(
+			'admin/global/sui-components/sui-tabs',
+			array(
+				'name'        => 'retain_tracking_forever',
+				'radio'       => true,
+				'saved_value' => $settings['retain_tracking_forever'],
+				'sidetabs'    => true,
+				'content'     => true,
+				'options'     => array(
+					'1' => array(
+						'value' => '1',
+						'label' => esc_html__( 'Forever', 'hustle' ),
+					),
+					'0' => array(
+						'value'   => '0',
+						'label'   => esc_html__( 'Custom', 'hustle' ),
+						'boxed'   => true,
+						'content' => $custom_tab_content,
+					),
+				),
+			)
+		);
+		?>
 
 	</div>
 

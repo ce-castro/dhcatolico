@@ -95,7 +95,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 				$buttons['disconnect'] = array(
 					'markup' => Hustle_Provider_Utils::get_provider_button_markup(
 						__( 'Disconnect', 'hustle' ),
-						'sui-button-ghost sui-button-left',
+						'sui-button-ghost sui-button',
 						'disconnect_form',
 						true
 					),
@@ -105,7 +105,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 			$buttons['save'] = array(
 				'markup' => Hustle_Provider_Utils::get_provider_button_markup(
 					__( 'Save', 'hustle' ),
-					'sui-button-right',
+					'sui-button',
 					'next',
 					true
 				),

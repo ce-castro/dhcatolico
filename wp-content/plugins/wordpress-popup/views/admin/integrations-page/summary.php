@@ -17,13 +17,9 @@ $active_icon      = self::$plugin_url . 'inc/providers/' . $active_app . '/image
 $providers      = Hustle_Provider_Utils::get_registered_providers_list();
 $available_apps = count( $providers );
 $connected_apps = 0;
-$active_apps    = 0;
 foreach ( $providers as $slug => $data ) {
 	if ( $data['is_connected'] ) {
 		$connected_apps++;
-	}
-	if ( $data['is_active'] ) {
-		$active_apps++;
 	}
 }
 ?>
@@ -63,16 +59,6 @@ foreach ( $providers as $slug => $data ) {
 					echo '<span class="sui-list-detail">0</span>';
 				} else {
 					echo '<span class="sui-list-detail">' . esc_html( $connected_apps ) . '</span>';
-				}
-				?>
-			</li>
-			<li>
-				<span class="sui-list-label"><?php esc_html_e( 'Active Apps', 'hustle' ); ?></span>
-				<?php
-				if ( 0 === $active_apps ) {
-					echo '<span class="sui-list-detail">0</span>';
-				} else {
-					echo '<span class="sui-list-detail">' . esc_html( $active_apps ) . '</span>';
 				}
 				?>
 			</li>

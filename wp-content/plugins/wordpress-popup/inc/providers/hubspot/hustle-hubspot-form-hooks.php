@@ -68,11 +68,10 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 					'last_name'  => '',
 				)
 			);
-			$extra_data = array_filter( $extra_data );
 
 			if ( ! empty( $extra_data ) ) {
 				$custom_fields = array();
-				$module        = Hustle_Module_Model::instance()->get( $module_id );
+				$module        = new Hustle_Module_Model( $module_id );
 				$form_fields   = $module->get_form_fields();
 				foreach ( $extra_data as $key => $value ) {
 					$type = isset( $form_fields[ $key ] ) ? $this->get_field_type( $form_fields[ $key ]['type'] ) : 'text';

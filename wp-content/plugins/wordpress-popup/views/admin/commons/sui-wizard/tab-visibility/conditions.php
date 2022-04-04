@@ -22,7 +22,8 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 				<div class="sui-builder-conditions-rule">
 					<select
 						name="show_or_hide_conditions"
-						class="sui-select-sm visibility-group-show-hide"
+						class="sui-select sui-select-sm sui-select-inline visibility-group-show-hide"
+						data-width="110"
 						data-group-attribute="show_or_hide_conditions"
 						data-group-id="{{ groupId }}"
 					>
@@ -36,7 +37,8 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 					<select
 						name="filter_type"
-						class="sui-select-sm visibility-group-filter-type"
+						class="sui-select sui-select-sm sui-select-inline visibility-group-filter-type"
+						data-width="110"
 						data-group-attribute="filter_type"
 						data-group-id="{{ groupId }}"
 					>
@@ -162,7 +164,9 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 				<?php
 				if ( ! $this->is_branding_hidden ) :
-					echo Opt_In_Utils::render_image_markup( $image_1x, $image_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo $this->render_image_markup( $image_1x, $image_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				else :
+					echo $this->render_image_markup( $this->branding_image, '', 'sui-image sui-image-center', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				endif;
 				?>
 
@@ -561,6 +565,8 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 <?php // RULE: Number of times visitor has seen. ?>
 <script id="hustle-visibility-rule-tpl--shown_less_than" type="text/template">
 
+<?php Opt_In_Utils::get_cookie_saving_notice(); ?>
+
 <div class="sui-row">
 
 	<div class="sui-col">
@@ -579,7 +585,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 						id="{{ groupId }}-visitor-seen--less_than"
 						data-attribute="less_or_more"
 						{{ _.checked( less_or_more, 'less_than' ) }} />
-					<?php esc_html_e( 'Less than', 'hustle' ); ?>
+					<?php esc_html_e( 'If seen less than', 'hustle' ); ?>
 				</label>
 
 				<label for="{{ groupId }}-visitor-seen--more_than"
@@ -590,7 +596,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 						id="{{ groupId }}-visitor-seen--more_than"
 						data-attribute="less_or_more"
 						{{ _.checked( less_or_more, 'more_than' ) }} />
-					<?php esc_html_e( 'More than', 'hustle' ); ?>
+					<?php esc_html_e( 'If seen more than', 'hustle' ); ?>
 				</label>
 
 			</div>
@@ -667,7 +673,16 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 			<div class="sui-tab-content" data-tab-content="mobiles">
 
 				<div class="sui-notice">
-					<p style="margin: 0;"><?php esc_html_e( 'Mobile devices include both Phone and Tablet.', 'hustle' ); ?></p>
+
+					<div class="sui-notice-content">
+
+						<div class="sui-notice-message">
+
+							<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+							<p style="margin-top: 0;"><?php esc_html_e( 'Mobile devices include both Phone and Tablet.', 'hustle' ); ?></p>
+
+						</div>
+					</div>
 				</div>
 
 			</div>
@@ -871,7 +886,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 					class="sui-form-control"
 					data-attribute="urls">{{{ urls }}}</textarea>
 
-				<span class="sui-description"><?php esc_html_e( 'Enter only one URL per line and URLs should not include "http://" or "https://". You can also use wildcards in URLs.', 'hustle' ); ?></span>
+				<span class="sui-description"><?php esc_html_e( 'Enter only one URL per line. You can use wildcards in URLs. Ensure the correct protocol - "http://" or "https://" - is used, or do not include the protocol at all so the URL will apply for both protocols.', 'hustle' ); ?></span>
 
 			</div>
 
@@ -918,12 +933,14 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 			<div class="sui-tab-content active">
 
-				<select multiple="multiple"
-					data-placeholder="<?php esc_attr_e( 'Start typing the name of browsers...', 'hustle' ); ?>"
+				<select
+					multiple="multiple"
 					id="not_in_a_browser_browsers"
-					class="sui-select sui-select-lg"
+					class="sui-select"
+					data-placeholder="<?php esc_attr_e( 'Start typing the name of browsers...', 'hustle' ); ?>"
 					data-val="browsers"
-					data-attribute="browsers">
+					data-attribute="browsers"
+				>
 
 						<# _.each( _.keys( optinVars.browsers ), function( key ) { #>
 
@@ -978,8 +995,18 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 	</div>
 
 	<div class="sui-notice" style="margin-top: 20px;">
-		<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */ ?>
-		<p style="margin-bottom: 0;"><?php printf( esc_html__( 'You might also want to combine this condition along with %1$sVisitor\'s logged in status%2$s.', 'hustle' ), '<strong>', '</strong>' ); ?></p>
+
+		<div class="sui-notice-content">
+
+			<div class="sui-notice-message">
+
+				<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+
+				<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag */ ?>
+				<p style="margin-top: 0;"><?php printf( esc_html__( 'You might also want to combine this condition along with %1$sVisitor\'s logged in status%2$s.', 'hustle' ), '<strong>', '</strong>' ); ?></p>
+
+			</div>
+		</div>
 	</div>
 
 </script>
@@ -987,7 +1014,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 <?php // RULE: Visitor's Country. ?>
 <script id="hustle-visibility-rule-tpl--visitor_country" type="text/template">
 
-	<label class="sui-label"><?php esc_html_e( 'Choose visitor’s county', 'hustle' ); ?></label>
+	<label class="sui-label"><?php esc_html_e( 'Choose visitor’s country', 'hustle' ); ?></label>
 
 	<div class="sui-side-tabs">
 
@@ -1021,10 +1048,11 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 			<div class="sui-tab-content active">
 
-				<select multiple="multiple"
-					data-placeholder="<?php esc_attr_e( 'Start typing the name of countries...', 'hustle' ); ?>"
+				<select
+					multiple="multiple"
 					id="not_in_a_country_countries"
-					class="sui-select sui-select-lg"
+					class="sui-select"
+					data-placeholder="<?php esc_attr_e( 'Start typing the name of countries...', 'hustle' ); ?>"
 					data-val="countries"
 					data-attribute="countries">
 
@@ -1616,6 +1644,146 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 
 </script>
 
+<?php // RULE: Cookie is set. ?>
+<script id="hustle-visibility-rule-tpl--cookie_set" type="text/template">
+
+	<label class="sui-label"><?php esc_html_e( 'If a browser cookie', 'hustle' ); ?></label>
+
+	<div class="sui-side-tabs">
+
+		<div class="sui-tabs-menu" data-tabs>
+
+			<label for="{{ groupId }}-{{ type }}-rule--cookie-set-exists"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-rule--cookie-set"
+					value="exists"
+					id="{{ groupId }}-{{ type }}-rule--cookie-set-exists"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'exists' ) }} />
+				<?php esc_html_e( 'Exists', 'hustle' ); ?>
+			</label>
+
+			<label for="{{ groupId }}-{{ type }}-rule--cookie-set-doesnt_exists"
+				class="sui-tab-item">
+				<input type="radio"
+					name="{{ groupId }}-{{ type }}-rule--cookie-set"
+					value="doesnt_exists"
+					id="{{ groupId }}-{{ type }}-rule--cookie-set-doesnt_exists"
+					data-attribute="filter_type"
+					{{ _.checked( filter_type, 'doesnt_exists' ) }} />
+				<?php esc_html_e( 'Doesn\'t exist', 'hustle' ); ?>
+			</label>
+
+		</div>
+
+		<div data-panes>
+
+			<div class="sui-tab-boxed <# if( filter_type === 'exists' ) { #>active<# } #>">
+
+				<div class="sui-form-field">
+
+					<label class="sui-label"><?php esc_html_e( 'Cookie name', 'hustle' ); ?></label>
+
+					<input
+						type="text"
+						value="{{ cookie_name }}"
+						placeholder="<?php esc_html_e( 'Enter cookie name', 'hustle' ); ?>"
+						id="{{ groupId }}-{{ type }}-cookie-name"
+						class="sui-form-control"
+						data-attribute="cookie_name"
+						name="{{ groupId }}-{{ type }}-cookie-name"
+					/>
+
+				</div>
+				<div class="select-content-switcher-wrapper" style="margin-bottom: 0;">
+					<div class="sui-form-field" style="margin-bottom: 0;">
+
+						<label class="sui-label" style="margin-top: 26px;"><?php esc_html_e( 'Value', 'hustle' ); ?></label>
+
+						<select
+							id="{{ groupId }}-{{ type }}-cookie_value_conditions"
+							name="{{ groupId }}-{{ type }}-cookie_value_conditions"
+							class="sui-select select-content-switcher"
+							data-val="cookie_value_conditions"
+							data-attribute="cookie_value_conditions"
+							data-content-on="equals,contains,matches_pattern,doesnt_match_pattern,less_than,less_equal_than,greater_than,greater_equal_than,doesnt_contains,doesnt_equals"
+						>
+							<# _.each( _.keys( optinVars.wp_cookie_set ), function( key ) { #>
+								<option
+									value="{{ key }}"
+									{{ _.selected( ( cookie_value_conditions === key ), true) }}
+									<# if ( _.contains( ['less_than', 'greater_than', 'less_equal_than', 'greater_equal_than' ], key ) ) { #>
+										data-switcher-menu="number"
+									<# } else if ( _.contains( [ 'anything' ], key ) ) { #>
+										data-switcher-menu="none"
+									<# } else { #>
+										data-switcher-menu="text"
+									<# } #>
+								>
+									{{ optinVars.wp_cookie_set[key] }}
+								</option>
+							<# }); #>
+						</select>
+
+					</div>
+					<div class="sui-form-field select-switcher-content" data-switcher-content="text" style="margin-top: 5px; margin-bottom: 0;">
+
+						<input
+							type="text"
+							value="{{ cookie_value }}"
+							placeholder="<?php esc_html_e( 'Enter cookie value', 'hustle' ); ?>"
+							id="{{ groupId }}-{{ type }}-cookie-value"
+							class="sui-form-control"
+							data-attribute="cookie_value"
+							name="{{ groupId }}-{{ type }}-cookie-value"
+							style="margin-top:10px;"
+						/>
+
+					</div>
+
+					<div class="sui-form-field select-switcher-content" data-switcher-content="number" style="margin-top: 5px; margin-bottom: 0;">
+
+						<input
+							type="number"
+							value="{{ cookie_value }}"
+							placeholder="<?php esc_html_e( 'Enter cookie value', 'hustle' ); ?>"
+							id="{{ groupId }}-{{ type }}-cookie-value"
+							class="sui-form-control"
+							data-attribute="cookie_value"
+							name="{{ groupId }}-{{ type }}-cookie-value"
+							style="margin-top:10px;"
+						/>
+
+					</div>
+				</div>
+
+			</div>
+
+			<div class="sui-tab-boxed <# if( filter_type === 'doesnt_exists' ) { #>active<# } #>">
+
+				<div class="sui-form-field">
+
+					<label class="sui-label"><?php esc_html_e( 'Cookie name', 'hustle' ); ?></label>
+
+					<input
+						type="text"
+						value="{{ cookie_name }}"
+						placeholder="<?php esc_html_e( 'Enter cookie name', 'hustle' ); ?>"
+						id="{{ groupId }}-{{ type }}-cookie-name"
+						class="sui-form-control"
+						data-attribute="cookie_name"
+						name="{{ groupId }}-{{ type }}-cookie-name"
+					/>
+
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+</script>
 <?php
 
 /**

@@ -63,8 +63,6 @@ class Hustle_Migration {
 
 		$this->is_multisite = is_multisite();
 
-		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 10, 2 );
-
 		add_action( 'wp_ajax_hustle_migrate_tracking', array( $this, 'migrate_tracking_and_subscriptions' ) );
 
 		if ( $this->is_migration() ) {
@@ -72,32 +70,8 @@ class Hustle_Migration {
 		}
 
 		$this->migration_410 = new Hustle_410_Migration();
-	}
 
-	/**
-	 * Flags the previous version on upgrade so we can handle notices and modals.
-	 * This action runs in the old version of the plugin, not the new one.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @param WP_Upgrader $upgrader_object Instance of the WP_Upgrader class.
-	 * @param array       $data Upgrade data.
-	 */
-	public function upgrader_process_complete( $upgrader_object, $data ) {
-
-		if ( 'update' === $data['action'] && 'plugin' === $data['type'] ) {
-
-			foreach ( $data['plugins'] as $plugin ) {
-
-				// Make sure our plugin is among the ones being updated.
-				if ( Opt_In::$plugin_base_file === $plugin ) {
-					update_site_option( 'hustle_previous_version', Opt_In::VERSION );
-
-					// Make the highlights modal undismissed so it's shown in the next version.
-					Hustle_Notifications::add_dismissed_notification( Hustle_Dashboard_Admin::HIGHLIGHT_MODAL_NAME );
-				}
-			}
-		}
+		$this->migration_430 = new Hustle_430_Migration();
 	}
 
 	/**
@@ -278,14 +252,14 @@ class Hustle_Migration {
 	private function migrate_sshare_module( $old_module ) {
 
 		if ( ! $this->is_multisite || is_main_site( get_current_blog_id() ) ) {
-			$module = Hustle_SShare_Model::instance()->get( $old_module->module_id );
+			$module = new Hustle_SShare_Model( $old_module->module_id );
 			$module->save();
 
 		} else {
 
 			// The tables in multisite are no longer shared between the sites of the network.
 			// Instead, each site has its own tables, so they're empty and we should move the content there.
-			$module = Hustle_SShare_Model::instance();
+			$module = new Hustle_SShare_Model();
 
 			$module->module_id   = $old_module->module_id;
 			$module->active      = $old_module->active;
@@ -366,7 +340,7 @@ class Hustle_Migration {
 
 			$platforms_with_counter_endpoint = Hustle_SShare_Model::get_networks_counter_endpoint();
 
-			$social_platforms = Opt_In_Utils::get_social_platform_names();
+			$social_platforms = Hustle_SShare_Model::get_social_platform_names();
 
 			foreach ( $content['social_icons'] as $platform => $data ) {
 
@@ -490,7 +464,7 @@ class Hustle_Migration {
 	private function migrate_non_sshare_module( $old_module ) {
 
 		if ( ! $this->is_multisite || is_main_site( get_current_blog_id() ) ) {
-			$module = Hustle_Module_Model::instance()->get( $old_module->module_id );
+			$module = new Hustle_Module_Model( $old_module->module_id );
 
 			// Modules with 'test mode' enabled should be drafts.
 			if ( $this->is_true( $old_module->test_mode ) ) {
@@ -505,7 +479,7 @@ class Hustle_Migration {
 
 			// The tables in multisite are no longer shared between the sites of the network.
 			// Instead, each site has its own tables, so they're empty and we should move the content there.
-			$module = Hustle_Module_Model::instance();
+			$module = new Hustle_Module_Model();
 
 			// Modules with 'test mode' enabled should be drafts.
 			$module->active = ! $this->is_true( $old_module->test_mode ) ? $old_module->active : '0';
@@ -762,7 +736,7 @@ class Hustle_Migration {
 		if ( $is_optin ) {
 
 			// When making a module 'optin' in 3.x, the selected palette remained as the informational one.
-			if ( in_array( $design['style'], Hustle_Meta_Base_Design::get_palettes_names(), true ) ) {
+			if ( in_array( $design['style'], Hustle_Palettes_Helper::get_palettes_names(), true ) ) {
 				$design['color_palette'] = $design['style'];
 			} else {
 				$design['color_palette'] = 'gray_slate';
@@ -1301,7 +1275,7 @@ class Hustle_Migration {
 			return false;
 		}
 
-		$total_entries = self::get_tracking_submissions_count( false, $blog_modules_id );
+		$total_entries = self::get_tracking_submissions_count( $blog_modules_id );
 
 		// If we don't have tracking nor submissions, finish.
 		if ( ! $total_entries ) {
@@ -1341,7 +1315,7 @@ class Hustle_Migration {
 				$this->finish_tracking_subscription_migration();
 			}
 
-			$total_entries = self::get_tracking_submissions_count( $wpdb, $blog_modules_id );
+			$total_entries = self::get_tracking_submissions_count( $blog_modules_id, $wpdb );
 
 			// If we don't have tracking nor submissions, finish.
 			if ( ! $total_entries ) {
@@ -1467,7 +1441,7 @@ class Hustle_Migration {
 		return $metas;
 	}
 
-	private static function get_tracking_submissions_count( $wpdb = false, $modules_id ) {
+	private static function get_tracking_submissions_count( $modules_id, $wpdb = false ) {
 
 		if ( ! $wpdb ) {
 			global $wpdb;

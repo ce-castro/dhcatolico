@@ -15,27 +15,24 @@
 
 		<form id="hustle-entries-search-form" class="hui-search-left" method="get">
 
-			<div class="hui-split">
+			<input
+				type="hidden"
+				name="page"
+				value="hustle_entries"
+			/>
 
-				<input
-					type="hidden"
-					name="page"
-					value="hustle_entries"
-				/>
+			<select
+				name="module_type"
+				class="sui-select sui-select-sm sui-select-inline"
+				onchange="submit()"
+				data-width="150"
+			>
+				<?php foreach ( $this->admin->get_module_types() as $module_type => $name ) { ?>
+					<option value="<?php echo esc_attr( $module_type ); ?>" <?php echo selected( $module_type, $this->admin->get_current_module_type() ); ?>><?php echo esc_html( $name ); ?></option>
+				<?php } ?>
+			</select>
 
-				<select
-					name="module_type"
-					class="sui-select-sm"
-					onchange="submit()"
-				>
-					<?php foreach ( $this->admin->get_module_types() as $module_type => $name ) { ?>
-						<option value="<?php echo esc_attr( $module_type ); ?>" <?php echo selected( $module_type, $this->admin->get_current_module_type() ); ?>><?php echo esc_html( $name ); ?></option>
-					<?php } ?>
-				</select>
-
-				<?php echo $this->admin->render_module_switcher(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-
-			</div>
+			<?php echo $this->admin->render_module_switcher(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 			<button class="sui-button sui-button-blue" onclick="submit()">
 				<?php esc_html_e( 'Show Email List', 'hustle' ); ?>

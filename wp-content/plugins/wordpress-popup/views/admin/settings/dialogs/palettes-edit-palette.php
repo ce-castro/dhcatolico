@@ -6,6 +6,11 @@
  * @since 4.0.4
  */
 
+$palette_args = array(
+	'is_settings_page'    => true,
+	'capitalize_singular' => __( 'Module', 'hustle' ),
+);
+
 ob_start();
 ?>
 
@@ -132,7 +137,7 @@ ob_start();
 						<select id="hustle-palette-module-type" name="module_type" aria-labelledby="hustle-palette-module-type-label">
 
 							<?php
-							foreach ( Hustle_Module_Model::get_module_types() as $module_type ) :
+							foreach ( Hustle_Data::get_module_types() as $module_type ) :
 								if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module_type ) {
 									continue;
 								}
@@ -179,7 +184,7 @@ ob_start();
 </div>
 
 <?php // STEP 2: Edit Palette. ?>
-<div id="hustle-edit-palette-second-step" style="display: none; margin-bottom: 0;" tabindex="-1" aria-hidden="true" hidden></div>
+<div id="hustle-edit-palette-second-step" style="display: none;" tabindex="-1" aria-hidden="true" hidden></div>
 
 <?php
 $body_content = ob_get_clean();
@@ -234,16 +239,35 @@ $this->render_modal( $attributes );
 
 	<p class="sui-description"><?php esc_html_e( 'Customize your base palette as per your liking and click on the “Create Palette“ button to add this to your palettes list.', 'hustle' ); ?></p>
 
-	<?php
-	// Render the Popup optin's palette because it has all the properties a module can have.
-	$this->render(
-		'admin/commons/sui-wizard/elements/palette-optin',
-		array(
-			'module_type'  => Hustle_Module_Model::POPUP_MODULE,
-			'colors_label' => true,
-		)
-	);
-	?>
+	<div class="sui-form-field">
+		<?php
+		$this->render(
+			'admin/global/sui-components/sui-tabs',
+			array(
+				'name'    => 'module_type',
+				'content' => true,
+				'options' => array(
+					'general' => array(
+						'label'   => esc_html__( 'General', 'hustle' ),
+						'content' => $this->render(
+							'admin/commons/sui-wizard/elements/palette-general',
+							$palette_args,
+							true
+						),
+					),
+					'optin'   => array(
+						'label'   => esc_html__( 'Opt-in', 'hustle' ),
+						'content' => $this->render(
+							'admin/commons/sui-wizard/elements/palette-optin',
+							$palette_args,
+							true
+						),
+					),
+				),
+			)
+		);
+		?>
+	</div>
 
 	<# if ( 'undefined' !== typeof slug ) { #>
 		<input type="hidden" name="slug" value="{{ slug }}">

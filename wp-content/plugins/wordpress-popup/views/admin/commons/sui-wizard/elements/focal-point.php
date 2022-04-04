@@ -11,7 +11,7 @@
 
 	<div class="hustle-focal-point-position-item">
 
-		<span class="sui-description"><?php esc_html_e( 'Adjust the position of your feature image within the image container.', 'hustle' ); ?></span>
+		<span class="sui-description"><?php esc_html_e( 'Adjust the position of your featured image within the image container.', 'hustle' ); ?></span>
 
 		<div class="sui-focal-position-x">
 
@@ -35,7 +35,7 @@
 								id="hustle-in-container-image-positionX--left"
 								<?php checked( $settings['feature_image_horizontal'], 'left' ); ?>
 							/>
-							<span class="hui-position-icon-left" aria-hidden="true"></span>
+							<span class="hui-tab-icon-position-left" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Left', 'hustle' ); ?></span>
 						</label>
 
@@ -51,7 +51,7 @@
 								id="hustle-in-container-image-positionX--center"
 								<?php checked( $settings['feature_image_horizontal'], 'center' ); ?>
 							/>
-							<span class="hui-position-icon-center" aria-hidden="true"></span>
+							<span class="hui-tab-icon-position-center" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Center', 'hustle' ); ?></span>
 						</label>
 
@@ -67,7 +67,7 @@
 								id="hustle-in-container-image-positionX--right"
 								<?php checked( $settings['feature_image_horizontal'], 'right' ); ?>
 							/>
-							<span class="hui-position-icon-right" aria-hidden="true"></span>
+							<span class="hui-tab-icon-position-right" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Right', 'hustle' ); ?></span>
 						</label>
 
@@ -136,7 +136,7 @@
 								id="hustle-in-container-image-positionY--top"
 								<?php checked( $settings['feature_image_vertical'], 'top' ); ?>
 							/>
-							<span class="hui-position-icon-top" aria-hidden="true"></span>
+							<span class="hui-tab-icon-position-top" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Top', 'hustle' ); ?></span>
 						</label>
 
@@ -152,7 +152,7 @@
 								id="hustle-in-container-image-positionY--middle"
 								<?php checked( $settings['feature_image_vertical'], 'top' ); ?>
 							/>
-							<span class="hui-position-icon-middle" aria-hidden="true"></span>
+							<span class="hui-tab-icon-position-middle" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Middle', 'hustle' ); ?></span>
 						</label>
 
@@ -168,7 +168,7 @@
 								id="hustle-in-container-image-positionY--bottom"
 								<?php checked( $settings['feature_image_vertical'], 'bottom' ); ?>
 							/>
-							<span class="hui-position-icon-bottom" aria-hidden="true"></span>
+							<span class="hui-tab-icon-position-bottom" aria-hidden="true"></span>
 							<span class="sui-screen-reader-text"><?php esc_html_e( 'Bottom', 'hustle' ); ?></span>
 						</label>
 

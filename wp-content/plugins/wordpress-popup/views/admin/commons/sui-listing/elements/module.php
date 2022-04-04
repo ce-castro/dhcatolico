@@ -6,6 +6,8 @@
  * @since 4.0.0
  */
 
+$is_tracking_disabled = empty( $module->get_tracking_types() );
+
 $module_tag_class = $module->active ? ' sui-tag-blue' : '';
 $tooltip_message  = '';
 $schedule_icon    = '';
@@ -31,7 +33,7 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 		$module_tag_class .= ' hui-tag-scheduled sui-tooltip sui-tooltip-constrained sui-tooltip-top-left-mobile';
 
 		// Notify the admin that the module won't be shown again because of the schedule.
-		if ( ! $settings->will_be_shown_again() ) {
+		if ( ! $settings->will_be_shown_again() || $settings->is_schedule_finished() ) {
 
 			$module_tag_class .= ' hui-scheduled-error';
 
@@ -43,7 +45,7 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 			);
 
 			// Notify the admin that this module is currently being displayed according to the schedule.
-		} elseif ( $settings->is_currently_scheduled() ) {
+		} elseif ( $settings->is_currently_scheduled() || $settings->is_between_start_and_end_date() ) {
 
 			$module_tag_class .= ' hui-scheduled-success';
 
@@ -63,7 +65,8 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 	<?php
 	$module_id       = $module->module_id;
 	$can_edit        = Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module_id );
-	$last_entry_time = Opt_In_Utils::get_latest_conversion_time_by_module_id( $module_id );
+	$tracking_model  = Hustle_Tracking_Model::get_instance();
+	$last_entry_time = $tracking_model->get_latest_conversion_time_by_module_id( $module_id );
 	$view_stats      = filter_input( INPUT_GET, 'view_stats', FILTER_VALIDATE_INT );
 
 	if ( $view_stats && intval( $module_id ) === $view_stats ) {
@@ -80,7 +83,8 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 		data-nonce="<?php echo esc_attr( wp_create_nonce( 'module_get_tracking_data' . $module->id ) ); ?>"
 	>
 
-		<div class="sui-accordion-item-title <?php $is_scheduled ? '' : 'sui-trim-title'; ?>">
+		<?php // This should have sui-trim-title, but that class prevents the schedule tooltip from showing up. ?>
+		<div class="sui-accordion-item-title">
 
 			<label for="hustle-module-<?php echo esc_html( $module_id ); ?>" class="sui-checkbox sui-accordion-item-action">
 				<input
@@ -95,22 +99,8 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 
 			<span class="sui-trim-text"><?php echo esc_html( $module->module_name ); ?></span>
 
-			<!--
-				NOTE: Use "hui-tag-scheduled" class on "sui-tag" element when a module has been scheduled.
-				In addition to that, have in mind the following changes too:
-
-				1. When using "hui-tag-scheduled" you must also include icon markup as follows:
-					<span class="sui-icon-clock sui-sm" aria-hidden="true"></span>
-
-				2. When module schedule is currently active, include "hui-scheduled-success" class
-					on "sui-tag" to paint icon green.
-
-				3. When module schedule is over, include "hui-scheduled-error" class on "sui-tag"
-					to paint icon red.
-			-->
 			<span
 				class="sui-tag<?php echo esc_attr( $module_tag_class ); ?>"
-				data-status="<?php echo $module->active ? 'published' : 'draft'; ?>"
 				<?php echo ! empty( $tooltip_message ) ? 'data-tooltip="' . esc_html( $tooltip_message ) . '"' : ''; ?>
 			>
 
@@ -125,15 +115,9 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 
 			</span>
 
-			<!---
-				NOTE: Show this tag ONLY when analytics is disabled.
-			--->
-			<?php
-			$analytics = Hustle_Settings_Admin::get_dashboard_analytics_settings();
-			if ( '1' === $analytics['enabled'] && ! in_array( $module->module_type, $analytics['modules'], true ) ) :
-				?>
-				<span class="sui-tag sui-tag-disabled"><?php esc_html_e( 'Analytics Disabled', 'hustle' ); ?></span>
-			<?php endif; ?>
+			<span class="sui-tag sui-tag-disabled hustle-analytics-disabled-tag<?php echo ( $module->active && $is_tracking_disabled ) ? '' : ' sui-hidden-important'; ?>">
+				<?php esc_html_e( 'Tracking Disabled', 'hustle' ); ?>
+			</span>
 
 		</div>
 
@@ -146,14 +130,14 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 
 			<?php if ( $can_edit ) { ?>
 				<a
-					href="<?php echo esc_url( $module->decorated->get_edit_url() ); ?>"
+					href="<?php echo esc_url( $module->get_edit_url() ); ?>"
 					class="sui-button sui-button-ghost sui-accordion-item-action sui-desktop-visible"
 				>
 					<span class="sui-icon-pencil" aria-hidden="true"></span> <?php esc_attr_e( 'Edit', 'hustle' ); ?>
 				</a>
 
 				<a
-					href="<?php echo esc_url( $module->decorated->get_edit_url() ); ?>"
+					href="<?php echo esc_url( $module->get_edit_url() ); ?>"
 					class="sui-button-icon sui-accordion-item-action sui-mobile-visible"
 				>
 					<span class="sui-icon-pencil" aria-hidden="true"></span>
@@ -168,11 +152,10 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 				$this->render(
 					'admin/commons/sui-listing/elements/actions',
 					array(
-						'module'              => $module,
-						'smallcaps_singular'  => $smallcaps_singular,
-						'capitalize_singular' => $capitalize_singular,
-						'capability'          => $capability,
-						'can_create'          => $can_create,
+						'module'               => $module,
+						'smallcaps_singular'   => $smallcaps_singular,
+						'capitalize_singular'  => $capitalize_singular,
+						'is_tracking_disabled' => $is_tracking_disabled,
 					)
 				);
 				?>
