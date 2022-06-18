@@ -3,7 +3,7 @@ Contributors: smashballoon, craig-at-smash-balloon
 Tags: Instagram, Instagram feed, Instagram photos, Instagram widget, Instagram gallery
 Requires at least: 4.1
 Tested up to: 5.9
-Stable tag: 6.0.4
+Stable tag: 6.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,8 +34,8 @@ Display Instagram posts from your Instagram accounts, either in the same single 
 * **Increase Social Engagement** - Increase engagement between you and your Instagram followers. Increase your number of followers by displaying your Instagram content directly on your site.
 * **Save Time** - Don't have time to update your photos on your site? Save time and increase efficiency by only posting your photos to Instagram and automatically displaying them on your website
 * **Display Your Content Your Way** - Customize your Instagram feeds to look exactly the way you want, so that they blend seemlessly into your site or pop out at your visitors!
-* **Keep Your Site Looking Fresh** - Automatically aggregate your new Instagram content straight to your site to keep it looking fresh and keeping your audience engaged.
-* **Super simple to set up** - Once installed, you can be displaying your Instagram photos within 30 seconds! No confusing steps or Instagram Developer account needed. The Instagram Feed aggregator plugin is the easiest way to aggregate Instagram posts on your site.
+* **Keep Your Site Looking Fresh** - Automatically push your new Instagram content straight to your site to keep it looking fresh and keeping your audience engaged.
+* **Super simple to set up** - Once installed, you can be displaying your Instagram photos within 30 seconds! No confusing steps or Instagram Developer account needed.
 * **Powers all Instagram oEmbeds on your site** - With WordPress removing support for Instagram oEmbeds, the plugin will now power all Instagram embeds on your site, old and new, to allow them to continue working.
 
 = Pro Version =
@@ -80,7 +80,7 @@ For simple step-by-step directions on how to set up the Instagram Feed plugin pl
 
 Copy and paste the following shortcode directly into the page, post or widget where you'd like the Instagram feed to show up: `[instagram-feed]`
 
-**Multiple Instagram Aggregator Feeds**
+**Multiple Instagram Feeds**
 
 If you'd like to display multiple Instagram feeds then you can set different settings directly in the shortcode like so: `[instagram-feed num=9 cols=3]`
 
@@ -171,7 +171,7 @@ In version 2.5, support was added to allow the plugin to power your Instagram oE
 
 We've made it super easy. Simply click on the big blue button on the Instagram Feed Settings page and log into your Instagram account. The plugin will then ask if you'd like to connect the account and start using it in a feed.
 
-= My Instagram aggregator isn't displaying. Why not!? =
+= My Instagram feed isn't displaying. Why not!? =
 
 There are a few common reasons for this:
 
@@ -221,7 +221,7 @@ If you are trying to display an Instagram feed that has no posts made to it, a l
 
 5) The shortcode you are using is incorrect
 
-You may have an error in the Instagram Feed agregator shortcode you are using or are missing a necessary argument.
+You may have an error in the Instagram Feed shortcode you are using or are missing a necessary argument.
 
 = What are the available shortcode options that I can use to customize my Instagram feed? =
 
@@ -331,9 +331,16 @@ We understand that sometimes you need help, have issues or just have questions. 
 * Plus more customization options added all the time!
 
 == Changelog ==
+= 6.0.5 =
+* Tweak: If WordPress cron is broken or behind schedule and causing background caching to not work, the plugin will update the feed when the page loads.
+* Fix: Jetpack's "Master Bar" feature was causing the sidebar in the customizer to be partially hidden.
+* Fix: Added back support for the "class" shortcode setting for all feeds.
+* Fix: Only the first 20 sources were available when creating feeds and changing sources for a feed.
+* Fix: Removed all Font Awesome icons and no longer include the CSS file from the Font Awesome CDN.
+
 = 6.0.4 =
-* Fix: Added back the ability to use up to 10 columns in feeds for desktop and tablet devices, which was inadvertently removed in v6.0.
-* Fix: The reconnect link that would display when an account had an error would not successfully redirect to connect.smashballoon.com to reconnect the account.
+* Fix: Added back the ability to use up to 10 columns in feeds.
+* Fix: The reconnect link that would display when an account had an error would not redirect to connect.smashballoon.com.
 
 = 6.0.3 =
 * Tweak: Updated our logo throughout the plugin to match our new [website](https://smashballoon.com/).
