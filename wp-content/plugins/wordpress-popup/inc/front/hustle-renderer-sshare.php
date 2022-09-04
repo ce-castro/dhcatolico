@@ -341,7 +341,7 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 
 							} else {
 								$link = apply_filters( 'hustle_social_share_custom_link', $link, $data, $this->module );
-								$href_value = 'href="' . esc_url( $link ) . '" target="_blank"';
+								$href_value = 'href="' . esc_url( $link ) . '" target="_blank" rel="noopener"';
 							}
 
 							$link_type = 'custom';

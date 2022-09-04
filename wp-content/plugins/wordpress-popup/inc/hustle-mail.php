@@ -190,24 +190,12 @@ class Hustle_Mail {
 			return false;
 		}
 
-		$module = new Hustle_Module_Model();
-		$nonce  = $module->create_unsubscribe_nonce( $email, $modules_id );
-		if ( ! $nonce ) {
+		$email           = apply_filters( 'hustle_unsubscribe_email_recipient', $email, $modules_id, $referer );
+		$unsubscribe_url = self::get_unsubscribe_link( $email, $modules_id, $referer );
+		if ( ! $unsubscribe_url ) {
 			Opt_In_Utils::maybe_log( __METHOD__, 'There was an error getting the nonce.' );
 			return false;
 		}
-
-		$parsed_url      = wp_parse_url( $referer, PHP_URL_QUERY );
-		$concatenate     = empty( $parsed_url ) ? '?' : '&';
-		$email           = apply_filters( 'hustle_unsubscribe_email_recipient', $email, $modules_id, $referer );
-		$unsubscribe_url = apply_filters(
-			'hustle_unsubscribe_email_url',
-			$referer . $concatenate . 'token=' . $nonce . '&email=' . rawurlencode( $email ),
-			$email,
-			$modules_id,
-			$referer
-		);
-
 		$email_settings = Hustle_Settings_Admin::get_unsubscribe_email_settings();
 		$message        = str_replace( '{hustle_unsubscribe_link}', $unsubscribe_url, $email_settings['email_body'] );
 		$message        = apply_filters( 'hustle_unsubscribe_email_message', $message, $unsubscribe_url, $email, $modules_id, $referer );
@@ -216,6 +204,40 @@ class Hustle_Mail {
 		$sent          = $email_handler->process_mail();
 
 		return $sent;
+	}
+
+	/**
+	 * Get Unsubscribe link
+	 *
+	 * @param string $email Email.
+	 * @param array  $modules_id Module IDs unsubscribe from.
+	 * @param string $referer Unsubscription base URL.
+	 * @return string
+	 */
+	public static function get_unsubscribe_link( $email, $modules_id, $referer = '' ) {
+		if ( ! $referer ) {
+			$referer = get_option( 'hustle_unsubscribe_page' );
+		}
+		if ( ! $referer ) {
+			return '';
+		}
+		$module = new Hustle_Module_Model();
+		$nonce  = $module->create_unsubscribe_nonce( $email, $modules_id );
+		if ( ! $nonce ) {
+			return '';
+		}
+
+		$parsed_url      = wp_parse_url( $referer, PHP_URL_QUERY );
+		$concatenate     = empty( $parsed_url ) ? '?' : '&';
+		$unsubscribe_url = apply_filters(
+			'hustle_unsubscribe_email_url',
+			$referer . $concatenate . 'token=' . $nonce . '&email=' . rawurlencode( $email ),
+			$email,
+			$modules_id,
+			$referer
+		);
+
+		return $unsubscribe_url;
 	}
 
 	/**

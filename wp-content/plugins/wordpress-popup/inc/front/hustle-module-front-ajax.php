@@ -107,27 +107,25 @@ class Hustle_Module_Front_Ajax {
 		$is_scheduled = true;
 
 		// Check the schedule. Ssharing modules don't have schedules.
-		if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
-			$settings       = $module->get_settings();
-			$settings_array = $settings->to_array();
-			$check_schedule = ! empty( $settings_array['is_schedule'] ) && '1' === $settings_array['is_schedule'];
-			if ( $check_schedule && ! $settings->is_currently_scheduled() ) {
-				$is_scheduled = false;
-			}
+		if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type
+				&& ! $module->get_settings()->is_currently_scheduled() ) {
+			$is_scheduled = false;
+		}
+
+		if ( ! $is_scheduled ) {
+			wp_send_json_success( array( 'display' => false ) );
 		}
 
 		$avoid_static_cache = Opt_In_Utils::is_static_cache_enabled();
 		$passed_conditions  = true;
-		if ( $is_scheduled && $avoid_static_cache ) {
+		if ( $avoid_static_cache ) {
 			$sub_type         = filter_input( INPUT_POST, 'subType' );
 			$module->sub_type = $sub_type;
 			// Check visibility conditions.
 			$passed_conditions = $module->is_condition_allow();
 		}
 
-		$display = $is_scheduled && $passed_conditions;
-
-		wp_send_json_success( array( 'display' => $display ) );
+		wp_send_json_success( array( 'display' => $passed_conditions ) );
 	}
 
 	/**
@@ -145,14 +143,30 @@ class Hustle_Module_Front_Ajax {
 			return;
 		}
 
-		$to      = ! empty( $emails_settings['recipient'] ) ? $emails_settings['recipient'] : '';
-		$subject = ! empty( $emails_settings['email_subject'] ) ? $emails_settings['email_subject'] : '';
-		$body    = ! empty( $emails_settings['email_body'] ) ? $emails_settings['email_body'] : '';
+		$recipient     = ! empty( $emails_settings['recipient'] ) ? $emails_settings['recipient'] : '';
+		$email_subject = ! empty( $emails_settings['email_subject'] ) ? $emails_settings['email_subject'] : '';
+		$email_body    = ! empty( $emails_settings['email_body'] ) ? $emails_settings['email_body'] : '';
 
 		$data = filter_input( INPUT_POST, 'data', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 		parse_str( $data['form'], $form_data );
+
+		$to      = apply_filters( 'hustle_automated_email_recipient', $recipient, $module_id, $data, $form_data );
+		$subject = apply_filters( 'hustle_automated_email_email_subject', $email_subject, $module_id, $data, $form_data );
+		$body    = apply_filters( 'hustle_automated_email_email_body', $email_body, $module_id, $data, $form_data );
+
 		$to   = $this->maybe_replace_to_field( $to, $form_data );
 		$body = $this->replace_email_body_placeholders( $module_id, $body, $form_data );
+
+		// Replace {hustle_unsubscribe_link} placeholder.
+		if ( false !== strpos( $body, '{hustle_unsubscribe_link}' ) ) {
+			if ( ! empty( $form_data['hustle_module_id'] ) ) {
+				$modules_id      = array( $form_data['hustle_module_id'] );
+				$unsubscribe_url = Hustle_Mail::get_unsubscribe_link( $to, $modules_id );
+			} else {
+				$unsubscribe_url = '';
+			}
+			$body = str_replace( '{hustle_unsubscribe_link}', $unsubscribe_url, $body );
+		}
 
 		$subject = $this->replace_email_body_placeholders( $module_id, $subject, $form_data );
 

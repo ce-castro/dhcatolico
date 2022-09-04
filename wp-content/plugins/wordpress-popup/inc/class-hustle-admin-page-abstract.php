@@ -86,7 +86,7 @@ if ( ! class_exists( 'Hustle_Admin_Page_Abstract' ) ) :
 		 */
 		public function __construct() {
 
-			$this->current_page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
+			$this->current_page = filter_input( INPUT_GET, 'page' );
 
 			$this->init();
 
@@ -354,7 +354,7 @@ if ( ! class_exists( 'Hustle_Admin_Page_Abstract' ) ) :
 		 */
 		protected function export_module() {
 
-			$nonce = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
+			$nonce = filter_input( INPUT_POST, '_wpnonce' );
 			if ( ! wp_verify_nonce( $nonce, 'hustle_module_export' ) ) {
 				return;
 			}
@@ -495,7 +495,7 @@ if ( ! class_exists( 'Hustle_Admin_Page_Abstract' ) ) :
 		 * @return boolean|string
 		 */
 		protected function get_current_section( $default = false ) {
-			$section = filter_input( INPUT_GET, 'section', FILTER_SANITIZE_STRING );
+			$section = filter_input( INPUT_GET, 'section' );
 			return empty( $section ) ? $default : $section;
 		}
 
@@ -590,6 +590,27 @@ if ( ! class_exists( 'Hustle_Admin_Page_Abstract' ) ) :
 		 * @since 4.3.5
 		 */
 		protected function render_modals() {}
+
+		/**
+		 * Add wp color picker
+		 */
+		protected static function add_color_picker() {
+			// Deregister other similar pickers if they load from other plugins or theme.
+			wp_deregister_script( 'wp-color-picker-alpha' );
+
+			wp_register_script( 'wp-color-picker-alpha', Opt_In::$plugin_url . 'assets/js/vendor/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), '3.0.2', true );
+
+			$color_picker_strings = array(
+				'clear'            => __( 'Clear', 'hustle' ),
+				'clearAriaLabel'   => __( 'Clear color', 'hustle' ),
+				'defaultString'    => __( 'Default', 'hustle' ),
+				'defaultAriaLabel' => __( 'Select default color', 'hustle' ),
+				'pick'             => __( 'Select Color', 'hustle' ),
+				'defaultLabel'     => __( 'Color value', 'hustle' ),
+			);
+			wp_localize_script( 'wp-color-picker-alpha', 'wpColorPickerL10n', $color_picker_strings );
+			wp_enqueue_script( 'wp-color-picker-alpha' );
+		}
 	}
 
 endif;

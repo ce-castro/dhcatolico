@@ -48,18 +48,7 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 	 * @since 4.2.0
 	 */
 	public function enqueue_scripts() {
-		wp_register_script( 'wp-color-picker-alpha', Opt_In::$plugin_url . 'assets/js/vendor/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), '3.0.2', true );
-
-		$color_picker_strings = array(
-			'clear'            => __( 'Clear', 'hustle' ),
-			'clearAriaLabel'   => __( 'Clear color', 'hustle' ),
-			'defaultString'    => __( 'Default', 'hustle' ),
-			'defaultAriaLabel' => __( 'Select default color', 'hustle' ),
-			'pick'             => __( 'Select Color', 'hustle' ),
-			'defaultLabel'     => __( 'Color value', 'hustle' ),
-		);
-		wp_localize_script( 'wp-color-picker-alpha', 'wpColorPickerL10n', $color_picker_strings );
-		wp_enqueue_script( 'wp-color-picker-alpha' );
+		self::add_color_picker();
 	}
 
 	public function get_page_template_args() {
@@ -96,7 +85,7 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 
 		$current_array['palettes'] = Hustle_Palettes_Helper::get_all_palettes();
 
-		$saved_id = filter_input( INPUT_GET, 'saved-id', FILTER_SANITIZE_STRING );
+		$saved_id = filter_input( INPUT_GET, 'saved-id' );
 		if ( $saved_id ) {
 
 			$saved_palettes = Hustle_Palettes_Helper::get_all_palettes_slug_and_name();
@@ -108,7 +97,7 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 			}
 		}
 
-		$deleted_name = filter_input( INPUT_GET, 'deleted-name', FILTER_SANITIZE_STRING );
+		$deleted_name = filter_input( INPUT_GET, 'deleted-name' );
 		if ( $deleted_name ) {
 
 			$deleted_name = '<span style="color:#333;"><strong>' . $deleted_name . '</strong></span>';

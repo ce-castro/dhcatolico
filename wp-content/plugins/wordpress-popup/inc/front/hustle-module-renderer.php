@@ -1443,7 +1443,12 @@ class Hustle_Module_Renderer extends Hustle_Renderer_Abstract {
 				}
 
 				$class_input      = 'hustle-date';
-				$data_attributes .= 'data-min-date="null" data-rtl-support="false" data-format="' . $date_format . '"';
+				$change_year      = wp_json_encode( ! empty( $field['change_year'] ) );
+				$change_month     = wp_json_encode( ! empty( $field['change_month'] ) );
+				$min_year_range   = ! empty( $field['min_year_range'] ) ? $field['min_year_range'] : 'c-10';
+				$max_year_range   = ! empty( $field['max_year_range'] ) ? $field['max_year_range'] : 'c+10';
+				$year_range       = $min_year_range . ':' . $max_year_range;
+				$data_attributes .= 'data-min-date="null" data-rtl-support="false" data-change-year="' . $change_year . '" data-change-month="' . $change_month . '" data-year-range="' . $year_range . '" data-format="' . $date_format . '"';
 				break;
 
 			default:
@@ -1563,6 +1568,9 @@ class Hustle_Module_Renderer extends Hustle_Renderer_Abstract {
 				break;
 			case 'custom_value':
 				$value = $field['custom_value'];
+				break;
+			case 'query_parameter':
+				$value = $field['query_parameter'] ? (string) filter_input( INPUT_GET, $field['query_parameter'] ) : '';
 				break;
 
 			default:
@@ -1783,7 +1791,17 @@ class Hustle_Module_Renderer extends Hustle_Renderer_Abstract {
 			'class' => array(),
 		);
 		// Keep allowing scripts because users are using it.
-		$allowed_html['script'] = array();
+		$allowed_html['script'] = array(
+			'async'          => array(),
+			'crossorigin'    => array(),
+			'integrity'      => array(),
+			'referrerpolicy' => array(),
+			'nomodule'       => array(),
+			'src'            => array(),
+			'type'           => array(),
+			'defer'          => array(),
+			'charset'        => array(),
+		);
 
 		/**
 		 * Allows editing the allowed html tags for the modules' main content.
@@ -1792,7 +1810,7 @@ class Hustle_Module_Renderer extends Hustle_Renderer_Abstract {
 		 */
 		$allowed_html = apply_filters( 'hustle_module_main_content_allowed_html', $allowed_html, $this->module );
 
-		$content = wp_kses( $content->main_content, $allowed_html );
+		$content = wpautop( wp_kses( $content->main_content, $allowed_html ) );
 
 		/**
 		 * Allows editing the escaped main content before doing the shortcodes.

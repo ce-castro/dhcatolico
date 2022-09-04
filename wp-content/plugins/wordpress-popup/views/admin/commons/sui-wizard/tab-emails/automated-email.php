@@ -275,6 +275,11 @@ $options = array(
 						);
 						?>
 
+						<span class="sui-description">
+							<?php /* translators: %1$s - placeholder between 'strong' tags, %2$s - unsubscription shortcode */ ?>
+							<?php printf( esc_html__( 'If you include the %1$s placeholder, please be sure to add the %2$s shortcode to any post or page.', 'hustle' ), '<strong>{hustle_unsubscribe_link}</strong>', '[wd_hustle_unsubscribe id="" ]' ); ?>
+						</span>
+
 					</div>
 
 			</div>

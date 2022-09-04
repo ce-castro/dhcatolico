@@ -24,6 +24,13 @@ class Opt_In_Utils {
 	private static $admin_roles;
 
 	/**
+	 * Is static cache enabled
+	 *
+	 * @var boolean
+	 */
+	private static $static_cache;
+
+	/**
 	 * Returns the referrer.
 	 *
 	 * @return string
@@ -116,8 +123,8 @@ class Opt_In_Utils {
 			return '';
 		}
 
-		$host = filter_var( wp_unslash( $_SERVER['HTTP_HOST'] ), FILTER_SANITIZE_STRING );
-		$uri  = filter_var( wp_unslash( $_SERVER['REQUEST_URI'] ), FILTER_SANITIZE_STRING );
+		$host = filter_var( wp_unslash( $_SERVER['HTTP_HOST'] ) );
+		$uri  = filter_var( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 
 		$url = $host . $uri;
 
@@ -558,6 +565,11 @@ class Opt_In_Utils {
 	 */
 	public static function get_select2_data( $post_type, $include_ids = null ) {
 		$data = array();
+
+		if ( array() === $include_ids ) {
+			return $data;
+		}
+
 		$args = array(
 			'numberposts' => -1,
 			'post_type'   => $post_type,
@@ -1263,18 +1275,19 @@ class Opt_In_Utils {
 	 * @return boolean
 	 */
 	public static function is_static_cache_enabled() {
+		if ( ! is_null( self::$static_cache ) ) {
+			return self::$static_cache;
+		}
+
 		if ( defined( 'HUSTLE_STATIC_CACHE_ENABLED' ) ) {
-			return HUSTLE_STATIC_CACHE_ENABLED;
+			self::$static_cache = HUSTLE_STATIC_CACHE_ENABLED;
+		} elseif ( apply_filters( 'wp_hummingbird_is_active_module_page_cache', false ) ) {
+			self::$static_cache = true;
+		} else {
+			self::$static_cache = self::is_hub_cache();
 		}
 
-		$hummingbird_cache = apply_filters( 'wp_hummingbird_is_active_module_page_cache', false );
-		if ( $hummingbird_cache ) {
-			return true;
-		}
-
-		$hub_cache = self::is_hub_cache();
-
-		return $hub_cache;
+		return self::$static_cache;
 	}
 
 	/**

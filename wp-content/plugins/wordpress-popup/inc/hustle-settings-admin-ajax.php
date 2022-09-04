@@ -87,7 +87,7 @@ class Hustle_Settings_Admin_Ajax {
 		/**
 		 * From Tracking
 		 */
-		$range                = filter_input( INPUT_POST, 'range', FILTER_SANITIZE_STRING );
+		$range                = filter_input( INPUT_POST, 'range' );
 		$tracking             = Hustle_Tracking_Model::get_instance();
 		$hustle_entries_admin = new Hustle_Entry_Model();
 
@@ -97,7 +97,7 @@ class Hustle_Settings_Admin_Ajax {
 			$message = esc_html__( 'All IP addresses have been successfully deleted from the database.', 'hustle' );
 
 		} else {
-			$values = filter_input( INPUT_POST, 'ips', FILTER_SANITIZE_STRING );
+			$values = filter_input( INPUT_POST, 'ips' );
 			if ( ! empty( $values ) ) {
 				$values = preg_replace( '/ /', '', $values );
 				$r      = preg_split( '/[\r\n]/', $values );
@@ -143,21 +143,21 @@ class Hustle_Settings_Admin_Ajax {
 	public function save_privacy_settings() {
 
 		$filter_args = array(
-			'ip_tracking'                       => FILTER_SANITIZE_STRING,
+			'ip_tracking'                       => FILTER_DEFAULT,
 			// Account erasure request
-			'retain_sub_on_erasure'             => FILTER_SANITIZE_STRING,
+			'retain_sub_on_erasure'             => FILTER_DEFAULT,
 			// Submissions retention
-			'retain_submission_forever'         => FILTER_SANITIZE_STRING,
+			'retain_submission_forever'         => FILTER_DEFAULT,
 			'submissions_retention_number'      => FILTER_SANITIZE_NUMBER_INT,
-			'submissions_retention_number_unit' => FILTER_SANITIZE_STRING,
+			'submissions_retention_number_unit' => FILTER_DEFAULT,
 			// IPs retention
-			'retain_ip_forever'                 => FILTER_SANITIZE_STRING,
+			'retain_ip_forever'                 => FILTER_DEFAULT,
 			'ip_retention_number'               => FILTER_SANITIZE_NUMBER_INT,
-			'ip_retention_number_unit'          => FILTER_SANITIZE_STRING,
+			'ip_retention_number_unit'          => FILTER_DEFAULT,
 			// Tracking retention
-			'retain_tracking_forever'           => FILTER_SANITIZE_STRING,
+			'retain_tracking_forever'           => FILTER_DEFAULT,
 			'tracking_retention_number'         => FILTER_SANITIZE_NUMBER_INT,
-			'tracking_retention_number_unit'    => FILTER_SANITIZE_STRING,
+			'tracking_retention_number_unit'    => FILTER_DEFAULT,
 		);
 		$data        = filter_input_array( INPUT_POST, $filter_args, false );
 
@@ -176,8 +176,8 @@ class Hustle_Settings_Admin_Ajax {
 	 */
 	public function save_data_settings() {
 
-		$reset_settings_uninstall = filter_input( INPUT_POST, 'reset_settings_uninstall', FILTER_SANITIZE_STRING );
-		$reset_all_sites          = filter_input( INPUT_POST, 'reset_all_sites', FILTER_SANITIZE_STRING );
+		$reset_settings_uninstall = filter_input( INPUT_POST, 'reset_settings_uninstall' );
+		$reset_all_sites          = filter_input( INPUT_POST, 'reset_all_sites' );
 
 		$value = array(
 			'reset_settings_uninstall' => '1' === $reset_settings_uninstall ? '1' : '0',
@@ -196,7 +196,7 @@ class Hustle_Settings_Admin_Ajax {
 	 * @since 4.0.0
 	 */
 	private function save_top_metrics_settings() {
-		$data    = filter_input( INPUT_POST, 'metrics', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$data    = filter_input( INPUT_POST, 'metrics', FILTER_REQUIRE_ARRAY );
 		$metrics = ! empty( $data ) ? array_filter( $data ) : array();
 
 		// Only 3 metrics can be selected. No more.
@@ -254,7 +254,7 @@ class Hustle_Settings_Admin_Ajax {
 		);
 
 		foreach ( $settings_to_save as $key => $value ) {
-			$incoming_setting = filter_input( INPUT_POST, $key, FILTER_SANITIZE_STRING );
+			$incoming_setting = filter_input( INPUT_POST, $key );
 
 			if ( $incoming_setting ) {
 				$settings_to_save[ $key ] = trim( $incoming_setting );
@@ -367,7 +367,7 @@ class Hustle_Settings_Admin_Ajax {
 		Opt_In_Utils::validate_ajax_call( 'hustle_settings_save' );
 		Opt_In_Utils::is_user_allowed_ajax( 'hustle_edit_settings' );
 
-		$tab = filter_input( INPUT_POST, 'target', FILTER_SANITIZE_STRING );
+		$tab = filter_input( INPUT_POST, 'target' );
 
 		switch ( $tab ) {
 			case 'permissions':
@@ -430,11 +430,11 @@ class Hustle_Settings_Admin_Ajax {
 	private function save_permissions_settings() {
 
 		// Handle per module roles. We'll go with per permission next.
-		$current_modules_ids = filter_input( INPUT_POST, 'modules_ids', FILTER_SANITIZE_STRING );
+		$current_modules_ids = filter_input( INPUT_POST, 'modules_ids' );
 		$modules_ids         = empty( $current_modules_ids ) ? array() : explode( ',', $current_modules_ids );
 
 		if ( ! empty( $modules_ids ) ) {
-			$modules_roles = filter_input( INPUT_POST, 'modules', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+			$modules_roles = filter_input( INPUT_POST, 'modules', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 
 			foreach ( $modules_ids as $module_id ) {
 
@@ -449,7 +449,7 @@ class Hustle_Settings_Admin_Ajax {
 
 		// Handling per permissions roles here.
 		$filter         = array(
-			'filter' => FILTER_SANITIZE_STRING,
+			'filter' => FILTER_DEFAULT,
 			'flags'  => FILTER_REQUIRE_ARRAY,
 		);
 		$filter_options = array(
@@ -545,7 +545,7 @@ class Hustle_Settings_Admin_Ajax {
 		// Sanitize the incoming data.
 		foreach ( $stored_values as $key => $value ) {
 			if ( 'sender_email_address' !== $key ) {
-				$new_value = filter_input( INPUT_POST, $key, FILTER_SANITIZE_STRING );
+				$new_value = filter_input( INPUT_POST, $key );
 			} else {
 				$new_value = filter_input( INPUT_POST, $key, FILTER_VALIDATE_EMAIL );
 			}
@@ -571,7 +571,7 @@ class Hustle_Settings_Admin_Ajax {
 		$value  = Hustle_Settings_Admin::get_hustle_settings( 'analytics' );
 
 		// Handle enable/disable action.
-		$enable_toggled = filter_input( INPUT_POST, 'enabled', FILTER_SANITIZE_STRING );
+		$enable_toggled = filter_input( INPUT_POST, 'enabled' );
 		if ( false !== $enable_toggled && ! is_null( $enable_toggled ) ) {
 			$value['enabled'] = $enable_toggled;
 			$reload           = true;
@@ -581,14 +581,14 @@ class Hustle_Settings_Admin_Ajax {
 			// Handle storing the actual settings.
 			$filter_args   = array(
 				'modules' => array(
-					'filter' => FILTER_SANITIZE_STRING,
+					'filter' => FILTER_DEFAULT,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				),
 				'role'    => array(
-					'filter' => FILTER_SANITIZE_STRING,
+					'filter' => FILTER_DEFAULT,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				),
-				'title'   => FILTER_SANITIZE_STRING,
+				'title'   => FILTER_DEFAULT,
 			);
 			$filtered_data = filter_input_array( INPUT_POST, $filter_args );
 
@@ -656,8 +656,8 @@ class Hustle_Settings_Admin_Ajax {
 		Opt_In_Utils::validate_ajax_call( 'hustle_palette_action' );
 		Opt_In_Utils::is_user_allowed_ajax( 'hustle_edit_settings' );
 
-		$palette_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_STRING );
-		$action     = filter_input( INPUT_POST, 'hustleAction', FILTER_SANITIZE_STRING );
+		$palette_id = filter_input( INPUT_POST, 'id' );
+		$action     = filter_input( INPUT_POST, 'hustleAction' );
 
 		$args = array(
 			'page'    => Hustle_Data::SETTINGS_PAGE,
@@ -674,7 +674,7 @@ class Hustle_Settings_Admin_Ajax {
 				break;
 
 			case 'go-to-step':
-				$step = filter_input( INPUT_POST, 'step', FILTER_SANITIZE_STRING );
+				$step = filter_input( INPUT_POST, 'step' );
 
 				if ( '2' === $step ) {
 					$this->action_edit_palette_go_second_step();
@@ -703,11 +703,11 @@ class Hustle_Settings_Admin_Ajax {
 	 */
 	private function action_edit_palette_go_second_step() {
 
-		$palette_slug = filter_input( INPUT_POST, 'slug', FILTER_SANITIZE_STRING );
+		$palette_slug = filter_input( INPUT_POST, 'slug' );
 
 		if ( $palette_slug ) { // Editing an existing palette.
 
-			$palette_name          = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
+			$palette_name          = filter_input( INPUT_POST, 'name' );
 			$palette_array         = Hustle_Palettes_Helper::get_palette_array( $palette_slug );
 			$palette_array['slug'] = $palette_slug;
 			$palette_array['name'] = $palette_name;
@@ -717,20 +717,20 @@ class Hustle_Settings_Admin_Ajax {
 		} else { // Creating a new palette.
 
 			$callback    = 'actionGoToSecondStep';
-			$base_source = filter_input( INPUT_POST, 'base_source', FILTER_SANITIZE_STRING );
+			$base_source = filter_input( INPUT_POST, 'base_source' );
 
 			if ( 'palette' === $base_source ) {
 				// Use an existing palette as the base.
-				$palette       = filter_input( INPUT_POST, 'base_palette', FILTER_SANITIZE_STRING );
+				$palette       = filter_input( INPUT_POST, 'base_palette' );
 				$palette_array = Hustle_Palettes_Helper::get_palette_array( $palette );
 
 			} else {
 				// Use a module's palette as the base.
 
-				$fallback_palette_name = filter_input( INPUT_POST, 'fallback_palette', FILTER_SANITIZE_STRING );
+				$fallback_palette_name = filter_input( INPUT_POST, 'fallback_palette' );
 				$fallback_palette      = Hustle_Palettes_Helper::get_palette_array( $fallback_palette_name );
 
-				$module_id = filter_input( INPUT_POST, 'module_id', FILTER_SANITIZE_STRING );
+				$module_id = filter_input( INPUT_POST, 'module_id' );
 
 				$module = new Hustle_Module_Model( $module_id );
 
@@ -767,8 +767,8 @@ class Hustle_Settings_Admin_Ajax {
 	 */
 	private function action_edit_palette_save() {
 
-		$palette_slug = filter_input( INPUT_POST, 'slug', FILTER_SANITIZE_STRING );
-		$palette_name = filter_input( INPUT_POST, 'palette_name', FILTER_SANITIZE_STRING );
+		$palette_slug = filter_input( INPUT_POST, 'slug' );
+		$palette_name = filter_input( INPUT_POST, 'palette_name' );
 
 		// Remove non-palette data.
 		$palette_colors = array_intersect_key( $_POST, Hustle_Palettes_Helper::get_palette_array( 'gray_slate' ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification

@@ -7,6 +7,9 @@
 
 		let options = '';
 		$.each( hustleData.fields, function( name, label ) {
+			if ( 'hustle_unsubscribe_link' === name && 'email_body' !== editor.id ) {
+				return;
+			}
 			options += `<li><button value="{${name}}">${label}</button></li>`;
 		});
 

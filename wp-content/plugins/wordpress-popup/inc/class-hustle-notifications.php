@@ -62,6 +62,8 @@ class Hustle_Notifications {
 			require_once Opt_In::$plugin_path . 'lib/free-dashboard/module.php';
 		}
 
+		add_action( 'admin_init', array( $this, 'init_notices' ), 1 );
+
 		add_action( 'current_screen', array( $this, 'load_plugins_page_notices' ) );
 
 		$cap = is_multisite() ? 'manage_network_plugins' : 'update_plugins';
@@ -146,7 +148,7 @@ class Hustle_Notifications {
 	public function dismiss_notification() {
 
 		Opt_In_Utils::validate_ajax_call( 'hustle_dismiss_notification' );
-		$notification_name = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
+		$notification_name = filter_input( INPUT_POST, 'name' );
 
 		if ( Hustle_Dashboard_Admin::MIGRATE_NOTICE_NAME !== $notification_name ) {
 			self::add_dismissed_notification( $notification_name );
@@ -207,7 +209,7 @@ class Hustle_Notifications {
 			return false;
 		}
 
-		$page       = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
+		$page       = filter_input( INPUT_GET, 'page' );
 		$show_modal = filter_input( INPUT_GET, 'show-migrate', FILTER_VALIDATE_BOOLEAN );
 
 		if ( $show_modal || ( Hustle_Data::ADMIN_PAGE === $page && ! self::was_notification_dismissed( Hustle_Dashboard_Admin::MIGRATE_MODAL_NAME ) ) ) {
@@ -286,23 +288,43 @@ class Hustle_Notifications {
 	}
 
 	/**
+	 * Setup WPMUDEV Dashboard notifications.
+	 */
+	public function init_notices() {
+		if ( $this->is_free ) {
+			// Register the current plugin.
+			do_action(
+				'wpmudev_register_notices',
+				'hustle', // Plugin ID.
+				array(
+					'basename'     => plugin_basename( __FILE__ ), // Required: Plugin basename (for backward compat).
+					'title'        => 'Hustle', // Plugin title.
+					'wp_slug'      => 'wordpress-popup', // Plugin slug on wp.org .
+					'cta_email'    => __( 'Sign Me Up', 'hustle' ), // Email button CTA.
+					'mc_list_id'   => 'f68d9fbc51', // Mailchimp list id for the plugin.
+					'installed_on' => time(), // Plugin installed time (timestamp). Default to current time.
+					'screens'      => array( // Screen IDs of plugin pages.
+						'toplevel_page_hustle',
+						'hustle_page_hustle_popup_listing',
+						'hustle_page_hustle_slidein_listing',
+						'hustle_page_hustle_embedded_listing',
+						'hustle_page_hustle_sshare_listing',
+						'hustle_page_hustle_integrations',
+						'hustle_page_hustle_entries',
+						'hustle_page_hustle_settings',
+						'hustle_page_hustle_tutorials',
+					),
+				)
+			);
+		}
+	}
+
+	/**
 	 * Add the notices for the plugins page
 	 *
 	 * @since 4.2.0
 	 */
 	public function load_plugins_page_notices() {
-		if ( $this->is_free ) {
-			// Register the current plugin.
-			do_action(
-				'wdev-register-plugin', // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-				plugin_basename( __FILE__ ),             // 1. Plugin ID
-				'Hustle',                                // 2. Plugin Title
-				'/plugins/wordpress-popup/',             // 3. https://wordpress.org
-				__( 'Sign Me Up', 'hustle' ), // 4. Email Button CTA
-				'f68d9fbc51'                             // 5. Mailchimp List id
-			);
-		}
-
 		// Skip if the current page doesn't have 'current_screen' defined.
 		if ( ! function_exists( 'get_current_screen' ) ) {
 			return;

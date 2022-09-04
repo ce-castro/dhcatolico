@@ -514,9 +514,9 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 			return;
 		}
 
-		$action = filter_input( INPUT_POST, 'hustle_action', FILTER_SANITIZE_STRING );
+		$action = filter_input( INPUT_POST, 'hustle_action' );
 		if ( empty( $action ) ) {
-			$action = filter_input( INPUT_POST, 'hustle_action_bottom', FILTER_SANITIZE_STRING );
+			$action = filter_input( INPUT_POST, 'hustle_action_bottom' );
 		}
 
 		switch ( $action ) {
@@ -530,7 +530,7 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 				break;
 
 			case 'delete-all':
-				$entries = filter_input( INPUT_POST, 'ids', FILTER_SANITIZE_STRING );
+				$entries = filter_input( INPUT_POST, 'ids' );
 				if ( ! empty( $entries ) ) {
 					$entries = explode( ',', $entries );
 					Hustle_Entry_Model::delete_by_entries( $this->module_id, $entries );
@@ -1084,11 +1084,11 @@ class Hustle_Entries_Admin extends Hustle_Admin_Page_Abstract {
 	 */
 	private function export() {
 
-		$action = filter_input( INPUT_POST, 'hustle_action', FILTER_SANITIZE_STRING );
+		$action = filter_input( INPUT_POST, 'hustle_action' );
 		if ( 'export_listing' !== $action ) {
 			return;
 		}
-		$nonce = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
+		$nonce = filter_input( INPUT_POST, '_wpnonce' );
 		if ( ! wp_verify_nonce( $nonce, 'hustle_module_export_listing' ) ) {
 			return;
 		}

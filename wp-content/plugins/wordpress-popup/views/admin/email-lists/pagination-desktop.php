@@ -21,6 +21,7 @@ if ( is_array( $date_created ) && isset( $date_created[0] ) && isset( $date_crea
 
 $search_email = isset( $this->admin->filters['search_email'] ) ? $this->admin->filters['search_email'] : '';
 $order_by     = isset( $this->admin->order['order_by'] ) ? $this->admin->order['order_by'] : '';
+$order_filter = isset( $this->admin->order['order'] ) ? $this->admin->order['order'] : '';
 
 $order_by_array = array(
 	'entries.entry_id'     => esc_html__( 'Id', 'hustle' ),
@@ -114,7 +115,7 @@ if ( isset( $actions_class ) ) {
 
 				</div>
 
-				<div class="sui-col-md-6">
+				<div class="sui-col-md-3">
 
 					<div class="sui-form-field">
 						<label class="sui-label"><?php esc_html_e( 'Sort by', 'hustle' ); ?></label>
@@ -122,6 +123,18 @@ if ( isset( $actions_class ) ) {
 							<?php foreach ( $order_by_array as $key => $name ) { ?>
 								<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $order_by ); ?>><?php echo esc_html( $name ); ?></option>
 							<?php } ?>
+						</select>
+					</div>
+
+				</div>
+
+				<div class="sui-col-md-3">
+
+					<div class="sui-form-field">
+						<label class="sui-label"><?php esc_html_e( 'Sort Order', 'hustle' ); ?></label>
+						<select id="forminator-forms-filter--sort-order" name="order">
+							<option value="DESC" <?php selected( 'DESC', $order_filter ); ?>><?php esc_html_e( 'Descending', 'hustle' ); ?></option>
+							<option value="ASC" <?php selected( 'ASC', $order_filter ); ?>><?php esc_html_e( 'Ascending', 'hustle' ); ?></option>
 						</select>
 					</div>
 
@@ -168,10 +181,17 @@ if ( isset( $actions_class ) ) {
 	</div>
 
 	<?php
-	$get_order_by = filter_input( INPUT_GET, 'order_by', FILTER_SANITIZE_STRING );
+	$get_order_by = filter_input( INPUT_GET, 'order_by' );
 	$ordered      = ! is_null( $get_order_by ) && key_exists( $get_order_by, $order_by_array );
 
-	if ( $ordered || $search_email || $date_range ) {
+	$order_direction = filter_input( INPUT_GET, 'order' );
+	if ( 'DESC' === $order_direction ) {
+		$direction = __( 'Descending', 'forminator' );
+	} else {
+		$direction = __( 'Ascending', 'forminator' );
+	}
+
+	if ( $ordered || $search_email || $date_range || $order_direction ) {
 		?>
 
 		<div class="sui-pagination-filters-list">
@@ -190,6 +210,12 @@ if ( isset( $actions_class ) ) {
 					<span class="sui-active-filter">
 						<?php esc_html_e( 'Sort by:', 'hustle' ); ?> <?php echo esc_html( $order_by_array[ $get_order_by ] ); ?>
 					<span class="sui-active-filter-remove" data-filter="order_by" role="button"><span class="sui-screen-reader-text"><?php esc_html_e( 'Remove this filter', 'hustle' ); ?></span></span></span>
+				<?php } ?>
+
+				<?php if ( $order_direction ) { ?>
+					<span class="sui-active-filter">
+						<?php esc_html_e( 'Sort Order:', 'hustle' ); ?> <?php echo esc_html( $direction ); ?>
+					<span class="sui-active-filter-remove" data-filter="order" role="button"><span class="sui-screen-reader-text"><?php esc_html_e( 'Remove this filter', 'hustle' ); ?></span></span></span>
 				<?php } ?>
 
 				<?php if ( $date_range ) { ?>

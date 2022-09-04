@@ -112,6 +112,7 @@ return array(
     'Hustle_GHBlock_Embeds' => $baseDir . '/inc/providers/gutenberg/blocks/block-embeds.php',
     'Hustle_GHBlock_Popup_Trigger' => $baseDir . '/inc/providers/gutenberg/blocks/block-popup-trigger.php',
     'Hustle_GHBlock_Social_Share' => $baseDir . '/inc/providers/gutenberg/blocks/block-social-share.php',
+    'Hustle_GHBlock_Unsubscribe' => $baseDir . '/inc/providers/gutenberg/blocks/block-unsubscribe.php',
     'Hustle_GHBlock_slidein_Trigger' => $baseDir . '/inc/providers/gutenberg/blocks/block-slidein-trigger.php',
     'Hustle_General_Data_Protection' => $baseDir . '/inc/hustle-general-data-protection.php',
     'Hustle_Get_Response' => $baseDir . '/inc/providers/getresponse/hustle-get-response.php',

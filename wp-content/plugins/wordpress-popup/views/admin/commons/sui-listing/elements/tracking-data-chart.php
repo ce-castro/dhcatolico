@@ -60,12 +60,21 @@ if ( ! $module->active ) {
 	}
 }
 
+$last_conversion_text = __( 'Last Conversion', 'hustle' );
+$conversion_rate_text = __( 'Conversion Rate', 'hustle' );
+$conversion_text      = __( 'Conversions', 'hustle' );
+if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE === $module->module_type ) {
+	$last_conversion_text = __( 'Last Share', 'hustle' );
+	$conversion_rate_text = __( 'Share Rate', 'hustle' );
+	$conversion_text      = __( 'Shares', 'hustle' );
+}
+
 ?>
 
 <ul class="sui-accordion-item-data">
 
 	<li data-col="large">
-		<strong><?php esc_html_e( 'Last Conversion', 'hustle' ); ?></strong>
+		<strong><?php echo esc_html( $last_conversion_text ); ?></strong>
 		<span><?php echo esc_html( $last_entry_time ); ?></span>
 	</li>
 
@@ -75,12 +84,12 @@ if ( ! $module->active ) {
 	</li>
 
 	<li>
-		<strong><?php esc_html_e( 'Conversions', 'hustle' ); ?></strong>
+		<strong><?php echo esc_html( $conversion_text ); ?></strong>
 		<span class="hustle-tracking-<?php echo esc_attr( $chart_sub_type ); ?>-conversions-count"><?php echo esc_html( $total_module_conversions ); ?></span>
 	</li>
 
 	<li>
-		<strong><?php esc_html_e( 'Conversion Rate', 'hustle' ); ?></strong>
+		<strong><?php echo esc_html( $conversion_rate_text ); ?></strong>
 		<span class="hustle-tracking-<?php echo esc_attr( $chart_sub_type ); ?>-conversions-rate"><?php echo esc_html( $rate ); ?>%</span>
 	</li>
 

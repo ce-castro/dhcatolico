@@ -117,6 +117,7 @@ class ComposerStaticInitda98371940d11703c56dee923bbb392f
         'Hustle_GHBlock_Embeds' => __DIR__ . '/../..' . '/inc/providers/gutenberg/blocks/block-embeds.php',
         'Hustle_GHBlock_Popup_Trigger' => __DIR__ . '/../..' . '/inc/providers/gutenberg/blocks/block-popup-trigger.php',
         'Hustle_GHBlock_Social_Share' => __DIR__ . '/../..' . '/inc/providers/gutenberg/blocks/block-social-share.php',
+        'Hustle_GHBlock_Unsubscribe' => __DIR__ . '/../..' . '/inc/providers/gutenberg/blocks/block-unsubscribe.php',
         'Hustle_GHBlock_slidein_Trigger' => __DIR__ . '/../..' . '/inc/providers/gutenberg/blocks/block-slidein-trigger.php',
         'Hustle_General_Data_Protection' => __DIR__ . '/../..' . '/inc/hustle-general-data-protection.php',
         'Hustle_Get_Response' => __DIR__ . '/../..' . '/inc/providers/getresponse/hustle-get-response.php',

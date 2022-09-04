@@ -339,7 +339,7 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 */
 		public function process_external_redirect() {
 
-			$status   = filter_input( INPUT_GET, 'status', FILTER_SANITIZE_STRING );
+			$status   = filter_input( INPUT_GET, 'status' );
 			$response = array();
 
 			$api           = $this->api();

@@ -18,6 +18,14 @@ $content_class   = empty( $content_class ) ? '' : ' ' . $content_class;
 
 reset( $options );
 $first_tab = key( $options );
+
+$collapse_link = '<a class="hustle-expand-color-palettes" data-next-text="' . esc_attr__( 'Collapse all', 'hustle' ) . '">' . esc_attr__( 'Expand all', 'hustle' ) . '</a>'
+?>
+
+<?php
+if ( 'module_type' === $name ) {
+	echo $collapse_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
 ?>
 
 <div
@@ -150,6 +158,11 @@ $first_tab = key( $options );
 						aria-labelledby="tab-<?php echo esc_attr( $name ); ?>-<?php echo esc_attr( $key ); ?>"
 						<?php echo ( ! $radio_allowed && $key === $first_tab ) ? '' : 'hidden'; ?>
 					>
+						<?php
+						if ( 'customize_colors' === $name && 'custom' === $key ) {
+							echo $collapse_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						}
+						?>
 						<?php echo $option['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 

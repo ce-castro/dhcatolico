@@ -90,7 +90,7 @@ class Hustle_Addon_Aweber_Oauth2 {
 		}
 
 		$url = $this->_options( 'authorization_endpoint' );
-		$url = $url . '?' . http_build_query( $params, null, '&', \PHP_QUERY_RFC3986 );
+		$url = $url . '?' . http_build_query( $params, '', '&', \PHP_QUERY_RFC3986 );
 
 		return $url;
 

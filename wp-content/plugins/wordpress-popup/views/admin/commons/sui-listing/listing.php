@@ -28,6 +28,7 @@ if ( isset( $page_title ) ) {
 $sql_month_start_date = date( 'Y-m-d H:i:s', strtotime( '-30 days midnight' ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 $tracking_model       = Hustle_Tracking_Model::get_instance();
 $free_limit_reached   = Hustle_Data::was_free_limit_reached( $module_type );
+$is_search            = filter_input( INPUT_GET, 'q' );
 ?>
 
 <div class="sui-header">
@@ -101,7 +102,7 @@ $free_limit_reached   = Hustle_Data::was_free_limit_reached( $module_type );
 
 <div id="hustle-floating-notifications-wrapper" class="sui-floating-notices"></div>
 
-<?php if ( 0 < count( $modules ) ) { ?>
+<?php if ( 0 < count( $modules ) || $is_search ) { ?>
 
 	<?php
 	// ELEMENT: Summary.
@@ -111,6 +112,7 @@ $free_limit_reached   = Hustle_Data::was_free_limit_reached( $module_type );
 			'active_modules_count' => $active,
 			'capitalize_singular'  => $capitalize_singular,
 			'capitalize_plural'    => $capitalize_plural,
+			'module_type'          => $module_type,
 			'latest_entry_time'    => $tracking_model->get_latest_conversion_time( $module_type ),
 			'latest_entries_count' => $tracking_model->count_newer_conversions_by_module_type( $module_type, $sql_month_start_date ),
 			'sui'                  => $sui,
@@ -120,24 +122,23 @@ $free_limit_reached   = Hustle_Data::was_free_limit_reached( $module_type );
 
 	<?php
 	// ELEMENT: Pagination.
-	$this->render(
-		'admin/commons/sui-listing/elements/pagination',
-		array(
-			'module_type'      => $module_type,
-			'items'            => $modules,
-			'total'            => $total,
-			'entries_per_page' => $entries_per_page,
-		)
-	);
+	if ( count( $modules ) ) {
+		$this->render(
+			'admin/commons/sui-listing/elements/pagination',
+			array(
+				'module_type'      => $module_type,
+				'items'            => $modules,
+				'total'            => $total,
+				'entries_per_page' => $entries_per_page,
+			)
+		);
+	}
 	?>
 
 	<div class="hustle-list sui-accordion sui-accordion-block">
 
 		<?php
 		foreach ( $modules as $key => $module ) {
-			?>
-
-			<?php
 			// ELEMENT: Modules.
 			$this->render(
 				'admin/commons/sui-listing/elements/module',
@@ -149,15 +150,26 @@ $free_limit_reached   = Hustle_Data::was_free_limit_reached( $module_type );
 					'tracking_types'      => $module->get_tracking_types(),
 				)
 			);
-			?>
+		}
 
-		<?php } ?>
+		if ( ! count( $modules ) ) {
+			// ELEMENT: Empty Search Message.
+			$this->render(
+				'admin/commons/sui-listing/elements/empty-search',
+				array(
+					'capitalize_plural' => $capitalize_plural,
+					'search_keyword'    => $is_search,
+				)
+			);
+		}
+		?>
 
 	</div>
 
 	<?php
 	// ELEMENT: Pagination.
-	echo '<div style="margin-top: 20px;">'; // Spacing correction.
+	if ( count( $modules ) ) {
+		echo '<div style="margin-top: 20px;">'; // Spacing correction.
 
 		$this->render(
 			'admin/commons/sui-listing/elements/pagination',
@@ -170,7 +182,8 @@ $free_limit_reached   = Hustle_Data::was_free_limit_reached( $module_type );
 			)
 		);
 
-	echo '</div>';
+		echo '</div>';
+	}
 	?>
 
 <?php } else { ?>

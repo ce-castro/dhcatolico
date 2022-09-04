@@ -632,7 +632,7 @@ abstract class Hustle_Model {
 	 * @return null|array
 	 */
 	public function get_tracking_types() {
-		$this->_track_types = json_decode( $this->get_meta( self::TRACK_TYPES ), true );
+		$this->_track_types = json_decode( $this->get_meta( self::TRACK_TYPES, '{}' ), true );
 		return $this->_track_types;
 	}
 
@@ -1318,7 +1318,7 @@ abstract class Hustle_Model {
 		$thumb_id = attachment_url_to_postid( $image );
 		$text     = $thumb_id ? get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ) : '';
 
-		if ( $force_save ) {
+		if ( $force_save && $this->id ) {
 			$content = $this->get_content()->to_array();
 
 			$content['feature_image_alt'] = $text;

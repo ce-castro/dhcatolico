@@ -19,6 +19,7 @@ if ( is_array( $date_created ) && isset( $date_created[0] ) && isset( $date_crea
 }
 $search_email = isset( $this->admin->filters['search_email'] ) ? $this->admin->filters['search_email'] : '';
 $order_by     = isset( $this->admin->order['order_by'] ) ? $this->admin->order['order_by'] : '';
+$order_filter = isset( $this->admin->order['order'] ) ? $this->admin->order['order'] : '';
 
 $order_by_array = array(
 	'entries.entry_id'     => esc_html__( 'Id', 'hustle' ),
@@ -59,6 +60,18 @@ ob_start();
 		<?php foreach ( $order_by_array as $key => $name ) { ?>
 			<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $order_by ); ?>><?php echo esc_html( $name ); ?></option>
 		<?php } ?>
+	</select>
+
+</div>
+
+<?php // FIELD: Sort order. ?>
+<div class="sui-form-field">
+
+	<label for="hustle-dialog-filter--sortorder" class="sui-label"><?php esc_html_e( 'Sort Order', 'hustle' ); ?></label>
+
+	<select name="order" id="hustle-dialog-filter--sortorder" class="sui-select">
+		<option value="DESC" <?php selected( 'DESC', $order_filter ); ?>><?php esc_html_e( 'Descending', 'hustle' ); ?></option>
+		<option value="ASC" <?php selected( 'ASC', $order_filter ); ?>><?php esc_html_e( 'Ascending', 'hustle' ); ?></option>
 	</select>
 
 </div>
@@ -126,4 +139,3 @@ $attributes = array(
 );
 
 $this->render_modal( $attributes );
-?>

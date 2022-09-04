@@ -35,6 +35,10 @@ class Hustle_Module_Preview {
 
 		// With a priority of 20 to override possible WC's filter.
 		add_filter( 'show_admin_bar', '__return_false', 20 );
+
+		// Remove WordPress emoji - it generates JS error in Mozilla https://core.trac.wordpress.org/ticket/53529 .
+		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
 	}
 
 	/**

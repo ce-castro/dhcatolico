@@ -264,8 +264,8 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 			if ( $is_submit && ! $has_errors ) {
 				// Save additional data for submission's entry
 				if ( ! empty( $current_data[ $list_id ] ) ) {
-					$current_data[ $list_name ] = ! empty( $this->lists[ $current_data[ $list_id ] ]['label'] )
-						? $this->lists[ $current_data[ $list_id ] ]['label'] . ' (' . $current_data[ $list_id ] . ')' : $current_data[ $list_id ];
+					$current_data[ $list_name ] = ! empty( $this->lists[ $current_data[ $list_id ] ] )
+						? $this->lists[ $current_data[ $list_id ] ] . ' (' . $current_data[ $list_id ] . ')' : $current_data[ $list_id ];
 				}
 				$this->save_form_settings_values( $current_data );
 			}

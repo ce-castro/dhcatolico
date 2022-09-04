@@ -56,7 +56,7 @@ class Opt_In_Condition_On_Browser extends Opt_In_Condition_Abstract {
 		$browser = 'other';
 		if ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
 			$unlashed_agent = wp_unslash( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$user_agent     = filter_var( $unlashed_agent, FILTER_SANITIZE_STRING );
+			$user_agent     = filter_var( $unlashed_agent );
 		} else {
 			$user_agent = false;
 		}

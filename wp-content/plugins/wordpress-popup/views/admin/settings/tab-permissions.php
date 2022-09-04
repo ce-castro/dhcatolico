@@ -30,8 +30,8 @@ if ( 'permissions' !== $section ) {
 			array(
 				'roles'         => $roles,
 				'form_id'       => $form_id,
-				'label'         => __( 'Create Modules', 'hustle' ),
-				'description'   => __( 'Choose the user roles which can create new modules.', 'hustle' ),
+				'label'         => __( 'Create and Update Modules', 'hustle' ),
+				'description'   => __( 'Choose the user roles which can create new modules and update all modules.', 'hustle' ),
 				'input_name'    => 'create[]',
 				'current_value' => $settings['create'],
 			)

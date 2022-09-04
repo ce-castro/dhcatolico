@@ -221,7 +221,7 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 		$settings = $this->to_array();
 
 		// Schedule is deactivated. Show it right away.
-		if ( '0' === $settings['is_schedule'] ) {
+		if ( '1' !== $settings['is_schedule'] ) {
 
 			// Skip schedule check in next runs.
 			return array(

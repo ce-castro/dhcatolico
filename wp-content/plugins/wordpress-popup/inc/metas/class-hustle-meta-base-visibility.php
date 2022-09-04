@@ -60,6 +60,39 @@ class Hustle_Meta_Base_Visibility extends Hustle_Meta {
 	}
 
 	/**
+	 * Check if it contains only "simple" conditions.
+	 * Simple conditions means conditions which behavior is the same for the same page.
+	 * If so - we can allow to cache it for static cache.
+	 *
+	 * @param string $sub_type Sub type.
+	 * @return boolean
+	 */
+	public function is_simple_conditions( $sub_type ) {
+		$all_conditions = $this->get_conditions( $sub_type );
+
+		if ( empty( $all_conditions['conditions'] ) ) {
+			return true;
+		}
+		foreach ( $all_conditions['conditions'] as $conditions ) {
+			$complex_conditions = array_diff( array_keys( $conditions ), self::get_non_condition_properties(), self::simple_conditions() );
+			if ( $complex_conditions ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Return simple condition keys
+	 *
+	 * @return array
+	 */
+	private static function simple_conditions() {
+		return array( 'pages', 'posts', 'tags', 'categories', 'archive_pages', 'page_templates', 'on_url', 'wp_conditions', 'wc_pages', 'wc_categories', 'wc_tags', 'wc_archive_pages', 'wc_static_pages' );
+	}
+
+	/**
 	 * Checks if this module is allowed to be displayed
 	 *
 	 * @since unknwon
@@ -103,7 +136,7 @@ class Hustle_Meta_Base_Visibility extends Hustle_Meta {
 			foreach ( $conditions as $condition_key => $args ) {
 
 				// These are not conditions but group's properties we don't need to check here.
-				if ( in_array( $condition_key, array( 'group_id', 'filter_type', 'apply_on_inline', 'apply_on_widget', 'apply_on_shortcode', 'show_or_hide_conditions' ), true ) ) {
+				if ( in_array( $condition_key, self::get_non_condition_properties(), true ) ) {
 					continue;
 				}
 
@@ -151,6 +184,15 @@ class Hustle_Meta_Base_Visibility extends Hustle_Meta {
 		}
 
 		return $display;
+	}
+
+	/**
+	 * Get property keys which aren't related to conditions
+	 *
+	 * @return array
+	 */
+	private static function get_non_condition_properties() {
+		return array( 'group_id', 'filter_type', 'apply_on_inline', 'apply_on_widget', 'apply_on_shortcode', 'apply_on_floating', 'show_or_hide_conditions' );
 	}
 
 	/**

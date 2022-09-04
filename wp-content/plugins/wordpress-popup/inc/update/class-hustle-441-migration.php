@@ -50,7 +50,7 @@ class Hustle_441_Migration {
 		// Bail out if the migration is being forced but it's not 4.4.1.
 		if (
 			filter_input( INPUT_GET, 'run-migration', FILTER_VALIDATE_INT ) &&
-			self::MIGRATION_FLAG !== filter_input( INPUT_GET, 'run-migration', FILTER_SANITIZE_STRING )
+			self::MIGRATION_FLAG !== filter_input( INPUT_GET, 'run-migration' )
 		) {
 			return false;
 		}

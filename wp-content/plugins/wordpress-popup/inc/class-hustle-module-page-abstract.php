@@ -266,18 +266,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 		wp_enqueue_script( 'jquery-ui-sortable' );
 
-		wp_register_script( 'wp-color-picker-alpha', Opt_In::$plugin_url . 'assets/js/vendor/wp-color-picker-alpha.min.js', array( 'wp-color-picker' ), '3.0.2', true );
-
-		$color_picker_strings = array(
-			'clear'            => __( 'Clear', 'hustle' ),
-			'clearAriaLabel'   => __( 'Clear color', 'hustle' ),
-			'defaultString'    => __( 'Default', 'hustle' ),
-			'defaultAriaLabel' => __( 'Select default color', 'hustle' ),
-			'pick'             => __( 'Select Color', 'hustle' ),
-			'defaultLabel'     => __( 'Color value', 'hustle' ),
-		);
-		wp_localize_script( 'wp-color-picker-alpha', 'wpColorPickerL10n', $color_picker_strings );
-		wp_enqueue_script( 'wp-color-picker-alpha' );
+		self::add_color_picker();
 	}
 
 	/**
@@ -290,7 +279,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 		wp_enqueue_script(
 			'chartjs',
-			Opt_In::$plugin_url . 'assets/js/vendor/chartjs/Chart.bundle.min.js',
+			Opt_In::$plugin_url . 'assets/js/vendor/chartjs/chart.min.js',
 			array(),
 			'2.7.2',
 			true
@@ -393,6 +382,9 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 				}
 			}
 
+			// Add Unsubscribe Link.
+			$fields['hustle_unsubscribe_link'] = __( 'Unsubscribe Link', 'hustle' );
+
 			$available_editors = array( 'success_message', 'email_body' );
 
 			/**
@@ -458,13 +450,20 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		// Don't use filter_input() here, because of see Hustle_Module_Admin::maybe_remove_paged function.
 		$paged = ! empty( $_GET['paged'] ) ? (int) $_GET['paged'] : 1; // phpcs:ignore
 
+		$args = array(
+			'module_type' => $this->module_type,
+			'page'        => $paged,
+			'filter'      => array( 'can_edit' => true ),
+		);
+
+		$search = filter_input( INPUT_GET, 'q' );
+		if ( $search ) {
+			$args['filter']['q'] = $search;
+		}
+
 		$modules = Hustle_Module_Collection::instance()->get_all(
 			null,
-			array(
-				'module_type' => $this->module_type,
-				'page'        => $paged,
-				'filter'      => array( 'can_edit' => true ),
-			),
+			$args,
 			$entries_per_page
 		);
 
@@ -483,7 +482,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			'is_free'          => Opt_In_Utils::_is_free(),
 			'capability'       => $capability,
 			'entries_per_page' => $entries_per_page,
-			'message'          => filter_input( INPUT_GET, 'message', FILTER_SANITIZE_STRING ),
+			'message'          => filter_input( INPUT_GET, 'message' ),
 			'sui'              => $this->get_sui_summary_config( 'sui-summary-sm' ),
 		);
 	}
@@ -599,7 +598,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 			$current_array['labels'] = array(
 				/* translators: number of conversions */
-				'submissions' => __( '%d Conversions', 'hustle' ),
+				'submissions' => Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $this->module_type ? __( '%d Conversions', 'hustle' ) : __( '%d Shares', 'hustle' ),
 				/* translators: number of views */
 				'views'       => __( '%d Views', 'hustle' ),
 			);
@@ -1146,12 +1145,17 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	private function get_total_count_modules_current_type() {
 
 		if ( is_null( $this->module_count_type ) ) {
+			$args   = array(
+				'module_type' => $this->module_type,
+				'count_only'  => true,
+			);
+			$search = filter_input( INPUT_GET, 'q' );
+			if ( $search ) {
+				$args['filter']['q'] = $search;
+			}
 			$this->module_count_type = Hustle_Module_Collection::instance()->get_all(
 				null,
-				array(
-					'module_type' => $this->module_type,
-					'count_only'  => true,
-				)
+				$args
 			);
 		}
 		return $this->module_count_type;

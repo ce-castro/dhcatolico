@@ -28,6 +28,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @param mixed $offset Passed offset.
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return isset( $this->providers[ $offset ] );
 	}
@@ -39,6 +40,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @param mixed $offset Passed offset.
 	 * @return Hustle_Provider_Abstract|mixed|null
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		if ( isset( $this->providers[ $offset ] ) ) {
 			return $this->providers[ $offset ];
@@ -54,6 +56,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @param mixed $offset Passed offset.
 	 * @param mixed $value Passed value.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		$this->providers[ $offset ] = $value;
 	}
@@ -64,6 +67,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @since 3.0.5
 	 * @param mixed $offset Passed offset.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		unset( $this->providers[ $offset ] );
 	}
@@ -75,6 +79,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @since 3.0.5
 	 * @return int The custom count as an integer.
 	 */
+	#[\ReturnTypeWillChange]
 	public function count() {
 		return count( $this->providers );
 	}
@@ -154,6 +159,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return mixed Can return any type.
 	 * @since 4.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 		return current( $this->providers );
 	}
@@ -165,6 +171,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return void Any returned value is ignored.
 	 * @since 4.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 		next( $this->providers );
 	}
@@ -176,6 +183,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return mixed scalar on success, or null on failure.
 	 * @since 4.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 		return key( $this->providers );
 	}
@@ -188,6 +196,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * Returns true on success or false on failure.
 	 * @since 4.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 		return key( $this->providers ) !== null;
 	}
@@ -199,6 +208,7 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return void Any returned value is ignored.
 	 * @since 4.0
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 		reset( $this->providers );
 	}

@@ -129,6 +129,96 @@ $this->render_modal( $attributes );
 
 </script>
 
+<script id="hustle-before-datepicker-field-settings-tpl" type="text/template">
+	<div class="sui-box-settings-row">
+		<div class="sui-form-field" style="width: 100%">
+
+			<label class="sui-settings-label"><?php esc_html_e( 'Allow month change', 'hustle' ); ?></label>
+			<span class="sui-description"><?php esc_html_e( 'Add a selectbox to change the month.', 'hustle' ); ?></span>
+
+			<div class="sui-side-tabs" style="margin-top: 10px;">
+
+				<div class="sui-tabs-menu">
+
+					<label class="sui-tab-item">
+						<input type="radio" name="change_month" value="true" data-attribute="change_month" {{ _.checked( 'true', change_month ) }}>
+						<?php esc_html_e( 'Yes', 'hustle' ); ?></label>
+
+					<label class="sui-tab-item">
+						<input type="radio" name="change_month" value="false" data-attribute="change_month" {{ _.checked( 'false', change_month ) }}>
+						<?php esc_html_e( 'No', 'hustle' ); ?></label>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="sui-box-settings-row">
+		<div class="sui-form-field" style="width: 100%">
+
+			<label class="sui-settings-label"><?php esc_html_e( 'Allow year change', 'hustle' ); ?></label>
+			<span class="sui-description"><?php esc_html_e( 'Add a selectbox to change the year.', 'hustle' ); ?></span>
+
+			<div class="sui-side-tabs" style="margin-top: 10px;">
+
+				<div class="sui-tabs-menu">
+
+					<label class="sui-tab-item">
+						<input type="radio" name="change_year" value="true" data-attribute="change_year" {{ _.checked( 'true', change_year ) }} data-tab-menu="change_year">
+						<?php esc_html_e( 'Yes', 'hustle' ); ?></label>
+
+					<label class="sui-tab-item">
+						<input type="radio" name="change_year" value="false" data-attribute="change_year" {{ _.checked( 'false', change_year ) }} >
+						<?php esc_html_e( 'No', 'hustle' ); ?></label>
+
+				</div>
+
+				<div class="sui-tabs-content">
+
+					<div class="sui-tab-boxed{{ 'true' === change_year ? ' active' : '' }}" data-tab-content="change_year">
+						<div class="sui-row">
+							<div class="sui-col-md-6">
+								<div class="sui-form-field">
+
+									<label class="sui-label"><?php esc_html_e( 'Select min year', 'hustle' ); ?></label>
+
+									<input type="number"
+										name="min_year_range"
+										placeholder="1900"
+										data-attribute="min_year_range"
+										value="{{ min_year_range }}"
+										class="sui-form-control" />
+
+								</div>
+							</div>
+							<div class="sui-col-md-6">
+								<div class="sui-form-field">
+
+									<label class="sui-label"><?php esc_html_e( 'Select max year', 'hustle' ); ?></label>
+
+									<input type="number"
+										name="max_year_range"
+										placeholder="2100"
+										data-attribute="max_year_range"
+										value="{{ max_year_range }}"
+										class="sui-form-control" />
+
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</script>
+
 <script id="hustle-common-field-settings-tpl" type="text/template">
 
 	<?php // TAB: Settings. ?>
@@ -1013,7 +1103,7 @@ $this->render_modal( $attributes );
 
 	</div>
 
-	<div class="sui-row">
+	<div class="sui-row" style="margin-bottom: 30px;">
 
 		<div class="sui-col-md-6">
 
@@ -1024,8 +1114,8 @@ $this->render_modal( $attributes );
 				<select
 					name="default_value"
 					id="hustle-field-hidden--default"
-					class="sui-select"
-					data-content-on="custom_value"
+					class="sui-select hustle-select-with-container"
+					data-content-on="custom_value,query_parameter"
 					aria-labelledby="hustle-field-hidden--default-label"
 				>
 					<option value="user_ip" {{ _.selected( 'user_ip' === default_value, true ) }}><?php esc_html_e( 'User IP Address', 'hustle' ); ?></option>
@@ -1041,6 +1131,7 @@ $this->render_modal( $attributes );
 					<option value="user_email" {{ _.selected( 'user_email' === default_value, true ) }}><?php esc_html_e( 'User Email', 'hustle' ); ?></option>
 					<option value="user_login" {{ _.selected( 'user_login' === default_value, true ) }}><?php esc_html_e( 'User Login', 'hustle' ); ?></option>
 					<option value="custom_value" {{ _.selected( 'custom_value' === default_value, true ) }}><?php esc_html_e( 'Custom Value', 'hustle' ); ?></option>
+					<option value="query_parameter" {{ _.selected( 'query_parameter' === default_value, true ) }}><?php esc_html_e( 'Query Parameter', 'hustle' ); ?></option>
 				</select>
 
 			</div>
@@ -1049,7 +1140,7 @@ $this->render_modal( $attributes );
 
 		<div class="sui-col-md-6">
 
-			<div class="sui-form-field" data-field-content="default_value">
+			<div class="sui-form-field" data-field-content="default_value" data-field-content-value="custom_value" style="margin-bottom: 0;">
 
 				<label for="hustle-field-hidden--custom" id="hustle-field-hidden--custom-label" class="sui-label"><?php esc_html_e( 'Custom Value', 'hustle' ); ?></label>
 
@@ -1061,6 +1152,22 @@ $this->render_modal( $attributes );
 					id="hustle-field-hidden--custom"
 					class="sui-form-control"
 					aria-labelledby="hustle-field-hidden--custom-label"
+				/>
+
+			</div>
+
+			<div class="sui-form-field" data-field-content="default_value" data-field-content-value="query_parameter">
+
+				<label for="hustle-field-hidden--query" id="hustle-field-hidden--query-label" class="sui-label"><?php esc_html_e( 'Query parameter', 'hustle' ); ?></label>
+
+				<input
+					type="text"
+					name="query_parameter"
+					value="{{ query_parameter }}"
+					placeholder="<?php esc_html_e( 'E.g. query_parameter_key', 'hustle' ); ?>"
+					id="hustle-field-hidden--query"
+					class="sui-form-control"
+					aria-labelledby="hustle-field-hidden--query-label"
 				/>
 
 			</div>

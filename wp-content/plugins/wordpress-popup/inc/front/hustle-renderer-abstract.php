@@ -69,8 +69,15 @@ abstract class Hustle_Renderer_Abstract {
 
 		self::$is_preview = $is_preview;
 
-		$avoid_static_cache = Opt_In_Utils::is_static_cache_enabled();
-		if ( $avoid_static_cache ) {
+		$avoid_static_cache    = Opt_In_Utils::is_static_cache_enabled();
+		$has_schedule_settings = ! empty( $this->module->settings->is_schedule ) && '1' === $this->module->settings->is_schedule;
+		if ( $avoid_static_cache && ! $has_schedule_settings ) {
+			$is_simple_conditions = $this->module->get_visibility()->is_simple_conditions( $module->module_type, $sub_type );
+			if ( $is_simple_conditions ) {
+				$custom_classes .= ' hustle-show-this-module';
+			}
+		}
+		if ( $avoid_static_cache && empty( $is_simple_conditions ) ) {
 			$display_module = $this->module->active;
 		} else {
 			$display_module = $this->module->active && $this->module->get_visibility()->is_allowed_to_display( $module->module_type, $sub_type );

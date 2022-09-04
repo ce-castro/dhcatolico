@@ -84,7 +84,7 @@ class Hustle_Wp_Dashboard_Page {
 
 		wp_enqueue_script(
 			'chartjs',
-			Opt_In::$plugin_url . 'assets/js/vendor/chartjs/Chart.bundle.min.js',
+			Opt_In::$plugin_url . 'assets/js/vendor/chartjs/chart.min.js',
 			array(),
 			'2.7.2',
 			true
@@ -101,7 +101,7 @@ class Hustle_Wp_Dashboard_Page {
 		// Days labels for the chart.
 		for ( $h = 89; $h >= 0; $h-- ) {
 			$time         = strtotime( '-' . $h . ' days' );
-			$days_array[] = strftime( '%B %d', $time );
+			$days_array[] = gmdate( 'F d', $time );
 		}
 
 		// These are the labels for the different tracking types.
@@ -199,7 +199,7 @@ class Hustle_Wp_Dashboard_Page {
 		Opt_In_Utils::validate_ajax_call( 'hustle_update_wp_dashboard_chart' );
 
 		$days_range    = filter_input( INPUT_POST, 'days', FILTER_VALIDATE_INT );
-		$tracking_type = filter_input( INPUT_POST, 'trackingType', FILTER_SANITIZE_STRING );
+		$tracking_type = filter_input( INPUT_POST, 'trackingType' );
 		$delete_cache  = filter_input( INPUT_POST, 'delete_cache', FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
 
 		$module_types_to_display = $this->settings['modules'];

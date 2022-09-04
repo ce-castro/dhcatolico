@@ -1149,7 +1149,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 			maxlength="3"
 			value="{{ from_date }}"
 			id="{{ groupId }}-shown_from_date"
-			class="sui-form-control sui-input-sm sui-field-has-suffix"
+			class="sui-form-control sui-input-sm sui-field-has-suffix hustle-shown-from-date"
 			data-attribute="from_date"
 		/>
 		<span class="sui-field-suffix" aria-hidden="true"><?php echo esc_html( $days_past ); ?></span>
@@ -1166,7 +1166,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 			maxlength="3"
 			value="{{ to_date }}"
 			id="{{ groupId }}-shown_to_date"
-			class="sui-form-control sui-input-sm sui-field-has-suffix"
+			class="sui-form-control sui-input-sm sui-field-has-suffix hustle-shown-to-date"
 			data-attribute="to_date"
 		/>
 		<span class="sui-field-suffix" aria-hidden="true"><?php echo esc_html( $days_past ); ?></span>

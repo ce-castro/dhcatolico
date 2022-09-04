@@ -68,17 +68,17 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 	private function grab_integration_external_redirect() {
 
 		$response  = array();
-		$action    = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+		$action    = filter_input( INPUT_GET, 'action' );
 		$migration = filter_input( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
 
 		// handle migration elsewhere
 		if ( 'external-redirect' === $action && true !== $migration ) {
 
-			$nonce = filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
+			$nonce = filter_input( INPUT_GET, 'nonce' );
 
 			if ( $nonce && wp_verify_nonce( $nonce, 'hustle_provider_external_redirect' ) ) {
 
-				$slug = filter_input( INPUT_GET, 'slug', FILTER_SANITIZE_STRING );
+				$slug = filter_input( INPUT_GET, 'slug' );
 
 				$provider = Hustle_Provider_Utils::get_provider_by_slug( $slug );
 
@@ -113,10 +113,10 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 	private function grab_integration_external_redirect_migration() {
 
 		$response  = array();
-		$action    = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+		$action    = filter_input( INPUT_GET, 'action' );
 		$migration = filter_input( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
-		$provider  = filter_input( INPUT_GET, 'show_provider_migration', FILTER_SANITIZE_STRING );
-		$multiID   = filter_input( INPUT_GET, 'integration_id', FILTER_SANITIZE_STRING );
+		$provider  = filter_input( INPUT_GET, 'show_provider_migration' );
+		$multiID   = filter_input( INPUT_GET, 'integration_id' );
 
 		if ( isset( $provider ) && ! empty( $provider ) ) {
 			$response['provider_modal'] = $provider;
@@ -128,11 +128,11 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 
 		if ( 'external-redirect' === $action && true === $migration ) {
 
-			$nonce = filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING );
+			$nonce = filter_input( INPUT_GET, 'nonce' );
 
 			if ( $nonce && wp_verify_nonce( $nonce, 'hustle_provider_external_redirect' ) ) {
 
-				$slug = filter_input( INPUT_GET, 'slug', FILTER_SANITIZE_STRING );
+				$slug = filter_input( INPUT_GET, 'slug' );
 
 				$response['migration_notificaiton'] = array(
 					'action' => 'notification',

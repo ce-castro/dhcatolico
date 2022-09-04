@@ -37,6 +37,9 @@ class Hustle_Module_Front {
 		add_action( 'hustle_send_email', array( 'Hustle_Mail', 'send_email' ), 10, 3 );
 		add_action( 'hustle_aweber_token_refresh', array( 'Hustle_Aweber', 'refresh_token' ) );
 
+		// Used for Gutenberg.
+		add_action( 'wp_ajax_hustle_render_unsubscribe_form', array( $this, 'get_unsubscribe_form' ) );
+
 		$is_preview = filter_input( INPUT_GET, 'hustle_preview', FILTER_VALIDATE_BOOLEAN ) && Opt_In_Utils::is_user_allowed( 'hustle_edit_module' );
 
 		// Don't render Hustle's widgets and shortcodes on preview mode.
@@ -71,6 +74,8 @@ class Hustle_Module_Front {
 		} else {
 			new Hustle_Module_Preview();
 		}
+
+		add_action( 'post_updated', array( __CLASS__, 'maybe_unsubscribe_page' ), 10, 3 );
 	}
 
 	private function prepare_for_front() {
@@ -271,6 +276,7 @@ class Hustle_Module_Front {
 				'months_full'  => Hustle_Time_Helper::get_months(),
 				'months_short' => Hustle_Time_Helper::get_months( 'short' ),
 			);
+			wp_enqueue_script( 'jquery-ui-datepicker' );
 		}
 		wp_localize_script( 'hustle_front', 'incOpt', $vars );
 
@@ -292,7 +298,7 @@ class Hustle_Module_Front {
 			$this->add_recaptcha_script( $modules_deps['recaptcha']['language'] );
 		}
 
-		// Queue Pinteres if reuqired.
+		// Queue Pinteres if required.
 		if ( ! empty( $modules_deps['pinterest'] ) ) {
 			wp_enqueue_script(
 				'hustle_sshare_pinterest',
@@ -316,10 +322,6 @@ class Hustle_Module_Front {
 	 * @since 4.0
 	 */
 	public static function add_hui_scripts() {
-
-		wp_enqueue_script( 'jquery-ui-core' );
-		wp_enqueue_script( 'jquery-ui-datepicker' );
-
 		// Register Hustle UI functions.
 		wp_register_script(
 			'hui_scripts',
@@ -624,6 +626,11 @@ class Hustle_Module_Front {
 
 			// Setting up stuff for all modules except social sharing.
 			if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
+				$settings = $module->get_settings();
+				// Check the schedule. Ssharing modules don't have schedules.
+				if ( ! $avoid_static_cache && ! $settings->is_currently_scheduled() ) {
+					continue;
+				}
 				$module->load();
 
 				// Skip if Google fonts were deativated via hook.
@@ -680,7 +687,7 @@ class Hustle_Module_Front {
 
 					if ( ! $enqueue_adblock ) {
 
-						$settings = $module->get_settings()->to_array();
+						$settings = $settings->to_array();
 
 						// If trigger is adblock.
 						if ( in_array( 'adblock', $settings['triggers']['trigger'], true ) ) {
@@ -845,8 +852,31 @@ class Hustle_Module_Front {
 
 		$renderer = new Hustle_Layout_Helper();
 		$html     = $renderer->render( 'general/unsubscribe-form', $params, true );
-		apply_filters( 'hustle_render_unsubscribe_form_html', $html, $params );
+		$html     = apply_filters( 'hustle_render_unsubscribe_form_html', $html, $params );
 		return $html;
+	}
+
+	/**
+	 * Get unsubscribe form.
+	 */
+	public function get_unsubscribe_form() {
+		Opt_In_Utils::validate_ajax_call( 'hustle_gutenberg_get_unsubscribe_form' );
+
+		$atts = array();
+		$ids  = filter_input( INPUT_GET, 'module_ids' );
+		$skip = filter_input( INPUT_GET, 'skip_confirmation', FILTER_VALIDATE_BOOLEAN );
+
+		if ( $ids ) {
+			$atts['id'] = $ids;
+		}
+
+		if ( $skip ) {
+			$atts['skip_confirmation'] = true;
+		}
+
+		$html = $this->unsubscribe_shortcode( $atts );
+
+		wp_send_json_success( $html );
 	}
 
 	/**
@@ -1011,5 +1041,24 @@ class Hustle_Module_Front {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * If new post content includes unsubscribe shortcode - safe the post URL.
+	 *
+	 * @param int     $post_ID Post ID.
+	 * @param WP_Post $post_after Post object following the update.
+	 * @param WP_Post $post_before Post object before the update.
+	 * @return null|void
+	 */
+	public static function maybe_unsubscribe_page( $post_ID, $post_after, $post_before ) {
+		if ( ! strpos( $post_after->post_content, 'wd_hustle_unsubscribe' ) ) {
+			return;
+		}
+
+		$post_url = get_permalink( $post_after );
+		if ( $post_url ) {
+			update_option( 'hustle_unsubscribe_page', $post_url );
+		}
 	}
 }

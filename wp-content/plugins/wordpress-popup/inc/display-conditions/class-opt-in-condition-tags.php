@@ -62,7 +62,9 @@ class Opt_In_Condition_Tags extends Opt_In_Condition_Abstract {
 	 */
 	private function get_current_tags() {
 		global $post;
-		if ( ! isset( $post ) || ! ( $post instanceof WP_Post ) || 'post' !== $post->post_type || ! self::check( 'is_single' ) ) {
+		if ( ! isset( $post ) || ! ( $post instanceof WP_Post )
+				|| ! in_array( $post->post_type, array( 'page', 'post' ), true )
+				|| ! self::check( 'is_singular' ) ) {
 			return null;
 		}
 

@@ -259,7 +259,7 @@ if ( ! class_exists( 'Hustle_Module_Admin' ) ) :
 		 * @return bool
 		 */
 		private function is_hustle_page() {
-			$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
+			$page = filter_input( INPUT_GET, 'page' );
 			return in_array( $page, Hustle_Data::get_hustle_pages(), true );
 		}
 

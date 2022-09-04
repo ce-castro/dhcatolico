@@ -111,8 +111,8 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 			$error_array = array( 'message' => __( 'Something went wrong while creating your pop-up. Please try again.', 'hustle' ) );
 
 			try {
-				$module_type = filter_input( INPUT_POST, 'module_type', FILTER_SANITIZE_STRING );
-				$module_name = filter_input( INPUT_POST, 'module_name', FILTER_SANITIZE_STRING );
+				$module_type = filter_input( INPUT_POST, 'module_type' );
+				$module_name = filter_input( INPUT_POST, 'module_name' );
 
 				if ( empty( $module_type ) || empty( $module_name ) ) {
 					$error_array['message'] = __( 'The module name or module type is missing. Please make sure you added a name for the module.' );
@@ -138,12 +138,12 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 				);
 
 				if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ) {
-					$module_mode = filter_input( INPUT_POST, 'module_mode', FILTER_SANITIZE_STRING );
+					$module_mode = filter_input( INPUT_POST, 'module_mode' );
 					$module_mode = Hustle_Module_Model::OPTIN_MODE === $module_mode ? Hustle_Module_Model::OPTIN_MODE : Hustle_Module_Model::INFORMATIONAL_MODE;
 
 					$module_data['module_mode'] = $module_mode;
 
-					$template = filter_input( INPUT_POST, 'module_template', FILTER_SANITIZE_STRING );
+					$template = filter_input( INPUT_POST, 'module_template' );
 
 					$module_data['base_template'] = $template;
 
@@ -212,9 +212,9 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 
 			Opt_In_Utils::validate_ajax_call( 'hustle_single_action' );
 
-			$module_id = filter_input( INPUT_POST, 'moduleId', FILTER_SANITIZE_STRING );
+			$module_id = filter_input( INPUT_POST, 'moduleId' );
 			$module    = Hustle_Model::get_module( $module_id );
-			$action    = filter_input( INPUT_POST, 'hustleAction', FILTER_SANITIZE_STRING );
+			$action    = filter_input( INPUT_POST, 'hustleAction' );
 
 			try {
 
@@ -223,7 +223,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 					throw new Exception( __( 'Invalid module.', 'hustle' ) );
 				}
 
-				$context = filter_input( INPUT_POST, 'context', FILTER_SANITIZE_STRING );
+				$context = filter_input( INPUT_POST, 'context' );
 
 				switch ( $action ) {
 					case 'toggle-status':
@@ -354,7 +354,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 				throw new Exception( 'invalid_permissions' );
 			}
 
-			$module_type = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING );
+			$module_type = filter_input( INPUT_POST, 'type' );
 
 			if ( ! $module_type || ! in_array( $module_type, Hustle_Data::get_module_types(), true ) ) {
 				throw new Exception( __( "The module's type is not valid.", 'hustle' ) );
@@ -429,7 +429,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 				}
 
 				$source_mode = $data['data']['module_mode'];
-				$target_mode = $is_new_module ? filter_input( INPUT_POST, 'module_mode', FILTER_SANITIZE_STRING ) : $module->module_mode;
+				$target_mode = $is_new_module ? filter_input( INPUT_POST, 'module_mode' ) : $module->module_mode;
 
 				if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ) {
 
@@ -646,7 +646,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 				$module_mode = 'ssharing';
 			}
 
-			$metas = filter_input( INPUT_POST, $module_mode . '_metas', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+			$metas = filter_input( INPUT_POST, $module_mode . '_metas', FILTER_REQUIRE_ARRAY );
 
 			if ( empty( $metas ) ) {
 				throw new Exception( __( 'Please select the settings to import.', 'hustle' ) );
@@ -778,8 +778,8 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		 */
 		public function handle_bulk_action() {
 			Opt_In_Utils::validate_ajax_call( 'hustle-bulk-action' );
-			$type   = filter_input( INPUT_POST, 'type', FILTER_SANITIZE_STRING );
-			$hustle = filter_input( INPUT_POST, 'hustle', FILTER_SANITIZE_STRING );
+			$type   = filter_input( INPUT_POST, 'type' );
+			$hustle = filter_input( INPUT_POST, 'hustle' );
 			$ids    = isset( $_POST['ids'] ) ? $_POST['ids'] : array(); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			if ( ! is_array( $ids ) || empty( $ids ) ) {
 				wp_send_json_error( __( 'Failed', 'hustle' ) );
@@ -852,7 +852,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		public function render_module() {
 			Opt_In_Utils::validate_ajax_call( 'hustle_gutenberg_get_module' );
 
-			$shortcode_id = filter_input( INPUT_GET, 'shortcode_id', FILTER_SANITIZE_STRING );
+			$shortcode_id = filter_input( INPUT_GET, 'shortcode_id' );
 
 			if ( ! $shortcode_id ) {
 				wp_send_json_error();
@@ -901,7 +901,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		public function get_module_id_by_shortcode() {
 			Opt_In_Utils::validate_ajax_call( 'hustle_gutenberg_get_module' );
 
-			$shortcode_id = filter_input( INPUT_GET, 'shortcode_id', FILTER_SANITIZE_STRING );
+			$shortcode_id = filter_input( INPUT_GET, 'shortcode_id' );
 
 			$module_id = Hustle_Model::get_module_id_by_shortcode_id( $shortcode_id );
 			$module    = Hustle_Model::get_module( $module_id );
@@ -922,7 +922,7 @@ if ( ! class_exists( 'Hustle_Modules_Common_Admin_Ajax' ) ) :
 		public function get_new_condition_ids() {
 			global $wpdb;
 
-			$post_type = filter_input( INPUT_POST, 'postType', FILTER_SANITIZE_STRING );
+			$post_type = filter_input( INPUT_POST, 'postType' );
 			$search    = filter_input( INPUT_POST, 'search' );
 			$result    = array();
 			$limit     = 30;

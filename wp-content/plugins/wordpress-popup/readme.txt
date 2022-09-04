@@ -1,14 +1,14 @@
 === Hustle - Email Marketing, Lead Generation, Optins, Popups ===
 Plugin Name: Hustle - Email Marketing, Lead Generation, Opt-ins, Popups
-Version: 7.4.13.1
+Version: 7.5.0
 Author: WPMU DEV
 Author URI: https://wpmudev.com/
 Contributors: WPMUDEV
 Tags: marketing, popup, optin, newsletter, subscription form, email, advertise, signup, mailing list, wordpress popup plugin, popup maker, pop-up, opt-in
 Requires at least: 5.2
-Tested up to: 5.9.1
+Tested up to: 6.0.1
 Requires PHP: 5.6.20
-Stable tag: 7.4.13.1
+Stable tag: 7.5.0
 
 Setup email optin forms, popups, newsletter forms & subscription forms to generate email leads with the best marketing popup builder
 
@@ -185,9 +185,28 @@ No! Hustle gives you all the same settings and options as Hustle Pro. The only d
 
 == Changelog ==
 
+= 7.5.0 ( 2022-07-14 ) =
+
+- New: Allow to select years and months in the date picker
+- New: Add search ability to listing pages
+- New: Capture value of a hidden field from query parameters
+- New: Add “Expand all” & “Collapse all” ability for Color Palettes settings
+- New: Ability to switch order on Email List filter
+- New: Add Gutenberg block for adding Unsubscribe shortcode
+- New: Support Unsubscribe Link in Automated Email
+- Enhance: PHP 8.1 compatibility
+- Enhance: Update chart.js library
+- Enhance: Tag and Category rules not working for WordPress Pages
+- Fix: Text mode removes break lines
+- Fix: Loading modules code everywhere with Static cache for simple Visibility Conditions
+- Fix: Fatal error with a huge amount of posts
+- Fix: Divi theme conflict with color picker
+- Fix: Unable to Save Palette when editing Color Palettes
+
+
 = 7.4.13.1 ( 2022-03-16 ) =
 
- - Fix: it's not possible to close the promo opt-in
+- Fix: it's not possible to close the promo opt-in
 
 
 = 7.4.13 ( 2022-02-22 ) =
@@ -252,32 +271,6 @@ No! Hustle gives you all the same settings and options as Hustle Pro. The only d
 = 7.4.8 ( 2021-11-03 ) =
 
 - Enhance: White labeling support
-
-
-= 7.4.7 ( 2021-11-01 ) =
-
-- New: Hook for cloning modules to a new subsite when creating it on Multisite
-- Enhance: Check jQuery compatibility issues for scripts
-- Enhance: Ability to use CSS IDs as CTA button
-- Fix: Integration with Mailpoet mapping fields
-- Fix: Display custom logo enabled in white label
-- Fix: Disable read more tag for TinyMCE editor
-- Fix: Adding custom logo in WPMU DEV White label makes some other images invisible
-- Fix: Network Settings link in plugin page
-- Fix: Fatal Error when Schedule Start Date or End Date is Set Improperly for Slide-ins
-- Fix: Close button checkbox is not working
-- Fix: Custom User Font improperly set for Form Submit Button
-- Fix: Resetting Appearance settings for modules created based on a template
-- Fix: @media styles in Custom CSS
-- Fix: Icon color not being applied
-- Fix: Libre Franklin Google Font is missed
-- Fix: Border radius is not applying
-- Fix: Mobile size is not overriding the Desktop size
-- Fix: Tracking disabled button showing on mobile when Tracking is enabled
-- Fix: Active Pop-ups counter is not updating right away when you publish/unpublish
-- Fix: Borders overlap the background image
-- Fix: Social Sharing Counter border color
-- Fix: Pop-ups/Slide-ins triggers inside Elementor page builder
 
 [Changelog for previous versions](https://wpmudev.com/project/hustle/#view-changelog).
 

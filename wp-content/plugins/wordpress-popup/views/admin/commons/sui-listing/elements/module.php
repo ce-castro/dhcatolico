@@ -7,6 +7,7 @@
  */
 
 $is_tracking_disabled = empty( $module->get_tracking_types() );
+$last_conversion_text = __( 'Last conversion', 'hustle' );
 
 $module_tag_class = $module->active ? ' sui-tag-blue' : '';
 $tooltip_message  = '';
@@ -57,6 +58,8 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 			);
 		}
 	}
+} else {
+	$last_conversion_text = __( 'Last share', 'hustle' );
 }
 
 ?>
@@ -122,7 +125,7 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 		</div>
 
 		<div class="sui-accordion-item-date">
-			<strong><?php esc_html_e( 'Last conversion', 'hustle' ); ?></strong>
+			<strong><?php echo esc_html( $last_conversion_text ); ?></strong>
 			<?php echo esc_html( $last_entry_time ); ?>
 		</div>
 

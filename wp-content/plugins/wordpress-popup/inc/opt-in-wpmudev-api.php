@@ -62,7 +62,7 @@ class Opt_In_WPMUDEV_API {
 	 * @return bool
 	 */
 	public function validate_callback_request( $provider ) {
-		$wpnonce        = filter_input( INPUT_GET, 'wpnonce', FILTER_SANITIZE_STRING );
+		$wpnonce        = filter_input( INPUT_GET, 'wpnonce' );
 		$domain         = filter_input( INPUT_GET, 'domain', FILTER_VALIDATE_URL );
 		$provider_input = filter_input( INPUT_GET, 'provider' );
 

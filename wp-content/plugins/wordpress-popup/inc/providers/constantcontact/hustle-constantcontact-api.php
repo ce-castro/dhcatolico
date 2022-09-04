@@ -64,7 +64,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			 */
 			public function process_callback_request() {
 				if ( $this->validate_callback_request( 'constantcontact' ) ) {
-					$code   = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
+					$code   = filter_input( INPUT_GET, 'code' );
 					$status = 'error';
 
 					// Get the referer page that sent the request

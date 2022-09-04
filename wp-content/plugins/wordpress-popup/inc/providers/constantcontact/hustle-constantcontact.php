@@ -291,7 +291,7 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 
 			$response = array();
 
-			$status = filter_input( INPUT_GET, 'status', FILTER_SANITIZE_STRING );
+			$status = filter_input( INPUT_GET, 'status' );
 
 			$api           = $this->api();
 			$is_authorized = (bool) $api->get_token( 'access_token' );

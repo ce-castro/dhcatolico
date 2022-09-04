@@ -49,7 +49,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Api' ) ) :
 		public function process_callback_request() {
 			if ( $this->validate_callback_request( 'hubspot' ) ) {
 
-				$code   = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
+				$code   = filter_input( INPUT_GET, 'code' );
 				$status = 'error';
 
 				// Get the referer page that sent the request
