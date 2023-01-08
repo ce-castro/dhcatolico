@@ -6,17 +6,15 @@
  * @package Hustle
  */
 
+// Template args.
+$args = array(
+	'key'                => $key,
+	'settings'           => $settings,
+	'is_optin'           => $is_optin,
+	'device'             => $device,
+	'smallcaps_singular' => $smallcaps_singular,
+);
 ?>
-<?php
-	// Template args.
-	$args = array(
-		'key'                => $key,
-		'settings'           => $settings,
-		'is_optin'           => $is_optin,
-		'device'             => $device,
-		'smallcaps_singular' => $smallcaps_singular,
-	);
-	?>
 <div class="sui-box">
 
 	<div class="sui-box-body">

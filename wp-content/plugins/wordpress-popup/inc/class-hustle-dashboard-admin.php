@@ -13,7 +13,7 @@ class Hustle_Dashboard_Admin extends Hustle_Admin_Page_Abstract {
 
 	const WELCOME_MODAL_NAME   = 'welcome_modal';
 	const MIGRATE_MODAL_NAME   = 'migrate_modal';
-	const HIGHLIGHT_MODAL_NAME = 'release_highlight_modal_446';
+	const HIGHLIGHT_MODAL_NAME = 'release_highlight_modal_460';
 	const MIGRATE_NOTICE_NAME  = 'migrate_notice';
 
 	/**
@@ -62,7 +62,7 @@ class Hustle_Dashboard_Admin extends Hustle_Admin_Page_Abstract {
 	 */
 	public function register_admin_menu() {
 
-		$parent_menu_title = Opt_In_Utils::_is_free() ? __( 'Hustle', 'hustle' ) : __( 'Hustle Pro', 'hustle' );
+		$parent_menu_title = Opt_In_Utils::is_free() ? __( 'Hustle', 'hustle' ) : __( 'Hustle Pro', 'hustle' );
 
 		// Parent menu.
 		add_menu_page(
@@ -147,18 +147,23 @@ class Hustle_Dashboard_Admin extends Hustle_Admin_Page_Abstract {
 			)
 		);
 
-		$last_conversion = Hustle_Tracking_Model::get_instance()->get_latest_conversion_date( 'all' );
-
-		return array(
+		$args = array(
 			'metrics'         => $this->get_3_top_metrics(),
 			'active_modules'  => $active_modules,
 			'popups'          => $modules['popup'],
 			'slideins'        => $modules['slidein'],
 			'embeds'          => $modules['embedded'],
 			'social_sharings' => $modules['social_sharing'],
-			'last_conversion' => $last_conversion ? date_i18n( 'j M Y @ H:i A', strtotime( $last_conversion ) ) : __( 'Never', 'hustle' ),
+			'last_conversion' => '',
 			'sui'             => $this->get_sui_summary_config(),
 		);
+
+		if ( Hustle_Settings_Admin::global_tracking() ) {
+			$last_conversion         = Hustle_Tracking_Model::get_instance()->get_latest_conversion_date( 'all' );
+			$args['last_conversion'] = $last_conversion ? date_i18n( 'j M Y @ H:i A', strtotime( $last_conversion ) ) : __( 'Never', 'hustle' );
+		}
+
+		return $args;
 	}
 
 	/**
@@ -230,8 +235,7 @@ class Hustle_Dashboard_Admin extends Hustle_Admin_Page_Abstract {
 	 * @return array $data Array of 4 top metrics.
 	 */
 	private function get_3_top_metrics() {
-		global $hustle;
-		$names   = array(
+		$names = array(
 			'average_conversion_rate' => __( 'Average Conversion Rate', 'hustle' ),
 			'total_conversions'       => __( 'Total Conversions', 'hustle' ),
 			'most_conversions'        => __( 'Most Conversions', 'hustle' ),
@@ -241,18 +245,23 @@ class Hustle_Dashboard_Admin extends Hustle_Admin_Page_Abstract {
 			'inactive_modules_count'  => __( 'Inactive Modules', 'hustle' ),
 			'total_modules_count'     => __( 'Total Modules', 'hustle' ),
 		);
-		$keys    = array_keys( $names );
-		$metrics = Hustle_Settings_Admin::get_top_metrics_settings();
-		$metrics = array_values( array_intersect( $keys, $metrics ) );
 
-		$metrics_count = count( $metrics );
+		if ( ! Hustle_Settings_Admin::global_tracking() ) {
+			$metrics = array( 'inactive_modules_count', 'total_modules_count' );
+		} else {
+			$keys    = array_keys( $names );
+			$metrics = Hustle_Settings_Admin::get_top_metrics_settings();
+			$metrics = array_values( array_intersect( $keys, $metrics ) );
 
-		while ( 3 > $metrics_count ) {
-			$key = array_shift( $keys );
-			if ( ! in_array( $key, $metrics, true ) ) {
-				$metrics[] = $key;
-			}
 			$metrics_count = count( $metrics );
+
+			while ( 3 > $metrics_count ) {
+				$key = array_shift( $keys );
+				if ( ! in_array( $key, $metrics, true ) ) {
+					$metrics[] = $key;
+				}
+				$metrics_count = count( $metrics );
+			}
 		}
 		$data            = array();
 		$tracking        = Hustle_Tracking_Model::get_instance();

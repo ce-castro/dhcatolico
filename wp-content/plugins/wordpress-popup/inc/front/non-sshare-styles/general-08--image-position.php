@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $container = '.hustle-layout .hustle-image';
@@ -349,5 +353,10 @@ if ( '' !== $image ) {
 				$style         .= '}';
 			}
 		}
+	}
+	if ( $is_rtl ) {
+		$style     .= $prefix_mobile . $component . ' {';
+			$style .= 'transform: scaleX(-1);';
+		$style     .= '}';
 	}
 }

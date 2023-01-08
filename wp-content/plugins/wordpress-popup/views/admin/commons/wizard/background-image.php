@@ -1,3 +1,11 @@
+<?php
+/**
+ * Background image section
+ *
+ * @package Hustle
+ */
+
+?>
 <div id="hustle-choose-background_image" class="sui-upload {{ ( !_.isEmpty( background_image ) ) ? 'sui-has_file' : '' }}">
 
 	<input type="file"

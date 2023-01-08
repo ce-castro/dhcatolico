@@ -211,6 +211,7 @@
 		"optin_success_content_color": "#eaeaea",
 		"overlay_bg": "rgba(0,0,0,0.75)",
 		"close_button_static_color": "#ffffff",
+		"close_button_static_background": "#cc0100",
 		"never_see_link_static": "#e1e1e1",
 		"recaptcha_copy_text": "#FFFFFF",
 		"recaptcha_copy_link_default": "#FFFFFF",

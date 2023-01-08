@@ -1,20 +1,29 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Module_Front_Ajax
+ *
+ * @package Hustle
+ */
 
+/**
+ * Class Hustle_Module_Front_Ajax
+ */
 class Hustle_Module_Front_Ajax {
 
-	private $_hustle;
-
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 
-		// When module is viewed
+		// When module is viewed.
 		add_action( 'wp_ajax_hustle_module_viewed', array( $this, 'module_viewed' ) );
 		add_action( 'wp_ajax_nopriv_hustle_module_viewed', array( $this, 'module_viewed' ) );
 
-		// When module form is submitted
+		// When module form is submitted.
 		add_action( 'wp_ajax_hustle_module_form_submit', array( $this, 'submit_form' ) );
 		add_action( 'wp_ajax_nopriv_hustle_module_form_submit', array( $this, 'submit_form' ) );
 
-		// Update the number of shares of each network
+		// Update the number of shares of each network.
 		add_action( 'wp_ajax_hustle_update_network_shares', array( $this, 'get_networks_native_shares' ) );
 		add_action( 'wp_ajax_nopriv_hustle_update_network_shares', array( $this, 'get_networks_native_shares' ) );
 
@@ -26,7 +35,7 @@ class Hustle_Module_Front_Ajax {
 		add_action( 'wp_ajax_hustle_sshare_click_counted', array( $this, 'update_sshare_click_counter' ) );
 		add_action( 'wp_ajax_nopriv_hustle_sshare_click_counted', array( $this, 'update_sshare_click_counter' ) );
 
-		// Handles unsubscribe form submisisons
+		// Handles unsubscribe form submisisons.
 		add_action( 'wp_ajax_hustle_unsubscribe_form_submission', array( $this, 'unsubscribe_submit_form' ) );
 		add_action( 'wp_ajax_nopriv_hustle_unsubscribe_form_submission', array( $this, 'unsubscribe_submit_form' ) );
 
@@ -38,8 +47,8 @@ class Hustle_Module_Front_Ajax {
 	/**
 	 * Replace value if it's a dinamic one based on submited fields
 	 *
-	 * @param string $value The current value
-	 * @param array  $form_data The submitted form data
+	 * @param string $value The current value.
+	 * @param array  $form_data The submitted form data.
 	 * @return string final value
 	 */
 	private function maybe_replace_to_field( $value, $form_data ) {
@@ -54,13 +63,13 @@ class Hustle_Module_Front_Ajax {
 	/**
 	 * Replace common placeholders and current field placeholders
 	 *
-	 * @param int    $module_id Module ID
-	 * @param string $body Email body
-	 * @param array  $form_data Submitted data
+	 * @param int    $module_id Module ID.
+	 * @param string $text Text.
+	 * @param array  $form_data Submitted data.
 	 * @return string Replaced text
 	 */
-	private function replace_email_body_placeholders( $module_id, $body, $form_data ) {
-		preg_match_all( '/\{[^}]*\}/', $body, $matches );
+	private function replace_placeholders( $module_id, $text, $form_data ) {
+		preg_match_all( '/\{[^}]*\}/', $text, $matches );
 
 		if ( ! empty( $matches[0] ) && is_array( $matches[0] ) ) {
 			$site_placeholders   = array(
@@ -74,22 +83,22 @@ class Hustle_Module_Front_Ajax {
 			}
 
 			foreach ( $matches[0] as $placeholder ) {
-				// find common placeholders
+				// find common placeholders.
 				if ( key_exists( $placeholder, $site_placeholders ) ) {
 					$value = $site_placeholders[ $placeholder ];
 				} else {
-					// find field placeholders
+					// find field placeholders.
 					$value = $this->maybe_replace_to_field( $placeholder, $form_data );
 				}
 
 				if ( $value !== $placeholder ) {
-					// replace if we found something
-					$body = str_replace( $placeholder, $value, $body );
+					// replace if we found something.
+					$text = str_replace( $placeholder, $value, $text );
 				}
 			}
 		}
 
-		return $body;
+		return $text;
 	}
 
 	/**
@@ -131,8 +140,7 @@ class Hustle_Module_Front_Ajax {
 	/**
 	 * Send auto email if it sets
 	 *
-	 * @param Hustle_Module_Model $module
-	 * @param array               $response
+	 * @param Hustle_Module_Model $module Module.
 	 */
 	public function send_automated_email( Hustle_Module_Model $module ) {
 		$module_id       = $module->module_id;
@@ -154,8 +162,8 @@ class Hustle_Module_Front_Ajax {
 		$subject = apply_filters( 'hustle_automated_email_email_subject', $email_subject, $module_id, $data, $form_data );
 		$body    = apply_filters( 'hustle_automated_email_email_body', $email_body, $module_id, $data, $form_data );
 
-		$to   = $this->maybe_replace_to_field( $to, $form_data );
-		$body = $this->replace_email_body_placeholders( $module_id, $body, $form_data );
+		$to   = $this->replace_placeholders( $module_id, $to, $form_data );
+		$body = $this->replace_placeholders( $module_id, $body, $form_data );
 
 		// Replace {hustle_unsubscribe_link} placeholder.
 		if ( false !== strpos( $body, '{hustle_unsubscribe_link}' ) ) {
@@ -168,7 +176,7 @@ class Hustle_Module_Front_Ajax {
 			$body = str_replace( '{hustle_unsubscribe_link}', $unsubscribe_url, $body );
 		}
 
-		$subject = $this->replace_email_body_placeholders( $module_id, $subject, $form_data );
+		$subject = $this->replace_placeholders( $module_id, $subject, $form_data );
 
 		// Send the email right away if it's set as 'instant'.
 		if ( 'instant' === $emails_settings['email_time'] ) {
@@ -183,7 +191,7 @@ class Hustle_Module_Front_Ajax {
 		if ( 'delay' === $emails_settings['email_time'] ) {
 			$time = ! empty( $emails_settings['auto_email_time'] ) ? (int) $emails_settings['auto_email_time'] : '';
 			$unit = ! empty( $emails_settings['auto_email_unit'] ) ? $emails_settings['auto_email_unit'] : '';
-			// get delay rate
+			// get delay rate.
 			switch ( $unit ) {
 				case 'days':
 					$rate = DAY_IN_SECONDS;
@@ -200,17 +208,17 @@ class Hustle_Module_Front_Ajax {
 			}
 			$schedule_time = time() + $time * $rate;
 		} elseif ( 'schedule' === $emails_settings['email_time'] ) {
-			// time settings
+			// time settings.
 			$time = ! empty( $emails_settings['time'] ) ? $emails_settings['time'] : '';
 			$day  = ! empty( $emails_settings['day'] ) ? $emails_settings['day'] : '';
 			$time = $this->maybe_replace_to_field( $time, $form_data );
 			$day  = $this->maybe_replace_to_field( $day, $form_data );
 
-			// delay settings
-			$delay_time = ! empty( $emails_settings['schedule_auto_email_time'] ) ? (int) $emails_settings['schedule_auto_email_time'] : '';
+			// delay settings.
+			$delay_time = ! empty( $emails_settings['schedule_auto_email_time'] ) ? (int) $emails_settings['schedule_auto_email_time'] : 0;
 			$delay_unit = ! empty( $emails_settings['schedule_auto_email_unit'] ) ? $emails_settings['schedule_auto_email_unit'] : '';
 
-			// get delay rate
+			// get delay rate.
 			switch ( $delay_unit ) {
 				case 'days':
 					$delay_rate = DAY_IN_SECONDS;
@@ -225,10 +233,10 @@ class Hustle_Module_Front_Ajax {
 					$delay_rate = 1;
 					break;
 			}
-			// schedule time calculation
+			// schedule time calculation.
 			$delay = $delay_time * $delay_rate;
-			// convert from local time to GMT
-			$schedule_time = get_gmt_from_date( date( 'Y-m-d H:i:s', strtotime( $day . ' ' . $time ) ), 'U' );
+			// convert from local time to GMT.
+			$schedule_time = get_gmt_from_date( date( 'Y-m-d H:i:s', strtotime( $day . ' ' . $time ) ), 'U' );// phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 			$schedule_time = $schedule_time + $delay;
 			if ( time() > $schedule_time ) {
 				return;
@@ -237,11 +245,17 @@ class Hustle_Module_Front_Ajax {
 		wp_schedule_single_event( $schedule_time, 'hustle_send_email', $args );
 	}
 
+	/**
+	 * Submit form
+	 */
 	public function submit_form() {
 
 		Hustle_Provider_Autoload::initiate_providers();
 
-		$module_id = sanitize_text_field( $_POST['data']['module_id'] );
+		if ( ! isset( $_POST['data']['module_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			return;
+		}
+		$module_id = sanitize_text_field( wp_unslash( $_POST['data']['module_id'] ) );// phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// Action called before full form submit.
 		do_action( 'hustle_form_before_handle_submit', $module_id );
@@ -268,7 +282,7 @@ class Hustle_Module_Front_Ajax {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $module_id
+	 * @param int $module_id MOdule ID.
 	 * @return array
 	 */
 	private function handle_form( $module_id ) {
@@ -451,6 +465,16 @@ class Hustle_Module_Front_Ajax {
 			 */
 			$redirect_url = apply_filters( 'hustle_success_redirect_url', $redirect_url, $module_id, $module_sub_type, $form_data );
 
+			/**
+			 * Filters redirect tab on success
+			 *
+			 * @param string $redirect_tab    Redirect tab ( sametab | newtab_thankyou | newtab_hide )
+			 * @param string $module_id       ID of the current module.
+			 * @param string $module_sub_type Subtype of the current module.
+			 * @param array  $form_data       The submitted data.
+			 */
+			$redirect_tab = apply_filters( 'hustle_success_redirect_tab', $emails_settings['redirect_tab'], $module_id, $module_sub_type, $form_data );
+
 			$response = array(
 				'message'  => do_shortcode( wp_kses_post( $success_message ) ),
 				'success'  => true,
@@ -458,8 +482,17 @@ class Hustle_Module_Front_Ajax {
 				'behavior' => array(
 					'after_submit' => $emails_settings['after_successful_submission'],
 					'url'          => esc_url_raw( $redirect_url ), // Using raw here to honor url params.
+					'redirect_tab' => $redirect_tab,
 				),
 			);
+
+			if ( ! empty( $emails_settings['automated_file'] ) && ! empty( $emails_settings['auto_download_file'] ) ) {
+				$explode   = explode( DIRECTORY_SEPARATOR, $emails_settings['auto_download_file'] );
+				$file_name = end( $explode );
+
+				$response['behavior']['file']      = $emails_settings['auto_download_file'];
+				$response['behavior']['file_name'] = $file_name;
+			}
 		}
 
 		if ( ! empty( $submit_errors ) ) {
@@ -478,7 +511,10 @@ class Hustle_Module_Front_Ajax {
 	 * Do recaptcha backend validation.
 	 *
 	 * @since 4.0
+	 * @param array $form_data Form data.
+	 * @param array $recaptcha_field Recaptcha field.
 	 * @return array
+	 * @throws Exception When reCAPTCHA validation failed.
 	 */
 	private function validate_recaptcha( $form_data, $recaptcha_field ) {
 
@@ -502,12 +538,16 @@ class Hustle_Module_Front_Ajax {
 					);
 				}
 
+				$remote_ip = filter_input( INPUT_SERVER, 'HTTP_X_FORWARDED_FOR' );
+				if ( ! $remote_ip ) {
+					$remote_ip = filter_input( INPUT_SERVER, 'REMOTE_ADDR' );
+				}
 				$response = wp_remote_get(
 					add_query_arg(
 						array(
 							'secret'   => $recaptcha_secret,
 							'response' => $token,
-							'remoteip' => isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'],
+							'remoteip' => $remote_ip,
 						),
 						'https://www.google.com/recaptcha/api/siteverify'
 					)
@@ -550,10 +590,10 @@ class Hustle_Module_Front_Ajax {
 	 * @since 4.0
 	 * @since 4.0.2 $fields_to_validate parameter added.
 	 *
-	 * @param array $form_data
-	 * @param array $required_fields
-	 * @param array $fields_to_validate
-	 * @param array $fields
+	 * @param array $form_data Form data.
+	 * @param array $required_fields Rewuired Fields.
+	 * @param array $fields_to_validate Fields to validate.
+	 * @param array $fields Fields.
 	 * @return array
 	 */
 	private function validate_fields( $form_data, $required_fields, $fields_to_validate, $fields ) {
@@ -604,7 +644,7 @@ class Hustle_Module_Front_Ajax {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $fields
+	 * @param array $fields Fields.
 	 * @return string
 	 */
 	private function get_invalid_form_message( $fields ) {
@@ -618,6 +658,13 @@ class Hustle_Module_Front_Ajax {
 		return esc_html( $message );
 	}
 
+	/**
+	 * Replace placeholders
+	 *
+	 * @param string $raw_message Message.
+	 * @param array  $submitted_data Submitted data.
+	 * @return string
+	 */
 	private function parse_message_with_fields_placeholders( $raw_message, $submitted_data ) {
 
 		$message = str_replace(
@@ -634,10 +681,10 @@ class Hustle_Module_Front_Ajax {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int         $module
-	 * @param int         $page_id
-	 * @param string|null $module_sub_type
-	 * @param string|null $cta
+	 * @param int         $module Module ID.
+	 * @param int         $page_id Page ID.
+	 * @param string|null $module_sub_type Sub type.
+	 * @param string|null $cta CTA.
 	 */
 	private function maybe_log_conversion( $module, $page_id, $module_sub_type = null, $cta = null ) {
 
@@ -665,7 +712,7 @@ class Hustle_Module_Front_Ajax {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $module_id
+	 * @param int $module_id Module ID.
 	 * @return array
 	 */
 	private function get_module_active_integrations_to_store( $module_id ) {
@@ -690,14 +737,14 @@ class Hustle_Module_Front_Ajax {
 	 * @see Hustle_Provider_Form_Hooks_Abstract::on_form_submit()
 	 * @since 4.0
 	 *
-	 * @param $module_id
-	 * @param array     $submitted_data Data submitted by the user.
-	 * @param bool      $allow_subscribed
+	 * @param int   $module_id Module ID.
+	 * @param array $submitted_data Data submitted by the user.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool true on success|string error message from addon otherwise
 	 */
 	private function attach_addons_on_form_submit( $module_id, $submitted_data, $allow_subscribed ) {
 
-		// Find is_form_connected
+		// Find is_form_connected.
 		$connected_addons = Hustle_Provider_Utils::get_addons_instance_connected_with_module( $module_id );
 
 		$submitted_data = Opt_In_Utils::validate_and_sanitize_fields( $submitted_data );
@@ -728,10 +775,10 @@ class Hustle_Module_Front_Ajax {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $module_id
-	 * @param Hustle_Module_Model $module
+	 * @param int                 $module_id Module ID.
+	 * @param Hustle_Module_Model $module Module.
 	 * @param array               $submitted_data Data submitted by the user.
-	 * @param array               $current_entry_fields
+	 * @param array               $current_entry_fields Entry fields.
 	 * @return array fields to be added to entry
 	 */
 	private function attach_addons_add_entry_fields( $module_id, Hustle_Module_Model $module, $submitted_data, $current_entry_fields ) {
@@ -746,7 +793,7 @@ class Hustle_Module_Front_Ajax {
 				if ( $form_hooks instanceof Hustle_Provider_Form_Hooks_Abstract ) {
 
 					$addon_fields = $form_hooks->add_entry_fields( $formatted_submitted_data );
-					// log errors
+					// log errors.
 					if (
 						! empty( $addon_fields[0] ) && ! empty( $addon_fields[0]['value'] ) &&
 						isset( $addon_fields[0]['value']['is_sent'] ) &&
@@ -786,12 +833,12 @@ class Hustle_Module_Front_Ajax {
 	 *
 	 * @since 4.0
 	 *
-	 * @param Hustle_Provider_Abstract $addon
-	 * @param $additional_fields
+	 * @param Hustle_Provider_Abstract $addon Addon.
+	 * @param array                    $additional_fields Additional fields.
 	 * @return array
 	 */
 	private static function format_addon_additional_fields( Hustle_Provider_Abstract $addon, $additional_fields ) {
-		// to `name` and `value` basis
+		// to `name` and `value` basis.
 		$formatted_additional_fields = array();
 		if ( ! is_array( $additional_fields ) ) {
 			return array();
@@ -817,7 +864,7 @@ class Hustle_Module_Front_Ajax {
 	 */
 	public function unsubscribe_submit_form() {
 
-		parse_str( $_POST['data'], $submitted_data ); // WPCS: CSRF ok.
+		parse_str( $_POST['data'], $submitted_data ); // phpcs:ignore
 		$sanitized_data = Opt_In_Utils::validate_and_sanitize_fields( $submitted_data );
 		$messages       = Hustle_Settings_Admin::get_unsubscribe_messages();
 		// Check if we got the email address and if it's valid.
@@ -827,7 +874,7 @@ class Hustle_Module_Front_Ajax {
 
 			$modules_id = self::get_module_ids( $email, $sanitized_data, $messages );
 
-			// Handle 'choose_list' form step
+			// Handle 'choose_list' form step.
 			if ( isset( $sanitized_data['form_step'] ) && 'choose_list' === $sanitized_data['form_step'] ) {
 
 				if ( ! empty( $sanitized_data['skip_confirmation'] ) ) {
@@ -931,7 +978,7 @@ class Hustle_Module_Front_Ajax {
 	public function get_networks_native_shares() {
 
 		// TODO: check the networks are the ones that have APIs, and sanitize.
-		$networks = ! empty( $_POST['networks'] ) ? $_POST['networks'] : false; // CSRF: ok.
+		$networks = filter_input( INPUT_POST, 'networks', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 
 		$post_id = filter_input( INPUT_POST, 'postId', FILTER_VALIDATE_INT );
 
@@ -953,6 +1000,11 @@ class Hustle_Module_Front_Ajax {
 		);
 	}
 
+	/**
+	 * Log module conversion
+	 *
+	 * @return null
+	 */
 	public function log_module_conversion() {
 		$data = json_decode( file_get_contents( 'php://input' ) );
 		$data = get_object_vars( $data );
@@ -990,6 +1042,11 @@ class Hustle_Module_Front_Ajax {
 		}
 	}
 
+	/**
+	 * Module view
+	 *
+	 * @return null
+	 */
 	public function module_viewed() {
 		$data = json_decode( file_get_contents( 'php://input' ) );
 		$data = get_object_vars( $data );
@@ -1037,7 +1094,7 @@ class Hustle_Module_Front_Ajax {
 	 */
 	public function update_sshare_click_counter() {
 
-		$data = $_POST; // PHPCS CSRF: ok.
+		$data = $_POST;// phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		$module = Hustle_Module_Collection::instance()->return_model_from_id( $data['moduleId'] );
 

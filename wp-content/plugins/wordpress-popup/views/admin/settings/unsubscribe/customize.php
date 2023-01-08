@@ -181,7 +181,7 @@ $messages_enabled = '0' !== (string) $messages['enabled'];
 							'type'  => 'label',
 							'value' => __( 'Email couldn\'t be submitted message', 'hustle' ),
 						),
-						'email_not_submitted_message'       => array(
+						'email_not_submitted_message' => array(
 							'id'    => 'email-not-submitted-message',
 							'name'  => 'email_not_processed',
 							'type'  => 'text',

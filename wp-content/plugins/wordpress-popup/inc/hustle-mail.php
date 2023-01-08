@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Mail
+ *
+ * @package Hustle
+ */
+
 /**
  * Base class for sending emails.
  *
@@ -59,19 +65,13 @@ class Hustle_Mail {
 	 * @param string $subject The email subject.
 	 */
 	public function __construct( $recipient = '', $message = '', $subject = '' ) {
-		if ( ! empty( $recipient ) && filter_var( $recipient, FILTER_VALIDATE_EMAIL ) ) {
-			$this->recipient = $recipient;
-		}
-		if ( ! empty( $message ) ) {
-			$this->message = $message;
-		}
+		$this->set_recipient( $recipient );
+		$this->set_message( $message );
 		if ( ! empty( $subject ) ) {
 			$this->subject = $subject;
 		}
 
-		$general_settings   = Hustle_Settings_Admin::get_general_settings();
-		$this->sender_email = $general_settings['sender_email_address'];
-		$this->sender_name  = $general_settings['sender_email_name'];
+		$this->set_sender();
 		$this->set_headers();
 	}
 
@@ -81,10 +81,26 @@ class Hustle_Mail {
 	 * @since 3.0.5
 	 * @param string $recipient The email recipient.
 	 */
-	public function set_recipient( $recipient ) {
-		if ( filter_var( $recipient, FILTER_VALIDATE_EMAIL ) ) {
-			$this->recipient = $recipient;
+	private function set_recipient( $recipient ) {
+		if ( empty( $recipient ) ) {
+			return;
 		}
+		$recipients = array_map( 'trim', explode( ',', $recipient ) );
+		if ( empty( $recipients ) ) {
+			return;
+		}
+		$emails = array();
+		foreach ( $recipients as $email ) {
+			$filtered_email = filter_var( $email, FILTER_VALIDATE_EMAIL );
+			if ( $filtered_email ) {
+				$emails[] = $filtered_email;
+			}
+		}
+		if ( empty( $emails ) ) {
+			return;
+		}
+
+		$this->recipient = $emails;
 	}
 
 	/**
@@ -93,8 +109,10 @@ class Hustle_Mail {
 	 * @since 3.0.5
 	 * @param string $message The email message.
 	 */
-	public function set_message( $message ) {
-		$this->message = $message;
+	private function set_message( $message ) {
+		if ( ! empty( $message ) ) {
+			$this->message = $message;
+		}
 	}
 
 	/**
@@ -120,13 +138,11 @@ class Hustle_Mail {
 	 * Set sender details.
 	 *
 	 * @since 3.0.5
-	 * @param array $sender_details - the sender details ( 'email' => 'email', 'name' => 'name' ).
 	 */
-	public function set_sender( $sender_details = array() ) {
-		if ( ! empty( $sender_details ) ) {
-			$this->sender_email = $sender_details['email'];
-			$this->sender_name  = $sender_details['name'];
-		}
+	private function set_sender() {
+		$general_settings   = Hustle_Settings_Admin::get_general_settings();
+		$this->sender_email = $general_settings['sender_email_address'];
+		$this->sender_name  = $general_settings['sender_email_name'];
 	}
 
 	/**
@@ -155,7 +171,9 @@ class Hustle_Mail {
 		$sent = false;
 		if ( ! empty( $this->recipient ) && ! empty( $this->subject ) && ! empty( $this->message ) ) {
 			$this->clean();
-			$sent = wp_mail( $this->recipient, $this->subject, $this->message, $this->headers );
+			foreach ( $this->recipient as $to ) {
+				$sent = wp_mail( $to, $this->subject, $this->message, $this->headers );
+			}
 		}
 		return $sent;
 	}

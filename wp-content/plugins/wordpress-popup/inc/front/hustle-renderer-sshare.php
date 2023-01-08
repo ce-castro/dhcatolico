@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Renderer_Sshare
+ *
+ * @package Hustle
+ */
+
 /**
  * Class Hustle_Renderer_Sshare
  * Used to render Social sharing modules.
@@ -11,6 +17,8 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 	 * Get the content container tag.
 	 *
 	 * @since 4.0
+	 * @param string $subtype Sub type.
+	 * @param string $custom_classes Custom classes.
 	 * @return string
 	 */
 	protected function get_wrapper_main( $subtype, $custom_classes ) {
@@ -50,8 +58,8 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 				$module_data .= 'data-desktop="true"';
 			} elseif ( $this->module->is_display_type_active( Hustle_SShare_Model::FLOAT_DESKTOP ) ) {
 
-				$offset = 'css_selector' === $display->float_desktop_offset ? 'selector' : $display->float_desktop_offset;
-				$selector = 'selector' === $offset ? trim( $display->float_desktop_css_selector ) : '';
+				$offset     = 'css_selector' === $display->float_desktop_offset ? 'selector' : $display->float_desktop_offset;
+				$selector   = 'selector' === $offset ? trim( $display->float_desktop_css_selector ) : '';
 				$position_x = $display->float_desktop_position;
 				$position_y = $display->float_desktop_position_y;
 
@@ -75,8 +83,8 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 			// Check if the module has floating active for mobile.
 			if ( $this->module->is_display_type_active( Hustle_SShare_Model::FLOAT_MOBILE ) ) {
 
-				$offset = 'css_selector' === $display->float_mobile_offset ? 'selector' : $display->float_mobile_offset;
-				$selector = 'selector' === $offset ? trim( $display->float_mobile_css_selector ) : '';
+				$offset     = 'css_selector' === $display->float_mobile_offset ? 'selector' : $display->float_mobile_offset;
+				$selector   = 'selector' === $offset ? trim( $display->float_mobile_css_selector ) : '';
 				$position_x = $display->float_mobile_position;
 				$position_y = $display->float_mobile_position_y;
 
@@ -140,7 +148,7 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $subtype
+	 * @param string $subtype Sub type.
 	 * @return string
 	 */
 	protected function get_wrapper_content( $subtype ) {
@@ -165,7 +173,7 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $subtype
+	 * @param string $subtype Sub type.
 	 * @return string
 	 */
 	protected function get_module_body( $subtype ) {
@@ -179,13 +187,13 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 		$display = $this->module->display;
 		$design  = $this->module->design;
 
-		$icons_design = $design->icon_style;
+		$icons_design       = $design->icon_style;
 		$icons_custom_color = 'false';
 		$icons_grid_desktop = 'inline';
 		$icons_grid_mobiles = 'inline';
-		$icons_counter = 'none';
-		$icons_animated = false;
-		$icons_animation = 'zoom';
+		$icons_counter      = 'none';
+		$icons_animated     = false;
+		$icons_animation    = 'zoom';
 
 		if ( 'flat' === $icons_design ) {
 			$icons_design = 'default';
@@ -195,7 +203,7 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 
 		if ( Hustle_SShare_Model::FLOAT_MODULE === $subtype ) {
 
-			// Check if icons custom color is enabled
+			// Check if icons custom color is enabled.
 			$icons_custom_color = ( '1' === $design->floating_customize_colors ) ? 'true' : 'false';
 
 			// Check if the module has floating active for desktop.
@@ -243,26 +251,26 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 				$icons_grid_mobiles = 'stacked';
 			}
 
-			// Check if counter is enabled
+			// Check if counter is enabled.
 			if ( '1' === $content->counter_enabled ) {
 				$icons_counter = ( '1' === $design->floating_inline_count ) ? 'inline' : 'stacked';
 			}
 
-			// Check if icons are animated
+			// Check if icons are animated.
 			if ( '1' === $design->floating_animate_icons ) {
 				$icons_animated = true;
 			}
 		} else {
 
-			// Check if icons custom color is enabled
+			// Check if icons custom color is enabled.
 			$icons_custom_color = ( '1' === $design->widget_customize_colors ) ? 'true' : 'false';
 
-			// Check if counter is enabled
+			// Check if counter is enabled.
 			if ( '1' === $content->counter_enabled ) {
 				$icons_counter = ( '1' === $design->widget_inline_count ) ? 'inline' : 'stacked';
 			}
 
-			// Check if icons are animated
+			// Check if icons are animated.
 			if ( '1' === $design->widget_animate_icons ) {
 				$icons_animated = true;
 			}
@@ -331,16 +339,16 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 							// Check if is email to insert mailto.
 							if ( 'email' === $icon ) {
 
-								$query_args = [
+								$query_args = array(
 									'subject' => rawurlencode( Opt_In_Utils::replace_global_placeholders( $data['title'] ) ),
 									'body'    => rawurlencode( Opt_In_Utils::replace_global_placeholders( $data['message'] ) ),
-								];
+								);
 								$mail_url   = add_query_arg( $query_args, 'mailto:' );
 								$href_value = 'href="' . esc_url( $mail_url ) . '"';
 								$title      = apply_filters( 'hustle_social_share_platform_title', rawurlencode( html_entity_decode( esc_html( get_the_title() ) ) ) );
 
 							} else {
-								$link = apply_filters( 'hustle_social_share_custom_link', $link, $data, $this->module );
+								$link       = apply_filters( 'hustle_social_share_custom_link', $link, $data, $this->module );
 								$href_value = 'href="' . esc_url( $link ) . '" target="_blank" rel="noopener"';
 							}
 
@@ -375,10 +383,10 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 								if ( '1' === $content->counter_enabled ) {
 
 									if ( 'native' === $type && ! self::$is_preview ) {
-										$counter_content  = '<i class="hustle-icon-loader hustle-loading-icon" aria-hidden="true"></i>';
+										$counter_content = '<i class="hustle-icon-loader hustle-loading-icon" aria-hidden="true"></i>';
 
 									} else {
-										$counter_content    = ( '' !== $data['counter'] ) ? esc_attr( $data['counter'] ) : '0';
+										$counter_content = ( '' !== $data['counter'] ) ? esc_attr( $data['counter'] ) : '0';
 									}
 
 									$html .= sprintf(
@@ -412,6 +420,9 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 	 * Handle AJAX display
 	 *
 	 * @since 4.0
+	 * @param Hustle_Sshare_Model $module Module.
+	 * @param array               $data Data.
+	 * @param bool                $is_preview Is preview.
 	 * @return string
 	 */
 	public function ajax_display( Hustle_Sshare_Model $module, $data = array(), $is_preview = true ) {
@@ -425,18 +436,18 @@ class Hustle_Renderer_Sshare extends Hustle_Renderer_Abstract {
 		}
 
 		$response = array(
-			'style'     => array(),
-			'script'    => array(),
-			'module'    => $this->module,
+			'style'  => array(),
+			'script' => array(),
+			'module' => $this->module,
 		);
 
 		$response['floatingHtml'] = $this->get_module( Hustle_SShare_Model::FLOAT_MODULE, 'hustle-show', $is_preview );
-		$response['widgetHtml'] = $this->get_module( Hustle_SShare_Model::WIDGET_MODULE, 'hustle-show', $is_preview );
+		$response['widgetHtml']   = $this->get_module( Hustle_SShare_Model::WIDGET_MODULE, 'hustle-show', $is_preview );
 
 		// This might be used later for ajax loading.
 		ob_start();
 		$this->print_styles( $is_preview );
-		$styles = ob_get_clean();
+		$styles            = ob_get_clean();
 		$response['style'] = $styles;
 
 		return $response;

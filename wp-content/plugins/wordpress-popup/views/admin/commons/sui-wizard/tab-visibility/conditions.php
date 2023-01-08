@@ -734,7 +734,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-visibility@2x.png';
 					class="sui-form-control"
 					data-attribute="refs">{{{ refs }}}</textarea>
 
-				<span class="sui-description"><?php esc_html_e( 'It can be a full URL or a pattern like “.website.com”. Enter one pattern/URL per line.', 'hustle' ); ?></span>
+				<span class="sui-description"><?php esc_html_e( 'It can be a full URL or a pattern like “.website.com”. You can use wildcards in URLs. Enter one pattern/URL per line.', 'hustle' ); ?></span>
 
 			</div>
 

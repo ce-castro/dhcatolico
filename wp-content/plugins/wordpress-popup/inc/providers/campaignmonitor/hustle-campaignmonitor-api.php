@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Campaignmonitor_API class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Campaignmonitor
@@ -10,7 +15,7 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @var string
 	 */
-	private $_api_key = '';
+	private $api_key = '';
 
 	/**
 	 * CampaignMonitor API VERSION
@@ -24,7 +29,7 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @var string
 	 */
-	private $_endpoint = 'https://api.createsend.com/api/v3.2/';
+	private $endpoint = 'https://api.createsend.com/api/v3.2/';
 
 	/**
 	 * Activecampaign Provider Instance
@@ -33,24 +38,25 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @var self|null
 	 */
-	protected static $_instances = false;
+	protected static $instances = false;
 
 	/**
 	 * Hustle_Campaignmonitor constructor.
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $api_key
+	 * @param string $api_key Api key.
 	 *
-	 * @return Exception
+	 * @return object
+	 * @throws Exception Missing required API Key.
 	 */
 	private function __construct( $api_key ) {
-		// prerequisites
+		// prerequisites.
 		if ( ! $api_key ) {
 			throw new Exception( __( 'Missing required API Key', 'hustle' ) );
 		}
 
-		$this->_api_key = $api_key;
+		$this->api_key = $api_key;
 	}
 
 
@@ -59,17 +65,16 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param string $api_key
+	 * @param string $api_key Api key.
 	 *
 	 * @return Hustle_Campaignmonitor|null
-	 * @return Exception
 	 */
 	public static function boot( $api_key ) {
-		if ( ! isset( self::$_instances[ md5( $api_key ) ] ) ) {
-			self::$_instances[ md5( $api_key ) ] = new static( $api_key );
+		if ( ! isset( self::$instances[ md5( $api_key ) ] ) ) {
+			self::$instances[ md5( $api_key ) ] = new static( $api_key );
 		}
 
-		return self::$_instances[ md5( $api_key ) ];
+		return self::$instances[ md5( $api_key ) ];
 	}
 
 	/**
@@ -77,7 +82,7 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $user_agent
+	 * @param string $user_agent User agent.
 	 *
 	 * @return string
 	 */
@@ -101,18 +106,18 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param string $verb
-	 * @param        $path
-	 * @param array  $args
+	 * @param string $path Path.
+	 * @param string $verb Verb.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
+	 * @throws Exception Failed to process request.
 	 */
-	private function _request( $path, $verb = 'GET', $args = array() ) {
-		// Adding extra user agent for wp remote request
+	private function request( $path, $verb = 'GET', $args = array() ) {
+		// Adding extra user agent for wp remote request.
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
-		$url = trailingslashit( $this->_endpoint ) . $path;
+		$url = trailingslashit( $this->endpoint ) . $path;
 
 		/**
 		 * Filter campaignmonitor url to be used on sending api request
@@ -126,7 +131,7 @@ class Hustle_Campaignmonitor_API {
 		 */
 		$url = apply_filters( 'hustle_campaignmonitor_api_url', $url, $verb, $path, $args );
 
-		$encoded_auth = base64_encode( $this->_api_key . ':hustle-no_pass' ); //phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		$encoded_auth = base64_encode( $this->api_key . ':hustle-no_pass' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 		$headers      = array(
 			'Authorization' => 'Basic ' . $encoded_auth,
 		);
@@ -168,11 +173,11 @@ class Hustle_Campaignmonitor_API {
 
 		$res = wp_remote_request( $url, $_args );
 
-		// logging data
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request   = $url;
-		$utils->_last_data_sent     = $_args;
-		$utils->_last_data_received = $res;
+		// logging data.
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_url_request   = $url;
+		$utils->last_data_sent     = $_args;
+		$utils->last_data_received = $res;
 
 		$wp_response = $res;
 		remove_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
@@ -194,21 +199,18 @@ class Hustle_Campaignmonitor_API {
 				$body_json = wp_remote_retrieve_body( $res );
 				$res_json  = json_decode( $body_json );
 
-				if ( ! is_null( $res_json ) && is_object( $res_json ) && isset( $res_json->Message ) ) {//phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
-					$msg = $res_json->Message;//phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+				if ( ! is_null( $res_json ) && is_object( $res_json ) && isset( $res_json->Message ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$msg = $res_json->Message;// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				}
 
-				if ( 404 === $status_code ) {
-					throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
-				}
-				// * translators: ... */
+				/* translators: error message */
 				throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
 			}
 		}
 
 		$body = wp_remote_retrieve_body( $res );
 
-		// probably silent mode
+		// probably silent mode.
 		if ( ! empty( $body ) ) {
 			$res = json_decode( $body );
 		}
@@ -233,15 +235,13 @@ class Hustle_Campaignmonitor_API {
 	 * Send data to static webhook campaignmonitor URL
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param $args
+	 * @param array $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function post_( $args ) {
 
-		return $this->_request(
+		return $this->request(
 			'',
 			'POST',
 			$args
@@ -252,18 +252,16 @@ class Hustle_Campaignmonitor_API {
 	 * Get Primary Contact
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param array $args
+	 * @param array $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_primary_contact( $args = array() ) {
 		$default_args = array();
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'primarycontact.json',
 			'GET',
 			$args
@@ -274,18 +272,16 @@ class Hustle_Campaignmonitor_API {
 	 * Get Current Data on Campaign Monitor
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param array $args
+	 * @param array $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_system_date( $args = array() ) {
 		$default_args = array();
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'systemdate.json',
 			'GET',
 			$args
@@ -297,18 +293,17 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param       $list_id
-	 * @param array   $args
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_list( $list_id, $args = array() ) {
 		$default_args = array();
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'lists/' . rawurlencode( trim( $list_id ) ) . '.json',
 			'GET',
 			$args
@@ -320,18 +315,17 @@ class Hustle_Campaignmonitor_API {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param       $client_id
-	 * @param array     $args
+	 * @param string $client_id Client ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_client_lists( $client_id, $args = array() ) {
 		$default_args = array();
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'clients/' . rawurlencode( trim( $client_id ) ) . '/lists.json',
 			'GET',
 			$args
@@ -342,18 +336,16 @@ class Hustle_Campaignmonitor_API {
 	 * Get Clients
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param array $args
+	 * @param array $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_clients( $args = array() ) {
 		$default_args = array();
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'clients.json',
 			'GET',
 			$args
@@ -364,19 +356,17 @@ class Hustle_Campaignmonitor_API {
 	 * Get Client Details
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param       $client_id
-	 * @param array     $args
+	 * @param string $client_id Client ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_client( $client_id, $args = array() ) {
 		$default_args = array();
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'clients/' . rawurlencode( trim( $client_id ) ) . '.json',
 			'GET',
 			$args
@@ -387,19 +377,17 @@ class Hustle_Campaignmonitor_API {
 	 * Get Custom Fields on Lists
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param       $list_id
-	 * @param array   $args
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_list_custom_field( $list_id, $args = array() ) {
 		$default_args = array();
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'lists/' . rawurlencode( trim( $list_id ) ) . '/customfields.json',
 			'GET',
 			$args
@@ -410,12 +398,10 @@ class Hustle_Campaignmonitor_API {
 	 * Add Custom Fields on Lists
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param       $list_id
-	 * @param array   $args
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function add_list_custom_field( $list_id, $args = array() ) {
 		$default_args = array(
@@ -424,7 +410,7 @@ class Hustle_Campaignmonitor_API {
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'lists/' . rawurlencode( trim( $list_id ) ) . '/customfields.json',
 			'POST',
 			$args
@@ -435,15 +421,13 @@ class Hustle_Campaignmonitor_API {
 	 * Add Subscriber to the list
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param       $list_id
-	 * @param array   $args
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function add_subscriber( $list_id, $args = array() ) {
-		return $this->_request(
+		return $this->request(
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json',
 			'POST',
 			$args
@@ -454,15 +438,13 @@ class Hustle_Campaignmonitor_API {
 	 * Update subscriber
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param       $list_id
-	 * @param array   $args
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function update_subscriber( $list_id, $args = array() ) {
-		return $this->_request(
+		return $this->request(
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json?email=' . $args['EmailAddress'],
 			'PUT',
 			$args
@@ -473,13 +455,11 @@ class Hustle_Campaignmonitor_API {
 	 * Check if Subscriber exists
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param       $list_id
-	 * @param       $email_address
-	 * @param array         $args
+	 * @param string $list_id List ID.
+	 * @param string $email_address Email.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function get_subscriber( $list_id, $email_address, $args = array() ) {
 		$default_args = array(
@@ -488,7 +468,7 @@ class Hustle_Campaignmonitor_API {
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json',
 			'GET',
 			$args
@@ -496,16 +476,34 @@ class Hustle_Campaignmonitor_API {
 	}
 
 	/**
+	 * Delete subscriber from the list
+	 *
+	 * @param string $list_id List ID.
+	 * @param string $email Email.
+	 *
+	 * @return bool
+	 */
+	public function delete_email( $list_id, $email ) {
+		$res = $this->request(
+			'subscribers/' . rawurlencode( trim( $list_id ) ) . '/unsubscribe.json',
+			'POST',
+			array(
+				'EmailAddress' => $email,
+			)
+		);
+
+		return ! is_wp_error( $res ) && 'OK' === wp_remote_retrieve_response_message( $res );
+	}
+
+	/**
 	 * Delete Subscriber from the list
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param       $list_id
-	 * @param       $email_address
-	 * @param array         $args
+	 * @param string $list_id List ID.
+	 * @param string $email_address Email.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @return Exception
 	 */
 	public function delete_subscriber( $list_id, $email_address, $args = array() ) {
 		$default_args = array(
@@ -514,7 +512,7 @@ class Hustle_Campaignmonitor_API {
 
 		$args = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			'subscribers/' . rawurlencode( trim( $list_id ) ) . '.json',
 			'DELETE',
 			$args

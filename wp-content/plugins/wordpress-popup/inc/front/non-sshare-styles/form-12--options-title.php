@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $component = '.hustle-form .hustle-form-options .hustle-group-title';
@@ -16,7 +20,7 @@ $font_family     = $typography['form_extras_font_family'];
 $font_size       = $typography['form_extras_font_size'] . $typography['form_extras_font_size_unit'];
 $font_weight     = $typography['form_extras_font_weight'];
 $font_style      = 'normal';
-$alignment       = $typography['form_extras_alignment'];
+$alignment       = ( ! $is_rtl ) ? $typography['form_extras_alignment'] : 'right';
 $line_height     = $typography['form_extras_line_height'] . $typography['form_extras_line_height_unit'];
 $letter_spacing  = $typography['form_extras_letter_spacing'] . $typography['form_extras_letter_spacing_unit'];
 $text_transform  = $typography['form_extras_text_transform'];
@@ -43,7 +47,7 @@ if ( 'regular' === $font_weight ) {
 $mobile_font_size       = ( '' !== $typography['form_extras_font_size_mobile'] ) ? $typography['form_extras_font_size_mobile'] . $typography['form_extras_font_size_unit_mobile'] : $font_size;
 $mobile_font_weight     = $typography['form_extras_font_weight_mobile'];
 $mobile_font_style      = 'normal';
-$mobile_alignment       = $typography['form_extras_alignment_mobile'];
+$mobile_alignment       = ( ! $is_rtl ) ? $typography['form_extras_alignment_mobile'] : 'right';
 $mobile_line_height     = ( '' !== $typography['form_extras_line_height_mobile'] ) ? $typography['form_extras_line_height_mobile'] . $typography['form_extras_line_height_unit_mobile'] : $line_height;
 $mobile_letter_spacing  = ( '' !== $typography['form_extras_letter_spacing_mobile'] ) ? $typography['form_extras_letter_spacing_mobile'] . $typography['form_extras_letter_spacing_unit_mobile'] : $letter_spacing;
 $mobile_text_transform  = $typography['form_extras_text_transform'];

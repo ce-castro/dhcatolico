@@ -46,8 +46,8 @@ if ( $is_slidein ) {
 
 			// Width.
 			if ( '' !== $mobile_width ) {
-				$style         .= $breakpoint_sm . ' {';
-					$style     .= ( $is_optin ) ? $prefix_mobile . $component . ' .hustle-optin {' : $prefix_mobile . $component . ' .hustle-info {';
+				$style     .= $breakpoint_sm . ' {';
+					$style .= ( $is_optin ) ? $prefix_mobile . $component . ' .hustle-optin {' : $prefix_mobile . $component . ' .hustle-info {';
 				if ( $is_optin && '%' === substr( $mobile_width, -1 ) ) {
 					// Set % for parent.
 					$style .= 'max-width: 100%;}}';

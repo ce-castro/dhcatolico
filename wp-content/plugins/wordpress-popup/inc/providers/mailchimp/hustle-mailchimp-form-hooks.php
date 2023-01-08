@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Mailchimp_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Mailchimp_Form_Hooks
@@ -8,6 +13,12 @@
  */
 class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
+	/**
+	 * Constructor
+	 *
+	 * @param Hustle_Provider_Abstract $addon Addon.
+	 * @param int                      $module_id Module ID.
+	 */
 	public function __construct( Hustle_Provider_Abstract $addon, $module_id ) {
 		parent::__construct( $addon, $module_id );
 		add_filter( 'hustle_format_submitted_data', array( $this, 'format_submitted_data' ), 10, 2 );
@@ -16,7 +27,7 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	/**
 	 * Prepare GDPR fields for Mailchimp API
 	 *
-	 * @param array $gdpr_fields Saved GDPR fields
+	 * @param array $gdpr_fields Saved GDPR fields.
 	 * @return array
 	 */
 	private function prepare_marketing_permissions( $gdpr_fields ) {
@@ -32,12 +43,33 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	}
 
 	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
+		$list_id                = $addon_setting_values['list_id'];
+		$api_key                = $addon->get_setting( 'api_key', '', $global_multi_id );
+		try {
+			$api = $addon->get_api( $api_key );
+			$api->delete_email( $list_id, $email );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Add Mailchimp data to entry.
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
+	 * @throws Exception Required fields are missed.
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
@@ -99,7 +131,7 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$gdpr = ( 'on' === $submitted_data['gdpr'] ? true : false );
 				unset( $submitted_data['gdpr'] );
 			}
-			// Add extra fields
+			// Add extra fields.
 			$merge_data = array_diff_key(
 				$submitted_data,
 				array(
@@ -134,6 +166,7 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			// Add a warning in the entry letting the admin know how we're handling their keys.
 			if ( ! empty( $shortened_keys ) ) {
 				$success_message_extra = sprintf(
+					/* translators: shortened keys */
 					__( " These fields' names are being truncated to have a max length of 10. In parenthesis is the name currently used by Mailchimp: %s", 'hustle' ),
 					implode( ', ', $shortened_keys )
 				);
@@ -167,7 +200,7 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
 			$error_detail = __( 'Something went wrong.', 'hustle' );
 			try {
-				// Add custom fields
+				// Add custom fields.
 				$add_cf_result = $addon->maybe_add_custom_fields( $api, $list_id, $merge_data, $module_id );
 				if ( is_wp_error( $add_cf_result ) ) {
 					$error_message = $add_cf_result->get_error_message();
@@ -177,7 +210,7 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$existing_member = $addon->get_member( $email, $list_id, $submitted_data, $api_key );
 				$member_exists   = ! is_wp_error( $existing_member ) && $existing_member;
 
-				// tags
+				// tags.
 				$static_segments     = isset( $addon_setting_values['tags'] ) ? $addon_setting_values['tags'] : '';
 				$static_segments_val = ! empty( $static_segments ) ? ( $member_exists ? array_keys( $static_segments ) : array_values( $static_segments ) ) : '';
 
@@ -211,7 +244,7 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 						$subscribe_data['status'] = 'pending';
 						$can_subscribe            = true;
 					} elseif ( 'unsubscribed' === $existing_member->status ) {
-						// Resend Confirm Subscription Email even if `Automatically opt-in new users to the mailing list` is set
+						// Resend Confirm Subscription Email even if `Automatically opt-in new users to the mailing list` is set.
 						$subscribe_data['status'] = 'pending';
 						$can_subscribe            = true;
 					} elseif ( 'archived' === $existing_member->status ) {
@@ -343,7 +376,7 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param Hustle_Module_Model $module
+	 * @param Hustle_Module_Model $module Module.
 	 * @return string
 	 */
 	public function add_front_form_fields( Hustle_Module_Model $module ) {
@@ -377,7 +410,8 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -444,11 +478,11 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 			return $is_success;
 		}
@@ -462,29 +496,29 @@ class Hustle_Mailchimp_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * This method is to be inherited
 	 * And extended by child classes.
 	 *
-	 * Make use of the property `$_subscriber`
+	 * Make use of the property `$subscriber`
 	 * Method to omit double api calls
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param   object $api
-	 * @param   mixed  $data
+	 * @param   object $api Api.
+	 * @param   mixed  $data Data.
 	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ) {
-			$this->_subscriber[ md5( $data['email'] ) ] = $api->check_email( $data['list_id'], $data['email'] );
+		if ( empty( $this->subscriber ) && ! isset( $this->subscriber[ md5( $data['email'] ) ] ) ) {
+			$this->subscriber[ md5( $data['email'] ) ] = $api->check_email( $data['list_id'], $data['email'] );
 		}
 
-		return $this->_subscriber[ md5( $data['email'] ) ];
+		return $this->subscriber[ md5( $data['email'] ) ];
 	}
 
 	/**
 	 * Format submitted data
 	 *
 	 * @since 4.0
-	 * @param array  $submitted_data
-	 * @param string $slug Provider slug
+	 * @param array  $submitted_data Submitted data.
+	 * @param string $slug Provider slug.
 	 * @return array
 	 */
 	public function format_submitted_data( $submitted_data, $slug ) {

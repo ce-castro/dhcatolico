@@ -1,5 +1,13 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_SShare_Display class
+ *
+ * @package Hustle
+ */
 
+/**
+ * Class Hustle_SShare_Display
+ */
 class Hustle_SShare_Display extends Hustle_Meta_Base_Display {
 
 	/**

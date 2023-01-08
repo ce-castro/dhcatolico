@@ -1,16 +1,25 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_E_Newsletter class
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 
+	/**
+	 * Class Hustle_E_Newsletter
+	 */
 	class Hustle_E_Newsletter extends Hustle_Provider_Abstract {
 
 		/**
-		 * @var $_email_newsletter Email_Newsletter
+		 * Email Newsletter
+		 *
+		 * @var Email_Newsletter
 		 */
-		public $_email_newsletter;
+		public $email_newsletter;
 
 		const SLUG = 'e_newsletter';
-		// const NAME = "e-Newsletter";
 
 		/**
 		 * Activecampaign Provider Instance
@@ -19,33 +28,43 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * E newsletter
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'e_newsletter';
+		protected $slug = 'e_newsletter';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'e-Newsletter';
+		protected $title = 'e-Newsletter';
 
 		/**
+		 * Is multi on global
+		 *
 		 * @since 4.0
 		 * @var bool
 		 */
@@ -56,7 +75,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_E_Newsletter_Form_Settings';
+		protected $form_settings = 'Hustle_E_Newsletter_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -64,14 +83,14 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_E_Newsletter_Form_Hooks';
+		protected $form_hooks = 'Hustle_E_Newsletter_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -80,11 +99,11 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
@@ -94,13 +113,18 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 * @return object|null
 		 */
 		public function get_enewsletter_instance() {
-			if ( ! $this->_email_newsletter ) {
+			if ( ! $this->email_newsletter ) {
 				global $email_newsletter;
-				$this->_email_newsletter = $email_newsletter;
+				$this->email_newsletter = $email_newsletter;
 			}
-			return $this->_email_newsletter;
+			return $this->email_newsletter;
 		}
 
+		/**
+		 * Is active?
+		 *
+		 * @return bool
+		 */
 		public function active() {
 			$setting_values = $this->get_settings_values();
 
@@ -111,6 +135,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 * Check if the settings are completed
 		 *
 		 * @since 4.0
+		 * @param string $multi_id Multi ID.
 		 * @return boolean
 		 */
 		protected function settings_are_completed( $multi_id = '' ) {
@@ -139,7 +164,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure( $submitted_data ) {
@@ -151,10 +176,10 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 
 				$active = ! empty( $submitted_data['active'] );
 				// If not active, activate it.
-				if ( ! Hustle_Provider_Utils::is_provider_active( $this->_slug ) ) {
+				if ( ! Hustle_Provider_Utils::is_provider_active( $this->slug ) ) {
 
 					// TODO: Wrap this in a friendlier method.
-					$activated = Hustle_Providers::get_instance()->activate_addon( $this->_slug );
+					$activated = Hustle_Providers::get_instance()->activate_addon( $this->slug );
 					if ( ! $activated ) {
 						$error_message = esc_html( $this->provider_connection_falied() );
 						$has_errors    = true;
@@ -298,7 +323,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 		 *
 		 * @since 1.1.1
 		 *
-		 * @param $email
+		 * @param string $email Email.
 		 * @return bool
 		 */
 		public function is_member( $email ) {
@@ -307,10 +332,23 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 			return ! ! $member;
 		}
 
+		/**
+		 * Get synced
+		 *
+		 * @param int $module Module.
+		 * @return string
+		 */
 		public static function get_synced( $module ) {
 			return self::get_provider_details( $module, 'synced', self::SLUG );
 		}
 
+		/**
+		 * Migrate 3.0
+		 *
+		 * @param object $module Module.
+		 * @param object $old_module Old module.
+		 * @return boolean
+		 */
 		public function migrate_30( $module, $old_module ) {
 			$migrated = parent::migrate_30( $module, $old_module );
 			if ( ! $migrated ) {
@@ -324,10 +362,10 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 			 */
 			$module_provider_settings = $module->get_provider_settings( $this->get_slug() );
 			if ( ! empty( $module_provider_settings ) ) {
-				// At provider level we store a single boolean
+				// At provider level we store a single boolean.
 				$this->save_settings_values( array( 'active' => true ) );
 
-				// selected_global_multi_id not needed at module level
+				// selected_global_multi_id not needed at module level.
 				unset( $module_provider_settings['selected_global_multi_id'] );
 				$module->set_provider_settings( $this->get_slug(), $module_provider_settings );
 			}
@@ -335,6 +373,11 @@ if ( ! class_exists( 'Hustle_E_Newsletter' ) ) :
 			return $migrated;
 		}
 
+		/**
+		 * Get 3.0 provider mapping
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'enabled' => 'active',

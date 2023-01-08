@@ -79,6 +79,42 @@ ob_start();
 	</div>
 
 </div>
+
+<div class="sui-form-field">
+
+	<label for="hustle-automated-file" class="sui-toggle hustle-toggle-with-container" data-toggle-on="automated-file">
+		<input type="checkbox"
+			name="automated_file"
+			data-attribute="automated_file"
+			id="hustle-automated-file"
+			aria-labelledby="hustle-automated-file-label"
+			<?php checked( $settings['automated_file'], '1' ); ?>
+		/>
+		<span class="sui-toggle-slider" aria-hidden="true"></span>
+
+		<span id="hustle-automated-file-label" class="sui-toggle-label"><?php esc_html_e( 'Enable auto downloadable file after submission', 'hustle' ); ?></span>
+	</label>
+
+	<div class="sui-border-frame sui-toggle-content" data-toggle-content="automated-file">
+
+		<div class="sui-form-field">
+			<?php
+			$this->render(
+				'admin/commons/sui-wizard/tab-content/image-uploader',
+				array(
+					'image_url'         => $settings['auto_download_file'],
+					'attribute'         => 'auto_download_file',
+					'button_text'       => __( 'Upload file', 'hustle' ),
+					'field_title'       => __( 'Auto download file', 'hustle' ),
+					'field_description' => __( 'This file will be downloaded along with showing the success message after successful submission.', 'hustle' ),
+				)
+			);
+			?>
+		</div>
+
+	</div>
+
+</div>
 <?php
 $show_success_content = ob_get_clean();
 
@@ -104,6 +140,24 @@ ob_start();
 			data-behavior="insert"
 		></select>
 	</div>
+
+</div>
+
+<div class="sui-form-field">
+
+	<label class="sui-label"><?php esc_html_e( 'Redirection Option', 'hustle' ); ?></label>
+
+	<select name="redirect_tab" class="sui-select" data-attribute="redirect_tab">
+		<option value="sametab" <?php selected( $settings['redirect_tab'], 'sametab' ); ?>>
+			<?php esc_html_e( 'Redirect on the same tab', 'hustle' ); ?>
+		</option>
+		<option value="newtab_thankyou" <?php selected( $settings['redirect_tab'], 'newtab_thankyou' ); ?>>
+			<?php esc_html_e( 'Redirect on new tab and show thank you message on page', 'hustle' ); ?>
+		</option>
+		<option value="newtab_hide" <?php selected( $settings['redirect_tab'], 'newtab_hide' ); ?>>
+			<?php esc_html_e( 'Redirect on new tab and hide module on page', 'hustle' ); ?>
+		</option>
+	</select>
 
 </div>
 <?php

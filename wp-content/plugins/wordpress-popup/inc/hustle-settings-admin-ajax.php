@@ -1,16 +1,24 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Settings_Admin_Ajax
+ *
+ * @package Hustle
+ */
 
+/**
+ * Class Hustle_Settings_Admin_Ajax
+ */
 class Hustle_Settings_Admin_Ajax {
-	private $_hustle;
 
-	private $_admin;
-
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 
 		add_action( 'wp_ajax_hustle_remove_ips', array( $this, 'remove_ips_from_tables' ) );
 		add_action( 'wp_ajax_hustle_reset_settings', array( $this, 'reset_settings' ) );
 
-		// Return the recaptcha script for preview
+		// Return the recaptcha script for preview.
 		add_action( 'wp_ajax_hustle_load_recaptcha_preview', array( $this, 'load_recaptcha_preview' ) );
 
 		// Color Palette tab actions.
@@ -24,7 +32,7 @@ class Hustle_Settings_Admin_Ajax {
 	 * Filter IPs
 	 *
 	 * @since 4.0
-	 * @param string $ip_string
+	 * @param string $ip_string IPs string.
 	 * @return array valid IPs
 	 */
 	private function filter_ips( $ip_string ) {
@@ -144,17 +152,17 @@ class Hustle_Settings_Admin_Ajax {
 
 		$filter_args = array(
 			'ip_tracking'                       => FILTER_DEFAULT,
-			// Account erasure request
+			// Account erasure request.
 			'retain_sub_on_erasure'             => FILTER_DEFAULT,
-			// Submissions retention
+			// Submissions retention.
 			'retain_submission_forever'         => FILTER_DEFAULT,
 			'submissions_retention_number'      => FILTER_SANITIZE_NUMBER_INT,
 			'submissions_retention_number_unit' => FILTER_DEFAULT,
-			// IPs retention
+			// IPs retention.
 			'retain_ip_forever'                 => FILTER_DEFAULT,
 			'ip_retention_number'               => FILTER_SANITIZE_NUMBER_INT,
 			'ip_retention_number_unit'          => FILTER_DEFAULT,
-			// Tracking retention
+			// Tracking retention.
 			'retain_tracking_forever'           => FILTER_DEFAULT,
 			'tracking_retention_number'         => FILTER_SANITIZE_NUMBER_INT,
 			'tracking_retention_number_unit'    => FILTER_DEFAULT,
@@ -196,7 +204,7 @@ class Hustle_Settings_Admin_Ajax {
 	 * @since 4.0.0
 	 */
 	private function save_top_metrics_settings() {
-		$data    = filter_input( INPUT_POST, 'metrics', FILTER_REQUIRE_ARRAY );
+		$data    = filter_input( INPUT_POST, 'metrics', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 		$metrics = ! empty( $data ) ? array_filter( $data ) : array();
 
 		// Only 3 metrics can be selected. No more.
@@ -241,13 +249,13 @@ class Hustle_Settings_Admin_Ajax {
 	private function save_recaptcha_settings() {
 
 		$settings_to_save = array(
-			// V2 Checkbox
+			// V2 Checkbox.
 			'v2_checkbox_site_key'    => '',
 			'v2_checkbox_secret_key'  => '',
-			// V2 Invisible
+			// V2 Invisible.
 			'v2_invisible_site_key'   => '',
 			'v2_invisible_secret_key' => '',
-			// V3 Recaptcha
+			// V3 Recaptcha.
 			'v3_recaptcha_site_key'   => '',
 			'v3_recaptcha_secret_key' => '',
 			'language'                => 'automatic',
@@ -306,7 +314,7 @@ class Hustle_Settings_Admin_Ajax {
 	 */
 	private function save_unsubscribe_settings() {
 
-		$data           = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$data           = $_POST;// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$email_body     = wp_json_encode( $data['email_message'] );
 		$sanitized_data = Opt_In_Utils::validate_and_sanitize_fields( $data );
 
@@ -552,12 +560,21 @@ class Hustle_Settings_Admin_Ajax {
 
 			// Update it if valid.
 			if ( false !== $new_value && ! is_null( $new_value ) ) {
+				// Reload page if global_tracking_disabled is changed because there are dependent settings like Dashboard Analytics.
+				if ( 'global_tracking_disabled' === $key && $stored_values[ $key ] !== $new_value ) {
+					$reload = true;
+				}
 				$stored_values[ $key ] = $new_value;
 			}
 		}
 
 		Hustle_Settings_Admin::update_hustle_settings( $stored_values, 'general' );
-		wp_send_json_success();
+
+		if ( empty( $reload ) ) {
+			wp_send_json_success();
+		} else {
+			wp_send_json_success( array( 'url' => true ) );
+		}
 	}
 
 	/**
@@ -771,7 +788,7 @@ class Hustle_Settings_Admin_Ajax {
 		$palette_name = filter_input( INPUT_POST, 'palette_name' );
 
 		// Remove non-palette data.
-		$palette_colors = array_intersect_key( $_POST, Hustle_Palettes_Helper::get_palette_array( 'gray_slate' ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$palette_colors = array_intersect_key( $_POST, Hustle_Palettes_Helper::get_palette_array( 'gray_slate' ) );// phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		$palette_data = array( 'palette' => $palette_colors );
 

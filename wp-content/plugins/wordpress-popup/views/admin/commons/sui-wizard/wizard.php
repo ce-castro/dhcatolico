@@ -39,7 +39,7 @@ $docs_section = Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ? 'c
 				<input
 					type="text"
 					name="module_name"
-					value="<?php echo htmlspecialchars( $module_name, ENT_QUOTES, 'UTF-8' ); ?>"
+					value="<?php echo esc_attr( htmlspecialchars( $module_name, ENT_QUOTES, 'UTF-8' ) ); ?>"
 					placeholder="<?php esc_html_e( 'E.g. Newsletter', 'hustle' ); ?>"
 					id="hustle-module-name"
 					class="sui-form-control"
@@ -59,10 +59,10 @@ $docs_section = Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ? 'c
 				$this->render(
 					'admin/commons/sui-listing/elements/actions',
 					array(
-						'edit_page'            => true,
-						'module'               => $module,
-						'smallcaps_singular'   => $smallcaps_singular,
-						'capitalize_singular'  => $capitalize_singular,
+						'edit_page'           => true,
+						'module'              => $module,
+						'smallcaps_singular'  => $smallcaps_singular,
+						'capitalize_singular' => $capitalize_singular,
 					)
 				);
 				?>
@@ -76,6 +76,7 @@ $docs_section = Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ? 'c
 				'create-module' => 'true',
 			);
 
+			/* translators: module type */
 			$tooltip = sprintf( __( 'Create New %s', 'hustle' ), $capitalize_singular );
 			?>
 			<a
@@ -103,14 +104,14 @@ $docs_section = Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ? 'c
 	$this->render(
 		'admin/commons/sui-wizard/navigation',
 		array(
-			'is_optin'             => isset( $module_mode ) ? $module_mode : false,
-			'section'              => $page_tab,
-			'wizard_tabs'          => $wizard_tabs,
-			'module_name'          => $module_name,
-			'module_type'          => $module_type,
-			'module'               => $module,
-			'smallcaps_singular'   => $smallcaps_singular,
-			'capitalize_singular'  => $capitalize_singular,
+			'is_optin'            => isset( $module_mode ) ? $module_mode : false,
+			'section'             => $page_tab,
+			'wizard_tabs'         => $wizard_tabs,
+			'module_name'         => $module_name,
+			'module_type'         => $module_type,
+			'module'              => $module,
+			'smallcaps_singular'  => $smallcaps_singular,
+			'capitalize_singular' => $capitalize_singular,
 		)
 	);
 	?>
@@ -122,7 +123,7 @@ $docs_section = Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type ? 'c
 		$this->render(
 			'admin/commons/sui-wizard/status-bar',
 			array(
-				'is_active' => $module_status,
+				'is_active'   => $module_status,
 				'module_type' => $module_type,
 			)
 		);

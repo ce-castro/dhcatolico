@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Zapier_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Zapier_Form_Hooks
@@ -8,13 +13,12 @@
  */
 class Hustle_Zapier_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 
-
 	/**
 	 * Add Zapier data to entry.
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 *
 	 * @return array
 	 */
@@ -91,6 +95,14 @@ class Hustle_Zapier_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		return $entry_fields;
 	}
 
+	/**
+	 * Call hook
+	 *
+	 * @param string $key Key.
+	 * @param array  $connection_settings Connection settings.
+	 * @param array  $submitted_data Submitted data.
+	 * @return type
+	 */
 	private function call_hook( $key, $connection_settings, $submitted_data ) {
 		$submitted_data = $this->check_legacy( $submitted_data );
 		if ( empty( $connection_settings['api_key'] ) || empty( $connection_settings['name'] ) ) {
@@ -113,6 +125,15 @@ class Hustle_Zapier_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		}
 	}
 
+	/**
+	 * Get status
+	 *
+	 * @param string $key Key.
+	 * @param bool   $status Status.
+	 * @param string $message Message.
+	 * @param string $connection_name Connection name.
+	 * @return type
+	 */
 	private function get_status( $key, $status = false, $message = '', $connection_name = '' ) {
 		return array(
 			'name'  => 'status-' . $key,
@@ -125,8 +146,14 @@ class Hustle_Zapier_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	}
 
 	/**
+	 * On render entry
+	 *
 	 * @inheritdoc
 	 * @see Hustle_Provider_Form_Hooks_Abstract::on_render_entry()
+	 *
+	 * @param Hustle_Entry_Model $entry_model Entry model.
+	 * @param array              $addon_meta_data Addon meta data.
+	 * @return array
 	 */
 	public function on_render_entry( Hustle_Entry_Model $entry_model, $addon_meta_data ) {
 		$addon_slug             = $this->addon->get_slug();
@@ -155,6 +182,13 @@ class Hustle_Zapier_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		return $entry_items;
 	}
 
+	/**
+	 * Format multi metada for entry
+	 *
+	 * @param Hustle_Entry_Model $entry_model Entry model.
+	 * @param array              $addon_meta_data Addon meta data.
+	 * @return array
+	 */
 	private function format_multi_metadata_for_entry( Hustle_Entry_Model $entry_model, $addon_meta_data ) {
 		$entry_items = array();
 		foreach ( $addon_meta_data as $addon_meta ) {
@@ -163,6 +197,12 @@ class Hustle_Zapier_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		return $entry_items;
 	}
 
+	/**
+	 * Format single metada for entry
+	 *
+	 * @param array $addon_meta_data Addon meta data.
+	 * @return array
+	 */
 	private function format_single_metadata_for_entry( $addon_meta_data ) {
 		if ( ! isset( $addon_meta_data['value'] ) || ! is_array( $addon_meta_data['value'] ) ) {
 			return array();

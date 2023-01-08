@@ -30,12 +30,10 @@ $hide = apply_filters( 'wpmudev_branding_hide_doc_link', false );
 
 				<?php if ( ! $hide ) { ?>
 				<span class="sui-description">
-
-					<script charset="ISO-8859-1" src="//fast.wistia.com/assets/external/E-v1.js" async></script>
-						<div class="wistia_embed wistia_async_0rjgdi57kv popover=true popoverContent=link popoverOverlayOpacity=0.8 stillUrl=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-						style="display:inline-block; white-space:nowrap;">
-							<a href="#"><?php esc_html_e( 'How does it work (video)', 'hustle' ); ?></a></span>
-						</div>
+					<div class="wistia_embed wistia_async_0rjgdi57kv popover=true popoverContent=link popoverOverlayOpacity=0.8 stillUrl=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+					style="display:inline-block; white-space:nowrap;">
+						<a href="#"><?php esc_html_e( 'How does it work (video)', 'hustle' ); ?></a></span>
+					</div>
 				</span>
 				<?php } ?>
 

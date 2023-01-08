@@ -1,4 +1,10 @@
 <?php
+/**
+ * Layout row
+ *
+ * @package Hustle
+ */
+
 $info_default = self::$plugin_url . 'assets/images/layouts/layout-info-default';
 $info_compact = self::$plugin_url . 'assets/images/layouts/layout-info-compact';
 $info_stacked = self::$plugin_url . 'assets/images/layouts/layout-info-stacked';
@@ -17,13 +23,13 @@ $content_focus = self::$plugin_url . 'assets/images/layouts/layout-content-focus
 
 			<h3 id="hustle-row-layout" class="sui-settings-label"><?php esc_html_e( 'Choose Layout', 'hustle' ); ?></h3>
 
-			<p class="sui-description"><?php printf( esc_html__( 'Select from one of the pre-built layouts for your %s as per your liking.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
+			<p class="sui-description"><?php /* translators: module type */  printf( esc_html__( 'Select from one of the pre-built layouts for your %s as per your liking.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
 
 		<?php } else { ?>
 
 			<h3 id="hustle-row-layout" class="sui-settings-label"><?php esc_html_e( 'Layout', 'hustle' ); ?></h3>
 
-			<p class="sui-description"><?php printf( esc_html__( 'Choose one of the pre-built layouts for your %s content.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
+			<p class="sui-description"><?php /* translators: module type */  printf( esc_html__( 'Choose one of the pre-built layouts for your %s content.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
 
 		<?php } ?>
 	</div>

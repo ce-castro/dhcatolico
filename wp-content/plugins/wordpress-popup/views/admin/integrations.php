@@ -43,9 +43,6 @@
 <!-- Active integration remove modal -->
 <?php $this->render( 'admin/dialogs/remove-active-integration' ); ?>
 
-<!-- CTCT integration migration modal. Not using this. -->
-<?php // $this->render( 'admin/dialogs/modal-migrate-ctct' ); ?>
-
 <!-- Aweber integration migration modal -->
 <?php $this->render( 'admin/dialogs/modal-migrate-aweber' ); ?>
 

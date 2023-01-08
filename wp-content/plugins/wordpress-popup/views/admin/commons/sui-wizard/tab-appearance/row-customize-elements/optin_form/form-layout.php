@@ -1,4 +1,10 @@
 <?php
+/**
+ * Form Layout settings
+ *
+ * @package Hustle
+ */
+
 $name     = 'optin_form_layout' . ( $device ? '_' . $device : '' );
 $settings = $settings[ $name ];
 ?>
@@ -9,7 +15,7 @@ $settings = $settings[ $name ];
 
 		<h5 class="sui-settings-label sui-dark" style="font-size: 13px;"><?php echo esc_html_e( 'Form Layout', 'hustle' ); ?></h5>
 
-		<p class="sui-description"><?php printf( esc_html__( 'Choose whether your %s form should be inline or stacked.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
+		<p class="sui-description"><?php /* translators: module type */  printf( esc_html__( 'Choose whether your %s form should be inline or stacked.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
 
 		<div class="sui-tabs sui-side-tabs">
 

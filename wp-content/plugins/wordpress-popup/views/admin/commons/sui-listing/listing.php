@@ -8,7 +8,6 @@
  * @uses ../dialogs/import-module.php
  * @uses ../dialogs/delete-module.php
  * @uses ../dialogs/manage-tracking.php
- * @uses ../dialogs/tracking-reset-data.php
  * @uses ../dialogs/pro-upgrade.php
  * @uses ./summary.php
  * @uses ./pagination.php
@@ -26,7 +25,6 @@ if ( isset( $page_title ) ) {
 	$page_title = esc_html__( 'Module', 'hustle' );
 }
 $sql_month_start_date = date( 'Y-m-d H:i:s', strtotime( '-30 days midnight' ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
-$tracking_model       = Hustle_Tracking_Model::get_instance();
 $free_limit_reached   = Hustle_Data::was_free_limit_reached( $module_type );
 $is_search            = filter_input( INPUT_GET, 'q' );
 ?>
@@ -102,21 +100,26 @@ $is_search            = filter_input( INPUT_GET, 'q' );
 
 <div id="hustle-floating-notifications-wrapper" class="sui-floating-notices"></div>
 
-<?php if ( 0 < count( $modules ) || $is_search ) { ?>
+<?php
+if ( 0 < count( $modules ) || $is_search ) {
+	$args = array(
+		'active_modules_count' => $active,
+		'capitalize_singular'  => $capitalize_singular,
+		'capitalize_plural'    => $capitalize_plural,
+		'module_type'          => $module_type,
+		'sui'                  => $sui,
+	);
 
-	<?php
+	if ( Hustle_Settings_Admin::global_tracking() ) {
+		$tracking_model               = Hustle_Tracking_Model::get_instance();
+		$args['latest_entry_time']    = $tracking_model->get_latest_conversion_time( $module_type );
+		$args['latest_entries_count'] = $tracking_model->count_newer_conversions_by_module_type( $module_type, $sql_month_start_date );
+	}
+
 	// ELEMENT: Summary.
 	$this->render(
 		'admin/commons/sui-listing/elements/summary',
-		array(
-			'active_modules_count' => $active,
-			'capitalize_singular'  => $capitalize_singular,
-			'capitalize_plural'    => $capitalize_plural,
-			'module_type'          => $module_type,
-			'latest_entry_time'    => $tracking_model->get_latest_conversion_time( $module_type ),
-			'latest_entries_count' => $tracking_model->count_newer_conversions_by_module_type( $module_type, $sql_month_start_date ),
-			'sui'                  => $sui,
-		)
+		$args
 	);
 	?>
 
@@ -239,13 +242,8 @@ if ( isset( $multiple_charts ) ) {
 	);
 }
 
-/**
- * DIALOG: Reset Tracking Data Confirmation.
- */
-$this->render( 'admin/commons/sui-listing/dialogs/tracking-reset-data' );
-
 // DIALOG: Ugrade to pro.
-if ( Opt_In_Utils::_is_free() ) {
+if ( Opt_In_Utils::is_free() ) {
 	$this->render( 'admin/commons/sui-listing/dialogs/pro-upgrade' );
 }
 

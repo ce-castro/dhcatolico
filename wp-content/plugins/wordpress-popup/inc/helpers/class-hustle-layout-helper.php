@@ -133,7 +133,7 @@ class Hustle_Layout_Helper {
 
 		// Assign $file to a variable which is unlikely to be used by users of the method.
 		$opt_in_to_be_file_name = $file;
-		extract( $params, EXTR_OVERWRITE ); // phpcs:ignore
+		extract( $params, EXTR_OVERWRITE ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 
 		if ( $return ) {
 			ob_start();
@@ -272,7 +272,7 @@ class Hustle_Layout_Helper {
 				$image = '<img src="' . $image_path . '.' . $image_suffix . '" alt="' . $image_name . '" aria-hidden="true">';
 			}
 		}
-		echo $image; // phpcs:ignore
+		echo $image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**

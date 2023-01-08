@@ -1,8 +1,17 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Gutenberg class
+ *
+ * @package Hustle
+ */
+
 // Load Gutenberg module after Hustle is loaded.
 add_action( 'init', array( 'Hustle_Gutenberg', 'init' ), 5 );
 add_filter( 'block_categories_all', array( 'Hustle_Gutenberg', 'register_hustle_category' ), 10, 2 );
 
+/**
+ * Class Hustle_Gutenberg
+ */
 class Hustle_Gutenberg {
 
 	/**
@@ -85,6 +94,8 @@ class Hustle_Gutenberg {
 	 * Register Hustle's gutenberg category.
 	 *
 	 * @since 1.0 Gutenberg Addon
+	 * @param array  $categories Categories.
+	 * @param string $block_editor_context Editor context.
 	 * @return array
 	 */
 	public static function register_hustle_category( $categories, $block_editor_context ) {

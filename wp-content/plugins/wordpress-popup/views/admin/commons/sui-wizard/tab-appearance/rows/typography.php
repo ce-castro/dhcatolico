@@ -56,8 +56,13 @@ $this->render(
 	array(
 		'label'        => esc_html__( 'Typography', 'hustle' ),
 		'vanilla_hide' => true,
-		/* translators: module type in lowercase and singular */
-		'description'  => sprintf( esc_html__( 'Your %s has default font styles. However, you can use Google Fonts and also customize the font styles.', 'hustle' ), esc_html( $smallcaps_singular ) ),
+		'description'  => sprintf(
+			/* translators: 1. module type in lowercase and singular. 2. Open a tag. 3. Close a tag. */
+			esc_html__( 'Your %1$s has default font styles. However, you can switch to Custom and use any GDPR compliant %2$sBunny Font%3$s that you prefer, and also customize the font styles.', 'hustle' ),
+			esc_html( $smallcaps_singular ),
+			'<a href="https://fonts.bunny.net/about" target="_blank">',
+			'</a>'
+		),
 		'content'      => $content,
 	)
 );

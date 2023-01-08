@@ -38,6 +38,7 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 		'general-11--subtitle', // .hustle-subtitle
 		'general-12--content', // .hustle-group-content
 		'general-13--cta-container', // .hustle-cta-container
+		'general-19--cta-helper-text', // .hustle-cta-helper-text
 		'general-14--cta-button', // .hustle-button-cta
 		'general-15--cta-alignment', // .hustle-content-wrap
 		'general-16--nsa-link', // .hustle-nsa-link
@@ -85,6 +86,7 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 		'general-11--subtitle', // .hustle-subtitle
 		'general-12--content', // .hustle-group-content
 		'general-13--cta-container', // .hustle-cta-container
+		'general-19--cta-helper-text', // .hustle-cta-helper-text
 		'general-14--cta-button', // .hustle-button-cta
 		'general-15--cta-alignment', // .hustle-content-wrap
 		'general-16--nsa-link', // .hustle-nsa-link
@@ -92,6 +94,11 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 		'general-18--popup-mask', // .hustle-popup-mask
 	);
 
+	/**
+	 * Get styles
+	 *
+	 * @return string
+	 */
 	protected function get_styles() {
 		$styles  = $this->get_common_styles();
 		$styles .= $this->get_custom_css();
@@ -99,6 +106,11 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 		return $styles;
 	}
 
+	/**
+	 * Get common styles
+	 *
+	 * @return string
+	 */
 	private function get_common_styles() {
 
 		// Global prefix.
@@ -215,7 +227,7 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 		// ****************************************
 		// 2.1. DEFAULT
 
-		// Blockquote border
+		// Blockquote border.
 		if ( '' !== $content['main_content'] ) {
 			$styles     .= ' ';
 			$styles     .= $prefix . $stylable_elements['layout_content'] . ' blockquote {';
@@ -227,6 +239,12 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 
 	}
 
+	/**
+	 * Get stylable element with prefix
+	 *
+	 * @param string $prefix Prefix.
+	 * @return array
+	 */
 	private function get_prefixed_popup_stylable_elements( $prefix ) {
 
 		return array(
@@ -234,6 +252,11 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 		);
 	}
 
+	/**
+	 * Get stylable element
+	 *
+	 * @return array
+	 */
 	private function get_popup_stylable_elements() {
 
 		return array(
@@ -259,7 +282,7 @@ class Hustle_Decorator_Non_Sshare extends Hustle_Decorator_Abstract {
 		 * @since 4.0
 		 */
 
-		// for Desktop
+		// for Desktop.
 		if ( '1' === $this->design['customize_css'] && ! empty( $this->design['custom_css'] ) ) {
 			$styles .= $this->prepare_css( $this->design['custom_css'], $prefix_alt, false, true );
 		}

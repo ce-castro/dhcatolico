@@ -1,11 +1,20 @@
 <?php
+/**
+ * Icon style row
+ *
+ * @package Hustle
+ */
+
 // TODO: USE THE SUI COMPONENT.
+
+$position = $settings[ 'close_icon_position' . ( $device ? '_' . $device : '' ) ];
 
 $name     = 'close_icon_style' . ( $device ? '_' . $device : '' );
 $settings = $settings[ $name ];
+
 ?>
 
-<div class="sui-box-settings-row">
+<div class="sui-box-settings-row hustle-close_icon_style" style="<?php echo ( 'hidden' === $position ) ? 'display: none;' : ''; ?>">
 
 	<div class="sui-box-settings-col-2">
 
@@ -57,7 +66,7 @@ $settings = $settings[ $name ];
 					role="tab"
 					type="button"
 					id="tab-<?php echo esc_attr( $key ); ?>-position--flat"
-					class="sui-tab-item active"
+					class="sui-tab-item"
 					data-label-for="hustle-<?php echo esc_attr( $name ); ?>--flat"
 					aria-selected="true"
 				>

@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Mailchimp_Form_Settings class
+ *
+ * @package Hustle
+ */
+
 /**
  * Class Hustle_Mailchimp_Form_Settings
  * Form Settings Mailchimp Process
@@ -6,15 +12,18 @@
 class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstract {
 
 	/**
-	 * stores mailchimp group data
+	 * Stores mailchimp group data
+	 *
+	 * @var array
 	 */
 	private $groups_data = array();
 
 	/**
 	 *
-	 * stores mailchimp tags data ( static segments )
+	 * Stores mailchimp tags data ( static segments )
 	 *
 	 * @since 4.0.2
+	 * @var array
 	 */
 	private $tags_data = array();
 
@@ -43,20 +52,20 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 * @return array
 	 */
 	public function form_settings_wizards() {
-		// Get cached data if exists
+		// Get cached data if exists.
 		if ( ! is_null( $this->steps ) ) {
 			return $this->steps;
 		}
 
 		// already filtered on Abstract
-		// numerical array steps
+		// numerical array steps.
 		$this->steps = array(
-			// 0 - Select List
+			// 0 - Select List.
 			array(
 				'callback'     => array( $this, 'first_step_callback' ),
 				'is_completed' => array( $this, 'is_first_step_completed' ),
 			),
-			// 3 - Select Tags (yes, fourth step here. It's temporary)
+			// 3 - Select Tags (yes, fourth step here. It's temporary).
 			array(
 				'callback'     => array( $this, 'second_step_callback' ),
 				'is_completed' => array( $this, 'step_is_completed' ),
@@ -72,7 +81,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			// If the selected list doesn't have groups, close the modal. No need for this step.
 			if ( ! empty( $groups ) && is_array( $groups ) ) {
 				$this->steps[] = array(
-					// 1 - Select Group and Interests
+					// 1 - Select Group and Interests.
 					'callback'     => array( $this, 'third_step_callback' ),
 					'is_completed' => array( $this, 'step_is_completed' ),
 				);
@@ -92,7 +101,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			}
 		}
 
-		// return successful message
+		// return successful message.
 		$this->steps[] = array(
 			'callback'     => array( $this, 'get_successful_message' ),
 			'is_completed' => array( $this, 'step_is_completed' ),
@@ -114,7 +123,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	public function is_first_step_completed() {
 		$this->addon_form_settings = $this->get_form_settings_values();
 		if ( ! isset( $this->addon_form_settings['list_id'] ) ) {
-			// preliminary value
+			// preliminary value.
 			$this->addon_form_settings['list_id'] = 0;
 
 			return false;
@@ -148,7 +157,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 * @since 3.0.5
 	 * @since 4.0 param $is_submit removed.
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
 	 */
 	public function first_step_callback( $submitted_data ) {
@@ -222,9 +231,9 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			'has_errors' => $has_errors,
 		);
 
-		// Save only after the step has been validated and there are no errors
+		// Save only after the step has been validated and there are no errors.
 		if ( $is_submit && ! $has_errors ) {
-			// Save additional data for submission's entry
+			// Save additional data for submission's entry.
 			if ( ! empty( $current_data['list_id'] ) ) {
 				$current_data['list_name'] = ! empty( $this->lists[ $current_data['list_id'] ] )
 						? $this->lists[ $current_data['list_id'] ] . ' (' . $current_data['list_id'] . ')' : $current_data['list_id'];
@@ -267,7 +276,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
 	 */
 	public function third_step_callback( $submitted_data ) {
@@ -278,7 +287,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 
 		$is_submit = ! empty( $submitted_data );
 
-		// check groups
+		// check groups.
 		if ( $is_submit && isset( $submitted_data['group'] ) ) {
 			$group_id = $submitted_data['group'];
 		} elseif ( isset( $this->addon_form_settings['group'] ) ) {
@@ -299,14 +308,14 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 
 		if ( $is_submit ) {
 
-			// Store the selected group_id
+			// Store the selected group_id.
 			$this->addon_form_settings['group'] = $group_id;
 
 			if ( '-1' !== $group_id ) {
 				// Store the group name.
 				$this->addon_form_settings['group_name'] = $this->groups_data[ $group_id ]['name'];
 
-				// Store the group type. New in 4.0
+				// Store the group type. New in 4.0!
 				$this->addon_form_settings['group_type'] = $this->groups_data[ $group_id ]['type'];
 			}
 
@@ -345,7 +354,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.1.1
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
 	 */
 	public function fourth_step_callback( $submitted_data ) {
@@ -356,7 +365,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 
 		$is_submit = ! empty( $submitted_data );
 
-		// check gdpr_fields
+		// check gdpr_fields.
 		if ( $is_submit ) {
 			$selected_gdpr_fields = isset( $submitted_data['gdpr_fields'] ) ? $submitted_data['gdpr_fields'] : array();
 		} elseif ( isset( $this->addon_form_settings['gdpr_fields'] ) ) {
@@ -376,7 +385,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 		}
 
 		if ( $is_submit ) {
-			// Store the selected GDPR fields
+			// Store the selected GDPR fields.
 			$this->addon_form_settings['gdpr_fields'] = $selected_gdpr_fields;
 			$this->save_form_settings_values( $this->addon_form_settings );
 		}
@@ -415,7 +424,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0.3
 	 *
-	 * @param array $data
+	 * @param array $data Data.
 	 * @return string
 	 */
 	public function get_group_interests( $data ) {
@@ -463,8 +472,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param array $submitted_data
-	 * @param bool  $is_submit
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $is_submit Is submit.
 	 * @return array
 	 */
 	public function second_step_callback( $submitted_data, $is_submit ) {
@@ -472,7 +481,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 		$this->addon_form_settings = $this->get_form_settings_values( false );
 		$tags                      = $this->get_tags( $this->addon_form_settings['list_id'] );
 
-		// check tags
+		// check tags.
 		if ( $is_submit && isset( $submitted_data['tags'] ) ) {
 			$tags_id = $submitted_data['tags'];
 		} elseif ( isset( $this->addon_form_settings['tags'] ) ) {
@@ -529,8 +538,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	/**
 	 * Refresh list array via API
 	 *
-	 * @param object $provider
-	 * @param string $global_multi_id
+	 * @param object $provider Provider.
+	 * @param string $global_multi_id Global multi ID.
 	 * @return array
 	 */
 	public function refresh_global_multi_lists( $provider, $global_multi_id ) {
@@ -546,7 +555,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 
 			if ( is_wp_error( $response ) ) {
 				$integrations_global_url = add_query_arg( 'page', Hustle_Data::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
-				$message                 = sprintf( __( 'There was an error fetching the lists. Please make sure the %1$sselected account settings%2$s are correct.', 'hustle' ), '<a href="' . $integrations_global_url . '" target="_blank">', '</a>' );
+				/* translators: 1. open 'a' tag 2. closing 'a' tag */
+				$message = sprintf( __( 'There was an error fetching the lists. Please make sure the %1$sselected account settings%2$s are correct.', 'hustle' ), '<a href="' . $integrations_global_url . '" target="_blank">', '</a>' );
 
 				// TODO: handle errors from here on all providers gracefully.
 
@@ -574,7 +584,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
 	 */
 	private function get_first_step_options( $submitted_data ) {
@@ -651,8 +661,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.1.1
 	 *
-	 * @param array  $gdpr_fields GDPR fields
-	 * @param string $selected_gdpr_fields
+	 * @param array  $gdpr_fields GDPR fields.
+	 * @param string $selected_gdpr_fields Selected GDPR fields.
 	 * @return array
 	 */
 	private function get_fourth_step_options( $gdpr_fields, $selected_gdpr_fields = array() ) {
@@ -687,8 +697,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0
 	 *
-	 * @param array  $groups
-	 * @param string $group_id
+	 * @param array  $groups Groups.
+	 * @param string $group_id Group ID.
 	 * @return array
 	 */
 	private function get_second_step_options( $groups, $group_id = '-1' ) {
@@ -745,8 +755,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0
 	 *
-	 * @param array  $tags
-	 * @param string $tag_id
+	 * @param array $tags Tags.
+	 * @param mixed $tag_ids Tag IDs.
 	 * @return array
 	 */
 	private function get_second_step_options_tags( $tags, $tag_ids = array( '-1' ) ) {
@@ -793,16 +803,17 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $_type
-	 * @param array  $interests
-	 * @param string $interest_id
+	 * @param string $_type Type.
+	 * @param array  $interests Interests.
+	 * @param string $interest_id Interests ID.
+	 * @param string $placeholder Placeholder.
 	 * @return array
 	 */
 	private function get_group_interest_options( $_type, $interests, $interest_id, $placeholder = '' ) {
 
 		$interests_options = array( '-1' => __( 'No default choice', 'hustle' ) );
 
-		// TODO: this can probably be improved
+		// TODO: this can probably be improved.
 		$type = 'radio' === $_type ? 'radios' : $_type;
 		$type = 'dropdown' === $type || 'hidden' === $type ? 'select' : $type;
 
@@ -835,6 +846,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 				$field_type    = 'radios';
 				$class         = 'sui-radio-sm sui-radio-stacked';
 				$choose_prompt = sprintf(
+					/* translators: 1. open 'a' tag 2. closing 'a' tag */
 					__( 'Default Interest %1$s(clear selection)%2$s', 'hustle' ),
 					'<a href="#" class="hustle-provider-clear-radio-options" style="margin-left: 5px;" data-name="group_interest">',
 					'</a>'
@@ -911,8 +923,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	/**
 	 * Get the GDPR fields that belong to the given list.
 	 *
-	 * @param string $list_id
-	 * @param string $api_key
+	 * @param string $list_id List ID.
+	 * @param string $api_key Api key.
 	 * @return array
 	 */
 	private function get_gdpr_fields( $list_id, $api_key = '' ) {
@@ -930,7 +942,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			return $gdpr_fields;
 
 		} catch ( Exception $e ) {
-			// TODO: handle exception
+			// TODO: handle exception.
 			return array();
 		}
 
@@ -939,8 +951,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	/**
 	 * Get the groups that belong to the given list.
 	 *
-	 * @param string $list_id
-	 * @param string $api_key
+	 * @param string $list_id List ID.
+	 * @param string $api_key Api key.
 	 * @return array
 	 */
 	private function get_groups( $list_id, $api_key = '' ) {
@@ -961,7 +973,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 				// TODO: handle the wp error properly.
 				// Check out how it's handled in first step.
 				return array();
-				/*
+
+				/** Commented
 				return array(
 					array(
 						"value" => "<label class='wpmudev-label--notice'><span>" . __( 'There was an error fetching the data. Please review your settings and try again.', 'hustle' ) . "</span></label>",
@@ -988,7 +1001,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 
 		} catch ( Exception $e ) {
 			// TODO: handle exception
-			// return $e;
+			// return $e;.
 			return array();
 		}
 
@@ -1004,8 +1017,8 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param string $list_id
-	 * @param string $api_key
+	 * @param string $list_id List ID.
+	 * @param string $api_key Api key.
 	 * @return array
 	 */
 	private function get_tags( $list_id, $api_key = '' ) {
@@ -1019,7 +1032,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 		$api      = $this->provider->get_api( $api_key );
 		$api_tags = $api->get_tags( $list_id );
 
-		// error handling on first step
+		// error handling on first step.
 		return $api_tags;
 	}
 

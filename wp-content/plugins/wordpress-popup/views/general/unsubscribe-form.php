@@ -55,6 +55,8 @@ if ( ! $ajax_step ) : ?>
 			$local_list = $current_module->get_provider_settings( 'local_list' );
 			if ( ! empty( $local_list['local_list_name'] ) ) {
 				$list_name = $local_list['local_list_name'];
+			} elseif ( ! empty( $current_module->module_name ) ) {
+				$list_name = $current_module->module_name;
 			}
 		}
 		?>

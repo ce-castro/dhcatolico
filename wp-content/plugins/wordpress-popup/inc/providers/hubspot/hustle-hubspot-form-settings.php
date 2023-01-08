@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_HubSpot_Form_Settings class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 
 	/**
@@ -23,7 +29,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 		 */
 		public function form_settings_wizards() {
 			// already filtered on Abstract
-			// numerical array steps
+			// numerical array steps.
 			return array(
 				// 0
 				array(
@@ -43,7 +49,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 			$this->addon_form_settings = $this->get_form_settings_values();
 
 			if ( ! isset( $this->addon_form_settings['list_id'] ) || '0' === $this->addon_form_settings['list_id'] ) {
-				// preliminary value
+				// preliminary value.
 				$this->addon_form_settings['list_id'] = 0;
 
 				return false;
@@ -62,7 +68,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 		 * @since 3.0.5
 		 * @since 4.0 param $validate removed.
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function first_step_callback( $submitted_data ) {
@@ -135,8 +141,8 @@ if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 		/**
 		 * Refresh list array via API
 		 *
-		 * @param object $provider
-		 * @param string $global_multi_id
+		 * @param object $provider Provider.
+		 * @param string $global_multi_id Global multi ID.
 		 * @return array
 		 */
 		public function refresh_global_multi_lists( $provider, $global_multi_id ) {
@@ -155,7 +161,7 @@ if ( ! class_exists( 'Hustle_HubSpot_Form_Settings' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		private function get_first_step_options( $submitted_data ) {

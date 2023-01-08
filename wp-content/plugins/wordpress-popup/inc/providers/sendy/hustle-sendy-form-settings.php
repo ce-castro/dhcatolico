@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Sendy_Form_Settings class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Sendy_Form_Settings' ) ) :
 
 	/**
@@ -23,7 +29,7 @@ if ( ! class_exists( 'Hustle_Sendy_Form_Settings' ) ) :
 		 */
 		public function form_settings_wizards() {
 			// already filtered on Abstract
-			// numerical array steps
+			// numerical array steps.
 			return array(
 				// 0
 				array(
@@ -39,7 +45,7 @@ if ( ! class_exists( 'Hustle_Sendy_Form_Settings' ) ) :
 		 * @since 3.0.5
 		 * @since 4.0 param $validate removed.
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function first_step_callback( $submitted_data ) {

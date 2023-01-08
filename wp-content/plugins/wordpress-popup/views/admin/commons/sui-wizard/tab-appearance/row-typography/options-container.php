@@ -17,6 +17,7 @@ $general_options = array(
 	'subtitle'       => __( 'Subtitle', 'hustle' ),
 	'main_content'   => __( 'Main Content', 'hustle' ),
 	'cta'            => __( 'Call to Action', 'hustle' ),
+	'cta_help'       => __( 'Call to Action – Helper Text', 'hustle' ),
 	'never_see_link' => __( '"Never see this again" Link', 'hustle' ),
 );
 
@@ -29,7 +30,6 @@ $optin_options = array(
 	'input'           => __( 'Form - Input and Select', 'hustle' ),
 	'checkbox'        => __( 'Form - Radio and Checkbox', 'hustle' ),
 	'dropdown'        => __( 'Form - Dropdown', 'hustle' ),
-	// 'calendar'        => __( 'Form - Calendar', 'hustle' ),
 	'gdpr'            => __( 'Form - GDPR Checkbox', 'hustle' ),
 	'recaptcha'       => __( 'Form - reCAPTCHA Text', 'hustle' ),
 	'submit_button'   => __( 'Form - Submit Button', 'hustle' ),
@@ -41,6 +41,7 @@ $optin_options = array(
 $data_labels = array(
 	'subtitle'       => 'sub_title',
 	'cta'            => 'show_cta',
+	'cta_help'       => 'show_cta',
 	'never_see_link' => 'show_never_see_link',
 );
 

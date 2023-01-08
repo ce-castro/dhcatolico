@@ -1,10 +1,18 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Icontact
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Icontact' ) ) :
 
+	/**
+	 * Class Hustle_Icontact
+	 */
 	class Hustle_Icontact extends Hustle_Provider_Abstract {
 
 		const SLUG = 'icontact';
-		// const NAME = "IContact";
 
 		/**
 		 * Stores iContact API object.
@@ -27,38 +35,46 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'icontact';
+		protected $slug = 'icontact';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'iContact';
+		protected $title = 'iContact';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Icontact_Form_Settings';
+		protected $form_settings = 'Hustle_Icontact_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -66,7 +82,7 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Icontact_Form_Hooks';
+		protected $form_hooks = 'Hustle_Icontact_Form_Hooks';
 
 		/**
 		 * Array of options which should exist for confirming that settings are completed
@@ -74,14 +90,14 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 		 * @since 4.0
 		 * @var array
 		 */
-		protected $_completion_options = array( 'app_id', 'username', 'password' );
+		protected $completion_options = array( 'app_id', 'username', 'password' );
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -90,11 +106,11 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
@@ -116,9 +132,9 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 		/**
 		 * API Set up
 		 *
-		 * @param String $app_id - the application id
-		 * @param String $api_password - the api password
-		 * @param String $api_username - the api username
+		 * @param String $app_id - the application id.
+		 * @param String $api_password - the api password.
+		 * @param String $api_username - the api username.
 		 *
 		 * @return WP_Error|Object
 		 */
@@ -143,7 +159,7 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_credentials( $submitted_data ) {
@@ -159,20 +175,25 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 				&& isset( $submitted_data['password'] );
 			$global_multi_id = $this->get_global_multi_id( $submitted_data );
 
-			$app_id_valid = $api_username_valid = $api_password_valid = true;
+			$app_id_valid       = true;
+			$api_username_valid = true;
+			$api_password_valid = true;
 			if ( $is_submit ) {
 
 				$app_id_valid       = ! empty( $current_data['app_id'] );
 				$api_username_valid = ! empty( $current_data['username'] );
 				$api_password_valid = ! empty( $current_data['password'] );
 				$api_key_validated  = $app_id_valid
-								 && $api_username_valid
-								 && $api_password_valid
-								 && $this->validate_credentials( $submitted_data['app_id'], $submitted_data['username'], $submitted_data['password'] );
+					&& $api_username_valid
+					&& $api_password_valid
+					&& $this->validate_credentials( $submitted_data['app_id'], $submitted_data['username'], $submitted_data['password'] );
 				if ( ! $api_key_validated ) {
 					$error_message = $this->provider_connection_falied();
-					$app_id_valid  = $api_username_valid = $api_password_valid = false;
 					$has_errors    = true;
+
+					$app_id_valid       = false;
+					$api_username_valid = false;
+					$api_password_valid = false;
 				}
 
 				if ( ! $has_errors ) {
@@ -184,8 +205,8 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 					);
 					// TODO: Wrap this in a friendlier method
 					// If not active, activate it.
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -381,9 +402,9 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $app_id
-		 * @param string $username
-		 * @param string $password
+		 * @param string $app_id App ID.
+		 * @param string $username Username.
+		 * @param string $password Password.
 		 * @return bool
 		 */
 		private function validate_credentials( $app_id, $username, $password ) {
@@ -392,10 +413,10 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 			}
 
 			try {
-				// Check if credentials are valid
+				// Check if credentials are valid.
 				$api = self::api( $app_id, $password, $username );
 
-				if ( is_wp_error( $api ) ) {
+				if ( is_wp_error( $api ) || empty( $api ) ) {
 					Hustle_Provider_Utils::maybe_log( __METHOD__, __( 'Invalid iContact API credentials.', 'hustle' ) );
 					return false;
 				}
@@ -409,8 +430,13 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 
 		/**
 		 * Check if email is already subcribed to list
+		 *
+		 * @param object $api Api.
+		 * @param string $list_id List ID.
+		 * @param string $email Email.
+		 * @return boolean
 		 */
-		public function _is_subscribed( $api, $list_id, $email ) {
+		public function is_subscribed( $api, $list_id, $email ) {
 			$contacts = $api->get_contacts( $list_id );
 			if ( ! is_wp_error( $contacts ) ) {
 				if ( is_array( $contacts ) && isset( $contacts['contacts'] ) && is_array( $contacts['contacts'] ) ) {
@@ -424,6 +450,11 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 			return false;
 		}
 
+		/**
+		 * Get 3.0 provider mapping
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'app_id'   => 'app_id',
@@ -432,6 +463,13 @@ if ( ! class_exists( 'Hustle_Icontact' ) ) :
 			);
 		}
 
+		/**
+		 * Add custom field
+		 *
+		 * @param array  $fields Fields.
+		 * @param object $api Api.
+		 * @return type
+		 */
 		public static function add_custom_fields( $fields, $api ) {
 			$existed = array();
 			$added   = array();

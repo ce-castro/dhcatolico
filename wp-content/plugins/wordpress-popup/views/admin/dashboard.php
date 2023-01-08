@@ -19,7 +19,7 @@ $capability = array(
 	'hustle_access_emails' => current_user_can( 'hustle_access_emails' ),
 );
 
-$is_free = Opt_In_Utils::_is_free();
+$is_free = Opt_In_Utils::is_free();
 
 $header = array(
 	'title'        => 'Dashboard',

@@ -7,6 +7,8 @@
  */
 
 $can_create = current_user_can( 'hustle_create' );
+
+$access_emails = current_user_can( 'hustle_access_emails' );
 ?>
 <form class="hustle-bulk-actions-container sui-bulk-actions">
 
@@ -30,9 +32,14 @@ $can_create = current_user_can( 'hustle_create' );
 		<?php if ( $can_create ) : ?>
 			<option value="clone" data-icon="copy"><?php esc_html_e( 'Duplicate', 'hustle' ); ?></option>
 		<?php endif; ?>
-		<option value="reset-tracking" data-icon="undo"><?php esc_html_e( 'Reset Tracking Data', 'hustle' ); ?></option>
-		<option value="enable-tracking" data-icon="graph-line"><?php esc_html_e( 'Enable Tracking', 'hustle' ); ?></option>
-		<option value="disable-tracking" data-icon="tracking-disabled"><?php esc_html_e( 'Disable Tracking', 'hustle' ); ?></option>
+		<?php if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module_type && $access_emails ) : ?>
+			<option value="purge-email-list" data-icon="refresh2"><?php esc_html_e( 'Purge Email List', 'hustle' ); ?></option>
+		<?php endif; ?>
+		<?php if ( Hustle_Settings_Admin::global_tracking() ) : ?>
+			<option value="reset-tracking" data-icon="undo"><?php esc_html_e( 'Reset Tracking Data', 'hustle' ); ?></option>
+			<option value="enable-tracking" data-icon="graph-line"><?php esc_html_e( 'Enable Tracking', 'hustle' ); ?></option>
+			<option value="disable-tracking" data-icon="tracking-disabled"><?php esc_html_e( 'Disable Tracking', 'hustle' ); ?></option>
+		<?php endif; ?>
 		<?php if ( $can_create ) : ?>
 			<option value="delete" data-icon="trash"><?php esc_html_e( 'Delete', 'hustle' ); ?></option>
 		<?php endif; ?>
@@ -46,6 +53,8 @@ $can_create = current_user_can( 'hustle_create' );
 		data-delete-description="<?php esc_html_e( 'Are you sure to delete selected modules? Their additional data, like subscriptions and tracking data, will be deleted as well.', 'hustle' ); ?>"
 		data-reset-title="<?php esc_html_e( 'Reset Tracking Data', 'hustle' ); ?>"
 		data-reset-description="<?php esc_html_e( 'Are you sure you wish to reset the tracking data of these modules?', 'hustle' ); ?>"
+		data-purge-emails-title="<?php esc_html_e( 'Purge Email List', 'hustle' ); ?>"
+		data-purge-emails-description="<?php esc_html_e( 'Are you sure you wish purge the Email Lists of these modules?', 'hustle' ); ?>"
 		data-nonce="<?php echo esc_attr( wp_create_nonce( 'hustle-bulk-action' ) ); ?>"
 		<?php disabled( true ); ?>
 	>

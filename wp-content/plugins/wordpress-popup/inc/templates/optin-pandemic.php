@@ -206,6 +206,7 @@ return array(
 		'optin_success_content_color'                      => '#4f4f4f',
 		'overlay_bg'                                       => 'rgba(0,0,0,0.75)',
 		'close_button_static_color'                        => '#ffffff',
+		'close_button_static_background'                   => '#0d0d0d',
 		'never_see_link_static'                            => '#E1E1E1',
 		'recaptcha_copy_text'                              => '#666666',
 		'recaptcha_copy_link_default'                      => '#666666',

@@ -21,6 +21,28 @@ if ( $section && 'analytics' !== $section ) {
 		<h2 class="sui-box-title"><?php esc_html_e( 'Dashboard Analytics Tracking', 'hustle' ); ?></h2>
 	</div>
 
+	<?php if ( ! Hustle_Settings_Admin::global_tracking() ) { ?>
+	<div class="sui-box-body">
+		<?php
+		$this->get_html_for_options(
+			array(
+				array(
+					'type'  => 'inline_notice',
+					'class' => 'sui-notice-yellow',
+					'icon'  => 'info',
+					'value' => sprintf(
+						// translators: 1. Open link tag; 2. Close link tag.
+						esc_html__( 'Global Tracking is disabled for this site. Please enable %1$sGlobal Tracking%2$s to view the Dashboard Analytics tracking data.', 'hustle' ),
+						'<a href="#" data-tab="general" class="hustle-open-tab">',
+						'</a>'
+					),
+				),
+			)
+		);
+		?>
+	</div>
+	<?php } else { ?>
+
 	<form id="hustle-analytics-settings-form" class="sui-box-body">
 
 		<p><?php esc_html_e( "Add analytics tracking for your Hustle modules that doesn't require any third-party integration, and display the data in the WordPress Admin Dashboard area.", 'hustle' ); ?>
@@ -95,9 +117,9 @@ if ( $section && 'analytics' !== $section ) {
 
 		<?php } ?>
 
-	</form>
+		</form>
 
-	<?php if ( $is_enabled ) { ?>
+		<?php if ( $is_enabled ) { ?>
 
 		<div class="sui-box-footer">
 
@@ -124,6 +146,8 @@ if ( $section && 'analytics' !== $section ) {
 			</div>
 
 		</div>
+
+		<?php } ?>
 
 	<?php } ?>
 

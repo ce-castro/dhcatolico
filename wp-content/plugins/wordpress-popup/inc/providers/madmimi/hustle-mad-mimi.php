@@ -1,18 +1,32 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Mad_Mimi class
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 
 	include_once 'hustle-mad-mimi-api.php';
 
+	/**
+	 * Class Hustle_Mad_Mimi
+	 */
 	class Hustle_Mad_Mimi extends Hustle_Provider_Abstract {
 
 		const SLUG = 'mad_mimi';
-		// const NAME = "Mad Mimi";
 
 		/**
-		 * @var $api Mad Mimi
+		 * Mad Mimi
+		 *
+		 * @var object
 		 */
 		protected static $api;
+		/**
+		 * Errors
+		 *
+		 * @var array
+		 */
 		protected static $errors;
 
 		/**
@@ -22,31 +36,39 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'mad_mimi';
+		protected $slug = 'mad_mimi';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'Mad Mimi';
+		protected $title = 'Mad Mimi';
 
 		/**
 		 * Class name of form hooks
@@ -54,21 +76,21 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Mad_Mimi_Form_Hooks';
+		protected $form_hooks = 'Hustle_Mad_Mimi_Form_Hooks';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Mad_Mimi_Form_Settings';
+		protected $form_settings = 'Hustle_Mad_Mimi_Form_Settings';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -77,16 +99,18 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
-		 * @param $username
-		 * @param $api_key
+		 * Get api
+		 *
+		 * @param string $username Username.
+		 * @param string $api_key Api key.
 		 * @return Hustle_Mad_Mimi_Api
 		 */
 		public static function api( $username, $api_key ) {
@@ -124,7 +148,7 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
@@ -138,7 +162,8 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 			$is_submit       = isset( $submitted_data['api_key'] ) && isset( $submitted_data['username'] );
 			$global_multi_id = $this->get_global_multi_id( $submitted_data );
 
-			$api_username_valid = $api_key_valid = true;
+			$api_username_valid = true;
+			$api_key_valid      = true;
 			$is_validated       = true;
 
 			if ( $is_submit ) {
@@ -161,9 +186,9 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 						'name'     => $current_data['name'],
 					);
 					// If not active, activate it.
-					// TODO: Wrap this in a friendlier method
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					// TODO: Wrap this in a friendlier method.
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -333,8 +358,8 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $username
-		 * @param string $api_key
+		 * @param string $username Username.
+		 * @param string $api_key Api key.
 		 * @return bool
 		 */
 		private function validate_credentials( $username, $api_key ) {
@@ -342,9 +367,9 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 				return false;
 			}
 
-			// Check API Key by validating it on get_info request
+			// Check API Key by validating it on get_info request.
 			try {
-				// Check if API key is valid
+				// Check if API key is valid.
 				$_lists = self::api( $username, $api_key )->get_lists( array( 'limit' => 1 ) );
 
 				if ( is_wp_error( $_lists ) ) {
@@ -368,8 +393,6 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 		 * @return string|null
 		 */
 		public function get_username() {
-
-			/** @var array $setting_values */
 			$setting_values = $this->get_settings_values();
 			if ( isset( $setting_values['username'] ) ) {
 				return $setting_values['username'];
@@ -378,6 +401,11 @@ if ( ! class_exists( 'Hustle_Mad_Mimi' ) ) :
 			return null;
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'api_key'  => 'api_key',

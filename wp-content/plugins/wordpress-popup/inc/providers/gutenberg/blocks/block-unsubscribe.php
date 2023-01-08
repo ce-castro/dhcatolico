@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_GHBlock_Unsubscribe class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_GHBlock_Unsubscribe
@@ -12,7 +17,7 @@ class Hustle_GHBlock_Unsubscribe extends Hustle_GHBlock_Abstract {
 	 *
 	 * @var string
 	 */
-	protected $_slug = 'unsubscribe';
+	protected $slug = 'unsubscribe';
 
 	/**
 	 * Constructor.
@@ -46,7 +51,8 @@ class Hustle_GHBlock_Unsubscribe extends Hustle_GHBlock_Abstract {
 			'hustle-block-unsubscribe',
 			Hustle_Gutenberg::get_plugin_url() . '/js/unsubscribe-block.min.js',
 			array( 'wp-blocks', 'wp-i18n', 'wp-element' ),
-			filemtime( Hustle_Gutenberg::get_plugin_dir() . 'js/unsubscribe-block.min.js' )
+			filemtime( Hustle_Gutenberg::get_plugin_dir() . 'js/unsubscribe-block.min.js' ),
+			true
 		);
 
 		// Localize scripts.

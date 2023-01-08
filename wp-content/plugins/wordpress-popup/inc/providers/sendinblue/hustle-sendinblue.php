@@ -1,14 +1,18 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_SendinBlue class
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 
 	/**
-	 Class Hustle_SendinBlue
+	 * Class Hustle_SendinBlue
 	 */
 	class Hustle_SendinBlue extends Hustle_Provider_Abstract {
 
 		const SLUG = 'sendinblue';
-		// const NAME = "SendinBlue";
 
 		const CURRENT_LISTS = 'hustle-sendinblue-current-list';
 
@@ -19,7 +23,7 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
 		 * Provider api instance
@@ -31,35 +35,43 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 		protected static $api;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'sendinblue';
+		protected $slug = 'sendinblue';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '2.0';
+		protected $version = '2.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'SendinBlue';
+		protected $title = 'SendinBlue';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_SendinBlue_Form_Settings';
+		protected $form_settings = 'Hustle_SendinBlue_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -67,14 +79,14 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_SendinBlue_Form_Hooks';
+		protected $form_hooks = 'Hustle_SendinBlue_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -83,15 +95,17 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
-		 * @param $api_key
+		 * Get api
+		 *
+		 * @param string $api_key Api key.
 		 * @return Hustle_SendinBlue_Api
 		 */
 		public static function api( $api_key ) {
@@ -99,7 +113,7 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 				try {
 					self::$api = Hustle_SendinBlue_Api::boot( $api_key );
 				} catch ( Exception $e ) {
-					// handle errors here
+					// handle errors here.
 					self::$api = null;
 				}
 			}
@@ -128,7 +142,7 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
@@ -157,9 +171,9 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 						'name'    => $current_data['name'],
 					);
 					// If not active, activate it.
-					// TODO: Wrap this in a friendlier method
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					// TODO: Wrap this in a friendlier method.
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -308,7 +322,7 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $api_key
+		 * @param string $api_key Api key.
 		 * @return bool
 		 */
 		private function validate_api_key( $api_key ) {
@@ -316,7 +330,7 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 				return false;
 			}
 
-			// Check API Key by validating it on get_info request
+			// Check API Key by validating it on get_info request.
 			try {
 				self::api( $api_key )->get_account();
 			} catch ( Exception $e ) {
@@ -327,12 +341,24 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 			return true;
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'api_key' => 'api_key',
 			);
 		}
 
+		/**
+		 * Add custom fields
+		 *
+		 * @param array  $fields Fields.
+		 * @param object $api Api.
+		 * @return type
+		 */
 		public static function add_custom_fields( $fields, $api ) {
 			try {
 				foreach ( $fields as $field ) {
@@ -359,9 +385,12 @@ if ( ! class_exists( 'Hustle_SendinBlue' ) ) :
 			);
 		}
 
+		/**
+		 * Silent update api
+		 */
 		public function slient_update_api() {
-			if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-			|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+			if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+			|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 				$sendinblue_instances = get_option( 'hustle_provider_sendinblue_settings' );
 				foreach ( $sendinblue_instances as $global_multi_id => $creds ) {
 					try {

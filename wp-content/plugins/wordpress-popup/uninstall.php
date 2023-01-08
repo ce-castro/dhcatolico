@@ -4,6 +4,7 @@
  * Called when plugin is deleted
  *
  * @since 4.0.3
+ * @package Hustle
  */
 
 // If uninstall.php is not called by WordPress, die.

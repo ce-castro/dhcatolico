@@ -1,4 +1,12 @@
 <?php
+/**
+ * Alignment row
+ *
+ * @package Hustle
+ */
+
+$position = $settings[ 'close_icon_position' . ( $device ? '_' . $device : '' ) ];
+
 $horizontal = 'close_icon_alignment_x' . ( $device ? '_' . $device : '' );
 $settings_x = $settings[ $horizontal ];
 
@@ -6,7 +14,7 @@ $vertical   = 'close_icon_alignment_y' . ( $device ? '_' . $device : '' );
 $settings_y = $settings[ $vertical ];
 ?>
 
-<div class="sui-box-settings-row">
+<div class="sui-box-settings-row hustle-close_icon_alignment" style="<?php echo ( 'hidden' === $position ) ? 'display: none;' : ''; ?>">
 
 	<div class="sui-box-settings-col-2">
 
@@ -154,7 +162,7 @@ $settings_y = $settings[ $vertical ];
 							role="tab"
 							type="button"
 							id="tab-<?php echo esc_attr( $key ); ?>-alignment-top"
-							class="sui-tab-item active"
+							class="sui-tab-item"
 							data-label-for="hustle-<?php echo esc_attr( $vertical ); ?>--top"
 							aria-selected="true"
 						>
@@ -165,9 +173,9 @@ $settings_y = $settings[ $vertical ];
 						<button
 							role="tab"
 							type="button"
-							id="tab-<?php echo esc_attr( $key ); ?>-alignment-middle"
+							id="tab-<?php echo esc_attr( $key ); ?>-alignment-center"
 							class="sui-tab-item"
-							data-label-for="hustle-<?php echo esc_attr( $vertical ); ?>--middle"
+							data-label-for="hustle-<?php echo esc_attr( $vertical ); ?>--center"
 							aria-selected="false"
 							tabindex="-1"
 						>

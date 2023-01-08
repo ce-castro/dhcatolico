@@ -34,10 +34,9 @@
 				>
 
 					<?php
-					echo $this->render_image_markup( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						self::$plugin_url . 'assets/images/' . $position['image1x'],
-						self::$plugin_url . 'assets/images/' . $position['image2x']
-					);
+					$image_path        = self::$plugin_url . 'assets/images/' . $position['image1x'];
+					$image_retina_path = self::$plugin_url . 'assets/images/' . $position['image2x'];
+					echo $this->render_image_markup( $image_path, $image_retina_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 
 					<span class="sui-radio">

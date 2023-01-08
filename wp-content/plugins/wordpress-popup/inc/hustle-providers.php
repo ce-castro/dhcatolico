@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Providers
+ *
+ * @package Hustle
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
@@ -9,12 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Hustle_Providers {
 
 	/**
-	 * wp_option name of the activated providers
+	 * The wp_option name of the activated providers
 	 *
 	 * @since 4.0
 	 * @var string
 	 */
-	private static $_active_addons_option = 'hustle_activated_providers';
+	private static $active_addons_option = 'hustle_activated_providers';
 
 	/**
 	 * Instance of Hustle Providers.
@@ -71,19 +77,22 @@ class Hustle_Providers {
 	 */
 	private $last_error_message = '';
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		$this->providers = new Hustle_Provider_Container();
 
 		/**
 		 * Initiate activated addons
 		 */
-		$active_addons = get_option( self::$_active_addons_option, false );
+		$active_addons = get_option( self::$active_addons_option, false );
 
 		if ( empty( $active_addons ) ) {
 			$active_addons = array();
 		}
 
-		// Local list is always activated
+		// Local list is always activated.
 		$active_addons = array_unique( array_merge( array( 'local_list' ), $active_addons ) );
 
 		$this->activated_addons = $active_addons;
@@ -98,7 +107,7 @@ class Hustle_Providers {
 			'update_form_settings' => __( 'Failed to update form settings', 'hustle' ),
 		);
 
-		// Only enable wp_ajax hooks
+		// Only enable wp_ajax hooks.
 		if ( wp_doing_ajax() ) {
 			Hustle_Provider_Admin_Ajax::get_instance();
 		}
@@ -196,9 +205,9 @@ class Hustle_Providers {
 	 * -The provider's 'check_is_compatible' returns false.
 	 *
 	 * @since 3.0.5
-	 * @param string $class_name
+	 * @param string $class_name Clas name.
 	 * @return Hustle_Provider_Abstract
-	 * @throws Exception
+	 * @throws Exception Provider class isn't compatible.
 	 */
 	private function validate_provider_class( $class_name ) {
 		if ( ! class_exists( $class_name ) ) {
@@ -234,12 +243,12 @@ class Hustle_Providers {
 	 * -Has the same slug of an existing provider.
 	 *
 	 * @since 3.0.5
-	 * @param Hustle_Provider_Abstract $instance
+	 * @param Hustle_Provider_Abstract $instance Instance.
 	 * @return Hustle_Provider_Abstract
-	 * @throws Exception
+	 * @throws Exception Provider class isn't compatible.
 	 */
 	private function validate_provider_instance( Hustle_Provider_Abstract $instance ) {
-		/** @var Hustle_Provider_Abstract $provider_class */
+		/** Hustle_Provider_Abstract $provider_class */
 		$provider_class = $instance;
 		$class_name     = get_class( $instance );
 
@@ -261,7 +270,7 @@ class Hustle_Providers {
 			throw new Exception( 'The provider ' . $class_name . ' does not the required _class property.' );
 		}
 
-		// FIFO
+		// FIFO.
 		if ( isset( $this->providers[ $slug ] ) ) {
 			throw new Exception( 'The provider with the slug ' . $slug . ' already exists.' );
 		}
@@ -269,10 +278,10 @@ class Hustle_Providers {
 			throw new Exception( 'Provider with the slug ' . $slug . ' does not have a valid _version property.' );
 		}
 
-		// check if the version changed if active
+		// check if the version changed if active.
 		if ( $this->addon_is_active( $slug ) ) {
 			try {
-				// silent
+				// silent.
 				if ( $provider_class->is_version_changed() ) {
 					$provider_class->version_changed( $provider_class->get_installed_version(), $provider_class->get_installed_version() );
 				}
@@ -287,7 +296,7 @@ class Hustle_Providers {
 	/**
 	 * Gets an instace of a provider by its slug.
 	 *
-	 * @param string $slug Slug of the provider to be retrieved
+	 * @param string $slug Slug of the provider to be retrieved.
 	 * @return Hustle_Provider_Abstract|mixed|null
 	 */
 	public function get_provider( $slug ) {
@@ -302,7 +311,7 @@ class Hustle_Providers {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $slug
+	 * @param string $slug Slug.
 	 * @return bool
 	 */
 	public function activate_addon( $slug ) {
@@ -339,10 +348,20 @@ class Hustle_Providers {
 		return true;
 	}
 
+	/**
+	 * Get last error
+	 *
+	 * @return string
+	 */
 	public function get_last_error_message() {
 		return $this->last_error_message;
 	}
 
+	/**
+	 * Get default error messages
+	 *
+	 * @return array
+	 */
 	public function get_default_messages() {
 		return $this->default_addon_error_messages;
 	}
@@ -363,7 +382,7 @@ class Hustle_Providers {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $slug
+	 * @param string $slug Slug.
 	 * @return bool
 	 */
 	public function addon_is_active( $slug ) {
@@ -379,8 +398,8 @@ class Hustle_Providers {
 	 *
 	 * @since 3.0.5
 	 *
-	 * @param string $slug provider slus
-	 * @param array  $submitted_data
+	 * @param string $slug provider slug.
+	 * @param array  $submitted_data Submitted data.
 	 * @return bool
 	 */
 	public function deactivate_addon( $slug, $submitted_data = array() ) {
@@ -435,8 +454,8 @@ class Hustle_Providers {
 	 *
 	 * @since 4.0.1
 	 *
-	 * @param Hustle_Provider_Abstract $provider
-	 * @param array                    $submitted_data
+	 * @param Hustle_Provider_Abstract $provider Provider.
+	 * @param array                    $submitted_data Submitted data.
 	 */
 	private function disconnect_provider_instance_from_modules( Hustle_Provider_Abstract $provider, $submitted_data ) {
 
@@ -461,14 +480,13 @@ class Hustle_Providers {
 	 * Add activated provider to wp_options
 	 *
 	 * @since 4.0
-	 *
-	 * @param $slug
+	 * @param string $slug Slug.
 	 */
 	private function add_activated_addons( $slug ) {
 		$addon                    = $this->get_provider( $slug );
 		$this->activated_addons[] = $slug;
-		update_option( self::$_active_addons_option, $this->activated_addons );
-		// take from get_version() since it's a new provider
+		update_option( self::$active_addons_option, $this->activated_addons );
+		// take from get_version() since it's a new provider.
 		update_option( $addon->get_version_options_name(), $addon->get_version() );
 	}
 
@@ -477,7 +495,7 @@ class Hustle_Providers {
 	 * remove activated addons from wp options, without calling deactivate on addon function
 	 *
 	 * @since 4.0
-	 * @param $slug
+	 * @param string $slug Slug.
 	 */
 	public function force_remove_activated_addons( $slug ) {
 		$addon = $this->get_provider( $slug );
@@ -485,23 +503,23 @@ class Hustle_Providers {
 		$index = array_search( $slug, $this->activated_addons, true );
 		if ( false !== $index ) {
 			unset( $this->activated_addons[ $index ] );
-			// reset keys
+			// reset keys.
 			$this->activated_addons = array_values( $this->activated_addons );
-			update_option( self::$_active_addons_option, $this->activated_addons );
+			update_option( self::$active_addons_option, $this->activated_addons );
 		}
 
 		if ( $addon ) {
 			$version_options_name  = $addon->get_version_options_name();
 			$settions_options_name = $addon->get_settings_options_name();
 		} else {
-			// probably just want to remove the options
+			// probably just want to remove the options.
 			$version_options_name  = 'hustle_provider_' . $slug . '_version';
 			$settions_options_name = 'hustle_provider_' . $slug . '_settings';
 		}
 
-		// delete version
+		// delete version.
 		delete_option( $version_options_name );
-		// delete general settings
+		// delete general settings.
 		delete_option( $settions_options_name );
 
 		$addon->remove_wp_options();

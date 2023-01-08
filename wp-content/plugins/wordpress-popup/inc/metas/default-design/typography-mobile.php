@@ -129,6 +129,17 @@ return array(
 	'cta_text_decoration_mobile'                           => 'none',
 	'cta_font_size_mobile'                                 => '',
 
+	'cta_help_font_size_mobile'                            => '',
+	'cta_help_font_size_unit_mobile'                       => 'px',
+	'cta_help_font_weight_mobile'                          => 'regular',
+	'cta_help_alignment_mobile'                            => 'left',
+	'cta_help_line_height_mobile'                          => '',
+	'cta_help_line_height_unit_mobile'                     => 'em',
+	'cta_help_letter_spacing_mobile'                       => '',
+	'cta_help_letter_spacing_unit_mobile'                  => 'px',
+	'cta_help_text_transform_mobile'                       => 'none',
+	'cta_help_text_decoration_mobile'                      => 'none',
+
 	'never_see_link_font_size_mobile'                      => '',
 	'never_see_link_font_size_unit_mobile'                 => 'px',
 	'never_see_link_font_weight_mobile'                    => 'regular',

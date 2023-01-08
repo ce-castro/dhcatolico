@@ -1,10 +1,18 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Sendy class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Sendy' ) ) :
 
+	/**
+	 * Class Hustle_Sendy
+	 */
 	class Hustle_Sendy extends Hustle_Provider_Abstract {
 
 		const SLUG = 'sendy';
-		// const NAME = "Sendy";
 
 		/**
 		 * Provider Instance
@@ -13,38 +21,46 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'sendy';
+		protected $slug = 'sendy';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'Sendy';
+		protected $title = 'Sendy';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Sendy_Form_Settings';
+		protected $form_settings = 'Hustle_Sendy_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -52,14 +68,14 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Sendy_Form_Hooks';
+		protected $form_hooks = 'Hustle_Sendy_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -68,11 +84,11 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
@@ -97,7 +113,7 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_credentials( $submitted_data ) {
@@ -127,7 +143,7 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 				// If api key is correct we try to connect with Sendy.
 				if ( $api_key_validated ) {
 					$api_key_validated = $this->validate_api_credentials( $current_data['installation_url'], $current_data['api_key'], $current_data['list_id'] );
-					if ( is_wp_error( $api_key_validated ) ) {
+					if ( is_wp_error( $api_key_validated ) && $api_key_validated->get_error_code() ) {
 
 						$error_message = $this->provider_connection_falied();
 						$error_code    = $api_key_validated->get_error_code();
@@ -142,6 +158,7 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 								$api_key_valid = false;
 								break;
 
+							case 'List ID not passed':
 							case 'List does not exist':
 								$list_id_valid = false;
 								break;
@@ -166,8 +183,8 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 					);
 
 					// If not active, activate it.
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -353,7 +370,9 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 		}
 
 		/**
-		 * @param $global_multi_id
+		 * Get api
+		 *
+		 * @param string $global_multi_id Global multi ID.
 		 *
 		 * @return Hustle_Sendy_API
 		 */
@@ -366,8 +385,11 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 		}
 
 		/**
-		 * @param $data array
+		 * Validate API credentials
 		 *
+		 * @param string $installation_url Installation URL.
+		 * @param string $api_key Apie key.
+		 * @param string $list_id List ID.
 		 * @return boolean|WP_Error
 		 */
 		private function validate_api_credentials( $installation_url, $api_key, $list_id ) {
@@ -380,6 +402,11 @@ if ( ! class_exists( 'Hustle_Sendy' ) ) :
 			return $sendy->get_subscriber_count();
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'installation_url' => 'installation_url',

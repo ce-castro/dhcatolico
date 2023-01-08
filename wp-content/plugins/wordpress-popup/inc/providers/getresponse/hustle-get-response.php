@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Get_Response class
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 
@@ -12,13 +17,18 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 	class Hustle_Get_Response extends Hustle_Provider_Abstract {
 
 		const SLUG = 'getresponse';
-		// const NAME = "GetResponse";
-
 
 		/**
-		 * @var $api GetResponse
+		 * Api
+		 *
+		 * @var GetResponse
 		 */
 		protected static $api;
+		/**
+		 * Errors
+		 *
+		 * @var array
+		 */
 		protected static $errors;
 
 		/**
@@ -28,38 +38,46 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'getresponse';
+		protected $slug = 'getresponse';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'GetResponse';
+		protected $title = 'GetResponse';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Get_Response_Form_Settings';
+		protected $form_settings = 'Hustle_Get_Response_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -67,14 +85,14 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Get_Response_Form_Hooks';
+		protected $form_hooks = 'Hustle_Get_Response_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -83,18 +101,19 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
-		 * @param $api_key
+		 * Get API
+		 *
+		 * @param string $api_key Api key.
 		 * @return Hustle_Get_Response_Api
 		 */
-		// protected static function api( $api_key ){
 		public static function api( $api_key ) {
 
 			if ( empty( self::$api ) ) {
@@ -131,7 +150,7 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
@@ -159,9 +178,9 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 						'name'    => $current_data['name'],
 					);
 					// If not active, activate it.
-					// TODO: Wrap this in a friendlier method
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					// TODO: Wrap this in a friendlier method.
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -310,7 +329,7 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $api_key
+		 * @param string $api_key Api Key.
 		 * @return bool
 		 */
 		private function validate_api_key( $api_key ) {
@@ -318,9 +337,9 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 				return false;
 			}
 
-			// Check API Key by validating it on get_info request
+			// Check API Key by validating it on get_info request.
 			try {
-				// Check if API key is valid
+				// Check if API key is valid.
 				$api = self::api( $api_key );
 
 				$campaigns = $api->get_campaigns();
@@ -337,6 +356,9 @@ if ( ! class_exists( 'Hustle_Get_Response' ) ) :
 			return true;
 		}
 
+		/**
+		 * Remove wp_options rows
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'api_key' => 'api_key',

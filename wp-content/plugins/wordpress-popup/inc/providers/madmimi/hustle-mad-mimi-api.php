@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Mad_Mimi_Api class
+ *
+ * @package Hustle
+ */
+
 /**
  * Mad Mimi API implementation
  *
@@ -11,21 +17,21 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @var string
 	 */
-	private $_api_key;
+	private $api_key;
 
 	/**
 	 * API Key
 	 *
 	 * @var string
 	 */
-	private $_user_name;
+	private $user_name;
 
 	/**
-	 * madmimi API Url
+	 * Madmimi API Url
 	 *
 	 * @var array
 	 */
-	private $_endpoint = 'https://madmimi.com/api/v3/';
+	private $endpoint = 'https://madmimi.com/api/v3/';
 
 	/**
 	 * Instances of madmimi
@@ -33,10 +39,10 @@ class Hustle_Mad_Mimi_Api {
 	 * @since 4.0.2
 	 * @var array
 	 */
-	private static $_instances = array();
+	private static $instances = array();
 
 	/**
-	 * version of madmimi API Wrapper
+	 * Version of madmimi API Wrapper
 	 *
 	 * @since 4.0.2
 	 * @var string
@@ -50,14 +56,16 @@ class Hustle_Mad_Mimi_Api {
 	 * want to force the `boot()` method to
 	 * initate the class and maitain instances
 	 *
-	 * @param $api_key
+	 * @param string $user_name User name.
+	 * @param string $api_key Api key.
+	 * @throws Exception Missing required API Credentials.
 	 */
 	private function __construct( $user_name, $api_key ) {
 		if ( ! $api_key || ! $user_name ) {
 			throw new Exception( __( 'Missing required API Credentials', 'hustle' ) );
 		}
-		$this->_user_name = $user_name;
-		$this->_api_key   = $api_key;
+		$this->user_name = $user_name;
+		$this->api_key   = $api_key;
 	}
 
 	/**
@@ -65,36 +73,36 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $api_key
-	 *
+	 * @param string $user_name User name.
+	 * @param string $api_key Api key.
 	 * @return Hustle_Madmimi_Api|null
-	 * @throws Exception
 	 */
 	public static function boot( $user_name, $api_key ) {
 
 		$instance_key = md5( $api_key );
 
-		if ( ! isset( self::$_instances[ $instance_key ] ) ) {
-			self::$_instances[ $instance_key ] = new static( $user_name, $api_key );
+		if ( ! isset( self::$instances[ $instance_key ] ) ) {
+			self::$instances[ $instance_key ] = new static( $user_name, $api_key );
 		}
 
-		return self::$_instances[ $instance_key ];
+		return self::$instances[ $instance_key ];
 	}
 
 	/**
 	 * Sends request to the endpoint url with the provided $action
 	 *
-	 * @param string $verb
-	 * @param string $action rest action
-	 * @param array  $args
+	 * @param string $action rest action.
+	 * @param string $verb Verbs.
+	 * @param array  $args Args.
 	 * @return object|WP_Error
+	 * @throws Exception Failed to process request.
 	 */
-	private function _request( $action, $verb = 'GET', $args = array() ) {
+	private function request( $action, $verb = 'GET', $args = array() ) {
 
-		// Adding extra user agent for wp remote request
+		// Adding extra user agent for wp remote request.
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
-		$url = esc_url( trailingslashit( $this->_endpoint ) . $action );
+		$url = esc_url( trailingslashit( $this->endpoint ) . $action );
 
 		/**
 		 * Filter madmimi url to be used on sending api request
@@ -109,8 +117,8 @@ class Hustle_Mad_Mimi_Api {
 
 		$url = add_query_arg(
 			array(
-				'api_key'  => $this->_api_key,
-				'username' => rawurlencode( $this->_user_name ),
+				'api_key'  => $this->api_key,
+				'username' => rawurlencode( $this->user_name ),
 			),
 			$url
 		);
@@ -157,11 +165,11 @@ class Hustle_Mad_Mimi_Api {
 
 		$res = wp_remote_request( $url, $_args );
 
-		// logging data
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request   = $url;
-		$utils->_last_data_sent     = $args;
-		$utils->_last_data_received = $res;
+		// logging data.
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_url_request   = $url;
+		$utils->last_data_sent     = $args;
+		$utils->last_data_received = $res;
 
 		$wp_response = $res;
 
@@ -175,7 +183,7 @@ class Hustle_Mad_Mimi_Api {
 
 		$body = wp_remote_retrieve_body( $res );
 
-		// probably silent mode
+		// probably silent mode.
 		if ( ! empty( $body ) ) {
 			$res = json_decode( $body );
 		}
@@ -192,10 +200,7 @@ class Hustle_Mad_Mimi_Api {
 					$msg = $res->message;
 				}
 
-				if ( 404 === $status_code ) {
-					throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
-				}
-
+				/* translators: error message */
 				throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
 			}
 		}
@@ -221,7 +226,7 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @since 4.0.1
 	 *
-	 * @param $user_agent
+	 * @param string $user_agent User agent.
 	 *
 	 * @return string
 	 */
@@ -243,62 +248,65 @@ class Hustle_Mad_Mimi_Api {
 	/**
 	 * Sends rest GET request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _get( $action, $args = array() ) {
-		return $this->_request( $action, 'GET', $args );
+	private function get( $action, $args = array() ) {
+		return $this->request( $action, 'GET', $args );
 	}
 
 	/**
 	 * Sends rest POST request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _post( $action, $args = array() ) {
-		return $this->_request( $action, 'POST', $args );
+	private function post( $action, $args = array() ) {
+		return $this->request( $action, 'POST', $args );
 	}
 
 	/**
 	 * Sends rest PUT request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _put( $action, $args = array() ) {
-		return $this->_request( $action, 'PUT', $args );
+	private function put( $action, $args = array() ) {
+		return $this->request( $action, 'PUT', $args );
 	}
 
 	/**
 	 * Retrieves lists as array of objects
 	 *
+	 * @param array $data Data.
 	 * @return array|WP_Error
 	 */
 	public function get_lists( $data = array() ) {
-		return $this->_get( 'subscriberLists', $data );
+		return $this->get( 'subscriberLists', $data );
 	}
 
 	/**
 	 * Retrieves lists as array of objects
 	 *
+	 * @param array $data Data.
 	 * @return array|WP_Error
 	 */
 	public function get_subscriber( $data = array() ) {
-		return $this->_get( 'subscribers', $data );
+		return $this->get( 'subscribers', $data );
 	}
 
 	/**
 	 * Add new contact
 	 *
-	 * @param $data
+	 * @param string $list List.
+	 * @param array  $data Data.
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function subscribe( $list, array $data ) {
-		$res = $this->_post( 'subscribers', $data );
+		$res = $this->post( 'subscribers', $data );
 		if ( isset( $res->subscriber->id ) ) {
 			$id = $res->subscriber->id;
 			$this->update_subscriber_list( $id, array( $list ) );
@@ -309,13 +317,15 @@ class Hustle_Mad_Mimi_Api {
 	/**
 	 * Update a subscriber
 	 *
-	 * @param $data
+	 * @param string $id ID.
+	 * @param array  $data Data.
+	 * @param array  $list List.
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function update_subscriber( $id, array $data, $list = array() ) {
 
 		$action = 'subscribers/' . $id;
-		$res    = $this->_put( $action, $data );
+		$res    = $this->put( $action, $data );
 
 		if ( ! empty( $list && isset( $res->subscriber->id ) ) ) {
 			$id = $res->subscriber->id;
@@ -329,13 +339,33 @@ class Hustle_Mad_Mimi_Api {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @return array
+	 * @param string $id ID.
+	 * @param array  $list List.
 	 */
 	public function update_subscriber_list( $id, $list ) {
-		$res = $this->_put( 'subscribers/' . $id . '/memberships/', array( 'add' => $list ), false );
+		$res = $this->put( 'subscribers/' . $id . '/memberships/', array( 'add' => $list ) );
 		if ( isset( $res->subscriber->id ) ) {
 			$id = $res->subscriber->id;
 			$this->update_subscriber_list( $id, $list );
 		}
+	}
+
+	/**
+	 * Delete subscriber from the list
+	 *
+	 * @param string $list_id List ID.
+	 * @param string $email Email.
+	 *
+	 * @return bool
+	 */
+	public function delete_email( $list_id, $email ) {
+		$existing_member = $this->get_subscriber( array( 'query' => $email ) );
+		if ( empty( $existing_member->subscribers[0]->id ) ) {
+			return false;
+		}
+		$member_id = $existing_member->subscribers[0]->id;
+		$res       = $this->put( 'subscribers/' . $member_id . '/memberships/', array( 'remove' => array( $list_id ) ) );
+
+		return ! is_wp_error( $res );
 	}
 }

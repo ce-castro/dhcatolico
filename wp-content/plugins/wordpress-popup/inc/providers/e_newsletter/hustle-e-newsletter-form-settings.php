@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_E_Newsletter_Form_Settings class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 
 	/**
@@ -15,7 +21,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 		 */
 		public function form_settings_wizards() {
 			// already filtered on Abstract
-			// numerical array steps
+			// numerical array steps.
 			return array(
 				// 0
 				array(
@@ -34,7 +40,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 		public function first_step_is_completed() {
 			$this->addon_form_settings = $this->get_form_settings_values();
 			if ( ! isset( $this->addon_form_settings['list_id'] ) ) {
-				// preliminary value
+				// preliminary value.
 				$this->addon_form_settings['list_id'] = array();
 
 				return false;
@@ -53,7 +59,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 		 * @since 3.0.5
 		 * @since 4.0 param $validate removed.
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function first_step_callback( $submitted_data ) {
@@ -109,9 +115,9 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 				'has_errors' => $has_errors,
 			);
 
-			// Save only after the step has been validated and there are no errors
+			// Save only after the step has been validated and there are no errors.
 			if ( $is_submit && ! $has_errors ) {
-				error_log( wp_json_encode( $this->_lists ) );
+				error_log( wp_json_encode( $this->_lists ) );// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				$current_data['list_name'] = $this->get_selected_list_names( $current_data );
 				$this->save_form_settings_values( $current_data );
 			}
@@ -124,7 +130,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $current_data
+		 * @param array $current_data Current data.
 		 * @return string
 		 */
 		private function get_selected_list_names( $current_data ) {
@@ -146,7 +152,8 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
+		 * @param bool  $is_submit Is submit.
 		 * @return array
 		 */
 		private function get_first_step_options( $submitted_data, $is_submit ) {
@@ -165,7 +172,7 @@ if ( ! class_exists( 'Hustle_E_Newsletter_Form_Settings' ) ) :
 				}
 			} catch ( Exception $e ) {
 
-				// TODO: handle this properly
+				// TODO: handle this properly.
 				return array();
 
 			}

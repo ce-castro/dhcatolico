@@ -18,7 +18,6 @@ class Hustle_Meta_Base_Content extends Hustle_Meta {
 	 * Get the defaults for this meta.
 	 *
 	 * @since 4.0.0
-	 * @since 4.2.0 Moved from Hustle_Popup_Content to this class.
 	 * @return array
 	 */
 	public function get_defaults() {
@@ -35,9 +34,9 @@ class Hustle_Meta_Base_Content extends Hustle_Meta {
 			'cta_label'           => '',
 			'cta_url'             => '',
 			'cta_target'          => 'blank',
-			'cta_two_label'       => '',
+			'cta_two_label'       => 'Close',
 			'cta_two_url'         => '',
-			'cta_two_target'      => 'blank',
+			'cta_two_target'      => 'close',
 			'cta_helper_show'     => '0',
 			'cta_helper_text'     => '',
 		);

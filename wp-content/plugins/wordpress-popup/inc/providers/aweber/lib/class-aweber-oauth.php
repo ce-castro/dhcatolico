@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Addon_Aweber_Oauth class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Addon_Aweber_Oauth
@@ -11,8 +16,8 @@ class Hustle_Addon_Aweber_Oauth {
 	 *
 	 * @since 1.0
 	 *
-	 * @param mixed $method String name of HTTP method, such as "GET"
-	 * @param mixed $url    URL where this request will go
+	 * @param mixed $method String name of HTTP method, such as "GET".
+	 * @param mixed $url    URL where this request will go.
 	 * @param mixed $data   Array of params for this request. This should
 	 *                      include ALL oauth properties except for the signature.
 	 *
@@ -55,14 +60,14 @@ class Hustle_Addon_Aweber_Oauth {
 	}
 
 	/**
-	 * collapse data for signature
+	 * Collapse data for signature
 	 *
 	 * @since 1.0
 	 *
 	 * Turns an array of request data into a string, as used by the oauth
 	 * signature
 	 *
-	 * @param mixed $data
+	 * @param mixed $data Data.
 	 *
 	 * @return string
 	 */
@@ -84,15 +89,15 @@ class Hustle_Addon_Aweber_Oauth {
 	 *
 	 * @since  1.0
 	 *
-	 * @param mixed $base Base string of data to sign
-	 * @param mixed $key  Key to sign the data with
+	 * @param mixed $base Base string of data to sign.
+	 * @param mixed $key  Key to sign the data with.
 	 *
 	 * @access public
 	 * @return string   The signature
 	 */
 	public static function create_signature( $base, $key ) {
 
-		$signature = base64_encode( hash_hmac( 'sha1', $base, $key, true ) );//phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		$signature = base64_encode( hash_hmac( 'sha1', $base, $key, true ) );// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 
 		/**
 		 * Signature that will be used on AWeber oauth_signature
@@ -116,8 +121,8 @@ class Hustle_Addon_Aweber_Oauth {
 	 *
 	 * @since 1.0
 	 *
-	 * @param $application_key
-	 * @param $oauth_token_secret
+	 * @param string $application_key Application key.
+	 * @param string $oauth_token_secret Auth token secret.
 	 *
 	 * @return string
 	 */
@@ -143,7 +148,7 @@ class Hustle_Addon_Aweber_Oauth {
 	 *
 	 * @since 1.0
 	 *
-	 * @param int $timestamp
+	 * @param int $timestamp Timestamp.
 	 *
 	 * @return string
 	 */

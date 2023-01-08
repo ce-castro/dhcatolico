@@ -1,6 +1,15 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Zapier class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Zapier' ) ) :
 
+	/**
+	 * Class Hustle_Zapier
+	 */
 	class Hustle_Zapier extends Hustle_Provider_Abstract {
 
 		const SLUG = 'zapier';
@@ -12,39 +21,51 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'zapier';
+		protected $slug = 'zapier';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'Zapier';
+		protected $title = 'Zapier';
 
 		/**
+		 * Is multi on global
+		 *
 		 * @since 4.0
 		 * @var bool
 		 */
 		protected $is_multi_on_global = false;
 
 		/**
+		 * Is multi on form
+		 *
 		 * @since 4.0
 		 * @var bool
 		 */
@@ -55,7 +76,7 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Zapier_Form_Settings';
+		protected $form_settings = 'Hustle_Zapier_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -63,7 +84,7 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Zapier_Form_Hooks';
+		protected $form_hooks = 'Hustle_Zapier_Form_Hooks';
 
 		/**
 		 * Array of options which should exist for confirming that settings are completed
@@ -71,7 +92,7 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 * @since 4.0
 		 * @var array
 		 */
-		protected $_completion_options = array( 'active' );
+		protected $completion_options = array( 'active' );
 
 		/**
 		 * Provider constructor.
@@ -79,16 +100,18 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		public function __construct() {
 			$hide = apply_filters( 'wpmudev_branding_hide_doc_link', false );
 
-			$this->_icon_2x           = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x           = plugin_dir_url( __FILE__ ) . 'images/logo.png';
-			$this->_banner_1x         = plugin_dir_url( __FILE__ ) . 'images/banner.png';
-			$this->_banner_2x         = plugin_dir_url( __FILE__ ) . 'images/banner@2x.png';
-			$this->_documentation_url = Opt_In_Utils::get_link( 'docs' ) . '#zapier';
-			$this->_short_description = sprintf(
+			$this->icon_2x           = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x           = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->banner_1x         = plugin_dir_url( __FILE__ ) . 'images/banner.png';
+			$this->banner_2x         = plugin_dir_url( __FILE__ ) . 'images/banner@2x.png';
+			$this->documentation_url = Opt_In_Utils::get_link( 'docs' ) . '#zapier';
+			$this->short_description = sprintf(
+				/* translators: 1. openning 'a' tag 2. closing 'a' tag */
 				esc_html__( 'Zapier connects Hustle with %1$s1000+ apps%2$s. You can use it to send your leads to third-party apps not natively supported in Hustle and automate your after-submission workflows. %3$sHappy automating!', 'hustle' ),
 				'<a href="https://zapier.com/apps" target="_blank">',
 				'</a>',
 				( ! $hide ? sprintf(
+					/* translators: 1. openning 'a' tag 2. closing 'a' tag */
 					esc_html__( 'Refer to this %1$sarticle%2$s for tips and tricks on using Zapier integration and creating automated workflows.', 'hustle' ),
 					'<a href="' . Opt_In_Utils::get_link( 'blog' ) . 'zapier-wordpress-form-integrations/" target="_blank">',
 					'</a>'
@@ -102,13 +125,18 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
+		/**
+		 * Is active?
+		 *
+		 * @return bool
+		 */
 		public function active() {
 			$setting_values = $this->get_settings_values();
 
@@ -137,7 +165,7 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_zapier( $submitted_data ) {
@@ -149,9 +177,9 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 
 				$active = ! empty( $submitted_data['active'] );
 				// If not active, activate it.
-				if ( ! Hustle_Provider_Utils::is_provider_active( $this->_slug ) ) {
-					// TODO: Wrap this in a friendlier method
-					$activated = Hustle_Providers::get_instance()->activate_addon( $this->_slug );
+				if ( ! Hustle_Provider_Utils::is_provider_active( $this->slug ) ) {
+					// TODO: Wrap this in a friendlier method.
+					$activated = Hustle_Providers::get_instance()->activate_addon( $this->slug );
 					if ( ! $activated ) {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
 						$has_errors    = true;
@@ -239,7 +267,12 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 			return $response;
 		}
 
-
+		/**
+		 * Is form connected?
+		 *
+		 * @param string $form_id Module ID.
+		 * @return boolean
+		 */
 		public function is_form_connected( $form_id ) {
 
 			$form_settings_instance = null;
@@ -265,8 +298,8 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 		 *
 		 * Zapier data is structured differently so a custom implementation is necessary.
 		 *
-		 * @param Hustle_Module_Model $module
-		 * @param $old_module
+		 * @param Hustle_Module_Model $module Module.
+		 * @param object              $old_module Old module.
 		 *
 		 * @return bool
 		 */
@@ -276,7 +309,7 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 			: false;
 
 			if ( empty( $v3_provider ) ) {
-				// Nothing to migrate
+				// Nothing to migrate.
 				return false;
 			}
 
@@ -284,12 +317,12 @@ if ( ! class_exists( 'Hustle_Zapier' ) ) :
 				return false;
 			}
 
-			// At provider level we need a single boolean
+			// At provider level we need a single boolean.
 			$this->save_settings_values( array( 'active' => true ) );
-			// Activate the addon
+			// Activate the addon.
 			Hustle_Providers::get_instance()->activate_addon( $this->get_slug() );
 
-			// At module level
+			// At module level.
 			$module->set_provider_settings(
 				$this->get_slug(),
 				array(

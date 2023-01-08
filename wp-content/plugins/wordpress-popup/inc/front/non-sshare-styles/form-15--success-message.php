@@ -175,19 +175,19 @@ foreach ( $typos as $key => $prop ) {
 	$prop_prefix = 'success_message';
 
 	// DESKTOP: Basic.
-	$font_family = $typography[ $prop_prefix . '_' . $prop . '_font_family' ];
+	$font_family    = $typography[ $prop_prefix . '_' . $prop . '_font_family' ];
 	$font_size      = $typography[ $prop_prefix . '_' . $prop . '_font_size' ];
 	$font_size_unit = $typography[ $prop_prefix . '_' . $prop . '_font_size_unit' ];
-	$font_size   = ( '' !== $font_size ) ? $font_size . $font_size_unit : '0';
-	$font_weight = $typography[ $prop_prefix . '_' . $prop . '_font_weight' ];
-	$font_weight = ( 'regular' === $font_weight ) ? 'normal' : $font_weight;
+	$font_size      = ( '' !== $font_size ) ? $font_size . $font_size_unit : '0';
+	$font_weight    = $typography[ $prop_prefix . '_' . $prop . '_font_weight' ];
+	$font_weight    = ( 'regular' === $font_weight ) ? 'normal' : $font_weight;
 
 	// MOBILE: Basic.
 	$mobile_font_size      = $typography[ $prop_prefix . '_' . $prop . '_font_size_mobile' ];
 	$mobile_font_size_unit = $typography[ $prop_prefix . '_' . $prop . '_font_size_unit_mobile' ];
-	$mobile_font_size   = ( '' !== $mobile_font_size ) ? $mobile_font_size . $mobile_font_size_unit : $font_size;
-	$mobile_font_weight = $typography[ $prop_prefix . '_' . $prop . '_font_weight_mobile' ];
-	$mobile_font_weight = ( 'regular' === $mobile_font_weight ) ? 'normal' : $mobile_font_weight;
+	$mobile_font_size      = ( '' !== $mobile_font_size ) ? $mobile_font_size . $mobile_font_size_unit : $font_size;
+	$mobile_font_weight    = $typography[ $prop_prefix . '_' . $prop . '_font_weight_mobile' ];
+	$mobile_font_weight    = ( 'regular' === $mobile_font_weight ) ? 'normal' : $mobile_font_weight;
 
 	if ( ! $is_mobile_enabled || ( $is_mobile_enabled && $default_typography ) ) {
 		$mobile_font_size   = $font_size;

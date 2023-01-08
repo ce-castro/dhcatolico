@@ -9,7 +9,8 @@
 // Labels and values for the options for the Optin tracking charts.
 $cta_labels = array(
 	'all'   => __( 'All', 'hustle' ),
-	'cta'   => __( 'Call to Action', 'hustle' ),
+	'cta'   => __( 'Call to Action 1', 'hustle' ),
+	'cta_2' => __( 'Call to Action 2', 'hustle' ),
 	'optin' => __( 'Opt-in Form', 'hustle' ),
 );
 
@@ -26,7 +27,7 @@ $canvas_content = sprintf(
 	esc_attr( $chart_sub_type )
 );
 
-// For embeds and ssharing, check if the sub type (inline, shortcode, etc.) this chart
+// For embeds and ssharing, check if the sub type (inline, shortcode, etc.) this chart.
 if ( ! empty( $module_sub_type ) ) {
 
 	// And set the data of this sub type.

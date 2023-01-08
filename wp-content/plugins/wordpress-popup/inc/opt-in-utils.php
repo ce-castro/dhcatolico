@@ -1,10 +1,11 @@
-<?php
-
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Conditions utils
  *
- * Most of the methods are courtesy Philipp Stracker
- *
+ * @package Hustle
+ */
+
+/**
  * Class Opt_In_Utils
  */
 class Opt_In_Utils {
@@ -38,14 +39,16 @@ class Opt_In_Utils {
 	public static function get_referrer() {
 		$referrer = '';
 
-		$is_ajax = ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-			|| ( ! empty( $_POST['_po_method_'] ) && 'raw' === $_POST['_po_method_'] ); // WPCS: CSRF ok.
+		$po_method = filter_input( INPUT_POST, '_po_method_' );
+		$is_ajax   = defined( 'DOING_AJAX' ) && DOING_AJAX
+			|| 'raw' === $po_method;
 
-		if ( isset( $_REQUEST['thereferrer'] ) ) { // WPCS: CSRF ok.
-			$referrer = $_REQUEST['thereferrer']; // WPCS: CSRF ok.
-		} elseif ( ! $is_ajax && isset( $_SERVER['HTTP_REFERER'] ) ) {
+		$http_referer = filter_input( INPUT_SERVER, 'HTTP_REFERER' );
+		if ( isset( $_REQUEST['thereferrer'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$referrer = $_REQUEST['thereferrer'];// phpcs:ignore
+		} elseif ( ! $is_ajax && $http_referer ) {
 			// When doing Ajax request we NEVER use the HTTP_REFERER!
-			$referrer = $_SERVER['HTTP_REFERER'];
+			$referrer = $http_referer;
 		}
 
 		return $referrer;
@@ -72,7 +75,7 @@ class Opt_In_Utils {
 		if ( ! empty( $referrer ) ) {
 			foreach ( $list as $item ) {
 				$item = trim( $item );
-				$res  = stripos( $referrer, $item );
+				$res  = stripos( $referrer, $item ) || fnmatch( $item, $referrer );
 				if ( false !== $res ) {
 					$response = true;
 					break;
@@ -153,8 +156,8 @@ class Opt_In_Utils {
 	 * Checks if user is allowed to perform the ajax actions
 	 *
 	 * @since 4.0
-	 * @param array $capability Hustle capability
-	 * @param int   $module_id Optional. Module id
+	 * @param array $capability Hustle capability.
+	 * @param int   $module_id Optional. Module id.
 	 */
 	public static function is_user_allowed_ajax( $capability, $module_id = null ) {
 		if ( is_null( $module_id ) ) {
@@ -171,7 +174,7 @@ class Opt_In_Utils {
 	/**
 	 * Check is it admin role or not
 	 *
-	 * @param string|array $role
+	 * @param string|array $role Role.
 	 * @return bool
 	 */
 	public static function is_admin_role( $role ) {
@@ -217,8 +220,8 @@ class Opt_In_Utils {
 	 * Checks if user has the capability
 	 *
 	 * @since 4.0
-	 * @param array $capability Hustle capability
-	 * @param int   $module_id Optional. Module id
+	 * @param array $capability Hustle capability.
+	 * @param int   $module_id Optional. Module id.
 	 * @return bool
 	 */
 	public static function is_user_allowed( $capability, $module_id = null ) {
@@ -297,19 +300,8 @@ class Opt_In_Utils {
 	 */
 	public static function is_hustle_included_in_membership() {
 		if ( class_exists( 'WPMUDEV_Dashboard' ) ) {
-			if ( method_exists( 'WPMUDEV_Dashboard_Api', 'get_membership_projects' ) ) {
-				$type     = self::get_membership_status();
-				$projects = WPMUDEV_Dashboard::$api->get_membership_projects();
-
-				if ( ( 'unit' === $type && in_array( 1107020, $projects, true ) ) || ( 'single' === $type && 1107020 === $projects ) ) {
-					return true;
-				}
-
-				if ( function_exists( 'is_wpmudev_member' ) ) {
-					return is_wpmudev_member();
-				}
-
-				return false;
+			if ( class_exists( 'WPMUDEV_Dashboard' ) && method_exists( \WPMUDEV_Dashboard::$upgrader, 'user_can_install' ) ) {
+				return \WPMUDEV_Dashboard::$upgrader->user_can_install( 1107020, true );
 			}
 		}
 
@@ -379,7 +371,7 @@ class Opt_In_Utils {
 	 * Checks if the ajax
 	 *
 	 * @since 1.0
-	 * @param $action string ajax call action name
+	 * @param string $action ajax call action name.
 	 */
 	public static function validate_ajax_call( $action ) {
 		if ( ! check_ajax_referer( $action, false, false ) ) {
@@ -389,7 +381,7 @@ class Opt_In_Utils {
 	/**
 	 * Verify if current version is FREE
 	 **/
-	public static function _is_free() {
+	public static function is_free() {
 		$is_free = ! file_exists( Opt_In::$plugin_path . 'lib/wpmudev-dashboard/wpmudev-dash-notification.php' );
 
 		return $is_free;
@@ -427,7 +419,7 @@ class Opt_In_Utils {
 	 * @return array
 	 */
 	public static function validate_and_sanitize_fields( $post_data, $required_fields = array() ) {
-		// for serialized data or form
+		// for serialized data or form.
 		if ( ! is_array( $post_data ) && is_string( $post_data ) ) {
 			$post_string = $post_data;
 			$post_data   = array();
@@ -465,7 +457,8 @@ class Opt_In_Utils {
 	 * Sub-arrays are expected to have numerical indexes.
 	 *
 	 * @since 3.0.5
-	 * @param array|string $value
+	 * @param array|string $value Value.
+	 * @param string       $key Key.
 	 * @return string
 	 */
 	public static function sanitize_text_input_deep( $value, $key = null ) {
@@ -511,7 +504,7 @@ class Opt_In_Utils {
 			$args    = func_get_args();
 			$message = wp_json_encode( $args );
 			if ( false !== $message ) {
-				error_log( '[Hustle] ' . $message ); // phpcs:ignore
+				error_log( '[Hustle] ' . $message );// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			}
 		}
 	}
@@ -540,14 +533,14 @@ class Opt_In_Utils {
 			);
 			foreach ( $cpts as $cpt ) {
 
-				// skip ms_invoice
+				// skip ms_invoice.
 				if ( 'ms_invoice' === $cpt->name ) {
 					continue;
 				}
 
 				$cpt_array['name']  = $cpt->name;
 				$cpt_array['label'] = $cpt->label;
-				$cpt_array['data']  = self::get_select2_data( $cpt->name );
+				$cpt_array['data']  = array();
 
 				$post_types[ $cpt->name ] = $cpt_array;
 			}
@@ -560,7 +553,8 @@ class Opt_In_Utils {
 	/**
 	 * Get usable object for select2
 	 *
-	 * @param $post_type post type
+	 * @param string $post_type post type.
+	 * @param array  $include_ids Include IDs.
 	 * @return array
 	 */
 	public static function get_select2_data( $post_type, $include_ids = null ) {
@@ -697,7 +691,7 @@ class Opt_In_Utils {
 					// make sure it's wp_post.
 					if ( $post_object instanceof WP_Post ) {
 						// set global $post as $post_object retrieved from `get_post` for next usage.
-						$post = $post_object; // phpcs:ignore
+						$post = $post_object;// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					}
 				}
 			}
@@ -747,9 +741,9 @@ class Opt_In_Utils {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $old_key
-	 * @param string $new_key
-	 * @param array  $array
+	 * @param string $old_key Old key.
+	 * @param string $new_key New key.
+	 * @param array  $array Array.
 	 * @return array
 	 */
 	public static function replace_array_key( $old_key, $new_key, $array ) {
@@ -769,14 +763,14 @@ class Opt_In_Utils {
 		return $new_array;
 	}
 
-	/*
+	/**
 	 * Get the display name of a module type.
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $module_type
-	 * @param boolean $plural
-	 * @param boolean $capitalized
+	 * @param string  $module_type Module type.
+	 * @param boolean $plural Plural.
+	 * @param boolean $capitalized Capitalized.
 	 * @return string
 	 */
 	public static function get_module_type_display_name( $module_type, $plural = false, $capitalized = false ) {
@@ -864,7 +858,7 @@ class Opt_In_Utils {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param array $array
+	 * @param array $array Array.
 	 * @return mixed
 	 */
 	public static function array_key_first( array $array ) {
@@ -1239,12 +1233,14 @@ class Opt_In_Utils {
 			'ZW' => __( 'Zimbabwe', 'hustle' ),
 		);
 
+		// Deprecated.
+		$countries = apply_filters_deprecated( 'opt_in-country-list', array( $countries ), '4.6.0', 'opt_in_country_list' );
 		/**
 		 * Returns a list with countries
 		 * Must be an associative array where the key is the country code
 		 * and its value is its display name.
 		 */
-		return apply_filters( 'opt_in-country-list', $countries );
+		return apply_filters( 'opt_in_country_list', $countries );
 	}
 
 	/**

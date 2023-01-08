@@ -6,7 +6,7 @@
  * @since 4.0.0
  */
 
-if ( Opt_In_Utils::_is_free() ) { ?>
+if ( Opt_In_Utils::is_free() ) { ?>
 
 	<ul class="sui-footer-nav">
 		<li><a href="https://profiles.wordpress.org/wpmudev#content-plugins" target="_blank"><?php esc_html_e( 'Free Plugins', 'hustle' ); ?></a></li>

@@ -1,7 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * IContact API Helper
+ *
+ * @package Hustle
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
@@ -61,7 +64,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		 *
 		 * @var String
 		 */
-		private $_end_point = 'https://app.icontact.com/icp';
+		private $end_point = 'https://app.icontact.com/icp';
 
 
 		const API_CACHE_KEY = 'HUSTLE_ICONTACT_API_CACHE';
@@ -72,11 +75,11 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Plugin constructor
 		 *
-		 * @param String $_app_id - the application id
-		 * @param String $_api_password - the api password
-		 * @param String $_api_username - the api username
+		 * @param String $_app_id - the application id.
+		 * @param String $_api_password - the api password.
+		 * @param String $_api_username - the api username.
 		 *
-		 * @throws Exception
+		 * @throws Exception Something went wrong.
 		 */
 		public function __construct( $_app_id, $_api_password, $_api_username ) {
 			$this->app_id       = $_app_id;
@@ -84,10 +87,10 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 			$this->api_username = $_api_username;
 			$this->error        = false;
 
-			// Set up other API details
+			// Set up other API details.
 			try {
-				$this->_get_account_id();
-				$this->_get_client_folder_id();
+				$this->get_account_id();
+				$this->get_client_folder_id();
 			} catch ( Exception $e ) {
 				throw new Exception( $e->getMessage() );
 			}
@@ -96,12 +99,12 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Generate the request url
 		 *
-		 * @param bool $full_path . Defaults to false. Set to true to get the full api url
+		 * @param bool $full_path Defaults to false. Set to true to get the full api url.
 		 *
 		 * @return String
 		 */
-		private function _build_url( $full_path = false ) {
-			$base_url = $this->_end_point;
+		private function build_url( $full_path = false ) {
+			$base_url = $this->end_point;
 			if ( false !== $full_path ) {
 				return $base_url . "/a/{$this->account_id}/c/{$this->folder_id}";
 			}
@@ -111,11 +114,11 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Get the account id
 		 *
-		 * @param $_account_id - the account id. If not set, it will be pulled from the api
+		 * @param int $_account_id Account id. If not set, it will be pulled from the api.
 		 *
-		 * @throws Exception
+		 * @throws Exception Invalid accoiunt.
 		 */
-		private function _get_account_id( $_account_id = null ) {
+		private function get_account_id( $_account_id = null ) {
 			if ( ! empty( $_account_id ) ) {
 				$this->account_id = (int) $_account_id;
 			} else {
@@ -123,7 +126,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 				if ( $account_cache ) {
 					$this->account_id = (int) $account_cache;
 				} else {
-					$account_data = $this->_do_request( '/a/' );
+					$account_data = $this->do_request( '/a/' );
 					if ( ! is_wp_error( $account_data ) ) {
 						if ( is_array( $account_data ) && count( $account_data ) > 0 ) {
 							if ( isset( $account_data['errors'] ) && $account_data['errors'] ) {
@@ -154,11 +157,11 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Get the folder id
 		 *
-		 * @param $_folder_id - the folder id. If not set, it will be pulled from the api
+		 * @param int $_folder_id - the folder id. If not set, it will be pulled from the api.
 		 *
-		 * @throws Exception
+		 * @throws Exception Invalid folder.
 		 */
-		private function _get_client_folder_id( $_folder_id = null ) {
+		private function get_client_folder_id( $_folder_id = null ) {
 			if ( ! empty( $_folder_id ) ) {
 				$this->folder_id = (int) $_folder_id;
 			} else {
@@ -167,7 +170,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 					$this->folder_id = (int) $folder_cache;
 				} else {
 					$resource    = (string) "/a/{$this->account_id}/c";
-					$folder_data = $this->_do_request( $resource );
+					$folder_data = $this->do_request( $resource );
 					if ( ! is_wp_error( $folder_data ) ) {
 						if ( is_array( $folder_data ) && count( $folder_data ) > 0 && isset( $folder_data['clientfolders'] ) && count( $folder_data['clientfolders'] ) > 0 ) {
 							$folder          = $folder_data['clientfolders'][0];
@@ -186,12 +189,12 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Perform API Call
 		 *
-		 * @param String $path - relative path
-		 * @param String $method - Request method
-		 * @param Array  $input - the data input
+		 * @param String $path - relative path.
+		 * @param String $method - Request method.
+		 * @param Array  $input - the data input.
 		 */
-		private function _do_request( $path, $method = 'GET', $input = null ) {
-			$request_url = $this->_build_url() . $path;
+		private function do_request( $path, $method = 'GET', $input = null ) {
+			$request_url = $this->build_url() . $path;
 
 			$method = strtoupper( $method );
 
@@ -222,11 +225,11 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 
 			$response = wp_remote_request( $request_url, $args );
 
-			// logging data
-			$utils                      = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request   = $request_url;
-			$utils->_last_data_sent     = $args;
-			$utils->_last_data_received = $response;
+			// logging data.
+			$utils                     = Hustle_Provider_Utils::get_instance();
+			$utils->last_url_request   = $request_url;
+			$utils->last_data_sent     = $args;
+			$utils->last_data_received = $response;
 
 			$data = wp_remote_retrieve_body( $response );
 
@@ -240,10 +243,11 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Get Lists
 		 *
+		 * @param int $offset Offset..
 		 * @return Array|WP_Error
 		 */
 		public function get_lists( $offset = 0 ) {
-			return $this->_do_request( "/a/{$this->account_id}/c/{$this->folder_id}/lists?offset=" . intval( $offset ), 'GET', null );
+			return $this->do_request( "/a/{$this->account_id}/c/{$this->folder_id}/lists?offset=" . intval( $offset ), 'GET', null );
 		}
 
 		/**
@@ -252,7 +256,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		 * @return Array|WP_Error
 		 */
 		public function get_existing_messages() {
-			return $this->_do_request( "/a/{$this->account_id}/c/{$this->folder_id}/messages", 'GET', null );
+			return $this->do_request( "/a/{$this->account_id}/c/{$this->folder_id}/messages", 'GET', null );
 		}
 
 		/**
@@ -260,24 +264,25 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		 * First we add the subscriber and get the subscirber id
 		 * Then we add the subscriber id to the list
 		 *
-		 * @param Integer $list_id - the list id
-		 * @param Array   $contact_details - the contact details
-		 * @param String  $status  - normal, pending, unsubscribed
+		 * @param Integer $list_id - the list id.
+		 * @param Array   $contact_details - the contact details.
+		 * @param String  $status  - normal, pending, unsubscribed.
+		 * @param String  $confirmation_message_id Confirmation message ID.
 		 *
-		 * @throws Exception
+		 * @throws Exception Something went wrong.
 		 *
 		 * @return String
 		 */
 		public function add_subscriber( $list_id, $contact_details, $status = 'normal', $confirmation_message_id = '' ) {
 			$valid_statuses = array( 'normal', 'pending', 'unsubscribed' );
 
-			// Validate status
+			// Validate status.
 			if ( ! empty( $status ) && ! in_array( $status, $valid_statuses, true ) ) {
 				$status = 'normal';
 			}
 
-			// Save contact
-			$contact = $this->_save_contact( $contact_details );
+			// Save contact.
+			$contact = $this->save_contact( $contact_details );
 
 			$error_message = __( 'Something went wrong, please compare your Opt-in fields with IContact fields and add any missing fields', 'hustle' );
 
@@ -302,7 +307,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 						$subscription_array['confirmationMessageId'] = $confirmation_message_id;
 					}
 
-					$subscriptions = $this->_do_request( "/a/{$this->account_id}/c/{$this->folder_id}/subscriptions", 'POST', array( $subscription_array ) );
+					$subscriptions = $this->do_request( "/a/{$this->account_id}/c/{$this->folder_id}/subscriptions", 'POST', array( $subscription_array ) );
 
 					if ( is_wp_error( $subscriptions ) ) {
 						return $subscriptions;
@@ -312,7 +317,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 						return __( 'Successful subscription', 'hustle' );
 					}
 				} else {
-					$this->_set_error( 'contact_error', 'Something went wrong. Please try again' );
+					$this->set_error( 'contact_error', 'Something went wrong. Please try again' );
 					throw new Exception( __( 'Something went wrong, please try again', 'hustle' ) );
 				}
 			}
@@ -321,14 +326,14 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Add Custom Field
 		 *
-		 *  @param Array $field
+		 *  @param Array $field Field.
 		 *          @options displayToUser {Intger} - 1 to display the field or 0 to hide the field
 		 *          @options privateName {String} - Indicates the name displayed to the iContact user. This name will not appear to the contact
 		 *          @options fieldType {String} - String, one of the following: checkbox, text, number, decimalOne, decimalTwo, decimalThree, decimalFour, date
 		 */
 		public function add_custom_field( $field ) {
 			$path     = "/a/{$this->account_id}/c/{$this->folder_id}/customfields";
-			$response = $this->_do_request( $path, 'POST', array( $field ) );
+			$response = $this->do_request( $path, 'POST', array( $field ) );
 
 			return $response;
 		}
@@ -336,11 +341,11 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Get Contacts In a list
 		 *
-		 * @param Integer $list_id - the list id
+		 * @param Integer $list_id - the list id.
 		 */
 		public function get_contacts( $list_id ) {
 			$path     = "/a/{$this->account_id}/c/{$this->folder_id}/contacts?status=total&listId={$list_id}";
-			$response = $this->_do_request( $path, 'GET' );
+			$response = $this->do_request( $path, 'GET' );
 
 			return $response;
 		}
@@ -348,7 +353,7 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		/**
 		 * Subscribe an email
 		 *
-		 * @param Array $contact_details - array of contact details
+		 * @param Array $contact_details - array of contact details.
 		 *          @options email {String} - the email
 		 *          @options prefix {String} - the name prefix
 		 *          @options firstName {String} - the First name
@@ -357,20 +362,48 @@ if ( ! class_exists( 'Hustle_Icontact_Api' ) ) :
 		 *
 		 * @return WP_Error | Object
 		 */
-		private function _save_contact( $contact_details ) {
+		private function save_contact( $contact_details ) {
 			$path     = "/a/{$this->account_id}/c/{$this->folder_id}/contacts";
-			$response = $this->_do_request( $path, 'POST', array( $contact_details ) );
+			$response = $this->do_request( $path, 'POST', array( $contact_details ) );
 
 			return $response;
 		}
 
 		/**
+		 * Delete subscriber from the list
+		 *
+		 * @param string $list_id List ID.
+		 * @param string $email Email.
+		 *
+		 * @return bool
+		 */
+		public function delete_email( $list_id, $email ) {
+			// Get contact ID.
+			$path = "/a/{$this->account_id}/c/{$this->folder_id}/contacts?status=total&listId={$list_id}&email=" . rawurlencode( $email );
+			$res  = $this->do_request( $path, 'GET' );
+			if ( empty( $res['contacts'][0]['contactId'] ) ) {
+				return false;
+			}
+
+			// Unsubscribe.
+			$subscription_array = array(
+				'contactId' => $res['contacts'][0]['contactId'],
+				'listId'    => $list_id,
+				'status'    => 'unsubscribed',
+			);
+
+			$res = $this->do_request( "/a/{$this->account_id}/c/{$this->folder_id}/subscriptions", 'POST', array( $subscription_array ) );
+
+			return ! is_wp_error( $res ) && empty( $res['failed'] );
+		}
+
+		/**
 		 * Set Error
 		 *
-		 * @param String $tag - the error tag
-		 * @param String $message - the error message
+		 * @param String $tag - the error tag.
+		 * @param String $message - the error message.
 		 */
-		private function _set_error( $tag, $message ) {
+		private function set_error( $tag, $message ) {
 			if ( ! $this->error ) {
 				$this->error = new WP_Error();
 			}

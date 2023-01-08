@@ -28,7 +28,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @param mixed $offset Passed offset.
 	 * @return bool
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function offsetExists( $offset ) {
 		return isset( $this->providers[ $offset ] );
 	}
@@ -40,7 +42,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @param mixed $offset Passed offset.
 	 * @return Hustle_Provider_Abstract|mixed|null
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function offsetGet( $offset ) {
 		if ( isset( $this->providers[ $offset ] ) ) {
 			return $this->providers[ $offset ];
@@ -56,7 +60,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @param mixed $offset Passed offset.
 	 * @param mixed $value Passed value.
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function offsetSet( $offset, $value ) {
 		$this->providers[ $offset ] = $value;
 	}
@@ -67,7 +73,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @since 3.0.5
 	 * @param mixed $offset Passed offset.
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function offsetUnset( $offset ) {
 		unset( $this->providers[ $offset ] );
 	}
@@ -79,7 +87,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @since 3.0.5
 	 * @return int The custom count as an integer.
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function count() {
 		return count( $this->providers );
 	}
@@ -159,7 +169,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return mixed Can return any type.
 	 * @since 4.0
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function current() {
 		return current( $this->providers );
 	}
@@ -171,7 +183,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return void Any returned value is ignored.
 	 * @since 4.0
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function next() {
 		next( $this->providers );
 	}
@@ -183,7 +197,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return mixed scalar on success, or null on failure.
 	 * @since 4.0
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function key() {
 		return key( $this->providers );
 	}
@@ -196,7 +212,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * Returns true on success or false on failure.
 	 * @since 4.0
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function valid() {
 		return key( $this->providers ) !== null;
 	}
@@ -208,7 +226,9 @@ class Hustle_Provider_Container implements ArrayAccess, Countable, Iterator {
 	 * @return void Any returned value is ignored.
 	 * @since 4.0
 	 */
+	// phpcs:ignore Squiz.Commenting.InlineComment.WrongStyle,Squiz.PHP.CommentedOutCode.Found
 	#[\ReturnTypeWillChange]
+	// phpcs:ignore Squiz.Commenting.FunctionComment.Missing
 	public function rewind() {
 		reset( $this->providers );
 	}

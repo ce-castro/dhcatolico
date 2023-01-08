@@ -1,10 +1,20 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Decorator_Abstract
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Decorator_Abstract
  */
 abstract class Hustle_Decorator_Abstract {
 
+	/**
+	 * Module
+	 *
+	 * @var object
+	 */
 	protected $module;
 
 	/**
@@ -15,9 +25,24 @@ abstract class Hustle_Decorator_Abstract {
 	 */
 	protected $design_meta;
 
+	/**
+	 * Design
+	 *
+	 * @var array
+	 */
 	protected $design;
 
+	/**
+	 * Desktop breakpoint
+	 *
+	 * @var int
+	 */
 	protected $bp_desktop;
+	/**
+	 * Mobile breakpoint
+	 *
+	 * @var int
+	 */
 	protected $bp_mobile;
 
 	/**
@@ -29,6 +54,11 @@ abstract class Hustle_Decorator_Abstract {
 	 */
 	abstract protected function get_styles();
 
+	/**
+	 * Constructor
+	 *
+	 * @param Hustle_Model $module Module.
+	 */
 	public function __construct( Hustle_Model $module ) {
 		$this->module = $module;
 
@@ -36,6 +66,12 @@ abstract class Hustle_Decorator_Abstract {
 		$this->bp_desktop = $this->bp_mobile + 1;
 	}
 
+	/**
+	 * Get module styles
+	 *
+	 * @param type $module_type Module type.
+	 * @return type
+	 */
 	public function get_module_styles( $module_type ) {
 
 		$this->design_meta = $this->module->get_design();

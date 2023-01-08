@@ -365,11 +365,10 @@ class Hustle_Module_Collection {
 			$meta_result = $db->get_results( $sql );
 			$meta        = array();
 			foreach ( $meta_result as $row ) {
-				if ( 'shortcode_id' !== $row->meta_key ) {
-					$meta[ $row->meta_key ] = json_decode( $row->meta_value, true ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				} else {
-					$meta[ $row->meta_key ] = $row->meta_value; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				}
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				$meta[ $row->meta_key ] = 'shortcode_id' !== $row->meta_key
+						? json_decode( $row->meta_value, true )
+						: $row->meta_value;
 			}
 			$modules[ $module_id ]->meta = $meta;
 		}
@@ -399,7 +398,7 @@ class Hustle_Module_Collection {
 	 * @since 4.0.0
 	 */
 	private function get_filters() {
-		$filters = isset( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : array();
+		$filters = isset( $_REQUEST['filter'] ) ? $_REQUEST['filter'] : array(); //phpcs:ignore
 		if ( isset( $filters['types'] ) && is_string( $filters['types'] ) ) {
 			$filters['types'] = explode( ',', $filters['types'] );
 		}
@@ -432,7 +431,7 @@ class Hustle_Module_Collection {
 			AND `meta_key` = 'integrations_settings'",
 			'%' . $slug . '%'
 		);
-		return $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		return $wpdb->get_col( $query ); // phpcs:ignore
 		// phpcs:enable
 	}
 

@@ -5,11 +5,11 @@
  * @package Hustle
  * @since 4.0.0
  */
-?>
 
+?>
 <div class="sui-pagination-wrap">
 
-	<span class="sui-pagination-results"><?php printf( esc_html( _n( '%d result', '%d results', $total, 'hustle' ) ), esc_html( $total ) ); ?></span>
+	<span class="sui-pagination-results"><?php /* translators: total amount */  printf( esc_html( _n( '%d result', '%d results', $total, 'hustle' ) ), esc_html( $total ) ); ?></span>
 
 	<?php
 	$args = array(
@@ -27,6 +27,6 @@
 			<i class="sui-icon-filter" aria-hidden="true"></i>
 			<span class="sui-screen-reader-text"><?php echo esc_html__( 'Filter results', 'hustle' ); ?></span>
 		</button>
-	 <?php } ?>
+	<?php } ?>
 
 </div>

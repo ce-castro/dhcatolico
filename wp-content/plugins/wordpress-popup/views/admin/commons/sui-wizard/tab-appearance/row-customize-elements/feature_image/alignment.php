@@ -1,4 +1,10 @@
 <?php
+/**
+ * Alignment row
+ *
+ * @package Hustle
+ */
+
 $name     = 'feature_image_position' . ( $device ? '_' . $device : '' );
 $settings = $settings[ $name ];
 
@@ -28,7 +34,7 @@ $alignment = array(
 
 		<h5 class="sui-settings-label sui-dark" style="font-size: 13px;"><?php esc_html_e( 'Alignment', 'hustle' ); ?></h5>
 
-		<p class="sui-description"><?php printf( esc_html__( 'Choose how do you want to align your featured image inside your %s.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
+		<p class="sui-description"><?php /* translators: module type */  printf( esc_html__( 'Choose how do you want to align your featured image inside your %s.', 'hustle' ), esc_html( $smallcaps_singular ) ); ?></p>
 
 		<div class="sui-tabs sui-side-tabs">
 

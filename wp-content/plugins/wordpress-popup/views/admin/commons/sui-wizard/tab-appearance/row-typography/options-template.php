@@ -35,7 +35,6 @@ if ( $is_main_content || $is_success_message ) {
 			'settings'      => $settings,
 			'property_key'  => $property_key . '_' . $key,
 			'device_suffix' => $device_suffix,
-			//'spacing'       => true,
 		);
 
 		$option['label']    = $label;

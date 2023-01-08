@@ -1,38 +1,40 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
- * Mautic API Helper
- **/
+ * Hustle_Mautic_Api class
+ *
+ * @package Hustle
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
 if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 
+	/**
+	 * Mautic API Helper
+	 **/
 	class Hustle_Mautic_Api {
 		/**
-		 * @var (string) Mautic installation URL
+		 * Mautic installation URL
+		 *
+		 * @var (string)
 		 **/
 		private $base_url;
 
 		/**
-		 * @var (string) The username use to login.
+		 * The username use to login
+		 *
+		 * @var (string)
 		 **/
 		private $username;
 
 		/**
-		 * @var (string) The password use to authenticate.
+		 * The password use to authenticate
+		 *
+		 * @var (string)
 		 **/
 		private $password;
-
-		/**
-		 * @var (object) \MauticApi class instance
-		 **/
-		private $api;
-
-		/**
-		 * @var (object) \Mautic\Auth\ApiAuth class instance.
-		 **/
-		private $auth;
 
 		/**
 		 * Instances of mautic api
@@ -40,7 +42,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 * @since 4.0.2
 		 * @var array
 		 */
-		private static $_instances = array();
+		private static $instances = array();
 
 		/**
 		 * Instances of mautic api
@@ -53,12 +55,13 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		/**
 		 * Hustle_Mautic_Api constructor.
 		 *
-		 * @param $base_url
-		 * @param $username
-		 * @param $password
+		 * @param string $username Username.
+		 * @param string $base_url Basae URL.
+		 * @param string $password Password.
+		 * @throws Exception Missing required API Credentials.
 		 */
 		private function __construct( $username, $base_url, $password ) {
-			// final check here
+			// final check here.
 			if ( ! $base_url || ! $username || ! $password ) {
 				throw new Exception( __( 'Missing required API Credentials', 'hustle' ) );
 			}
@@ -73,22 +76,23 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param $base_url
-		 * @param $username
-		 * @param $password
+		 * @param string $username Username.
+		 * @param string $base_url Basae URL.
+		 * @param string $password Password.
 		 *
 		 * @return Hustle_Mautic_Api|null
+		 * @throws Exception Missing required API Credentials.
 		 */
 		public static function get_instance( $username, $base_url = '', $password = '' ) {
-			// initial check here
+			// initial check here.
 			if ( ! $username ) {
 				throw new Exception( __( 'Missing required API Credentials', 'hustle' ) );
 			}
 
-			if ( ! isset( self::$_instances[ md5( $username ) ] ) ) {
-				self::$_instances[ md5( $username ) ] = new self( $username, $base_url, $password );
+			if ( ! isset( self::$instances[ md5( $username ) ] ) ) {
+				self::$instances[ md5( $username ) ] = new self( $username, $base_url, $password );
 			}
-			return self::$_instances[ md5( $username ) ];
+			return self::$instances[ md5( $username ) ];
 		}
 
 		/**
@@ -96,7 +100,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param $user_agent
+		 * @param string $user_agent User agent.
 		 *
 		 * @return string
 		 */
@@ -120,17 +124,15 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param string $verb
-		 * @param        $url
-		 * @param array  $args
-		 *
-		 * @param array  $headers
+		 * @param string $url URL.
+		 * @param string $verb Verb.
+		 * @param array  $args Args.
 		 *
 		 * @return array|mixed|object
-		 * @throws Exception
+		 * @throws Exception Failed to process request.
 		 */
-		private function _request( $url, $verb = 'GET', $args = array() ) {
-			// Adding extra user agent for wp remote request
+		private function request( $url, $verb = 'GET', $args = array() ) {
+			// Adding extra user agent for wp remote request.
 			add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
 			$url = esc_url( trailingslashit( $this->base_url ) . 'api/' . $url );
@@ -148,7 +150,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 			$url = apply_filters( 'hustle_addon_mautic_api_url', $url, $verb, $args );
 
 			$headers = array(
-				'Authorization' => 'Basic ' . base64_encode( $this->username . ':' . $this->password ), //phpcs:ignore
+				'Authorization' => 'Basic ' . base64_encode( $this->username . ':' . $this->password ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 				'Expect'        => '',
 				'Accept'        => 'application/json',
 				'Content-Type'  => 'application/json',
@@ -202,11 +204,11 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 
 			$res = wp_remote_request( $url, $_args );
 
-			// logging data
-			$utils                      = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request   = $url;
-			$utils->_last_data_sent     = $_args;
-			$utils->_last_data_received = $res;
+			// logging data.
+			$utils                     = Hustle_Provider_Utils::get_instance();
+			$utils->last_url_request   = $url;
+			$utils->last_data_sent     = $_args;
+			$utils->last_data_received = $res;
 
 			$wp_response = $res;
 
@@ -235,6 +237,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 					}
 
 					if ( 404 === $status_code ) {
+						/* translators: error message */
 						throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
 					}
 				}
@@ -242,14 +245,14 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 
 			$body = wp_remote_retrieve_body( $res );
 
-			// probably silent mode
+			// probably silent mode.
 			if ( ! empty( $body ) ) {
 				$res = json_decode( $body );
-				// fallback to parse args when fail
+				// fallback to parse args when fail.
 				if ( empty( $res ) ) {
 					$res = wp_parse_args( $body, array() );
 
-					// json-ify to make same format as json response (which is object not array)
+					// json-ify to make same format as json response (which is object not array).
 					$res = wp_json_encode( $res );
 					$res = json_decode( $res );
 				}
@@ -273,42 +276,44 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		/**
 		 * Sends rest GET request
 		 *
-		 * @param $action
-		 * @param array  $args
+		 * @param string $action Action.
+		 * @param array  $args Args.
 		 * @return array|mixed|object|WP_Error
 		 */
-		private function _get( $action, $args = array() ) {
-			return $this->_request( $action, 'GET', $args );
+		private function get( $action, $args = array() ) {
+			return $this->request( $action, 'GET', $args );
 		}
 
 		/**
 		 * Sends rest POST request
 		 *
-		 * @param $action
-		 * @param array  $args
+		 * @param string $action Action.
+		 * @param array  $args Args.
 		 * @return array|mixed|object|WP_Error
 		 */
-		private function _post( $action, $args = array() ) {
-			return $this->_request( $action, 'POST', $args );
+		private function post( $action, $args = array() ) {
+			return $this->request( $action, 'POST', $args );
 		}
 
 		/**
 		 * Sends rest PUT request
 		 *
-		 * @param $action
-		 * @param array  $args
+		 * @param string $action Action.
+		 * @param array  $args Args.
 		 * @return array|mixed|object|WP_Error
 		 */
-		private function _patch( $action, $args = array() ) {
-			return $this->_request( $action, 'PATCH', $args );
+		private function patch( $action, $args = array() ) {
+			return $this->request( $action, 'PATCH', $args );
 		}
 
 		/**
 		 * Retrieve the list of segments from Mautic installation.
+		 *
+		 * @param int $offset Offset.
 		 **/
 		public function get_segments( $offset = 0 ) {
 			try {
-				$segments = $this->_get( 'segments' );
+				$segments = $this->get( 'segments' );
 				if ( ! empty( $segments ) && isset( $segments->lists ) ) {
 					return $segments;
 				}
@@ -327,7 +332,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		public function add_contact( $data ) {
 			$err = new WP_Error();
 			try {
-				$res = $this->_post( 'contacts/new', $data );
+				$res = $this->post( 'contacts/new', $data );
 
 				if ( $res && ! empty( $res->contact ) ) {
 					$contact = $res->contact;
@@ -347,13 +352,14 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		/**
 		 * Add contact to Mautic installation.
 		 *
-		 * @param (associative_array) $data         An array of contact details to add.
+		 * @param string $id ID.
+		 * @param array  $data An array of contact details to add.
 		 * @return Returns contact ID on success or WP_Error.
 		 **/
 		public function update_contact( $id, $data ) {
 			$err = new WP_Error();
 			try {
-				$res = $this->_patch( 'contacts/' . $id . '/edit', $data );
+				$res = $this->patch( 'contacts/' . $id . '/edit', $data );
 
 				if ( $res && ! empty( $res->contact ) ) {
 					$contact = $res->contact;
@@ -373,7 +379,7 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		/**
 		 * Check if an email is already used.
 		 *
-		 * @param (string) $email
+		 * @param (string) $email Email.
 		 * @return Returns true if the given email already in use otherwise false.
 		 **/
 		public function email_exist( $email ) {
@@ -383,10 +389,10 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 					'search' => $email,
 					'limit'  => 1000,
 				);
-				$res        = $this->_get( 'contacts', $args );
+				$res        = $this->get( 'contacts', $args );
 				$contact_id = '';
 				if ( $res && ! empty( $res->contacts ) ) {
-					$contact_id = wp_list_pluck( $res->contacts, 'id' );
+					$contact_id = wp_list_pluck( (array) $res->contacts, 'id' );
 				}
 				return ! empty( $contact_id ) ? key( $contact_id ) : false;
 			} catch ( Exception $e ) {
@@ -399,13 +405,13 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		/**
 		 * Add contact to segment list.
 		 *
-		 * @param (int) $segment_id
-		 * @param (int) $contact_id
+		 * @param (int) $segment_id Segment ID.
+		 * @param (int) $contact_id Contact ID.
 		 **/
 		public function add_contact_to_segment( $segment_id, $contact_id ) {
 			$err = new WP_Error();
 			try {
-				$add = $this->_post( 'segments/' . $segment_id . '/contact/' . $contact_id . '/add' );
+				$add = $this->post( 'segments/' . $segment_id . '/contact/' . $contact_id . '/add' );
 				return $add;
 			} catch ( Exception $e ) {
 				$err->add( 'subscribe_error', $e->getMessage() );
@@ -414,20 +420,39 @@ if ( ! class_exists( 'Hustle_Mautic_Api' ) ) :
 		}
 
 		/**
+		 * Delete subscriber from the list
+		 *
+		 * @param string $list_id List ID.
+		 * @param string $email Email.
+		 *
+		 * @return bool
+		 */
+		public function delete_email( $list_id, $email ) {
+			$contact_id = $this->email_exist( $email );
+			if ( false === $contact_id || is_wp_error( $contact_id ) ) {
+				return false;
+			}
+
+			$res = $this->post( 'segments/' . $list_id . '/contact/' . $contact_id . '/remove' );
+
+			return ! is_wp_error( $res );
+		}
+
+		/**
 		 * Get the list of available contact custom fields.
 		 **/
 		public function get_custom_fields() {
-			$fields = $this->_get( 'contacts/list/fields' );
+			$fields = $this->get( 'contacts/list/fields' );
 			return $fields;
 		}
 
 		/**
 		 * Add custom contact field.
 		 *
-		 * @param (array) $field
+		 * @param (array) $field Field.
 		 **/
 		public function add_custom_field( $field ) {
-			$res = $this->_post( 'fields/contact/new', $field );
+			$res = $this->post( 'fields/contact/new', $field );
 			return ! empty( $res ) && ! empty( $res->field );
 		}
 	}

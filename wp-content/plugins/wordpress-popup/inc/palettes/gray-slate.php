@@ -23,7 +23,7 @@ return array(
 	'image_container_bg'                 => '#35414A',
 
 	// Form area BG.
-	'form_area_bg'                       => '#5D7380',
+	'form_area_bg'                       => 'rgba(0,0,0,0)',
 
 	// ==================================================|
 	// 2. CONTENT                                        |
@@ -459,6 +459,7 @@ return array(
 
 	// Close button.
 	'close_button_static_color'          => '#38C5B5',
+	'close_button_static_background'     => '#5D7380',
 
 	// Never see link.
 	'never_see_link_static'              => '#38C5B5',
@@ -503,7 +504,7 @@ return array(
 	'layout_header_drop_shadow'          => 'rgba(0,0,0,0)',
 
 	'layout_content_border'              => 'rgba(0,0,0,0)',
-	'layout_content_bg'                  => 'rgba(0,0,0,0)',
+	'layout_content_bg'                  => '#5D7380',
 	'layout_content_drop_shadow'         => 'rgba(0,0,0,0)',
 
 	'layout_footer_border'               => 'rgba(0,0,0,0)',

@@ -8,8 +8,9 @@
 
 $banner_img_1x = self::$plugin_url . 'assets/images/release-highlight-header.png';
 $banner_img_2x = self::$plugin_url . 'assets/images/release-highlight-header@2x.png';
-$current_user  = wp_get_current_user();
-$username      = ! empty( $current_user->user_firstname ) ? $current_user->user_firstname : $current_user->user_login;
+$user          = wp_get_current_user();
+$username      = ! empty( $user->user_firstname ) ? $user->user_firstname : $user->user_login;
+$url           = 'https://wpmudev.com/docs/wpmu-dev-plugins/hustle/#integrations';
 ?>
 
 <div class="sui-modal sui-modal-md">
@@ -37,16 +38,27 @@ $username      = ! empty( $current_user->user_firstname ) ? $current_user->user_
 				<?php echo $this->render_image_markup( $banner_img_1x, $banner_img_2x, 'sui-image sui-image-center' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</figure>
 
-				<?php /* translators: current user's name */ ?>
-				<h3 id="hustle-dialog--release-highlight-title" class="sui-box-title sui-lg"><?php esc_html_e( 'New! Halloween Template', 'hustle' ); ?></h3>
+				<h3 id="hustle-dialog--release-highlight-title" class="sui-box-title sui-lg"><?php esc_html_e( 'New! Unsubscribe from third-party email lists', 'hustle' ); ?></h3>
 
 				<p id="hustle-dialog--release-highlight-description" class="sui-description">
-					<?php printf( esc_html__( "Hey %s! Need a Halloween costume for your module? We’ve just added a spooky new template, perfect for capturing ghostly leads and advertising Halloween deals!", 'hustle' ), $username ); ?>
+					<?php /* translators: url */ ?>
+					<?php printf( esc_html__( 'In the newest Hustle 4.6.0 release, your connected third-party email lists will automatically be updated when a user unsubscribes using Hustle forms. See the list of supported third-party apps in our %1$sdocumentation%2$s.', 'hustle' ), '<a target="_blank" href="' . esc_url( $url ) . '">', '</a>' ); ?>
 				</p>
 
-				<p class="sui-description">
+				<ul style="margin: 0 0 0 20px; list-style: disc;text-align: left;">
 
-				</p>
+					<li>
+						<h6 style="margin-bottom: 0;"><?php esc_html_e( 'Right-to-Left support', 'hustle' ); ?></h6>
+						<p class="sui-description" style="margin-left: -20px;margin-bottom: 30px;"><?php esc_html_e( 'We\'ve also added support for RTL languages. So, whether your site is in Arabic, Hebrew, or any other RTL language, your modules will look spot on!', 'hustle' ); ?></p>
+					</li>
+
+					<li>
+						<h6 style="margin-bottom: 0;"><?php esc_html_e( 'Two call-to-action buttons', 'hustle' ); ?></h6>
+						<p class="sui-description" style="margin-left: -20px;"><?php esc_html_e( 'Choose whether you want to include one or two call-to-action buttons, or none at all.', 'hustle' ); ?></p>
+					</li>
+
+				</ul>
+
 
 			</div>
 

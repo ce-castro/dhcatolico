@@ -10,8 +10,8 @@ $banner_1x    = esc_url( self::$plugin_url . 'assets/images/review-condition.png
 $banner_2x    = esc_url( self::$plugin_url . 'assets/images/review-condition@2x.png' );
 $banner_class = 'sui-image sui-image-center';
 
-$version     = Opt_In_Utils::_is_free() ? '7.1' : '4.1';
-$support_url = Opt_In_Utils::_is_free() ? 'https://wordpress.org/support/plugin/wordpress-popup/' : 'https://wpmudev.com/hub/support/#wpmud-chat-pre-survey-modal';
+$version     = Opt_In_Utils::is_free() ? '7.1' : '4.1';
+$support_url = Opt_In_Utils::is_free() ? 'https://wordpress.org/support/plugin/wordpress-popup/' : 'https://wpmudev.com/hub/support/#wpmud-chat-pre-survey-modal';
 ?>
 <div class="sui-modal sui-modal-md">
 
@@ -89,7 +89,7 @@ $support_url = Opt_In_Utils::_is_free() ? 'https://wordpress.org/support/plugin/
 				<p class="sui-description" style="margin: 0 0 5px;"><?php printf( esc_html__( '2. Unable to make the visibility conditions work correctly? %1$sContact Support%2$s.' ), '<a href="' . esc_url( $support_url ) . '" target="_blank">', '</a>' ); ?></p>
 
 				<?php /* translators: 1. opening 'strong' tag, 2. closing 'strong' tag, 3. v4.0.4 or v7.0.4 */ ?>
-				<p class="sui-description" style="margin: 0;"><?php printf( esc_html__( '3. Not yet ready for the new visibility behavior? Go to the Plugins page and use the "%1$sRollback to %3$s%2$s" link below Hustle to downgrade Hustle to %3$s', 'hustle' ), '<strong color="#666666">', '</strong>', Opt_In_Utils::_is_free() ? 'v7.0.4' : 'v4.0.4' ); ?></p>
+				<p class="sui-description" style="margin: 0;"><?php printf( esc_html__( '3. Not yet ready for the new visibility behavior? Go to the Plugins page and use the "%1$sRollback to %3$s%2$s" link below Hustle to downgrade Hustle to %3$s', 'hustle' ), '<strong color="#666666">', '</strong>', Opt_In_Utils::is_free() ? 'v7.0.4' : 'v4.0.4' ); ?></p>
 
 			</div>
 

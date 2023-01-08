@@ -39,7 +39,7 @@ $search_keyword = filter_input( INPUT_GET, 'q' );
 
 							<div class="sui-control-with-icon">
 								<button class="hustle-search-submit"><i class="sui-icon-magnifying-glass-search"></i></button>
-								<input type="text" name="q" value="<?php echo esc_attr( $search_keyword ); ?>" placeholder="<?php echo esc_attr( sprintf( __( 'Search %s...', 'hustle' ), $capitalize_singular ) ); ?>" id="hustle-module-search" class="sui-form-control">
+								<input type="text" name="q" value="<?php echo esc_attr( $search_keyword ); ?>" placeholder="<?php /* translators: module type */ echo esc_attr( sprintf( __( 'Search %s...', 'hustle' ), $capitalize_singular ) ); ?>" id="hustle-module-search" class="sui-form-control">
 							</div>
 							<?php if ( $search_keyword ) { ?>
 							<div class="search-reset sui-button-icon" title="<?php esc_attr_e( 'Reset search', 'hustle' ); ?>">
@@ -59,6 +59,7 @@ $search_keyword = filter_input( INPUT_GET, 'q' );
 		</div>
 	</div>
 	<div class="sui-summary-segment">
+		<?php if ( Hustle_Settings_Admin::global_tracking() ) { ?>
 		<ul class="sui-list">
 			<li>
 				<span class="sui-list-label"><?php echo esc_html( $last_conversion_text ); ?></span>
@@ -69,5 +70,6 @@ $search_keyword = filter_input( INPUT_GET, 'q' );
 				<span class="sui-list-detail"><?php echo esc_html( $latest_entries_count ); ?></span>
 			</li>
 		</ul>
+		<?php } ?>
 	</div>
 </div>

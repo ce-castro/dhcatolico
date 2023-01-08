@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Providers_Admin
+ *
+ * @package Hustle
+ */
+
 /**
  * Class Hustle_Providers_Admin
  * This class handles the global "Integrations" page view.
@@ -7,6 +13,9 @@
  */
 class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 
+	/**
+	 * Init
+	 */
 	public function init() {
 
 		$this->page = 'hustle_integrations';
@@ -71,7 +80,7 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 		$action    = filter_input( INPUT_GET, 'action' );
 		$migration = filter_input( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
 
-		// handle migration elsewhere
+		// handle migration elsewhere.
 		if ( 'external-redirect' === $action && true !== $migration ) {
 
 			$nonce = filter_input( INPUT_GET, 'nonce' );
@@ -116,14 +125,14 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 		$action    = filter_input( INPUT_GET, 'action' );
 		$migration = filter_input( INPUT_GET, 'migration', FILTER_VALIDATE_BOOLEAN );
 		$provider  = filter_input( INPUT_GET, 'show_provider_migration' );
-		$multiID   = filter_input( INPUT_GET, 'integration_id' );
+		$multi_id  = filter_input( INPUT_GET, 'integration_id' );
 
 		if ( isset( $provider ) && ! empty( $provider ) ) {
 			$response['provider_modal'] = $provider;
 		}
 
-		if ( isset( $multiID ) && ! empty( $multiID ) ) {
-			$response['integration_id'] = $multiID;
+		if ( ! empty( $multi_id ) ) {
+			$response['integration_id'] = $multi_id;
 		}
 
 		if ( 'external-redirect' === $action && true === $migration ) {
@@ -141,10 +150,12 @@ class Hustle_Providers_Admin extends Hustle_Admin_Page_Abstract {
 				);
 
 				if ( 'constantcontact' === $slug ) {
+					/* translators: integration type */
 					$response['migration_notificaiton']['message'] = sprintf( esc_html__( '%s integration successfully migrated to the v3.0 API version.', 'hustle' ), '<strong>' . esc_html__( 'Constant Contact', 'hustle' ) . '</strong>' );
 				}
 
 				if ( 'infusionsoft' === $slug ) {
+					/* translators: integration type */
 					$response['migration_notificaiton']['message'] = sprintf( esc_html__( '%s integration successfully migrated to use the REST API.', 'hustle' ), '<strong>' . esc_html__( 'InfusionSoft', 'hustle' ) . '</strong>' );
 				}
 			} else {

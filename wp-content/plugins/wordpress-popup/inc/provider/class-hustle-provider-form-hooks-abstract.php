@@ -58,7 +58,7 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 	 * @since 4.0.0
 	 * @var string
 	 */
-	protected $_submit_form_error_message = '';
+	protected $submit_form_error_message = '';
 
 	/**
 	 * Form settings instance
@@ -74,7 +74,7 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 	 * @since 4.0.2
 	 * @var mixed
 	 */
-	protected $_subscriber = array();
+	protected $subscriber = array();
 
 
 	/**
@@ -99,7 +99,7 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * Returning true will continue the process,
 	 * returning false will stop the process.
-	 * Display an error message to user by using @see Hustle_Provider_Form_Hooks_Abstract::get_submit_form_error_message()
+	 * Display an error message to user by using @see Hustle_Provider_Form_Hooks_Abstract::getsubmit_form_error_message()
 	 *
 	 * @since 4.0
 	 *
@@ -143,14 +143,12 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 		 * when duplicate entries is turned off
 		 * for a module.
 		 */
-		// if ( ! $allow_subscribed ){.
-			/**
-			 * Use your provider validation to check
-			 * for duplicate entries and put a stop here.
-			 * You can add a message on the`$is_success`
-			 * variable to display your own custom message
-			 */
-		// }
+		/**
+		 * Use your provider validation to check
+		 * for duplicate entries and put a stop here.
+		 * You can add a message on the`$is_success`
+		 * variable to display your own custom message
+		 */
 
 		/**
 		 * Filter the result of form submit.
@@ -179,9 +177,9 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 
 		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty.
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 
 			return $is_success;
@@ -201,7 +199,7 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
-		$error_message = $this->_submit_form_error_message;
+		$error_message = $this->submit_form_error_message;
 
 		// Set a common error message for when an already subscribed user can't subscribe again.
 		if ( self::ALREADY_SUBSCRIBED_ERROR === $error_message ) {
@@ -541,10 +539,10 @@ abstract class Hustle_Provider_Form_Hooks_Abstract {
 	 * @return mixed array/object API response on queried subscriber.
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if ( empty( $this->_subscriber ) ) {
-			$this->_subscriber = array();
+		if ( empty( $this->subscriber ) ) {
+			$this->subscriber = array();
 		}
-		return $this->_subscriber;
+		return $this->subscriber;
 	}
 
 	/**

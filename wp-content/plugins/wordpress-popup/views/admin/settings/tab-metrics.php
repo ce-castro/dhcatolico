@@ -10,12 +10,14 @@
 <div id="top-metrics-box" class="sui-box" data-tab="metrics" <?php echo 'metrics' !== $section ? 'style="display: none;"' : ''; ?>>
 
 	<div class="sui-box-header">
-		<h2 class="sui-box-title"><?php esc_html_e( 'Top 3 Metrics', 'hustle' ); ?></h2>
+		<h2 class="sui-box-title"><?php esc_html_e( 'Top Metrics', 'hustle' ); ?></h2>
 	</div>
 
 	<form id="hustle-top-metrics-settings-form" class="sui-box-body">
 
-		<p><?php esc_html_e( 'Choose the top 3 metrics which are most relevant to your goals. These metrics will be visible on the Hustle’s main dashboard area.', 'hustle' ); ?></p>
+		<p><?php esc_html_e( 'Choose the top metrics which are most relevant to your goals. These metrics will be visible on the Hustle’s main dashboard area.', 'hustle' ); ?></p>
+
+		<?php if ( Hustle_Settings_Admin::global_tracking() ) { ?>
 
 		<div class="sui-form-field">
 			<label for="hustle-metrics-rate" class="sui-checkbox">
@@ -42,7 +44,7 @@
 					data-tooltip="<?php esc_html_e( 'You can only select up to 3 metrics', 'hustle' ); ?>"></span>
 				<span><?php esc_html_e( "Today's Conversion", 'hustle' ); ?></span>
 			</label>
-			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The total number of conversions happened today from each module.', 'hustle' ); ?></span>
+			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The total number of conversions that happened today from each module.', 'hustle' ); ?></span>
 		</div>
 
 		<div class="sui-form-field">
@@ -56,7 +58,7 @@
 					data-tooltip="<?php esc_html_e( 'You can only select up to 3 metrics', 'hustle' ); ?>"></span>
 				<span><?php esc_html_e( "Last 7 Day's Conversion", 'hustle' ); ?></span>
 			</label>
-			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The total number of conversions happened in the last 7 days from each module', 'hustle' ); ?></span>
+			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The total number of conversions that happened in the last 7 days from each module.', 'hustle' ); ?></span>
 		</div>
 
 		<div class="sui-form-field">
@@ -70,7 +72,7 @@
 					data-tooltip="<?php esc_html_e( 'You can only select up to 3 metrics', 'hustle' ); ?>"></span>
 				<span><?php esc_html_e( "Last 1 Month's conversion", 'hustle' ); ?></span>
 			</label>
-			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The total number of conversions happened in the last month from each module.', 'hustle' ); ?></span>
+			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The total number of conversions that happened in the last month from each module.', 'hustle' ); ?></span>
 		</div>
 
 		<div class="sui-form-field">
@@ -84,7 +86,7 @@
 					data-tooltip="<?php esc_html_e( 'You can only select up to 3 metrics', 'hustle' ); ?>"></span>
 				<span><?php esc_html_e( 'Total Conversions', 'hustle' ); ?></span>
 			</label>
-			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The sum of all the conversion happened up to today from each module.', 'hustle' ); ?></span>
+			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The sum of all the conversions that happened up to today from each module.', 'hustle' ); ?></span>
 		</div>
 
 		<div class="sui-form-field">
@@ -100,6 +102,8 @@
 			</label>
 			<span class="sui-description sui-checkbox-description"><?php esc_html_e( 'The module which has the highest number of conversions.', 'hustle' ); ?></span>
 		</div>
+
+		<?php } ?>
 
 		<div class="sui-form-field">
 			<label for="hustle-metrics-inactive-modules" class="sui-checkbox">

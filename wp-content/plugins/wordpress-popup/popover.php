@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Hustle plugin.
  *
@@ -10,7 +10,7 @@
  * Plugin Name: Hustle
  * Plugin URI: https://wordpress.org/plugins/wordpress-popup/
  * Description: Start collecting email addresses and quickly grow your mailing list with big bold pop-ups, slide-ins, widgets, or in post opt-in forms.
- * Version: 7.5.0
+ * Version: 7.6.3
  * Author: WPMU DEV
  * Author URI: https://wpmudev.com
  * Text Domain: hustle
@@ -81,7 +81,7 @@ if ( ! class_exists( 'Opt_In' ) ) {
 	 */
 	class Opt_In {
 
-		const VERSION = '4.5.0';
+		const VERSION = '4.6.3';
 
 		const VIEWS_FOLDER = 'views';
 

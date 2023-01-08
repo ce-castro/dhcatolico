@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Addon_Aweber_Form_Settings_Exception class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Addon_Aweber_Form_Settings_Exception
@@ -24,8 +29,8 @@ class Hustle_Addon_Aweber_Form_Settings_Exception extends Hustle_Addon_Aweber_Ex
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param string $message
-	 * @param string $input_id
+	 * @param string $message Message.
+	 * @param string $input_id Input ID.
 	 */
 	public function __construct( $message = '', $input_id = '' ) {
 		parent::__construct( $message, 0 );
@@ -39,8 +44,8 @@ class Hustle_Addon_Aweber_Form_Settings_Exception extends Hustle_Addon_Aweber_Ex
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param $message
-	 * @param $input_id
+	 * @param string $message Message.
+	 * @param string $input_id Input ID.
 	 */
 	public function add_input_exception( $message, $input_id ) {
 		$this->input_exceptions[ $input_id ] = $message;

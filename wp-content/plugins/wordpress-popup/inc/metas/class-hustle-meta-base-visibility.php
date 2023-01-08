@@ -126,9 +126,7 @@ class Hustle_Meta_Base_Visibility extends Hustle_Meta {
 				$global_behavior = true;
 			}
 
-			/**
-			 * condition type
-			 */
+			// Condition type.
 			$filter_type = isset( $conditions['filter_type'] ) &&
 					'any' === $conditions['filter_type']
 				? $conditions['filter_type'] : 'all';

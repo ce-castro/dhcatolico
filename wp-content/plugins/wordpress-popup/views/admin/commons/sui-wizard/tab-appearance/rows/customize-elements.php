@@ -3,7 +3,7 @@
  * Markup the Customize Elements section for both mobile and desktop.
  *
  * @uses ../row-customize-elements/background-image.php
- * @uses ../row-customize-elementsclose-icon.php
+ * @uses ../row-customize-elements/close-icon.php
  * @uses ../row-customize-elements/cta-buttons.php
  * @uses ../row-customize-elements/feature-image.php
  * @uses ../row-customize-elements/optin-form.php
@@ -40,6 +40,13 @@ $customize_elements = array(
 		'file'        => 'optin-form',
 		'prop_prefix' => 'optin_form',
 		'row_name'    => 'optin_form',
+	),
+	array(
+		'show'        => true,
+		'label'       => esc_html__( 'Close icon', 'hustle' ),
+		'file'        => 'close-icon',
+		'prop_prefix' => 'close_icon',
+		'row_name'    => 'close_icon',
 	),
 );
 ?>
@@ -84,6 +91,7 @@ $customize_elements = array(
 									'is_optin'           => $is_optin,
 									'device'             => isset( $device ) ? $device : false,
 									'smallcaps_singular' => $smallcaps_singular,
+									'show_cta'           => $show_cta,
 								)
 							);
 							?>

@@ -44,10 +44,10 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 	 */
 	public function get_defaults() {
 		return array(
-			'auto_close_success_message' => '0',
-			'triggers'                   => array(
+			'auto_close_success_message'  => '0',
+			'triggers'                    => array(
 				'trigger'                     => array( 'time' ),
-				'on_time_delay'               => '0',
+				'on_time_delay'               => '3',
 				'on_time_unit'                => 'seconds',
 				'on_scroll'                   => 'scrolled',
 				'on_scroll_page_percent'      => 20,
@@ -61,32 +61,36 @@ class Hustle_Meta_Base_Settings extends Hustle_Meta {
 				'on_adblock_delay'            => '0',
 				'on_adblock_delay_unit'       => 'seconds',
 			),
-			'animation_in'               => 'no_animation',
-			'animation_out'              => 'no_animation',
-			'after_close_trigger'        => array( 'click_close_icon' ),
-			'after_close'                => 'keep_show',
-			'expiration'                 => 365,
-			'expiration_unit'            => 'days',
-			'on_submit'                  => 'nothing', // close | default |nothing | redirect.
-			'on_submit_delay'            => '5',
-			'on_submit_delay_unit'       => 'seconds',
-			'close_cta'                  => '0',
-			'close_cta_time'             => '0',
-			'close_cta_unit'             => 'seconds',
-			'hide_after_cta'             => 'keep_show', // keep_show | no_show_on_post | no_show_all.
-			'hide_after_subscription'    => 'keep_show', // keep_show | no_show_on_post | no_show_all.
+			'animation_in'                => 'no_animation',
+			'animation_out'               => 'no_animation',
+			'after_close_trigger'         => array( 'click_close_icon' ),
+			'after_close'                 => 'keep_show',
+			'expiration'                  => 365,
+			'expiration_unit'             => 'days',
+			'after_optin_expiration'      => 365,
+			'after_optin_expiration_unit' => 'days',
+			'after_cta_expiration'        => 365,
+			'after_cta_expiration_unit'   => 'days',
+			'on_submit'                   => 'nothing', // close | default |nothing | redirect.
+			'on_submit_delay'             => '5',
+			'on_submit_delay_unit'        => 'seconds',
+			'close_cta'                   => '0',
+			'close_cta_time'              => '0',
+			'close_cta_unit'              => 'seconds',
+			'hide_after_cta'              => 'keep_show', // keep_show | no_show_on_post | no_show_all.
+			'hide_after_subscription'     => 'keep_show', // keep_show | no_show_on_post | no_show_all.
 
-			'is_schedule'                => '0',
+			'is_schedule'                 => '0',
 
-			'schedule'                   => array(
+			'schedule'                    => array(
 				'not_schedule_start'        => '1',
-				'start_date'                => date( 'm/d/Y', strtotime( 'tomorrow' ) ),
+				'start_date'                => date( 'm/d/Y', strtotime( 'tomorrow' ) ), // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 				'start_hour'                => '12',
 				'start_minute'              => '00',
 				'start_meridiem_offset'     => 'am',
 
 				'not_schedule_end'          => '1',
-				'end_date'                  => date( 'm/d/Y', strtotime( '+7 days' ) ),
+				'end_date'                  => date( 'm/d/Y', strtotime( '+7 days' ) ), // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 				'end_hour'                  => '11',
 				'end_minute'                => '59',
 				'end_meridiem_offset'       => 'pm',

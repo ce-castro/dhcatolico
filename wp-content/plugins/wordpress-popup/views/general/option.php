@@ -18,9 +18,9 @@ if ( 'label' === $element_type ) { ?>
 		class="<?php echo isset( $class ) ? esc_attr( $class ) : 'sui-label'; ?>"
 		<?php $this->render_attributes( isset( $attributes ) ? $attributes : array() ); ?>
 	>
-		<?php echo $value; // phpcs:ignore ?>
+		<?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<?php if ( isset( $note ) && ! empty( $note ) ) { ?>
-			<span class="sui-label-note"><?php echo $note; // phpcs:ignore ?></span>
+			<span class="sui-label-note"><?php echo $note; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		<?php } ?>
 	</label>
 
@@ -28,7 +28,7 @@ if ( 'label' === $element_type ) { ?>
 	// FIELD TYPE: Description.
 } elseif ( 'description' === $element_type ) {
 	?>
-	<span class="sui-description"><?php echo $value; // phpcs:ignore ?></span>
+	<span class="sui-description"><?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 
 	<?php
 	// FIELD TYPE: Notice.
@@ -227,8 +227,8 @@ if ( 'label' === $element_type ) { ?>
 
 	foreach ( $options as $value => $label ) {
 
-		$id      = esc_attr( $id . "-" . str_replace( " ", "-", strtolower( $value ) ) ); // phpcs:ignore
-		$checked = is_array( $_selected ) ? in_array( $value, $_selected ) ? checked(true, true, false) : "" : checked( $_selected, $value, false ); // phpcs:ignore
+		$id      = esc_attr( $id . '-' . str_replace( ' ', '-', strtolower( $value ) ) );// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$checked = is_array( $_selected ) ? in_array( $value, $_selected ) ? checked( true, true, false ) : '' : checked( $_selected, $value, false );// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		?>
 
 		<label
@@ -344,7 +344,7 @@ if ( 'label' === $element_type ) { ?>
 } elseif ( 'small' === $element_type ) {
 	?>
 	<p><small <?php $this->render_attributes( isset( $attributes ) ? $attributes : array() ); ?> for="<?php echo esc_attr( $for ); ?>">
-		<?php echo $value; // phpcs:ignore ?>
+		<?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	</small></p>
 
 	<?php
@@ -358,7 +358,7 @@ if ( 'label' === $element_type ) { ?>
 		role="alert"
 		class="sui-error-message<?php echo isset( $class ) ? ' ' . esc_attr( $class ) : ''; ?>"
 	>
-		<?php echo $value; // phpcs:ignore ?>
+		<?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	</span>
 
 	<?php
@@ -372,7 +372,7 @@ if ( 'label' === $element_type ) { ?>
 		class="sui-button sui-button-ghost <?php echo esc_attr( $type_class ); ?> <?php echo isset( $class ) ? esc_attr( $class ) : ''; ?>"
 		<?php $this->render_attributes( isset( $attributes ) ? $attributes : array() ); ?>
 	>
-		<?php echo $value; // phpcs:ignore ?>
+		<?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	</button>
 
 	<?php
@@ -389,7 +389,7 @@ if ( 'label' === $element_type ) { ?>
 } elseif ( 'submit_button' === $element_type ) {
 	?>
 	<button type="submit"<?php $this->render_attributes( isset( $attributes ) ? $attributes : array() ); ?> <?php echo ( isset( $id ) ? 'id="' . esc_attr( $id ) . '"' : '' ); ?> class="sui-button <?php echo isset( $class ) ? esc_attr( $class ) : ''; ?>">
-   		<?php echo $value; // phpcs:ignore ?>
+		<?php echo $value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	</button>
 
 	<?php

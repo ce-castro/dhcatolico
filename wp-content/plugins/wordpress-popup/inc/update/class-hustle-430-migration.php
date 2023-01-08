@@ -274,7 +274,7 @@ class Hustle_430_Migration {
 			}
 
 			// Save transformed conditions.
-			$wpdb->update(
+			$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				Hustle_Db::modules_meta_table(),
 				array( 'meta_value' => wp_json_encode( $new_design ) ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 				array( 'meta_id' => $meta->meta_id )

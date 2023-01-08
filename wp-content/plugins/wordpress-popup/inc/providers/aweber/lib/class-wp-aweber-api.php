@@ -1,5 +1,13 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Addon_Aweber_Wp_Api class
+ *
+ * @package Hustle
+ */
 
+/**
+ * Include dependent files
+ */
 require_once dirname( __FILE__ ) . '/class-aweber-oauth.php';
 require_once dirname( __FILE__ ) . '/class-aweber-oauth2.php';
 require_once dirname( __FILE__ ) . '/class-wp-aweber-api-exception.php';
@@ -28,32 +36,60 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	const HUSTLE_REFRESH_TOKEN_SPAN = 7200;
 	const REFRESH_TOKEN_URL         = 'https://auth.aweber.com/oauth2/token';
 
-	private $_application_key         = '';
-	private $_application_secret      = '';
-	private $_oauth_token             = '';
-	private $_oauth_token_secret      = '';
-	private static $_instances        = array();
-	private static $_access_token_url = 'https://auth.aweber.com/1.0/oauth/access_token';
-	private static $_api_base_url     = 'https://api.aweber.com/1.0/';
+	/**
+	 * Application key
+	 *
+	 * @var string
+	 */
+	private $application_key = '';
+	/**
+	 * Application secret
+	 *
+	 * @var string
+	 */
+	private $application_secret = '';
+	/**
+	 * OAuth token
+	 *
+	 * @var string
+	 */
+	private $oauth_token = '';
+	/**
+	 * OAuth token secret
+	 *
+	 * @var string
+	 */
+	private $oauth_token_secret = '';
+	/**
+	 * Instances
+	 *
+	 * @var array
+	 */
+	private static $instances = array();
+	/**
+	 * Access token URL
+	 *
+	 * @var string
+	 */
+	private static $access_token_url = 'https://auth.aweber.com/1.0/oauth/access_token';
+	/**
+	 * Api base URL
+	 *
+	 * @var string
+	 */
+	private static $api_base_url = 'https://api.aweber.com/1.0/';
 
 	/**
 	 * Hustle_Addon_Aweber_Wp_Api constructor.
 	 *
 	 * @since 1.0 Aweber Addon
-	 *
-	 * @param $_application_key
-	 * @param $_application_secret
-	 *
-	 * @param $_oauth_token
-	 * @param $_oauth_token_secret
-	 *
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
+	 * @param array $creds Creds.
 	 */
 	public function __construct( $creds = null ) {
-		$this->_application_key            = isset( $creds['consumer_key'] ) ? $creds['consumer_key'] : '';
-		$this->_application_secret         = isset( $creds['consumer_secret'] ) ? $creds['consumer_secret'] : '';
-		$this->_oauth_token                = isset( $creds['access_token'] ) ? $creds['access_token'] : '';
-		$this->_oauth_token_secret         = isset( $creds['access_secret'] ) ? $creds['access_secret'] : '';
+		$this->application_key             = isset( $creds['consumer_key'] ) ? $creds['consumer_key'] : '';
+		$this->application_secret          = isset( $creds['consumer_secret'] ) ? $creds['consumer_secret'] : '';
+		$this->oauth_token                 = isset( $creds['access_token'] ) ? $creds['access_token'] : '';
+		$this->oauth_token_secret          = isset( $creds['access_secret'] ) ? $creds['access_secret'] : '';
 		$this->_oauth2_token_access_token  = isset( $creds['access_oauth2_token'] ) ? $creds['access_oauth2_token'] : '';
 		$this->_oauth2_token_refresh_token = isset( $creds['access_oauth2_refresh'] ) ? $creds['access_oauth2_refresh'] : '';
 	}
@@ -62,24 +98,18 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * Get singleton
 	 *
 	 * @since 1.0 Aweber Addon
-	 *
-	 * @param $_application_key
-	 * @param $_application_secret
-	 *
-	 * @param $_oauth_token
-	 * @param $_oauth_token_secret
+	 * @param array $creds Creds.
 	 *
 	 * @return Hustle_Addon_Aweber_Wp_Api|null
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
 	 */
 	public static function get_instance( $creds = null ) {
 		$args         = implode( '|', $creds );
 		$instance_key = md5( $args );
-		if ( ! isset( self::$_instances[ $instance_key ] ) ) {
-			self::$_instances[ $instance_key ] = new self( $creds );
+		if ( ! isset( self::$instances[ $instance_key ] ) ) {
+			self::$instances[ $instance_key ] = new self( $creds );
 		}
 
-		return self::$_instances[ $instance_key ];
+		return self::$instances[ $instance_key ];
 	}
 
 	/**
@@ -87,7 +117,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param $user_agent
+	 * @param string $user_agent User agent.
 	 *
 	 * @return string
 	 */
@@ -111,18 +141,17 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param string $verb
-	 * @param        $url
-	 * @param array  $args
-	 *
-	 * @param array  $headers
+	 * @param string $url URL.
+	 * @param string $verb Verb.
+	 * @param array  $args Args.
+	 * @param array  $headers Headers.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
+	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception Failed to process request.
+	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception Failed to process request.
 	 */
-	private function _request( $url, $verb = 'GET', $args = array(), $headers = array() ) {
-		// Adding extra user agent for wp remote request
+	private function request( $url, $verb = 'GET', $args = array(), $headers = array() ) {
+		// Adding extra user agent for wp remote request.
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
 		/**
@@ -200,7 +229,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 				$_args['body'] = wp_json_encode( $args );
 			} else {
 				if ( 'POST' === $verb ) {
-					$_args['body'] = json_encode( $args );
+					$_args['body'] = wp_json_encode( $args );
 				} else {
 					$url .= ( '?' . http_build_query( $args ) );
 				}
@@ -218,11 +247,11 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 
 		$res = wp_remote_request( $url, $_args );
 
-		// logging data
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request   = $url;
-		$utils->_last_data_sent     = $_args;
-		$utils->_last_data_received = $res;
+		// logging data.
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_url_request   = $url;
+		$utils->last_data_sent     = $_args;
+		$utils->last_data_received = $res;
 
 		$wp_response = $res;
 
@@ -251,6 +280,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 				}
 
 				if ( 404 === $status_code ) {
+					/* translators: error message */
 					throw new Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception( sprintf( __( 'Failed processing the request : %s', 'hustle' ), $msg ) );
 				}
 			}
@@ -258,14 +288,14 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 
 		$body = wp_remote_retrieve_body( $res );
 
-		// probably silent mode
+		// probably silent mode.
 		if ( ! empty( $body ) ) {
 			$res = json_decode( $body );
-			// fallback to parse args when fail
+			// fallback to parse args when fail.
 			if ( empty( $res ) ) {
 				$res = wp_parse_args( $body, array() );
 
-				// json-ify to make same format as json response (which is object not array)
+				// json-ify to make same format as json response (which is object not array).
 				$res = wp_json_encode( $res );
 				$res = json_decode( $res );
 			}
@@ -293,7 +323,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * @return string
 	 */
 	public function get_redirect_uri() {
-		return $this->_get_redirect_uri(
+		return $this->redirect_uri(
 			'aweber',
 			'authorize',
 			array( 'client_id' => self::CLIENT_ID )
@@ -310,7 +340,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 		$timestamp          = time();
 		$oauth_request_data = array(
 			'oauth_token'            => $this->get_oauth_token(),
-			'oauth_consumer_key'     => $this->_application_key,
+			'oauth_consumer_key'     => $this->application_key,
 			'oauth_version'          => self::OAUTH_VERSION,
 			'oauth_timestamp'        => $timestamp,
 			'oauth_signature_method' => 'HMAC-SHA1',
@@ -335,14 +365,14 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param $method
-	 * @param $url
-	 * @param $data
+	 * @param string $method Method.
+	 * @param string $url URL.
+	 * @param array  $data Data.
 	 *
 	 * @return mixed
 	 */
 	public function get_signed_request( $method, $url, $data ) {
-		$application_secret = $this->_application_secret;
+		$application_secret = $this->application_secret;
 		$oauth_token_secret = $this->get_oauth_token_secret();
 
 		$base                    = Hustle_Addon_Aweber_Oauth::create_signature_base( $method, $url, $data );
@@ -368,13 +398,13 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	}
 
 	/**
-	 * prepare Request
+	 * Prepare Request
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param mixed $method HTTP method
-	 * @param mixed $url    URL for the request
-	 * @param mixed $data   The data to generate oauth data and be signed
+	 * @param mixed $method HTTP method.
+	 * @param mixed $url    URL for the request.
+	 * @param mixed $data   The data to generate oauth data and be signed.
 	 *
 	 * @return array
 	 */
@@ -400,53 +430,18 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	}
 
 	/**
-	 * Get Access Token
-	 *
-	 * @since 1.0 Aweber Addon
-	 *
-	 * @param       $oauth_verifier
-	 * @param array $args
-	 *
-	 * @return object contains oauth_token and oauth_token_secret
-	 *
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
-	 */
-	// public function get_access_token( $oauth_verifier, $args = array() ) {
-	// $default_args = array(
-	// 'oauth_verifier' => $oauth_verifier,
-	// );
-
-	// $args = array_merge( $default_args, $args );
-
-	// $access_tokens = $this->_request( 'POST', self::$_access_token_url, $args );
-
-	// if ( ! is_object( $access_tokens ) ) {
-	// throw new Hustle_Addon_Aweber_Wp_Api_Exception( __( 'Invalid access token', 'hustle' ) );
-	// }
-
-	// if ( ! isset( $access_tokens->oauth_token_secret ) || ! isset( $access_tokens->oauth_token ) ) {
-	// throw new Hustle_Addon_Aweber_Wp_Api_Exception( __( 'Invalid access token', 'hustle' ) );
-	// }
-
-	// return $access_tokens;
-	// }
-
-	/**
 	 * Get related accounts
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param array $args
+	 * @param array $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
 	 */
 	public function get_accounts( $args = array() ) {
 		$default_args = array();
 		$args         = array_merge( $default_args, $args );
-		return $this->_request( $this->get_api_url( 'accounts' ), 'GET', $args );
+		return $this->request( $this->get_api_url( 'accounts' ), 'GET', $args );
 	}
 
 	/**
@@ -454,18 +449,16 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param       $account_id
-	 * @param array      $args
+	 * @param string $account_id Account ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
 	 */
 	public function get_account_lists( $account_id, $args = array() ) {
 		$default_args = array();
 		$args         = array_merge( $default_args, $args );
 
-		return $this->_request( $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists' ), 'GET', $args );
+		return $this->request( $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists' ), 'GET', $args );
 	}
 
 	/**
@@ -473,18 +466,17 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param       $account_id
-	 * @param array      $args
+	 * @param string $account_id Account ID.
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
 	 */
 	public function get_account_list( $account_id, $list_id, $args = array() ) {
 		$default_args = array();
 		$args         = array_merge( $default_args, $args );
 
-		return $this->_request( $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists/' . rawurlencode( trim( $list_id ) ) ), 'GET', $args );
+		return $this->request( $this->get_api_url( 'accounts/' . rawurlencode( trim( $account_id ) ) . '/lists/' . rawurlencode( trim( $list_id ) ) ), 'GET', $args );
 	}
 
 	/**
@@ -492,19 +484,17 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param       $account_id
-	 * @param       $list_id
-	 * @param array      $args
+	 * @param string $account_id Account ID.
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
 	 */
 	public function get_account_list_custom_fields( $account_id, $list_id, $args = array() ) {
 		$default_args = array();
 		$args         = array_merge( $default_args, $args );
 
-		return $this->_request(
+		return $this->request(
 			$this->get_api_url(
 				'accounts/' .
 				rawurlencode( trim( $account_id ) ) .
@@ -521,13 +511,12 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param       $account_id
-	 * @param       $list_id
-	 * @param array      $args
+	 * @param string $account_id Account ID.
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
+	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception Name is required on add AWeber custom field.
 	 */
 	public function add_custom_field( $account_id, $list_id, $args = array() ) {
 		$default_args = array(
@@ -547,7 +536,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			rawurlencode( trim( $list_id ) ) . '/custom_fields'
 		);
 
-		$res = $this->_request(
+		$res = $this->request(
 			$api_url,
 			'POST',
 			$args
@@ -561,13 +550,12 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param       $account_id
-	 * @param       $list_id
-	 * @param array      $args
+	 * @param string $account_id Account ID.
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
+	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception Email is required.
 	 */
 	public function add_account_list_subscriber( $account_id, $list_id, $args = array() ) {
 		$default_args = array(
@@ -587,7 +575,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			rawurlencode( trim( $list_id ) ) . '/subscribers'
 		);
 
-		$res = $this->_request(
+		$res = $this->request(
 			$api_url,
 			'POST',
 			$args
@@ -601,14 +589,13 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param       $account_id
-	 * @param       $list_id
-	 * @param       $subscriber_id
-	 * @param array         $args
+	 * @param string $account_id Account ID.
+	 * @param string $list_id List ID.
+	 * @param string $subscriber_id Subscriber ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
+	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception Email is required.
 	 */
 	public function update_account_list_subscriber( $account_id, $list_id, $subscriber_id, $args = array() ) {
 		$default_args = array(
@@ -629,7 +616,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			rawurlencode( trim( $subscriber_id ) )
 		);
 
-		$res = $this->_request(
+		$res = $this->request(
 			$api_url,
 			'PATCH',
 			$args,
@@ -638,12 +625,55 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			)
 		);
 
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_data_received = $res;
-		$utils->_last_url_request   = $api_url;
-		$utils->_last_data_sent     = $args;
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_data_received = $res;
+		$utils->last_url_request   = $api_url;
+		$utils->last_data_sent     = $args;
 
 		return $res;
+	}
+
+	/**
+	 * Delete subscriber from the list
+	 *
+	 * @param string $list_id List ID.
+	 * @param string $email Email.
+	 * @param string $account_id Account ID.
+	 *
+	 * @return bool
+	 */
+	public function delete_email( $list_id, $email, $account_id ) {
+		$query_args = array(
+			'subscriber_email' => $email,
+		);
+		$args       = array(
+			'status' => 'unsubscribed',
+		);
+
+		$api_url = $this->get_api_url(
+			'accounts/' .
+			rawurlencode( trim( $account_id ) ) .
+			'/lists/' .
+			rawurlencode( trim( $list_id ) ) .
+			'/subscribers/' .
+			'?' . http_build_query( $query_args )
+		);
+
+		$res = $this->request(
+			$api_url,
+			'PATCH',
+			$args,
+			array(
+				'Content-Type' => 'application/json',
+			)
+		);
+
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_data_received = $res;
+		$utils->last_url_request   = $api_url;
+		$utils->last_data_sent     = $args;
+
+		return empty( $res->error );
 	}
 
 	/**
@@ -651,13 +681,11 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 1.0 Aweber Addon
 	 *
-	 * @param       $account_id
-	 * @param       $list_id
-	 * @param array      $args
+	 * @param string $account_id Account ID.
+	 * @param string $list_id List ID.
+	 * @param array  $args Args.
 	 *
 	 * @return array|mixed|object
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-	 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
 	 */
 	public function find_account_list_subscriber( $account_id, $list_id, $args = array() ) {
 		$default_args = array(
@@ -672,7 +700,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			rawurlencode( trim( $list_id ) ) . '/subscribers'
 		);
 
-		$res = $this->_request(
+		$res = $this->request(
 			$api_url,
 			'GET',
 			$args,
@@ -686,11 +714,15 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 
 	/**
 	 * Helper function to listen to request callback sent from WPMUDEV
+	 *
+	 * @param string $code Code.
+	 * @param bool   $migrate Migrate.
+	 * @return boolean
 	 */
 	public function process_callback_request( $code, $migrate = false ) {
 
 		$status = 'error';
-		// Get the referer page that sent the request
+		// Get the referer page that sent the request.
 		$referer      = get_option( self::REFERER );
 		$current_page = get_option( self::CURRENTPAGE );
 
@@ -699,18 +731,6 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			if ( $tokens ) {
 				return $tokens;
 			}
-
-			// if( 'success' === $status && true === $migrate  ){
-			// $addon      = Hustle_Aweber::get_instance();
-			// $referer    = add_query_arg( 'migration', true, $referer );
-			// update_option( $addon->get_version_options_name(), $addon->get_version() );
-			// }
-
-			// if ( ! empty( $referer ) ) {
-			// $referer = add_query_arg( 'status', $status, $referer );
-			// wp_safe_redirect( $referer );
-			// exit;
-			// }
 		}
 
 		return false;
@@ -719,7 +739,9 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	/**
 	 * Generates authorization URL
 	 *
-	 * @param int $module_id
+	 * @param int    $module_id Module ID.
+	 * @param bool   $log_referrer Log referrer.
+	 * @param string $page Page.
 	 *
 	 * @return string
 	 */
@@ -746,22 +768,23 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 			update_option( self::CURRENTPAGE, $page );
 		}
 
-		return $oauth->getAuthorizationUrl();
+		return $oauth->get_authorization_url();
 	}
 
 	/**
 	 * Get Access token
 	 *
-	 * @param Array $args
+	 * @param string $code Code.
+	 * @param bool   $migrate Migrate.
 	 */
 	public function get_access_token( $code, $migrate = false ) {
 		$oauth = Hustle_Addon_Aweber_Oauth2::boot( self::APIKEY, self::CONSUMER_SECRET, 'test' );
 
 		try {
-			$access_token = $oauth->getAccessToken( $code );
+			$access_token = $oauth->get_access_token( $code );
 
 			// schedule token refresh
-			// dont break the old schedule because of multiple instances
+			// dont break the old schedule because of multiple instances.
 			if ( ! wp_next_scheduled( 'hustle_aweber_token_refresh' ) ) {
 				wp_schedule_event( time(), 'hourly', 'hustle_aweber_token_refresh' );
 			}
@@ -785,7 +808,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	/**
 	 * Update token data.
 	 *
-	 * @param array $token
+	 * @param array $token Token.
 	 * @return void
 	 */
 	public function update_auth_token( array $token ) {
@@ -796,32 +819,29 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	/**
 	 * Update token data.
 	 *
-	 * @param array $token
+	 * @param string $multi_id Multi ID.
 	 * @return void
 	 */
 	public function validate_auth_token_lifespan( $multi_id ) {
-		$this->_refresh_access_token( $multi_id );
+		$this->refresh_access_token( $multi_id );
 	}
 
 	/**
 	 * Refresh access token
 	 *
 	 * @since 4.0.3
-	 *
-	 * @param String $email
-	 * @param String $list
-	 * @param Array  $custom_fields
+	 * @param string $multi_id Multi ID.
 	 */
-	private function _refresh_access_token( $multi_id ) {
+	private function refresh_access_token( $multi_id ) {
 		$addon    = new Hustle_Aweber();
 		$settings = $addon->get_settings_values( 'aweber' );
-		// Adding extra user agent for wp remote request
+		// Adding extra user agent for wp remote request.
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
-		// url to refresh auth token
+		// url to refresh auth token.
 		$url = self::REFRESH_TOKEN_URL;
 
-		// headers to get auth token from refresh token
+		// headers to get auth token from refresh token.
 		$headers = array(
 			'Accept'       => 'application/json',
 			'Content-Type' => 'application/json',
@@ -910,7 +930,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * @return string
 	 */
 	public function get_access_token_url() {
-		$access_token_url = self::$_access_token_url;
+		$access_token_url = self::$access_token_url;
 
 		/**
 		 * Filter access_token_url
@@ -927,12 +947,12 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	/**
 	 * Get API URL
 	 *
-	 * @param $path
+	 * @param string $path Path.
 	 *
 	 * @return string
 	 */
 	public function get_api_url( $path ) {
-		$api_base_url = self::$_api_base_url;
+		$api_base_url = self::$api_base_url;
 		$api_url      = trailingslashit( $api_base_url ) . $path;
 
 		/**
@@ -956,7 +976,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * @return string
 	 */
 	public function get_oauth_token() {
-		return $this->_oauth_token;
+		return $this->oauth_token;
 	}
 
 	/**
@@ -966,7 +986,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 * @return string
 	 */
 	public function get_oauth_token_secret() {
-		return $this->_oauth_token_secret;
+		return $this->oauth_token_secret;
 	}
 
 	/**
@@ -974,7 +994,7 @@ class Hustle_Addon_Aweber_Wp_Api extends Opt_In_WPMUDEV_API {
 	 *
 	 * @since 4.0.3
 	 *
-	 * @param Array $schedules
+	 * @param Array $schedules Schedules.
 	 */
 	public function aweber_cron_refresh_span( $schedules ) {
 

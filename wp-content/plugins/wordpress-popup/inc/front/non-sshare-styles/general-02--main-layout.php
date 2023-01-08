@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $component = ( ! $is_optin && ( 'cabriolet' !== $layout_info ) ) ? '.hustle-layout' : '.hustle-layout .hustle-layout-body';
@@ -31,7 +35,7 @@ $padding_right  = ( '' !== $advanced['module_cont_padding_right'] ) ? $advanced[
 $padding_bottom = ( '' !== $advanced['module_cont_padding_bottom'] ) ? $advanced['module_cont_padding_bottom'] . $advanced['module_cont_padding_unit'] : '0';
 $padding_left   = ( '' !== $advanced['module_cont_padding_left'] ) ? $advanced['module_cont_padding_left'] . $advanced['module_cont_padding_unit'] : '0';
 
-$padding = $padding_top . ' ' . $padding_right . ' ' . $padding_bottom . ' ' . $padding_left;
+$padding = ( ! $is_rtl ) ? $padding_top . ' ' . $padding_right . ' ' . $padding_bottom . ' ' . $padding_left : $padding_top . ' ' . $padding_left . ' ' . $padding_bottom . ' ' . $padding_right;
 
 $mobile_padding_top    = ( '' !== $advanced['module_cont_padding_top_mobile'] ) ? $advanced['module_cont_padding_top_mobile'] . $advanced['module_cont_padding_unit_mobile'] : $padding_top;
 $mobile_padding_right  = ( '' !== $advanced['module_cont_padding_right_mobile'] ) ? $advanced['module_cont_padding_right_mobile'] . $advanced['module_cont_padding_unit_mobile'] : $padding_right;
@@ -74,8 +78,8 @@ $mobile_radius_bottomleft  = ( '' !== $advanced['module_cont_radius_bottom_left_
 $mobile_border_radius = ( ! $is_mobile_enabled || ( $is_mobile_enabled && $default_advanced ) ) ? $border_radius : $mobile_radius_topleft . ' ' . $mobile_radius_topright . ' ' . $mobile_radius_bottomright . ' ' . $mobile_radius_bottomleft;
 
 // SETTINGS: Box Shadow.
-$shadow_offset_x = ( '' !== $advanced['module_cont_drop_shadow_x'] ) ? $advanced['module_cont_drop_shadow_x'] . $advanced['module_cont_drop_shadow_unit'] : '0';
-$shadow_offset_y = ( '' !== $advanced['module_cont_drop_shadow_y'] ) ? $advanced['module_cont_drop_shadow_y'] . $advanced['module_cont_drop_shadow_unit'] : '0';
+$shadow_offset_x = ( '' !== $advanced['module_cont_drop_shadow_x'] ) ? ( ( ! $is_rtl ) ? $advanced['module_cont_drop_shadow_x'] : ( -1 * $advanced['module_cont_drop_shadow_x'] ) ) . $advanced['module_cont_drop_shadow_unit'] : '0';
+$shadow_offset_y = ( '' !== $advanced['module_cont_drop_shadow_y'] ) ? ( ( ! $is_rtl ) ? $advanced['module_cont_drop_shadow_y'] : ( -1 * $advanced['module_cont_drop_shadow_y'] ) ) . $advanced['module_cont_drop_shadow_unit'] : '0';
 $shadow_blur     = ( '' !== $advanced['module_cont_drop_shadow_blur'] ) ? $advanced['module_cont_drop_shadow_blur'] . $advanced['module_cont_drop_shadow_unit'] : '0';
 $shadow_spread   = ( '' !== $advanced['module_cont_drop_shadow_spread'] ) ? $advanced['module_cont_drop_shadow_spread'] . $advanced['module_cont_drop_shadow_unit'] : '0';
 $shadow_color    = $colors['module_cont_drop_shadow'];
@@ -97,7 +101,7 @@ $background_width      = ( '' !== $design['background_image_width'] ) ? $design[
 $background_height     = ( '' !== $design['background_image_height'] ) ? $design['background_image_height'] . $design['background_image_height_unit'] : 'auto';
 $background_size       = ( 'custom' === $background_size ) ? $background_width . ' ' . $background_height : $background_size;
 $background_repeat     = $design['background_image_repeat'];
-$background_position_x = $design['background_image_horizontal_position'];
+$background_position_x = ( ! $is_rtl || 'center' === $design['background_image_horizontal_position'] ) ? $design['background_image_horizontal_position'] : ( 'right' === $design['background_image_horizontal_position'] ? 'left' : 'right' );
 $background_position_y = $design['background_image_vertical_position'];
 
 if ( 'custom' === $background_position_x ) {

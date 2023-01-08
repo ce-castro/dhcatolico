@@ -74,6 +74,7 @@ class Hustle_Module_Preview {
 			$vars
 		);
 		wp_enqueue_script( 'hustle_preview_script' );
+		wp_enqueue_script( 'jquery-ui-datepicker' );
 	}
 
 	/**

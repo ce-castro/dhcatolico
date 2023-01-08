@@ -95,6 +95,13 @@ class Hustle_Meta_Base_Design extends Hustle_Meta {
 			'background_image_repeat'                     => 'repeat',
 			'background_image_repeat_mobile'              => 'repeat',
 
+			// CTA buttons layout and alignment.
+			'cta_buttons_layout_type'                     => 'inline',
+			'cta_buttons_layout_type_mobile'              => 'stacked',
+			'cta_buttons_layout_gap_value'                => '20',
+			'cta_buttons_layout_gap_value_mobile'         => '20',
+			'cta_buttons_layout_gap_unit'                 => 'px',
+			'cta_buttons_layout_gap_unit_mobile'          => 'px',
 			'cta_buttons_alignment'                       => 'left',
 			'cta_buttons_alignment_mobile'                => 'full',
 
@@ -108,6 +115,17 @@ class Hustle_Meta_Base_Design extends Hustle_Meta {
 			'form_fields_proximity_unit_mobile'           => 'px',
 			'form_fields_proximity_value'                 => '1',
 			'form_fields_proximity_value_mobile'          => '1',
+
+			// Close icon.
+			'close_icon_position'                         => 'outside',
+			'close_icon_position_mobile'                  => 'outside',
+			'close_icon_alignment_x'                      => 'right',
+			'close_icon_alignment_x_mobile'               => 'right',
+			'close_icon_alignment_y'                      => 'top',
+			'close_icon_alignment_y_mobile'               => 'top',
+			'close_icon_style'                            => 'flat',
+			'close_icon_style_mobile'                     => 'flat',
+			'close_button_static_background'              => '#f4973c',
 
 			// ========================================|
 			// 3. Typography.

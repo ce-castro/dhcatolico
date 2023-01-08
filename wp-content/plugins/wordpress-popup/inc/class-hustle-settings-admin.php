@@ -20,6 +20,20 @@ class Hustle_Settings_Admin {
 	const SETTINGS_OPTION_KEY = 'hustle_settings';
 
 	/**
+	 * Global Settings
+	 *
+	 * @var array
+	 */
+	private static $settings;
+
+	/**
+	 * Global Tracking
+	 *
+	 * @var bool
+	 */
+	private static $global_tracking;
+
+	/**
 	 * Gets the saved or default global unsubscription messages.
 	 *
 	 * @since 3.0.5
@@ -143,6 +157,9 @@ class Hustle_Settings_Admin {
 	 * @return array
 	 */
 	public static function get_general_settings() {
+		if ( ! is_null( self::$settings ) ) {
+			return self::$settings;
+		}
 
 		$default_settings = array(
 			'module_pagination'                     => 10,
@@ -156,6 +173,7 @@ class Hustle_Settings_Admin {
 			'draft_slidein_on_dashboard'            => '1',
 			'published_embedded_on_dashboard'       => '1',
 			'draft_embedded_on_dashboard'           => '1',
+			'global_tracking_disabled'              => '0',
 			'debug_enabled'                         => '0',
 			// Dashboard settings.
 			'popup_on_dashboard'                    => 5,
@@ -219,7 +237,25 @@ class Hustle_Settings_Admin {
 			}
 		}
 
-		return apply_filters( 'hustle_get_general_settings', $general_settings );
+		self::$settings = apply_filters( 'hustle_get_general_settings', $general_settings );
+
+		return self::$settings;
+	}
+
+	/**
+	 * Is global tracking enabled or not
+	 *
+	 * @return bool
+	 */
+	public static function global_tracking() {
+		if ( is_null( self::$global_tracking ) ) {
+			$stored_settings       = self::get_general_settings();
+			$global_tracking       = '1' !== $stored_settings['global_tracking_disabled'];
+			$global_tracking       = apply_filters( 'hustle_global_tracking', $global_tracking );
+			self::$global_tracking = $global_tracking;
+		}
+
+		return self::$global_tracking;
 	}
 
 	/**

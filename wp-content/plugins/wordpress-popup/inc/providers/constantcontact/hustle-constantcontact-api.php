@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_ConstantContact_Api class
+ *
+ * @package Hustle
+ */
 
 if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
@@ -8,6 +13,9 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 	if ( ! class_exists( 'Hustle_ConstantContact_Api' ) ) :
 
+		/**
+		 * Class Hustle_ConstantContact_Api
+		 */
 		class Hustle_ConstantContact_Api extends Opt_In_WPMUDEV_API {
 
 			const API_URL      = 'https://api.constantcontact.com/v2/';
@@ -16,7 +24,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			const APIKEY          = 'wn8r98wcxnegkgy976xeuegt';
 			const CONSUMER_SECRET = 'QZytJQReSTM3K9bH4NG9Dd2A';
 
-			// Random client ID we use to verify our calls
+			// Random client ID we use to verify our calls.
 			const CLIENT_ID = '9253e5C3-28d6-48fd-c102-b92b8f250G1b';
 
 			const REFERER     = 'hustle_constantcontact_referer';
@@ -29,23 +37,23 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			 */
 			private $option_token_name = 'hustle_opt-in-constant_contact-token';
 
-
 			/**
-			 * @var string
-			 */
-			private $action_event = 'hustle_constantcontact_event';
-
-			/**
+			 * Is error
+			 *
 			 * @var bool
 			 */
 			public $is_error = false;
 
 			/**
+			 * Error message
+			 *
 			 * @var string
 			 */
 			public $error_message;
 
 			/**
+			 * Sending
+			 *
 			 * @var boolean
 			 */
 			public $sending = false;
@@ -55,7 +63,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			 * Hustle_ConstantContact_Api constructor.
 			 */
 			public function __construct() {
-				// Init request callback listener
+				// Init request callback listener.
 				add_action( 'init', array( $this, 'process_callback_request' ) );
 			}
 
@@ -67,7 +75,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 					$code   = filter_input( INPUT_GET, 'code' );
 					$status = 'error';
 
-					// Get the referer page that sent the request
+					// Get the referer page that sent the request.
 					$referer      = get_option( self::REFERER );
 					$current_page = get_option( self::CURRENTPAGE );
 					if ( $code ) {
@@ -84,10 +92,10 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 						exit;
 					}
 
-					// Allow retry but don't log referrer
+					// Allow retry but don't log referrer.
 					$authorization_uri = $this->get_authorization_uri( false, false, $current_page );
 
-					$this->wp_die( esc_attr__( 'Constant Contact integration failed!', 'hustle' ), esc_url( $authorization_uri ), esc_url( $referer ) );
+					$this->api_die( esc_attr__( 'Constant Contact integration failed!', 'hustle' ), esc_url( $authorization_uri ), esc_url( $referer ) );
 				}
 			}
 
@@ -95,7 +103,9 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			/**
 			 * Generates authorization URL
 			 *
-			 * @param int $module_id
+			 * @param int    $module_id Module ID.
+			 * @param bool   $log_referrer Log referrer.
+			 * @param string $page Page.
 			 *
 			 * @return string
 			 */
@@ -123,7 +133,9 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			}
 
 			/**
-			 * @param string $key
+			 * Get token
+			 *
+			 * @param string $key Key.
 			 *
 			 * @return bool|mixed
 			 */
@@ -144,7 +156,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			 * @return string
 			 */
 			public function get_redirect_uri() {
-				return $this->_get_redirect_uri(
+				return $this->redirect_uri(
 					'constantcontact',
 					'authorize',
 					array( 'client_id' => self::CLIENT_ID )
@@ -154,7 +166,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			/**
 			 * Get Access token
 			 *
-			 * @param Array $args
+			 * @param string $code Code.
 			 */
 			public function get_access_token( $code ) {
 				$oauth        = new Ctct\Auth\CtctOAuth2( self::APIKEY, self::CONSUMER_SECRET, $this->get_redirect_uri() );
@@ -179,7 +191,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			/**
 			 * Update token data.
 			 *
-			 * @param array $token
+			 * @param array $token Token.
 			 * @return void
 			 */
 			public function update_auth_token( array $token ) {
@@ -212,7 +224,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 				$access_token = $this->get_token( 'access_token' );
 
-				$lists_data = $cc_api->listService->getLists( $access_token ); // phpcs:ignore
+				$lists_data = $cc_api->listService->getLists( $access_token );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 				return ( ! empty( $lists_data ) && is_array( $lists_data ) ) ? $lists_data : array();
 			}
@@ -221,14 +233,14 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			/**
 			 * Retrieve contact from ConstantContact
 			 *
-			 * @param string $email
+			 * @param string $email Email.
 			 * @return false|Object
 			 */
 			public function get_contact( $email ) {
 				$contact      = false;
 				$cc_api       = new Ctct\ConstantContact( self::APIKEY );
 				$access_token = $this->get_token( 'access_token' );
-				$res = $cc_api->contactService->getContacts( $access_token, array( 'email' => $email ) ); // phpcs:ignore
+				$res          = $cc_api->contactService->getContacts( $access_token, array( 'email' => $email ) );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				if ( is_object( $res ) && ! empty( $res->results ) ) {
 					$contact = $res->results[0];
 				}
@@ -240,8 +252,8 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			/**
 			 * Check if contact exists in certain list
 			 *
-			 * @param object $contact \Ctct\Components\Contacts\Contact
-			 * @param string $list_id
+			 * @param object $contact \Ctct\Components\Contacts\Contact.
+			 * @param string $list_id List ID.
 			 * @return bool
 			 */
 			public function contact_exist( $contact, $list_id ) {
@@ -264,9 +276,11 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 			/**
 			 * Subscribe contact
 			 *
-			 * @param String $email
-			 * @param String $list
-			 * @param Array  $custom_fields
+			 * @param String $email Email.
+			 * @param String $first_name First name.
+			 * @param String $last_name Last name.
+			 * @param String $list List.
+			 * @param Array  $custom_fields Custom fields.
 			 */
 			public function subscribe( $email, $first_name, $last_name, $list, $custom_fields = array() ) {
 				$access_token = $this->get_token( 'access_token' );
@@ -292,7 +306,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 						'fax',
 					);
 
-					// Add extra fields
+					// Add extra fields.
 					$x = 1;
 					foreach ( $custom_fields as $key => $value ) {
 						if ( in_array( $key, $allowed, true ) ) {
@@ -310,11 +324,14 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 					}
 				}
 
-				$response = $cc_api->contactService->addContact( $access_token, $contact, array( 'action_by' => 'ACTION_BY_VISITOR' ) ); // phpcs:ignore
+				$response = $cc_api->contactService->addContact( $access_token, $contact, array( 'action_by' => 'ACTION_BY_VISITOR' ) );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 				return $response;
 			}
 
+			/**
+			 * Remove wp_options rows
+			 */
 			public function remove_wp_options() {
 				delete_option( $this->option_token_name );
 				delete_option( self::REFERER );
@@ -323,6 +340,13 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 
 			/**
 			 * Update Subscription
+			 *
+			 * @param object $contact Contact.
+			 * @param string $first_name First name.
+			 * @param string $last_name Last name.
+			 * @param string $list List.
+			 * @param array  $custom_fields Custom fields.
+			 * @return type
 			 */
 			public function updateSubscription( $contact, $first_name, $last_name, $list, $custom_fields = array() ) {
 				$access_token = $this->get_token( 'access_token' );
@@ -346,7 +370,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 						'fax',
 					);
 
-					// Add extra fields
+					// Add extra fields.
 					$x = 1;
 					foreach ( $custom_fields as $key => $value ) {
 						if ( in_array( $key, $allowed, true ) ) {
@@ -364,9 +388,30 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 					}
 				}
 
-				$response = $cc_api->contactService->updateContact( $access_token, $contact, array( 'action_by' => 'ACTION_BY_VISITOR' ) ); // phpcs:ignore
+				$response = $cc_api->contactService->updateContact( $access_token, $contact, array( 'action_by' => 'ACTION_BY_VISITOR' ) );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 				return $response;
+			}
+
+			/**
+			 * Delete subscriber from the list
+			 *
+			 * @param string $list_id List ID.
+			 * @param string $email Email.
+			 *
+			 * @return bool
+			 */
+			public function delete_email( $list_id, $email ) {
+				$contact = $this->get_contact( $email );
+				if ( empty( $contact->id ) ) {
+					return false;
+				}
+
+				$cc_api       = new Ctct\ConstantContact( self::APIKEY );
+				$access_token = $this->get_token( 'access_token' );
+				$res          = $cc_api->contactService->deleteContactFromList( $access_token, $contact->id, $list_id ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
+				return ! is_wp_error( $res );
 			}
 		}
 	endif;

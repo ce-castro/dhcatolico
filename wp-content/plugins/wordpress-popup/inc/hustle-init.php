@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * File for the Hustle_Init class.
  *
@@ -57,7 +57,7 @@ if ( ! class_exists( 'Hustle_Init' ) ) {
 					new Hustle_Tutorials_Page();
 				}
 
-				if ( Opt_In_Utils::_is_free() ) {
+				if ( Opt_In_Utils::is_free() ) {
 					new Hustle_Upsell_Page();
 				}
 				new Hustle_General_Data_Protection();

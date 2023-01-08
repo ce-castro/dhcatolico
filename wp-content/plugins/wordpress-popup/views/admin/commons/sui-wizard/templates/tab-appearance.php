@@ -14,6 +14,7 @@ $args = array(
 	'smallcaps_singular'  => $smallcaps_singular,
 	'capitalize_singular' => $capitalize_singular,
 	'module_type'         => $module_type,
+	'show_cta'            => $show_cta,
 );
 ?>
 <div id="hustle-wizard-appearance" class="sui-box" <?php echo 'appearance' !== $section ? 'style="display: none;"' : ''; ?> data-tab="appearance">

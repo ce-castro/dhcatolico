@@ -225,6 +225,7 @@ return array(
 		'optin_success_content_color'                      => '#ffffff',
 		'overlay_bg'                                       => 'rgba(237,242,180,0.85)',
 		'close_button_static_color'                        => '#ffffff',
+		'close_button_static_background'                   => '#edf2b4',
 		'never_see_link_static'                            => '#38C5B5',
 		'recaptcha_copy_text'                              => '#FFFFFF',
 		'recaptcha_copy_link_default'                      => '#FFFFFF',

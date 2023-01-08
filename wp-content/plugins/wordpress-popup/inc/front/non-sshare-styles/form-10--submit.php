@@ -64,7 +64,7 @@ $radius_topright    = ( '' !== $advanced['submit_button_radius_top_right'] ) ? $
 $radius_bottomright = ( '' !== $advanced['submit_button_radius_bottom_right'] ) ? $advanced['submit_button_radius_bottom_right'] . $advanced['submit_button_radius_unit'] : '0';
 $radius_bottomleft  = ( '' !== $advanced['submit_button_radius_bottom_left'] ) ? $advanced['submit_button_radius_bottom_left'] . $advanced['submit_button_radius_unit'] : '0';
 
-$border_radius = $radius_topleft . ' ' . $radius_topright . ' ' . $radius_bottomright . ' ' . $radius_bottomleft;
+$border_radius = ( ! $is_rtl ) ? $radius_topleft . ' ' . $radius_topright . ' ' . $radius_bottomright . ' ' . $radius_bottomleft : $radius_topright . ' ' . $radius_topleft . ' ' . $radius_bottomleft . ' ' . $radius_bottomright;
 
 $mobile_radius_topleft     = ( '' !== $advanced['submit_button_radius_top_left_mobile'] ) ? $advanced['submit_button_radius_top_left_mobile'] . $advanced['submit_button_radius_unit_mobile'] : $radius_topleft;
 $mobile_radius_topright    = ( '' !== $advanced['submit_button_radius_top_right_mobile'] ) ? $advanced['submit_button_radius_top_right_mobile'] . $advanced['submit_button_radius_unit_mobile'] : $radius_topright;

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_HubSpot class
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 
@@ -9,7 +14,6 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 	 */
 	class Hustle_HubSpot extends Hustle_Provider_Abstract {
 		const SLUG = 'hubspot';
-		// const NAME = "HubSpot";
 
 		/**
 		 * Provider Instance
@@ -18,33 +22,43 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'hubspot';
+		protected $slug = 'hubspot';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'HubSpot';
+		protected $title = 'HubSpot';
 
 		/**
+		 * Is multi on global
+		 *
 		 * @since 4.0
 		 * @var boolean
 		 */
@@ -55,7 +69,7 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_HubSpot_Form_Settings';
+		protected $form_settings = 'Hustle_HubSpot_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -63,16 +77,16 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_HubSpot_Form_Hooks';
+		protected $form_hooks = 'Hustle_HubSpot_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 
-			// Instantiate API when instantiating because it's used after getting the authorization
+			// Instantiate API when instantiating because it's used after getting the authorization.
 			$hustle_hubpost = new Hustle_HubSpot_Api();
 		}
 
@@ -82,17 +96,18 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
 		 * Check if the settings are completed
 		 *
 		 * @since 4.0
+		 * @param string $multi_id Multi ID.
 		 * @return boolean
 		 */
 		protected function settings_are_completed( $multi_id = '' ) {
@@ -103,12 +118,19 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		}
 
 		/**
+		 * Get API
+		 *
 		 * @return bool|Hustle_HubSpot_Api
 		 */
 		public function api() {
 			return self::static_api();
 		}
 
+		/**
+		 * Get API by static method
+		 *
+		 * @return \Hustle_HubSpot_Api
+		 */
 		public static function static_api() {
 			if ( ! class_exists( 'Hustle_HubSpot_Api' ) ) {
 				require_once 'opt-in-hubspot-api.php'; }
@@ -140,6 +162,9 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 		 *
 		 * @since 4.0
 		 *
+		 * @param array $submitted_data Submitted data.
+		 * @param type  $is_submit Is submit.
+		 * @param int   $module_id Module ID.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data, $is_submit, $module_id ) {
@@ -227,11 +252,21 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 			return $response;
 		}
 
+		/**
+		 * Remove wp_option rows.
+		 */
 		public function remove_wp_options() {
 			$api = $this->api();
 			$api->remove_wp_options();
 		}
 
+		/**
+		 * Migrate 3.0
+		 *
+		 * @param object $module Module.
+		 * @param object $old_module Old Module.
+		 * @return boolean
+		 */
 		public function migrate_30( $module, $old_module ) {
 			$migrated = parent::migrate_30( $module, $old_module );
 			if ( ! $migrated ) {
@@ -245,10 +280,10 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 			 */
 			$module_provider_settings = $module->get_provider_settings( $this->get_slug() );
 			if ( ! empty( $module_provider_settings ) ) {
-				// At provider level don't store anything (at least not in the regular option)
+				// At provider level don't store anything (at least not in the regular option).
 				delete_option( $this->get_settings_options_name() );
 
-				// selected_global_multi_id not needed at module level
+				// selected_global_multi_id not needed at module level.
 				unset( $module_provider_settings['selected_global_multi_id'] );
 				$module->set_provider_settings( $this->get_slug(), $module_provider_settings );
 			}
@@ -256,16 +291,27 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 			return $migrated;
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return type
+		 */
 		public function get_30_provider_mappings() {
 			return array();
 		}
 
+		/**
+		 * Add custom fields
+		 *
+		 * @param array $fields Fields.
+		 * @return type
+		 */
 		public function add_custom_fields( $fields ) {
 			$api   = $this->api();
 			$error = false;
 
 			if ( $api && ! $api->is_error ) {
-				// Get the existing fields
+				// Get the existing fields.
 				$props = $api->get_properties();
 
 				$new_fields = array();
@@ -276,7 +322,7 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 				}
 
 				foreach ( $new_fields as $field ) {
-					// Add the new field as property
+					// Add the new field as property.
 					$property = array(
 						'name'      => $field['name'],
 						'label'     => $field['label'],
@@ -317,7 +363,7 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 			$account_data    = array();
 
 			if ( isset( $account_details->response ) && 400 <= $account_details->response['code'] ) {
-				Hustle_Providers_Utils::maybe_log( $this->_title, __METHOD__, $account_details->response['code'], $account_details['response']['message'] );
+				Hustle_Providers_Utils::maybe_log( $this->title, __METHOD__, $account_details->response['code'], $account_details['response']['message'] );
 
 			} else {
 				$account_data = array(
@@ -352,7 +398,7 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 
 				if ( ! $this->is_active() ) {
 
-					$activated = $providers_instance->activate_addon( $this->_slug );
+					$activated = $providers_instance->activate_addon( $this->slug );
 
 					// Provider successfully activated.
 					if ( $activated ) {
@@ -360,7 +406,8 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 						$response = array(
 							'action'  => 'notification',
 							'status'  => 'success',
-							'message' => sprintf( esc_html__( '%s successfully connected.', 'hustle' ), '<strong>' . $this->_title . '</strong>' ),
+							/* translators: integration name */
+							'message' => sprintf( esc_html__( '%s successfully connected.', 'hustle' ), '<strong>' . $this->title . '</strong>' ),
 						);
 
 						$this->save_account_details();
@@ -379,7 +426,8 @@ if ( ! class_exists( 'Hustle_HubSpot' ) ) :
 				$response = array(
 					'action'  => 'notification',
 					'status'  => 'error',
-					'message' => sprintf( esc_html__( 'Authentication failed! Please check your %s credentials and try again.', 'hustle' ), $this->_title ),
+					/* translators: integration name */
+					'message' => sprintf( esc_html__( 'Authentication failed! Please check your %s credentials and try again.', 'hustle' ), $this->title ),
 				);
 
 			}

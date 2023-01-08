@@ -24,11 +24,13 @@
 			<span class="sui-summary-large" aria-hidden="true"><?php echo esc_html( $active_modules ); ?></span>
 			<span class="sui-summary-sub" aria-hidden="true"><?php esc_html_e( 'Active Modules', 'hustle' ); ?></span>
 
-			<?php /* translators: active modules total number */ ?>
-			<p class="sui-screen-reader-text"><?php printf( esc_html__( 'Last conversion: %s', 'hustle' ), esc_html( $last_conversion ) ); ?></p>
+			<?php if ( Hustle_Settings_Admin::global_tracking() ) { ?>
+				<?php /* translators: active modules total number */ ?>
+				<p class="sui-screen-reader-text"><?php printf( esc_html__( 'Last conversion: %s', 'hustle' ), esc_html( $last_conversion ) ); ?></p>
 
-			<span class="sui-summary-detail" aria-hidden="true"><?php echo esc_html( $last_conversion ); ?></span>
-			<span class="sui-summary-sub" aria-hidden="true"><?php esc_html_e( 'Last Conversion', 'hustle' ); ?></span>
+				<span class="sui-summary-detail" aria-hidden="true"><?php echo esc_html( $last_conversion ); ?></span>
+				<span class="sui-summary-sub" aria-hidden="true"><?php esc_html_e( 'Last Conversion', 'hustle' ); ?></span>
+			<?php } ?>
 
 		</div>
 

@@ -1,16 +1,30 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Campaignmonitor class
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 
+	/**
+	 * Class Hustle_Campaignmonitor
+	 */
 	class Hustle_Campaignmonitor extends Hustle_Provider_Abstract {
 
 		const SLUG = 'campaignmonitor';
-		// const NAME = "Campaign Monitor";
 
 		/**
-		 * @var $api AWeberAPI
+		 * Api
+		 *
+		 * @var AWeberAPI
 		 */
 		protected static $api;
+		/**
+		 * Errors
+		 *
+		 * @var array
+		 */
 		protected static $errors;
 
 		/**
@@ -20,38 +34,46 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'campaignmonitor';
+		protected $slug = 'campaignmonitor';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'Campaign Monitor';
+		protected $title = 'Campaign Monitor';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Campaignmonitor_Form_Settings';
+		protected $form_settings = 'Hustle_Campaignmonitor_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -59,14 +81,14 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Campaignmonitor_Form_Hooks';
+		protected $form_hooks = 'Hustle_Campaignmonitor_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -75,15 +97,17 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
-		 * @param $api_key
+		 * Get api
+		 *
+		 * @param string $api_key Api key.
 		 * @return CS_REST_General
 		 */
 		public static function api( $api_key ) {
@@ -122,7 +146,7 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
@@ -162,35 +186,35 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 					if ( ! empty( $client_id ) && $api_client_validated ) {
 						$client_details = $this->get_client( $api_key, $client_id );
 					} else {
-						// find first client
+						// find first client.
 						$clients = self::api( $api_key )->get_clients();
 						if ( is_array( $clients ) ) {
 							if ( isset( $clients[0] ) ) {
 								$client = $clients[0];
-								if ( isset( $client->ClientID ) ) { //phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
-									$client_id      = $client->ClientID; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+								if ( isset( $client->ClientID ) ) {// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+									$client_id      = $client->ClientID;// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 									$client_details = $this->get_client( $api_key, $client_id );
 								}
 							}
 						}
 					}
 
-					if ( ! isset( $client_details->BasicDetails ) //phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
-					 || ! isset( $client_details->BasicDetails->ClientID ) //phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
-					 || ! isset( $client_details->BasicDetails->CompanyName ) ) { //phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+					if ( ! isset( $client_details->BasicDetails ) // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+							|| ! isset( $client_details->BasicDetails->ClientID ) // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+							|| ! isset( $client_details->BasicDetails->CompanyName ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 						$error_message = __( 'Could not find client details, please try again.', 'hustle' );
 						$has_errors    = true;
 					}
 
 					if ( ! $has_errors ) {
 						$settings_to_save['client_id']   = $client_id;
-						$settings_to_save['client_name'] = $client_details->BasicDetails->CompanyName; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+						$settings_to_save['client_name'] = $client_details->BasicDetails->CompanyName;// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 						$api_client_validated            = true;
 					}
 					// If not active, activate it.
-					// TODO: Wrap this in a friendlier method
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					// TODO: Wrap this in a friendlier method.
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -299,6 +323,7 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup(
 				__( 'Configure Campaign Monitor', 'hustle' ),
 				sprintf(
+					/* translators: 1. link to Campaign Monitor account 2. 'Account Settings' text 3. 'API keys' text */
 					esc_html__( 'To get your API key, log in to your %1$s, then click on your profile picture at the top-right corner to open a menu, then select %2$s and finally click on %3$s.', 'hustle' ),
 					sprintf(
 						'<a href="%1$s" target="_blank">%2$s</a>',
@@ -368,7 +393,7 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $api_key
+		 * @param string $api_key Api key.
 		 * @return bool
 		 */
 		private function validate_api_key( $api_key ) {
@@ -376,9 +401,9 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 				return false;
 			}
 
-			// Check API Key by validating it on get_info request
+			// Check API Key by validating it on get_info request.
 			try {
-				// Check if API key is valid
+				// Check if API key is valid.
 				$clients = self::api( $api_key )->get_system_date();
 
 				if ( is_wp_error( $clients ) ) {
@@ -394,12 +419,12 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 		}
 
 		/**
-		 * get client
+		 * Get client
 		 *
 		 * @since 1.0 Campaign Monitor Addon
 		 *
-		 * @param $api_key
-		 * @param $client_id
+		 * @param string $api_key Api key.
+		 * @param string $client_id Client ID.
 		 *
 		 * @return array|mixed|object
 		 */
@@ -417,16 +442,16 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 		 *
 		 * @since 1.0 Campaign Monitor Addon
 		 *
-		 * @param $api_key
-		 * @param $client_id
+		 * @param string $api_key Api key.
+		 * @param string $client_id Client ID.
 		 *
 		 * @return array|mixed|object
 		 */
 		public function validate_client( $api_key, $client_id ) {
 
-			// Check API Key by validating it on get_info request
+			// Check API Key by validating it on get_info request.
 			try {
-				// Check if API key is valid
+				// Check if API key is valid.
 				self::$api      = null;
 				$api            = self::api( $api_key );
 				$client_details = $api->get_client( $client_id );
@@ -443,6 +468,11 @@ if ( ! class_exists( 'Hustle_Campaignmonitor' ) ) :
 			return true;
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return type
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'api_key' => 'api_key',

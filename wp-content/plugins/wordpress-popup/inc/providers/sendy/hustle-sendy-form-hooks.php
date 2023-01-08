@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Sendy_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Sendy_Form_Hooks
@@ -14,25 +19,23 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 *
 	 * @return array
+	 * @throws Exception Required fields are missed.
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
 		$module_id              = $this->module_id;
 		$form_settings_instance = $this->form_settings_instance;
 
-		/**
-		 * @since 4.0
-		 */
 		$submitted_data = apply_filters( 'hustle_provider_' . $this->addon->get_slug() . '_form_submitted_data', $submitted_data, $module_id, $form_settings_instance );
 
 		$addon_setting_values = $form_settings_instance->get_form_settings_values();
 
 		try {
 			/**
-			 * @var $addon Hustle_Sendy
+			 * Addon $addon Hustle_Sendy
 			 */
 			$addon = $this->addon;
 
@@ -54,7 +57,7 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				'email' => $email,
 			);
 
-			// Add extra fields
+			// Add extra fields.
 			$extra_fields = array_diff_key(
 				$submitted_data,
 				array(
@@ -94,10 +97,42 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 		);
 	}
 
+	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
+		try {
+			$api = $addon->get_api( $global_multi_id );
+			$api->delete_email( $email );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Get value
+	 *
+	 * @param array  $data Data.
+	 * @param atring $field Field.
+	 * @return type
+	 */
 	private function get_value( $data, $field ) {
 		return empty( $data[ $field ] ) ? '' : $data[ $field ];
 	}
 
+	/**
+	 * Get status
+	 *
+	 * @param string $status Status.
+	 * @param string $message Message.
+	 * @return type
+	 */
 	private function get_status( $status, $message ) {
 		return array(
 			array(
@@ -111,8 +146,10 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	}
 
 	/**
-	 * @param $first_name
-	 * @param $last_name
+	 * Combine name parts
+	 *
+	 * @param string $first_name First name.
+	 * @param string $last_name Last name.
 	 *
 	 * @return string
 	 */
@@ -125,7 +162,8 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -187,11 +225,11 @@ class Hustle_Sendy_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 			return $is_success;
 		}

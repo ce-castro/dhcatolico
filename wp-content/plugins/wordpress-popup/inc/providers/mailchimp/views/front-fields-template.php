@@ -1,5 +1,17 @@
-<div class="hustle-form-options"<?php if ( 'hidden' === $group_type ) {
-	echo ' style="display:none;"';} ?>>
+<?php
+/**
+ * Front field template
+ *
+ * @package Hustle
+ */
+
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
+$display_none = 'hidden' === $group_type ? ' style="display:none;"' : '';
+?>
+<div class="hustle-form-options"<?php echo esc_html( $display_none ); ?>>
 
 	<input
 		type="hidden"
@@ -67,7 +79,7 @@
 			<select
 				name="mailchimp_group_interest"
 				class="hustle-select2"
-				data-rtl-support="false"
+				data-rtl-support=<?php echo ( ! $is_rtl ) ? 'false' : 'true'; ?>
 				data-language="en"
 				data-placeholder="<?php echo esc_html( $dropdown_placeholder ); ?>"
 			>

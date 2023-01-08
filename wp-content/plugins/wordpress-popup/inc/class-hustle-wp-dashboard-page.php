@@ -52,14 +52,14 @@ class Hustle_Wp_Dashboard_Page {
 	public function register_dashboard_styles() {
 		wp_register_style(
 			'hstl-roboto',
-			'https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i',
+			'https://fonts.bunny.net/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i',
 			array(),
 			Opt_In::VERSION
 		);
 
 		wp_register_style(
 			'hstl-opensans',
-			'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i',
+			'https://fonts.bunny.net/css?family=Open+Sans:400,400i,700,700i',
 			array(),
 			Opt_In::VERSION
 		);
@@ -146,6 +146,10 @@ class Hustle_Wp_Dashboard_Page {
 	 * @since 4.1.0
 	 */
 	public function analytics_widget_setup() {
+
+		if ( ! Hustle_Settings_Admin::global_tracking() ) {
+			return;
+		}
 
 		$title = ! empty( $this->settings['title'] ) ? $this->settings['title'] : ' ';
 		wp_add_dashboard_widget(

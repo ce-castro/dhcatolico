@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_HubSpot_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_HubSpot_Form_Hooks
@@ -14,8 +19,9 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
+	 * @throws Exception Required fields are missed.
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
@@ -59,7 +65,7 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				throw new Exception( __( 'Wrong API credentials', 'hustle' ) );
 			}
 
-			// Extra fields
+			// Extra fields.
 			$extra_data = array_diff_key(
 				$submitted_data,
 				array(
@@ -110,7 +116,7 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			);
 
 			if ( $email_exist && ! empty( $email_exist->vid ) ) {
-				// Add to list
+				// Add to list.
 				$contact_id = '';
 
 				if ( ! empty( $email_exist->{'list-memberships'} ) ) {
@@ -141,7 +147,7 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				}
 			}
 
-			// Add contact to contact list
+			// Add contact to contact list.
 			if ( ! empty( $contact_id ) && ! is_object( $contact_id ) && (int) $contact_id > 0 ) {
 				$res = $api->add_to_contact_list( $contact_id, $submitted_data['email'], $list_id );
 
@@ -205,11 +211,30 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	}
 
 	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$list_id                = $addon_setting_values['list_id'];
+		try {
+			$api = $addon->api();
+			$api->delete_email( $list_id, $email );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Check whether the email is already subscribed.
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -278,11 +303,11 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 			return $is_success;
 		}
@@ -296,22 +321,22 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * This method is to be inherited
 	 * And extended by child classes.
 	 *
-	 * Make use of the property `$_subscriber`
+	 * Make use of the property `$subscriber`
 	 * Method to omit double api calls
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param   object $api
-	 * @param   mixed  $data
+	 * @param   object $api Api.
+	 * @param   mixed  $data Data.
 	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
 
-		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ) {
-			$this->_subscriber[ md5( $data ) ] = $api->email_exists( $data );
+		if ( empty( $this->subscriber ) && ! isset( $this->subscriber[ md5( $data ) ] ) ) {
+			$this->subscriber[ md5( $data ) ] = $api->email_exists( $data );
 		}
 
-		return $this->_subscriber[ md5( $data ) ];
+		return $this->subscriber[ md5( $data ) ];
 	}
 
 	/**
@@ -325,7 +350,7 @@ class Hustle_HubSpot_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.1
 	 *
-	 * @param string hustle field type
+	 * @param string $type hustle field type.
 	 * @return string Api field type
 	 */
 	protected function get_field_type( $type ) {

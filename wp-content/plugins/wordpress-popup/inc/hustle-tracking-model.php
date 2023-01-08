@@ -1,10 +1,14 @@
-<?php
-
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Tracking model.
  * Base model for all tracking data: views and conversions.
  *
  * @since 4.0
+ * @package Hustle
+ */
+
+/**
+ * Hustle_Tracking_Model class
  */
 class Hustle_Tracking_Model {
 
@@ -61,10 +65,15 @@ class Hustle_Tracking_Model {
 	 * Save conversion
 	 *
 	 * @since 4.0
-	 * @param int    $module_id
-	 * @param array  $data
-	 * @param string $action - 'cta_conversion' || 'optin_conversion' || 'conversion' || 'view'
+	 * @param int    $module_id Module ID.
+	 * @param string $action - 'cta_conversion' || 'optin_conversion' || 'conversion' || 'view'.
+	 * @param string $module_type Module type.
+	 * @param int    $page_id Page ID.
+	 * @param string $module_sub_type Sub type.
 	 * @param string $date_created Created date, default null will be * completed.
+	 * @param string $ip IP.
+	 *
+	 * @return boolean
 	 */
 	public function save_tracking( $module_id, $action, $module_type, $page_id, $module_sub_type = null, $date_created = null, $ip = null ) {
 		global $wpdb;
@@ -100,15 +109,15 @@ class Hustle_Tracking_Model {
 			);
 		}
 		if ( $ip_tracking ) {
-			$prepared_sql = $wpdb->prepare( $sql, $module_id, $page_id, $ip, $action, $module_type ); // WPCS: unprepared SQL ok. false positive
+			$prepared_sql = $wpdb->prepare( $sql, $module_id, $page_id, $ip, $action, $module_type );// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		} else {
-			$prepared_sql = $wpdb->prepare( $sql, $module_id, $page_id, $action, $module_type ); // WPCS: unprepared SQL ok. false positive
+			$prepared_sql = $wpdb->prepare( $sql, $module_id, $page_id, $action, $module_type );// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
-		$tracking_id = $wpdb->get_var( $prepared_sql ); // WPCS: unprepared SQL ok. false positive
+		$tracking_id = $wpdb->get_var( $prepared_sql );// phpcs:ignore
 		if ( $tracking_id ) {
-			$this->_update( $tracking_id, $wpdb );
+			$this->update( $tracking_id, $wpdb );
 		} else {
-			$this->_save( $module_id, $page_id, $module_type, $action, $ip, $wpdb, $date_created );
+			$this->save( $module_id, $page_id, $module_type, $action, $ip, $wpdb, $date_created );
 		}
 		return true;
 	}
@@ -118,8 +127,8 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int $page_id
-	 * @param int $count
+	 * @param int $page_id Page ID.
+	 * @param int $count Count.
 	 * @return void
 	 */
 	public function save_old_migrated_sshare_page_count( $page_id, $count ) {
@@ -154,15 +163,15 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int         $module_id
-	 * @param int         $page_id
-	 * @param string      $module_type popup | slidein | embedded
-	 * @param string      $action view | conversion
-	 * @param string      $ip - the user ip
-	 * @param bool|object $db - the wp db object
+	 * @param int         $module_id Module ID.
+	 * @param int         $page_id Page ID.
+	 * @param string      $module_type popup | slidein | embedded.
+	 * @param string      $action view | conversion.
+	 * @param string      $ip - the user ip.
+	 * @param bool|object $db - the wp db object.
 	 * @param string      $date_created Created date, default null will be * completed.
 	 */
-	private function _save( $module_id, $page_id, $module_type, $action, $ip, $db = false, $date_created = null ) {
+	private function save( $module_id, $page_id, $module_type, $action, $ip, $db = false, $date_created = null ) {
 		if ( ! $db ) {
 			global $wpdb;
 			$db = $wpdb;
@@ -188,10 +197,10 @@ class Hustle_Tracking_Model {
 	 * Update tracking
 	 *
 	 * @since 4.0
-	 * @param int         $id - tracking id
-	 * @param bool|object $db - the wp db object
+	 * @param int         $id - tracking id.
+	 * @param bool|object $db - the wp db object.
 	 */
-	private function _update( $id, $db = false ) {
+	private function update( $id, $db = false ) {
 		if ( ! $db ) {
 			global $wpdb;
 			$db = $wpdb;
@@ -210,11 +219,11 @@ class Hustle_Tracking_Model {
 	 * Count conversions
 	 *
 	 * @since 4.0
-	 * @param int    $module_id
-	 * @param string $action - view | all_conversion | optin_conversion | cta_conversion
-	 * @param string $module_subtype - the module subtype
-	 * @param string $starting_date - the start date (dd-mm-yyy)
-	 * @param string $ending_date - the end date (dd-mm-yyy)
+	 * @param int    $module_id Modul ID.
+	 * @param string $action - view | all_conversion | optin_conversion | cta_conversion.
+	 * @param string $module_subtype - the module subtype.
+	 * @param string $starting_date - the start date (dd-mm-yyy).
+	 * @param string $ending_date - the end date (dd-mm-yyy).
 	 *
 	 * @return int - total views based on parameters
 	 */
@@ -222,7 +231,7 @@ class Hustle_Tracking_Model {
 		if ( ! in_array( $action, array( 'all_conversion', 'cta_conversion', 'cta_1_conversion', 'cta_2_conversion', 'optin_conversion' ), true ) ) {
 			$action = 'view';
 		}
-		return $this->_count( $action, $module_id, $module_subtype, $starting_date, $ending_date );
+		return $this->count( $action, $module_id, $module_subtype, $starting_date, $ending_date );
 	}
 
 	/**
@@ -230,12 +239,13 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0.4
 	 * @global object $wpdb
-	 * @param string $module_id
+	 * @param string $module_id Module ID.
+	 *
 	 * @return bool
 	 */
 	public function has_old_tracking_data( $module_id ) {
 		global $wpdb;
-		$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( tracking_id ) FROM {$this->table_name} WHERE module_id = %d AND action = 'conversion'", $module_id ) ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( tracking_id ) FROM {$this->table_name} WHERE module_id = %d AND action = 'conversion'", $module_id ) ); // phpcs:ignore
 
 		return ! empty( $result );
 	}
@@ -245,15 +255,15 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $action view | all_conversion | optin_conversion | cta_conversion
-	 * @param int    $module_id - the module id
-	 * @param string $module_subtype - the module subtype
-	 * @param string $starting_date - the start date (dd-mm-yyy)
-	 * @param string $ending_date - the end date (dd-mm-yyy)
+	 * @param string $action view | all_conversion | optin_conversion | cta_conversion.
+	 * @param int    $module_id - the module id.
+	 * @param string $module_subtype - the module subtype.
+	 * @param string $starting_date - the start date (dd-mm-yyy).
+	 * @param string $ending_date - the end date (dd-mm-yyy).
 	 *
 	 * @return int - total counts based on parameters
 	 */
-	private function _count( $action, $module_id = null, $module_subtype = null, $starting_date = null, $ending_date = null ) {
+	private function count( $action, $module_id = null, $module_subtype = null, $starting_date = null, $ending_date = null ) {
 		global $wpdb;
 		if ( 'all_conversion' === $action ) {
 			$where_query = "WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion', 'cta_1_conversion', 'cta_2_conversion' )";
@@ -270,9 +280,9 @@ class Hustle_Tracking_Model {
 				$where_query .= $wpdb->prepare( ' AND `module_type` = %s', $module_subtype );
 			}
 		}
-		$date_query = $this->_generate_date_query( $wpdb, $starting_date, $ending_date );
+		$date_query = $this->generate_date_query( $wpdb, $starting_date, $ending_date );
 		$sql        = "SELECT SUM(`counter`) FROM {$this->table_name} {$where_query} $date_query";
-		$counts     = $wpdb->get_var( $sql ); // WPCS: unprepared SQL ok. false positive
+		$counts     = $wpdb->get_var( $sql );// phpcs:ignore
 		if ( $counts ) {
 			return $counts;
 		}
@@ -283,22 +293,24 @@ class Hustle_Tracking_Model {
 	 * Generate the date query
 	 *
 	 * @since 4.0
-	 * @param object $wpdb - the WordPress database object
-	 * @param string $starting_date - the start date (dd-mm-yyy)
-	 * @param string $ending_date - the end date (dd-mm-yyy)
+	 * @param object $wpdb - the WordPress database object.
+	 * @param string $starting_date - the start date (dd-mm-yyy).
+	 * @param string $ending_date - the end date (dd-mm-yyy).
+	 * @param string $prefix Prefix.
+	 * @param string $clause Clause.
 	 *
 	 * @return string $date_query
 	 */
-	private function _generate_date_query( $wpdb, $starting_date = null, $ending_date = null, $prefix = '', $clause = 'AND' ) {
+	private function generate_date_query( $wpdb, $starting_date = null, $ending_date = null, $prefix = '', $clause = 'AND' ) {
 		$date_query  = '';
 		$date_format = '%%Y-%%m-%%d';
 		if ( ! is_null( $starting_date ) && ! is_null( $ending_date ) && ! empty( $starting_date ) && ! empty( $ending_date ) ) {
-			$date_query = $wpdb->prepare( "$clause DATE_FORMAT($prefix`date_created`, '$date_format') >= %s AND DATE_FORMAT($prefix`date_created`, '$date_format') <= %s", $starting_date, $ending_date ); // WPCS: unprepared SQL OK.
+			$date_query = $wpdb->prepare( "$clause DATE_FORMAT($prefix`date_created`, '$date_format') >= %s AND DATE_FORMAT($prefix`date_created`, '$date_format') <= %s", $starting_date, $ending_date );// phpcs:ignore
 		} else {
 			if ( ! is_null( $starting_date ) && ! empty( $starting_date ) ) {
-				$date_query = $wpdb->prepare( "$clause DATE_FORMAT($prefix`date_created`, '$date_format') >= %s", $starting_date ); // WPCS: unprepared SQL OK.
+				$date_query = $wpdb->prepare( "$clause DATE_FORMAT($prefix`date_created`, '$date_format') >= %s", $starting_date );// phpcs:ignore
 			} elseif ( ! is_null( $ending_date ) && ! empty( $ending_date ) ) {
-				$date_query = $wpdb->prepare( "$clause DATE_FORMAT($prefix`date_created`, '$date_format') <= %s", $starting_date ); // WPCS: unprepared SQL OK.
+				$date_query = $wpdb->prepare( "$clause DATE_FORMAT($prefix`date_created`, '$date_format') <= %s", $starting_date );// phpcs:ignore
 			}
 		}
 		return $date_query;
@@ -309,10 +321,13 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param int          $module_id
-	 * @param $date_created
+	 * @param int    $module_id Module ID.
+	 * @param string $date_created Date created.
+	 * @param string $action Action.
+	 * @param string $module_type Module type.
+	 * @param string $module_sub_type Sub type.
 	 *
-	 * @return array
+	 * @return boolean|array
 	 */
 	public function get_form_latest_tracking_data_count_grouped_by_day( $module_id, $date_created, $action, $module_type = null, $module_sub_type = null ) {
 		global $wpdb;
@@ -341,7 +356,7 @@ class Hustle_Tracking_Model {
 			}
 			$sub_type_query = $wpdb->prepare( 'AND e.module_type = %s', $module_sub_type );
 		}
-		$date_query         = $this->_generate_date_query( $wpdb, $date_created );
+		$date_query         = $this->generate_date_query( $wpdb, $date_created );
 		$sql                = "SELECT SUM(`counter`) AS tracked_count,
 			DATE(e.date_created) AS date_created
 			FROM {$table_name} e
@@ -355,7 +370,7 @@ class Hustle_Tracking_Model {
 			$sql, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$module_id
 		);
-		$conversions_amount = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$conversions_amount = $wpdb->get_results( $sql ); // phpcs:ignore
 		return $conversions_amount;
 	}
 
@@ -364,7 +379,8 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $module_type
+	 * @param string $module_type Module type.
+	 *
 	 * @return string
 	 */
 	public function get_latest_conversion_date( $module_type = 'popup' ) {
@@ -390,7 +406,7 @@ class Hustle_Tracking_Model {
 		} else {
 			$sql = "SELECT `date_updated` FROM {$this->table_name} WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion' ) ORDER BY `date_updated` DESC";
 		}
-		$date = $wpdb->get_var( $sql ); // WPCS: unprepared SQL ok. false positive
+		$date = $wpdb->get_var( $sql );// phpcs:ignore
 		return $date;
 	}
 
@@ -399,9 +415,10 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $module_id
-	 * @param string    $sub_type Optional
-	 * @param string    $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion
+	 * @param int    $module_id Module ID.
+	 * @param string $sub_type Optional.
+	 * @param string $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion.
+	 *
 	 * @return Hustle_Entry_Model|null
 	 */
 	public function get_latest_conversion_date_by_module_id( $module_id, $sub_type = '', $cta_or_optin = 'all_conversion' ) {
@@ -418,7 +435,7 @@ class Hustle_Tracking_Model {
 		}
 
 		$sql  = "SELECT `date_updated` FROM {$this->table_name} WHERE `module_id` = %d {$and_action}{$and_subtype} ORDER BY `date_updated` DESC";
-		$date = $wpdb->get_var( $wpdb->prepare( $sql, $module_id ) ); // WPCS: unprepared SQL ok. false positive
+		$date = $wpdb->get_var( $wpdb->prepare( $sql, $module_id ) );// phpcs:ignore
 		return $date;
 	}
 
@@ -427,13 +444,13 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $module_type
-	 * @param $date_created
+	 * @param string $module_type Module type.
+	 * @param string $date_created Date created.
 	 *
 	 * @return array
 	 */
 	public function count_newer_conversions_by_module_type( $module_type, $date_created ) {
-		$count = $this->_count( 'all_conversion', null, $module_type, $date_created, null );
+		$count = $this->count( 'all_conversion', null, $module_type, $date_created, null );
 		return $count;
 	}
 
@@ -443,9 +460,11 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $module_type
-	 * @param string $action
-	 * @param array  $pages
+	 * @param string $module_type Module type.
+	 * @param string $action Action.
+	 * @param int    $limit Limit.
+	 * @param int    $offset Offset.
+	 *
 	 * @return array
 	 */
 	public function get_module_type_tracking_count_per_page( $module_type, $action, $limit = 5, $offset = 0 ) {
@@ -472,6 +491,13 @@ class Hustle_Tracking_Model {
 		return $conversions_amount;
 	}
 
+	/**
+	 * Get Social Sharing per page conversion count
+	 *
+	 * @global object $wpdb WPDB.
+	 * @param int $limit Limit.
+	 * @return array
+	 */
 	public function get_ssharing_per_page_conversion_count( $limit ) {
 
 		global $wpdb;
@@ -479,8 +505,8 @@ class Hustle_Tracking_Model {
 		$table_name = $this->table_name;
 
 		$query = $wpdb->prepare(
-			"SELECT SUM(`counter`) AS tracked_count, `page_id` AS page_id
-			FROM {$table_name}
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			"SELECT SUM(`counter`) AS tracked_count, `page_id` AS page_id FROM {$table_name}
 			WHERE `action` = '_page_shares'
 			OR ( `module_type` LIKE %s AND `action` = 'conversion' )
 			GROUP BY `page_id`
@@ -498,10 +524,9 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $module_type
-	 * @param array  $pages_ids
-	 * @param string $action
-	 * @param array  $pages
+	 * @param string $module_type Module type.
+	 * @param array  $pages_ids Page IDs.
+	 * @param string $action Action.
 	 * @return array
 	 */
 	public function get_tracking_count_by_page_id_and_module_type( $module_type, $pages_ids, $action ) {
@@ -513,12 +538,10 @@ class Hustle_Tracking_Model {
 		}
 
 		$pages_ids_placeholders = implode( ', ', array_fill( 0, count( $pages_ids ), '%d' ) );
-		$pages_ids_query = $wpdb->prepare( "WHERE page_id IN ({$pages_ids_placeholders})", $pages_ids ); // phpcs:ignore
-
-		$sql                = $wpdb->prepare(
-			"SELECT SUM(`counter`) AS tracked_count, `page_id` AS page_id
-			FROM {$table_name}
-			{$pages_ids_query}
+		$pages_ids_query        = $wpdb->prepare( "WHERE page_id IN ({$pages_ids_placeholders})", $pages_ids ); // phpcs:ignore
+		$sql                    = $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			"SELECT SUM(`counter`) AS tracked_count, `page_id` AS page_id FROM {$table_name} {$pages_ids_query}
 			AND module_type LIKE %s AND `action` = %s",
 			$module_type . '%',
 			$action
@@ -532,10 +555,11 @@ class Hustle_Tracking_Model {
 	 * Delete tracking data
 	 *
 	 * @since 4.0.0
+	 * @param int $module_id Module ID.
 	 */
 	public function delete_data( $module_id ) {
 		global $wpdb;
-		$wpdb->delete(
+		$wpdb->delete( // phpcs:ignore
 			$this->table_name,
 			array( 'module_id' => $module_id ),
 			array( '%d' )
@@ -550,8 +574,8 @@ class Hustle_Tracking_Model {
 	 * @return number $value Percent of conversions.
 	 */
 	public function get_average_conversion_rate() {
-		$conversions = $this->_count( 'all_conversion' );
-		$views       = $this->_count( 'view' );
+		$conversions = $this->count( 'all_conversion' );
+		$views       = $this->count( 'view' );
 		if ( 0 < $views ) {
 			return sprintf( '%.2f%%', 100 * $conversions / $views );
 		}
@@ -566,7 +590,7 @@ class Hustle_Tracking_Model {
 	 * @return integer $value Number of conversions.
 	 */
 	public function get_total_conversions() {
-		return $this->_count( 'all_conversion' );
+		return $this->count( 'all_conversion' );
 	}
 
 	/**
@@ -580,9 +604,8 @@ class Hustle_Tracking_Model {
 		global $wpdb;
 
 		$value = intval(
-			$wpdb->get_var( // WPCS: unprepared SQL OK.
-				'SELECT `module_id` FROM ' . $this->table_name . " WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion' ) GROUP BY `module_id` ORDER BY sum(`counter`) DESC LIMIT 1"
-			)
+			// phpcs:ignore
+			$wpdb->get_var( 'SELECT `module_id` FROM ' . $this->table_name . " WHERE `action` IN ( 'conversion', 'optin_conversion', 'cta_conversion' ) GROUP BY `module_id` ORDER BY sum(`counter`) DESC LIMIT 1" )
 		);
 
 		return $value;
@@ -601,7 +624,7 @@ class Hustle_Tracking_Model {
 			'SELECT COUNT(*) FROM `%s` WHERE `action` IN ( "conversion", "optin_conversion", "cta_conversion" ) AND `date_created` > DATE_SUB( NOW(), INTERVAL 24 hour )',
 			$this->table_name
 		);
-		$value = intval( $wpdb->get_var( $sql ) );
+		$value = intval( $wpdb->get_var( $sql ) );// phpcs:ignore
 		return $value;
 	}
 
@@ -618,7 +641,7 @@ class Hustle_Tracking_Model {
 			'SELECT COUNT(*) FROM `%s` WHERE `action` IN ( "conversion", "optin_conversion", "cta_conversion" ) AND `date_created` > DATE_SUB( NOW(), INTERVAL 7 DAY )',
 			$this->table_name
 		);
-		$value = intval( $wpdb->get_var( $sql ) );
+		$value = intval( $wpdb->get_var( $sql ) );// phpcs:ignore
 		return $value;
 	}
 
@@ -635,7 +658,7 @@ class Hustle_Tracking_Model {
 			'SELECT COUNT(*) FROM `%s` WHERE `action` IN ( "conversion", "optin_conversion", "cta_conversion" ) AND `date_created` > DATE_SUB( NOW(), INTERVAL 1 MONTH )',
 			$this->table_name
 		);
-		$value = intval( $wpdb->get_var( $sql ) );
+		$value = intval( $wpdb->get_var( $sql ) );// phpcs:ignore
 		return $value;
 	}
 
@@ -650,7 +673,7 @@ class Hustle_Tracking_Model {
 			'UPDATE `%s` SET `ip` = NULL WHERE `ip` IS NOT NULL',
 			$this->table_name
 		);
-		$wpdb->query( $query );
+		$wpdb->query( $query );// phpcs:ignore
 	}
 
 	/**
@@ -691,11 +714,13 @@ class Hustle_Tracking_Model {
 		if ( ! empty( $ranges ) ) {
 			$query .= implode( ' OR ', $ranges );
 		}
-		$wpdb->query( $query );
+		$wpdb->query( $query );// phpcs:ignore
 	}
 
 	/**
 	 * Helper to wrap IP into "''"
+	 *
+	 * @param string $a IP.
 	 */
 	private function wrap_ip( $a ) {
 		return sprintf( '\'%s\'', $a );
@@ -705,10 +730,11 @@ class Hustle_Tracking_Model {
 	 * Delete tracking data by tracking id
 	 *
 	 * @since 4.0.2
+	 * @param int $tracking_id Tracking ID.
 	 */
 	public static function delete_data_by_tracking_id( $tracking_id ) {
 		global $wpdb;
-		$wpdb->delete(
+		$wpdb->delete( // phpcs:ignore
 			Hustle_Db::tracking_table(),
 			array( 'tracking_id' => $tracking_id ),
 			array( '%d' )
@@ -720,7 +746,7 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $date_created
+	 * @param string $date_created Date created.
 	 *
 	 * @return array
 	 */
@@ -734,16 +760,14 @@ class Hustle_Tracking_Model {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$query = $wpdb->prepare( $query, $date_created );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		return $wpdb->get_col( $query );
+		return $wpdb->get_col( $query );// phpcs:ignore
 	}
 
 	/**
 	 * Get ip from tracking id
 	 *
 	 * @since 4.0.2
-	 *
-	 * @param $tracking_id
+	 * @param int $tracking_id Tracking ID.
 	 *
 	 * @return array ip address
 	 */
@@ -757,8 +781,7 @@ class Hustle_Tracking_Model {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$query = $wpdb->prepare( $query, $tracking_id );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		return $wpdb->get_col( $query );
+		return $wpdb->get_col( $query );// phpcs:ignore
 	}
 
 	/**
@@ -766,21 +789,14 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $tracking_id
-	 * @param $ip
-	 *
-	 * @return array ip address
+	 * @param int    $tracking_id Tracking ID.
+	 * @param string $ip IP.
 	 */
 	public static function anonymise_tracked_id( $tracking_id, $ip ) {
 		global $wpdb;
 		$tracking_table = Hustle_Db::tracking_table();
-		$wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$tracking_table} SET `ip` = %s WHERE `tracking_id` = %d",
-				$ip,
-				$tracking_id
-			)
-		);
+		// phpcs:ignore
+		$wpdb->query( $wpdb->prepare( "UPDATE {$tracking_table} SET `ip` = %s WHERE `tracking_id` = %d", $ip, $tracking_id ) );
 	}
 
 	/**
@@ -795,8 +811,6 @@ class Hustle_Tracking_Model {
 	 */
 	public function get_wp_dash_daily_stats_data( $days_ago ) {
 		global $wpdb;
-
-		$tracking_table = $this->table_name;
 
 		// Get the data from today to $days_ago before.
 		$query = $wpdb->prepare(
@@ -844,9 +858,9 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.3.1
 	 *
-	 * @param $module_id
-	 * @param string    $subtype
-	 * @param string    $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion
+	 * @param int    $module_id Module ID.
+	 * @param string $subtype Sub type.
+	 * @param string $cta_or_optin Optional. cta_conversion|optin_conversion|all_conversion CTA or Opt-in conversion.
 	 * @return string
 	 */
 	public function get_latest_conversion_time_by_module_id( $module_id, $subtype = '', $cta_or_optin = 'all_conversion' ) {
@@ -865,7 +879,7 @@ class Hustle_Tracking_Model {
 	 *
 	 * @since 4.3.1
 	 *
-	 * @param $entry_type
+	 * @param string $entry_type Entry type.
 	 * @return string
 	 */
 	public function get_latest_conversion_time( $entry_type ) {
@@ -873,7 +887,8 @@ class Hustle_Tracking_Model {
 
 		if ( $date ) {
 			$last_entry_time = mysql2date( 'U', $date );
-			$time_diff       = human_time_diff( current_time( 'timestamp' ), $last_entry_time );
+			$time_diff       = human_time_diff( current_time( 'timestamp' ), $last_entry_time ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
+			/* translators: time diff */
 			$last_entry_time = sprintf( __( '%s ago', 'hustle' ), $time_diff );
 
 			return $last_entry_time;

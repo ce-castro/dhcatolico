@@ -1,3 +1,11 @@
+<?php
+/**
+ * Images section
+ *
+ * @package Hustle
+ */
+
+?>
 <div class="sui-box-settings-row">
 
 	<div class="sui-box-settings-col-1">
@@ -16,7 +24,7 @@
 		$this->render(
 			'admin/commons/sui-wizard/tab-content/image-uploader',
 			array(
-				'settings'          => $settings,
+				'image_url'         => $settings['feature_image'],
 				'attribute'         => 'feature_image',
 				'field_title'       => __( 'Featured Image (optional)', 'hustle' ),
 				'field_description' => __( 'We recommend adding a featured image that grabs visitors\' attention and helps to explain your offering in a better way.', 'hustle' ),
@@ -27,7 +35,7 @@
 		$this->render(
 			'admin/commons/sui-wizard/tab-content/image-uploader',
 			array(
-				'settings'          => $settings,
+				'image_url'         => $settings['background_image'],
 				'attribute'         => 'background_image',
 				'field_title'       => __( 'Background Image (optional)', 'hustle' ),
 				/* translators: module type in smallcaps and singular. */

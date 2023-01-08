@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $component = '.hustle-form .hustle-checkbox:not(.hustle-gdpr)';
@@ -56,7 +60,7 @@ $font_family     = $typography['checkbox_font_family'];
 $font_size       = $typography['checkbox_font_size'] . $typography['checkbox_font_size_unit'];
 $font_weight     = $typography['checkbox_font_weight'];
 $font_style      = 'normal';
-$alignment       = $typography['checkbox_alignment'];
+$alignment       = ( ! $is_rtl ) ? $typography['checkbox_alignment'] : 'right';
 $line_height     = $typography['checkbox_line_height'] . $typography['checkbox_line_height_unit'];
 $letter_spacing  = $typography['checkbox_letter_spacing'] . $typography['checkbox_letter_spacing_unit'];
 $text_transform  = $typography['checkbox_text_transform'];
@@ -83,7 +87,7 @@ if ( 'regular' === $font_weight ) {
 $mobile_font_size       = ( '' !== $typography['checkbox_font_size_mobile'] ) ? $typography['checkbox_font_size_mobile'] . $typography['checkbox_font_size_unit_mobile'] : $font_size;
 $mobile_font_weight     = $typography['checkbox_font_weight_mobile'];
 $mobile_font_style      = 'normal';
-$mobile_alignment       = $typography['checkbox_alignment_mobile'];
+$mobile_alignment       = ( ! $is_rtl ) ? $typography['checkbox_alignment_mobile'] : 'right';
 $mobile_line_height     = ( '' !== $typography['checkbox_line_height_mobile'] ) ? $typography['checkbox_line_height_mobile'] . $typography['checkbox_line_height_unit_mobile'] : $line_height;
 $mobile_letter_spacing  = ( '' !== $typography['checkbox_letter_spacing_mobile'] ) ? $typography['checkbox_letter_spacing_mobile'] . $typography['checkbox_letter_spacing_unit_mobile'] : $letter_spacing;
 $mobile_text_transform  = $typography['checkbox_text_transform'];

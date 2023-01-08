@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_ActiveCampaign_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_ActiveCampaign_Form_Hooks
@@ -14,8 +19,9 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
+	 * @throws Exception Missed required fields.
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
@@ -47,26 +53,26 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 			$api_key         = $addon->get_setting( 'api_key', '', $global_multi_id );
 			$api             = $addon::api( $api_url, $api_key );
 
-			// check if email exists
+			// check if email exists.
 			if ( empty( $submitted_data['email'] ) ) {
 				throw new Exception( __( 'Required Field "email" was not filled by the user.', 'hustle' ) );
 			}
 
 			// check module.
-			// used for custom field label
+			// used for custom field label.
 			$module = new Hustle_Module_Model( $module_id );
 			if ( is_wp_error( $module ) ) {
 				return $module;
 			}
-			// set up basics
+			// set up basics.
 			$submitted_data = $this->check_legacy( $submitted_data );
-			$submitted_data = $this->_check_default_fields( $submitted_data );
+			$submitted_data = $this->check_default_fields( $submitted_data );
 			$sign_up        = $addon_setting['sign_up_to'];
 			$is_list        = empty( $addon_setting['sign_up_to'] ) || 'form' !== $addon_setting['sign_up_to'];
 			$id             = $is_list ? $addon_setting['list_id'] : $addon_setting['form_id'];
 			$sign_up_to     = ! empty( $sign_up ) ? $sign_up : 'list';
 
-			// set up custom fields
+			// set up custom fields.
 			$custom_fields = array_diff_key(
 				$submitted_data,
 				array(
@@ -107,7 +113,7 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 				$api->add_custom_fields( $prepared_fields, $id, $module );
 			}
 
-			// store the new custom fields key
+			// store the new custom fields key.
 			if ( ! empty( $custom_fields ) ) {
 				foreach ( $custom_fields as $key => $value ) {
 					if ( ! in_array( strtoupper( $key ), $reserved_fields, true ) ) {
@@ -133,7 +139,7 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 				$form_settings_instance
 			);
 
-			// subscribe
+			// subscribe.
 			$res = $api->subscribe( $id, $submitted_data, $module, $orig_data, $sign_up_to );
 
 			/**
@@ -154,7 +160,7 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 				$form_settings_instance
 			);
 
-			// result validation
+			// result validation.
 			if ( is_wp_error( $res ) ) {
 				$is_sent       = false;
 				$member_status = __( 'Member could not be subscribed.', 'hustle' );
@@ -198,11 +204,35 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 	}
 
 	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$sign_up_to             = $addon_setting_values['sign_up_to'];
+		$list_id                = 'form' === $sign_up_to ? $addon_setting_values['form_id'] : $addon_setting_values['list_id'];
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
+		$api_url                = $addon->get_setting( 'api_url', '', $global_multi_id );
+		$api_key                = $addon->get_setting( 'api_key', '', $global_multi_id );
+
+		try {
+			$api = $addon::api( $api_url, $api_key );
+			$api->delete_email( $list_id, $email, $sign_up_to );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Check whether the email is already subscribed.
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -270,11 +300,11 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 			return $is_success;
 		}
@@ -289,21 +319,21 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 	 * This method is to be inherited
 	 * And extended by child classes.
 	 *
-	 * Make use of the property `$_subscriber`
+	 * Make use of the property `$subscriber`
 	 * Method to omit double api calls
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param   object $api
-	 * @param   mixed  $data
+	 * @param   object $api Api.
+	 * @param   mixed  $data Data.
 	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ) {
-			$this->_subscriber[ md5( $data['email'] ) ] = $api->email_exist( $data['email'], $data['list'] );
+		if ( empty( $this->subscriber ) && ! isset( $this->subscriber[ md5( $data['email'] ) ] ) ) {
+			$this->subscriber[ md5( $data['email'] ) ] = $api->email_exist( $data['email'], $data['list'] );
 		}
 
-		return $this->_subscriber[ md5( $data['email'] ) ];
+		return $this->subscriber[ md5( $data['email'] ) ];
 	}
 
 	/**
@@ -317,7 +347,7 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 	 *
 	 * @since 4.1
 	 *
-	 * @param string hustle field type
+	 * @param string $type hustle field type.
 	 * @return string Api field type
 	 */
 	protected function get_field_type( $type ) {
@@ -334,14 +364,15 @@ class Hustle_ActiveCampaign_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstra
 		return $type;
 	}
 
-	/*
+	/**
 	 * Check for default API fields
 	 *
 	 * @since 4.0
 	 *
+	 * @param array $data Data.
 	 * @return array
 	 */
-	private function _check_default_fields( $data ) {
+	private function check_default_fields( $data ) {
 		$uppercase = array_change_key_case( $data, CASE_UPPER );
 		if ( isset( $uppercase['FIRSTNAME'] ) && ( ! isset( $data['first_name'] ) || empty( $data['first_name'] ) ) ) {
 			$data['first_name'] = $uppercase['FIRSTNAME'];

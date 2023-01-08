@@ -7,10 +7,11 @@
  * @package Hustle
  * @since 4.4.6
  */
-$is_free = Opt_In_Utils::_is_free();
+
+$is_free = Opt_In_Utils::is_free();
 
 $header = array(
-	'title' => 'Tutorials'
+	'title' => 'Tutorials',
 );
 
 $footer = array(

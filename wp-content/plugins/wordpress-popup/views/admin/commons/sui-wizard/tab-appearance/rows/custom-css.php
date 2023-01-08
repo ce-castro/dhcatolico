@@ -167,7 +167,7 @@ if ( Hustle_Module_Model::EMBEDDED_MODULE !== $module_type ) {
 
 			<?php } ?>
 
-			<div id="hustle_custom_css" style="height: 210px;"><?php echo $settings['custom_css']; ?></div>
+			<div id="hustle_custom_css" style="height: 210px;"><?php echo $settings['custom_css']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 
 		</div>
 

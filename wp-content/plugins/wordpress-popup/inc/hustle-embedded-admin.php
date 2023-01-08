@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Embedded_Admin
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_Embedded_Admin' ) ) :
 

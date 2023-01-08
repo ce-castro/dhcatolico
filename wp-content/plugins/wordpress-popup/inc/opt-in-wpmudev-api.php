@@ -1,10 +1,20 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Opt_In_WPMUDEV_API
+ *
+ * @package Hustle
+ */
 
+/**
+ * Class Opt_In_WPMUDEV_API
+ */
 class Opt_In_WPMUDEV_API {
 	const DOMAIN       = 'https://wpmudev.com';
 	const REDIRECT_URI = 'https://wpmudev.com/api/hustle/v1/provider';
 
 	/**
+	 * Nonce option name
+	 *
 	 * @var string
 	 */
 	private $nonce_option_name = 'hustle_custom_nonce';
@@ -33,7 +43,7 @@ class Opt_In_WPMUDEV_API {
 	/**
 	 * Helper function to validate nonce value.
 	 *
-	 * @param string $nonce
+	 * @param string $nonce Nonce.
 	 *
 	 * @return bool
 	 */
@@ -41,7 +51,16 @@ class Opt_In_WPMUDEV_API {
 		return $nonce === $this->get_nonce_value();
 	}
 
-	public function _get_redirect_uri( $provider, $action, $params = array(), $migration = 0 ) {
+	/**
+	 * Get redirect URL
+	 *
+	 * @param string $provider Provider.
+	 * @param string $action Action.
+	 * @param array  $params Params.
+	 * @param bool   $migration Migration.
+	 * @return string
+	 */
+	public function redirect_uri( $provider, $action, $params = array(), $migration = 0 ) {
 		$params = wp_parse_args(
 			$params,
 			array(
@@ -59,6 +78,7 @@ class Opt_In_WPMUDEV_API {
 	/**
 	 * Validates request callback from WPMU DEV
 	 *
+	 * @param string $provider Provider.
 	 * @return bool
 	 */
 	public function validate_callback_request( $provider ) {
@@ -73,13 +93,12 @@ class Opt_In_WPMUDEV_API {
 	/**
 	 * Print error page on failed integration.
 	 *
-	 * @param string $message
-	 * @param string $retry_url
-	 * @param string $cancel_url
+	 * @param string $message Message.
+	 * @param string $retry_url Retry URL.
+	 * @param string $cancel_url Cancel URL.
 	 */
-	public function wp_die( $message, $retry_url = '', $cancel_url = '' ) {
-		//phpcs:ignore
-		$html = sprintf( '<p><img src="%s" /></p>', Opt_In::$plugin_url . 'assets/img/hustle.png' );
+	public function api_die( $message, $retry_url = '', $cancel_url = '' ) {
+		$html  = sprintf( '<p><img src="%s" /></p>', Opt_In::$plugin_url . 'assets/img/hustle.png' );
 		$html .= sprintf( '<p>%s</p>', $message );
 
 		if ( ! empty( $retry_url ) ) {

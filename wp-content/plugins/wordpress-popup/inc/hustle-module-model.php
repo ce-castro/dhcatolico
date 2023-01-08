@@ -1,23 +1,21 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Module_Model
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Module_Model
- *
- * @property Hustle_Module_Decorator $decorated
  */
-
 class Hustle_Module_Model extends Hustle_Model {
-
-	public static function instance() {
-		_deprecated_function( __METHOD__, '4.3.0', 'new Hustle_Module_Model' );
-		return new self();
-	}
 
 	/**
 	 * Get the sub-types for embedded modules.
 	 *
 	 * @since the beggining of time
 	 * @since 4.0 "after_content" changed to "inline"
+	 * @param bool $with_titles With titles.
 	 *
 	 * @return array
 	 */
@@ -37,6 +35,7 @@ class Hustle_Module_Model extends Hustle_Model {
 	 * Get the sub-types for this module.
 	 *
 	 * @since 4.0
+	 * @param bool $with_titles With titles.
 	 *
 	 * @return array
 	 */
@@ -67,7 +66,7 @@ class Hustle_Module_Model extends Hustle_Model {
 	public function get_content() {
 		$data = $this->get_settings_meta( self::KEY_CONTENT );
 
-		if ( ! Opt_In_Utils::_is_free() ) {
+		if ( ! Opt_In_Utils::is_free() ) {
 			if ( ! empty( $data['background_image'] ) ) {
 				$data['background_image'] = self::replace_free_to_pro_folder( $data['background_image'] );
 			}
@@ -96,7 +95,7 @@ class Hustle_Module_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @return Hustle_Popup_Emails
+	 * @return Hustle_Meta_Base_Emails
 	 */
 	public function get_emails() {
 		$data = $this->get_settings_meta( self::KEY_EMAILS );
@@ -109,8 +108,8 @@ class Hustle_Module_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $slug
-	 * @param bool   $get_cached
+	 * @param string $slug Slug.
+	 * @param bool   $get_cached Get cached.
 	 * @return array
 	 */
 	public function get_provider_settings( $slug, $get_cached = true ) {
@@ -122,8 +121,8 @@ class Hustle_Module_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $slug
-	 * @param array  $data
+	 * @param string $slug Slug.
+	 * @param array  $data Data.
 	 * @return array
 	 */
 	public function set_provider_settings( $slug, $data ) {
@@ -144,6 +143,11 @@ class Hustle_Module_Model extends Hustle_Model {
 		return new Hustle_Meta_Base_Integrations( $stored, $this );
 	}
 
+	/**
+	 * Get design
+	 *
+	 * @return \Hustle_Meta_Base_Design
+	 */
 	public function get_design() {
 		$stored = $this->get_settings_meta( self::KEY_DESIGN );
 		return new Hustle_Meta_Base_Design( $stored, $this );
@@ -155,7 +159,7 @@ class Hustle_Module_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @return Hustle_Embedded_Display
+	 * @return Hustle_Meta_Base_Display
 	 */
 	public function get_display() {
 		return new Hustle_Meta_Base_Display( $this->get_settings_meta( self::KEY_DISPLAY_OPTIONS ), $this );
@@ -206,7 +210,7 @@ class Hustle_Module_Model extends Hustle_Model {
 	 * Set the schedule flags.
 	 *
 	 * @since 4.2.0
-	 * @param array $flags
+	 * @param array $flags Flags.
 	 * @return void
 	 */
 	public function set_schedule_flags( $flags ) {
@@ -428,7 +432,7 @@ class Hustle_Module_Model extends Hustle_Model {
 			return false;
 		}
 
-		// Proceed to unsubscribe
+		// Proceed to unsubscribe.
 		foreach ( $email_data['lists_id'] as $id ) {
 			$unsubscribed = $this->remove_local_subscription_by_email_and_module_id( $email, $id );
 		}
@@ -655,6 +659,11 @@ class Hustle_Module_Model extends Hustle_Model {
 		return false;
 	}
 
+	/**
+	 * Get renderer
+	 *
+	 * @return \Hustle_Module_Renderer
+	 */
 	public function get_renderer() {
 		return new Hustle_Module_Renderer();
 	}
@@ -664,7 +673,7 @@ class Hustle_Module_Model extends Hustle_Model {
 	 * This way the data is handled properly along hustle.
 	 *
 	 * @since 4.0
-	 * @param string $name
+	 * @param string $name Name.
 	 * @return string
 	 */
 	private function sanitize_form_field_name( $name ) {
@@ -673,8 +682,14 @@ class Hustle_Module_Model extends Hustle_Model {
 		return sanitize_text_field( $sanitized_name );
 	}
 
+	/**
+	 * Sanitize form elements
+	 *
+	 * @param array $form_elements Form elements.
+	 * @return type
+	 */
 	public function sanitize_form_elements( $form_elements ) {
-		// Sanitize GDPR message
+		// Sanitize GDPR message.
 		if ( isset( $form_elements['gdpr']['gdpr_message'] ) ) {
 			$allowed_html                          = array(
 				'a'      => array(

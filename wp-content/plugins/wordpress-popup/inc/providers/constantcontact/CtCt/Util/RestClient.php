@@ -90,9 +90,9 @@ class RestClient implements RestClientInterface
 
 		//logging data
 		$utils = \Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request 	= $url;
-		$utils->_last_data_sent 	= $data;
-		$utils->_last_data_received = $response;
+		$utils->last_url_request 	= $url;
+		$utils->last_data_sent 	= $data;
+		$utils->last_data_received = $response;
 
         // check if any errors were returned
         $body = json_decode($response->body, true);

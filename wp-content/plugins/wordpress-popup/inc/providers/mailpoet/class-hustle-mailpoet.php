@@ -21,7 +21,7 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 *
 	 * @var self|null
 	 */
-	protected static $_instance;
+	protected static $instance;
 
 	/**
 	 * Provider slug.
@@ -30,14 +30,14 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 *
 	 * @var string
 	 */
-	protected $_slug = 'mailpoet';
+	protected $slug = 'mailpoet';
 
 	/**
 	 * Provider version.
 	 *
 	 * @var string
 	 */
-	protected $_version = '1.0.0';
+	protected $version = '1.0.0';
 
 	/**
 	 * Provider's name class name.
@@ -46,7 +46,7 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 *
 	 * @var string
 	 */
-	protected $_class = __CLASS__;
+	protected $class = __CLASS__;
 
 	/**
 	 * Provider's title.
@@ -55,7 +55,7 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 *
 	 * @var string
 	 */
-	protected $_title = 'Mailpoet';
+	protected $title = 'Mailpoet';
 
 	/**
 	 * Whether there can be multiple global instances.
@@ -73,7 +73,7 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 *
 	 * @var array
 	 */
-	protected $_completion_options = array( 'active' );
+	protected $completion_options = array( 'active' );
 
 	/**
 	 * Class name of form settings.
@@ -82,7 +82,7 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 *
 	 * @var string
 	 */
-	protected $_form_settings = 'Hustle_Mailpoet_Form_Settings';
+	protected $form_settings = 'Hustle_Mailpoet_Form_Settings';
 
 	/**
 	 * Class name of form hooks
@@ -90,7 +90,7 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 * @since 4.4.0
 	 * @var string
 	 */
-	protected $_form_hooks = 'Hustle_Mailpoet_Form_Hooks';
+	protected $form_hooks = 'Hustle_Mailpoet_Form_Hooks';
 
 	/**
 	 * Mailpoet API instance.
@@ -107,19 +107,19 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 	 * @return self|null
 	 */
 	public static function get_instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 		}
 
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
 	 * Provider constructor.
 	 */
 	public function __construct() {
-		$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-		$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+		$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+		$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 	}
 
 	/**
@@ -193,10 +193,10 @@ class Hustle_Mailpoet extends Hustle_Provider_Abstract {
 
 			$active = ! empty( $submitted_data['active'] );
 			// If not active, activate it.
-			if ( ! Hustle_Provider_Utils::is_provider_active( $this->_slug ) ) {
+			if ( ! Hustle_Provider_Utils::is_provider_active( $this->slug ) ) {
 
 				// TODO: Wrap this in a friendlier method.
-				$activated = Hustle_Providers::get_instance()->activate_addon( $this->_slug );
+				$activated = Hustle_Providers::get_instance()->activate_addon( $this->slug );
 				if ( ! $activated ) {
 					$error_message = esc_html( $this->provider_connection_falied() );
 					$has_errors    = true;

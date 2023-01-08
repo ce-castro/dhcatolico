@@ -19,10 +19,12 @@
 define('DB_NAME', 'dhcatolico');
 
 /** MySQL database username */  
-define('DB_USER', getenv("WORDPRESS_DB_USER"));
+//define('DB_USER', getenv("WORDPRESS_DB_USER"));
+define('DB_USER', 'root');
 
 /** MySQL database password */
-define('DB_PASSWORD', getenv("WORDPRESS_DB_PASSWORD"));
+// define('DB_PASSWORD', getenv("WORDPRESS_DB_PASSWORD"));
+define('DB_PASSWORD', '');
 
 /** MySQL hostname */
 define('DB_HOST',  getenv("WORDPRESS_DB_HOST"));

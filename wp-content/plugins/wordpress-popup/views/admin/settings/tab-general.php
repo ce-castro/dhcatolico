@@ -24,6 +24,14 @@
 		?>
 
 		<?php
+		// SETTINGS: Global Tracking Views and Submissions.
+		$this->render(
+			'admin/settings/general/global-tracking',
+			array( 'settings' => $settings )
+		);
+		?>
+
+		<?php
 		// SETTINGS: From Headers.
 		$this->render(
 			'admin/settings/general/from-headers',

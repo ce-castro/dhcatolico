@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Addon_Aweber_Oauth2 class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Addon_Constant_Contact_Oauth
@@ -27,8 +32,12 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 */
 	public $redirect_uri;
 
-
-	protected static $_instances = array();
+	/**
+	 * Instances
+	 *
+	 * @var array
+	 */
+	protected static $instances = array();
 
 	/**
 	 * ConstactContact Oauth Version
@@ -39,6 +48,10 @@ class Hustle_Addon_Aweber_Oauth2 {
 
 	/**
 	 * Constructor
+	 *
+	 * @param string $client_id Client ID.
+	 * @param string $client_secret Client secret.
+	 * @param string $redirect_uri Redirect URI.
 	 */
 	private function __construct( $client_id, $client_secret, $redirect_uri ) {
 		$this->client_id     = $client_id;
@@ -51,17 +64,18 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param string $api_key
+	 * @param string $client_id Client ID.
+	 * @param string $client_secret Client secret.
+	 * @param string $redirect_uri Redirect URI.
 	 *
 	 * @return Hustle_Campaignmonitor|null
-	 * @return Exception
 	 */
 	public static function boot( $client_id, $client_secret, $redirect_uri ) {
-		if ( ! isset( self::$_instances[ md5( $client_secret ) ] ) ) {
-			self::$_instances[ md5( $client_secret ) ] = new static( $client_id, $client_secret, $redirect_uri );
+		if ( ! isset( self::$instances[ md5( $client_secret ) ] ) ) {
+			self::$instances[ md5( $client_secret ) ] = new static( $client_id, $client_secret, $redirect_uri );
 		}
 
-		return self::$_instances[ md5( $client_secret ) ];
+		return self::$instances[ md5( $client_secret ) ];
 	}
 
 	/**
@@ -69,27 +83,27 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param boolean $server - Whether or not to use OAuth2 server flow, alternative is client flow
+	 * @param boolean $server - Whether or not to use OAuth2 server flow, alternative is client flow.
 	 * @param string  $state - An optional value used by the client to maintain state between the request and callback.
 	 *
 	 * @return string $url - The url to send a user to, to grant access to their account
 	 */
-	public function getAuthorizationUrl( $server = true, $state = null ) {
+	public function get_authorization_url( $server = true, $state = null ) {
 		$params = array(
-			'response_type'         => $this->_options( 'response_type_code' ),
+			'response_type'         => $this->options( 'response_type_code' ),
 			'client_id'             => $this->client_id,
-			'scope'                 => implode( ' ', $this->_options( 'scopes' ) ),
+			'scope'                 => implode( ' ', $this->options( 'scopes' ) ),
 			'code_challenge'        => $this->get_pkce(),
 			'code_challenge_method' => 'S256',
 			'redirect_uri'          => 'urn:ietf:wg:oauth:2.0:oob',
 		);
 
-		// add the state param if it was provided
+		// add the state param if it was provided.
 		if ( null !== $state ) {
 			$params['state'] = $state;
 		}
 
-		$url = $this->_options( 'authorization_endpoint' );
+		$url = $this->options( 'authorization_endpoint' );
 		$url = $url . '?' . http_build_query( $params, '', '&', \PHP_QUERY_RFC3986 );
 
 		return $url;
@@ -104,7 +118,7 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 * @return string $hash - code verifier
 	 */
 	public function get_pkce() {
-        return str_replace( array('=', '+', '/' ), array( '', '-', '_' ), base64_encode( hash( 'sha256', $this->_get_pkce_verifier(), true ) ) );  // phpcs:ignore -- ignore base64_encode warning
+		return str_replace( array( '=', '+', '/' ), array( '', '-', '_' ), base64_encode( hash( 'sha256', $this->get_pkce_verifier(), true ) ) );// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	}
 
 	/**
@@ -114,13 +128,13 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 *
 	 * @return string $code_verifier - code verifier
 	 */
-	private function _get_pkce_verifier() {
+	private function get_pkce_verifier() {
 
 		$code_verifier = get_transient( 'hustle_aweber_code_verifier' );
 
-		// if transient not found
+		// if transient not found.
 		if ( empty( $code_verifier ) ) {
-	        $code_verifier = str_replace( array( '=', '+', '/' ), array( '', '-', '_' ), base64_encode( random_bytes( 32 ) ) ); // phpcs:ignore -- ignore base64_encode warning
+			$code_verifier = str_replace( array( '=', '+', '/' ), array( '', '-', '_' ), base64_encode( random_bytes( 32 ) ) );// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			set_transient( 'hustle_aweber_code_verifier', $code_verifier, DAY_IN_SECONDS );
 		}
 		return $code_verifier;
@@ -132,7 +146,7 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $user_agent
+	 * @param string $user_agent User agent.
 	 *
 	 * @return string
 	 */
@@ -146,19 +160,18 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param string $code - code returned from Constant Contact after a user has granted access to their account
+	 * @param string $code - code returned from Constant Contact after a user has granted access to their account.
 	 *
 	 * @return array
-	 * @throws Exception
 	 */
-	public function getAccessToken( $code ) {
-		$verifier = $this->_get_pkce_verifier();
+	public function get_access_token( $code ) {
+		$verifier = $this->get_pkce_verifier();
 		if ( empty( $verifier ) || empty( $code ) ) {
 			return;
 		}
 
 		$params = array(
-			'grant_type'    => $this->_options( 'authorization_code_grant_type' ),
+			'grant_type'    => $this->options( 'authorization_code_grant_type' ),
 			'code'          => $code,
 			'redirect_uri'  => 'urn:ietf:wg:oauth:2.0:oob',
 			'code_verifier' => $verifier,
@@ -169,7 +182,7 @@ class Hustle_Addon_Aweber_Oauth2 {
 			'Content-Type' => 'application/x-www-form-urlencoded',
 		);
 
-		$url = esc_url( $this->_options( 'base_url' ) . $this->_options( 'token_endpoint' ) );
+		$url = esc_url( $this->options( 'base_url' ) . $this->options( 'token_endpoint' ) );
 
 		$response      = $this->post( $url, $header, $params );
 		$response_body = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -181,34 +194,19 @@ class Hustle_Addon_Aweber_Oauth2 {
 	}
 
 	/**
-	 * Get an information about an access token
-	 *
-	 * @since 4.0.2
-	 *
-	 * @param string $accessToken - Constant Contact OAuth2 access token
-	 *
-	 * @return array
-	 * @throws Exception
-	 */
-	public function getTokenInfo( $access_token ) {
-		$url      = $this->_options( 'base_url' ) . $this->_options( 'token_info' );
-		$response = $this->post( $url, array(), 'access_token=' . $access_token );
-		return json_decode( wp_remote_retrieve_body( $response ), true );
-	}
-
-	/**
 	 * Make an Http POST request
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $url - request url
-	 * @param array                            $headers - array of all http headers to send
-	 * @param $data - data to send with request
+	 * @param string $url - request url.
+	 * @param array  $headers - array of all http headers to send.
+	 * @param array  $data - data to send with request.
 	 *
 	 * @return CurlResponse - The response body, http info, and error (if one exists)
+	 * @throws Exception Failed to process request.
 	 */
 	public function post( $url, array $headers = array(), $data = null ) {
-		// Adding extra user agent for wp remote request
+		// Adding extra user agent for wp remote request.
 		add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
 		$_args = array(
@@ -234,11 +232,11 @@ class Hustle_Addon_Aweber_Oauth2 {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param string $key - key to fetch
+	 * @param string $key - key to fetch.
 	 *
 	 * @return string
 	 */
-	private function _options( $key ) {
+	private function options( $key ) {
 		$props = array(
 			'auth' => array(
 				'base_url'                      => 'https://auth.aweber.com/oauth2/',

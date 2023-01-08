@@ -56,7 +56,7 @@ class Hustle_Notifications {
 	 */
 	public function __construct() {
 
-		$this->is_free = Opt_In_Utils::_is_free();
+		$this->is_free = Opt_In_Utils::is_free();
 
 		if ( $this->is_free && ( wp_doing_ajax() || is_admin() ) ) {
 			require_once Opt_In::$plugin_path . 'lib/free-dashboard/module.php';

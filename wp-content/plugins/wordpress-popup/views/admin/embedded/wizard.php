@@ -79,6 +79,7 @@ $this->render(
 					'smallcaps_singular'  => $smallcaps_singular,
 					'feature_image'       => $content_settings['feature_image'],
 					'settings'            => $appearance_settings,
+					'show_cta'            => $content_settings['show_cta'],
 				),
 			),
 			'display'      => array(

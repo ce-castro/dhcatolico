@@ -41,6 +41,7 @@
 				'is_optin'           => $is_optin,
 				'device'             => '',
 				'smallcaps_singular' => $smallcaps_singular,
+				'show_cta'           => $show_cta,
 			)
 		);
 

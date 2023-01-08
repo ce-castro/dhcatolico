@@ -1,3 +1,11 @@
+<?php
+/**
+ * Close icon settings
+ *
+ * @package Hustle
+ */
+
+?>
 <div class="sui-box">
 
 	<div class="sui-box-body">

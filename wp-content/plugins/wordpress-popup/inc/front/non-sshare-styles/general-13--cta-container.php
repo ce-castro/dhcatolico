@@ -61,7 +61,7 @@ $mobile_border_style = ( ! $is_mobile_enabled || ( $is_mobile_enabled && $defaul
 
 // ==================================================
 // Check if "Call to Action" button is enabled.
-if ( '1' === $content['show_cta'] ) {
+if ( '0' !== $content['show_cta'] ) {
 
 	$style .= ' ';
 

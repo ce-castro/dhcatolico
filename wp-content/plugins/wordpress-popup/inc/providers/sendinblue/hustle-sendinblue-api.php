@@ -1,14 +1,20 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Send In Blue API Helper
  *
  * Modification from https://github.com/mailin-api/mailin-api-php/tree/master/V2.0
+ *
+ * @package Hustle
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
 if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
+	/**
+	 * Hustle_SendinBlue_Api class
+	 */
 	class Hustle_SendinBlue_Api {
 
 
@@ -18,7 +24,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 * @var array
 		 */
-		private $_endpoint = 'https://api.sendinblue.com/v3/';
+		private $endpoint = 'https://api.sendinblue.com/v3/';
 
 		/**
 		 * SendinBlue API Url
@@ -26,7 +32,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 * @var array
 		 */
-		private $_migrate_endpoint = 'https://api.sendinblue.com/v2.0/account/generateapiv3key';
+		private $migrate_endpoint = 'https://api.sendinblue.com/v2.0/account/generateapiv3key';
 
 		/**
 		 * API Key
@@ -34,17 +40,19 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 * @var string
 		 */
-		private $_api_key = '';
+		private $api_key = '';
 
 		/**
 		 * Instances of sendinblue
 		 *
 		 * @var array
 		 */
-		private static $_instances = array();
+		private static $instances = array();
 
 		/**
-		 * version of sendinblue API Wrapper
+		 * Version of sendinblue API Wrapper
+		 *
+		 * @var string
 		 */
 		const HUSTLE_PROVIDER_SENDINBLUE_VERSION = '1.0';
 
@@ -55,13 +63,14 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * want to force the `boot()` method to
 		 * initate the class and maitain instances
 		 *
-		 * @param $api_key
+		 * @param string $api_key Api key.
+		 * @throws Exception Missing required API Credential.
 		 */
 		private function __construct( $api_key ) {
 			if ( ! $api_key ) {
 				throw new Exception( __( 'Missing required API Credential', 'hustle' ) );
 			}
-			$this->_api_key = $api_key;
+			$this->api_key = $api_key;
 		}
 
 		/**
@@ -69,20 +78,19 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param $api_key
+		 * @param string $api_key Api key.
 		 *
 		 * @return Hustle_SendinBlue_Api|null
-		 * @throws Exception
 		 */
 		public static function boot( $api_key ) {
 
 			$instance_key = md5( $api_key );
 
-			if ( ! isset( self::$_instances[ $instance_key ] ) ) {
-				self::$_instances[ $instance_key ] = new static( $api_key );
+			if ( ! isset( self::$instances[ $instance_key ] ) ) {
+				self::$instances[ $instance_key ] = new static( $api_key );
 			}
 
-			return self::$_instances[ $instance_key ];
+			return self::$instances[ $instance_key ];
 		}
 
 		/**
@@ -90,8 +98,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.1
 		 *
-		 * @param $user_agent
-		 *
+		 * @param string $user_agent User agent.
 		 * @return string
 		 */
 		public function filter_user_agent( $user_agent ) {
@@ -114,18 +121,22 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
+		 * @param string $action Action.
+		 * @param array  $args Args.
+		 * @param string $verb Verb.
+		 * @param bool   $migrate Migrate.
 		 * @return Mixed|Array|String|
-		 * @throws Exception
+		 * @throws Exception Failed to processing request.
 		 */
-		private function _request( $action, $args, $verb = 'GET', $migrate = false ) {
+		private function request( $action, $args, $verb = 'GET', $migrate = false ) {
 
-			// Adding extra user agent for wp remote request
+			// Adding extra user agent for wp remote request.
 			add_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
 
-			$url = esc_url( trailingslashit( $this->_endpoint ) . $action );
+			$url = esc_url( trailingslashit( $this->endpoint ) . $action );
 
 			if ( true === $migrate ) {
-				$url = esc_url( trailingslashit( $this->_migrate_endpoint ) );
+				$url = esc_url( trailingslashit( $this->migrate_endpoint ) );
 			}
 
 			/**
@@ -140,7 +151,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 			$url = apply_filters( 'hustle_provider_sendinblue_api_url', $url, $verb, $args );
 
 			$headers = array(
-				'api-key'      => $this->_api_key,
+				'api-key'      => $this->api_key,
 				'content-type' => 'application/json',
 			);
 			/**
@@ -181,11 +192,11 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 
 			$res = wp_remote_request( $url, $_args );
 
-			// logging data
-			$utils                      = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request   = $url;
-			$utils->_last_data_sent     = $_args;
-			$utils->_last_data_received = $res;
+			// logging data.
+			$utils                     = Hustle_Provider_Utils::get_instance();
+			$utils->last_url_request   = $url;
+			$utils->last_data_sent     = $_args;
+			$utils->last_data_received = $res;
 
 			$wp_response = $res;
 			remove_filter( 'http_headers_useragent', array( $this, 'filter_user_agent' ) );
@@ -198,7 +209,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 
 			$body = wp_remote_retrieve_body( $res );
 
-			// probably silent mode
+			// probably silent mode.
 			if ( ! empty( $body ) ) {
 				$res = json_decode( $body );
 			}
@@ -215,10 +226,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 						$msg = $res->message;
 					}
 
-					if ( 404 === $status_code ) {
-						throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
-					}
-
+					/* translators: error message */
 					throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
 				}
 			}
@@ -242,28 +250,35 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		/**
 		 * Prepare a get request
 		 *
+		 * @param string $endpoint Endpoint.
+		 * @param array  $args Args.
 		 * @since 4.0.2
 		 */
-		private function _get( $endpoint, $args ) {
-			return $this->_request( $endpoint, $args, 'GET' );
+		private function get( $endpoint, $args ) {
+			return $this->request( $endpoint, $args, 'GET' );
 		}
 
 		/**
 		 * Prepare a post request
 		 *
+		 * @param string $endpoint Endpoint.
+		 * @param array  $args Args.
+		 * @param bool   $migrate Migrate.
 		 * @since 4.0.2
 		 */
-		private function _post( $endpoint, $args, $migrate = false ) {
-			return $this->_request( $endpoint, $args, 'POST', $migrate );
+		private function post( $endpoint, $args, $migrate = false ) {
+			return $this->request( $endpoint, $args, 'POST', $migrate );
 		}
 
 		/**
 		 * Prepare a put request
 		 *
+		 * @param string $endpoint Endpoint.
+		 * @param array  $args Args.
 		 * @since 4.0.2
 		 */
-		private function _put( $endpoint, $args ) {
-			return $this->_request( $endpoint, $args, 'PUT' );
+		private function put( $endpoint, $args ) {
+			return $this->request( $endpoint, $args, 'PUT' );
 		}
 
 		/**
@@ -272,7 +287,7 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 */
 		public function get_account() {
-			return $this->_get( 'account', array() );
+			return $this->get( 'account', array() );
 		}
 
 		/**
@@ -280,13 +295,11 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param array $args
-		 *
+		 * @param array $args Args.
 		 * @return array|mixed|object
-		 * @return Exception
 		 */
 		public function get_lists( $args ) {
-			return $this->_get( 'contacts/lists', $args );
+			return $this->get( 'contacts/lists', $args );
 		}
 
 		/**
@@ -294,13 +307,12 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param array $args
+		 * @param array $data Data.
 		 *
 		 * @return array|mixed|object
-		 * @return Exception
 		 */
 		public function create_contact( $data ) {
-			return $this->_post( 'contacts', $data );
+			return $this->post( 'contacts', $data );
 		}
 
 		/**
@@ -308,13 +320,26 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param array $args
-		 *
+		 * @param array $data Data.
 		 * @return array|mixed|object
-		 * @return Exception
 		 */
 		public function update_contact( $data ) {
-			return $this->_put( 'contacts/' . $data['email'], $data );
+			return $this->put( 'contacts/' . $data['email'], $data );
+		}
+
+		/**
+		 * Delete subscriber from the list
+		 *
+		 * @param string $list_id List ID.
+		 * @param string $email Email.
+		 *
+		 * @return bool
+		 */
+		public function delete_email( $list_id, $email ) {
+			$endpoint = 'contacts/lists/' . $list_id . '/contacts/remove';
+			$res      = $this->post( $endpoint, array( 'emails' => array( $email ) ) );
+
+			return ! is_wp_error( $res ) && ! empty( $res->contacts->success );
 		}
 
 		/**
@@ -322,13 +347,12 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param       $email
+		 * @param string $email Email.
 		 *
 		 * @return array|mixed|object
-		 * @return Exception
 		 */
 		public function get_contact( $email ) {
-			return $this->_get(
+			return $this->get(
 				'contacts/' .
 				rawurlencode( trim( $email ) ),
 				array()
@@ -341,10 +365,9 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 * @since 4.0.2
 		 *
 		 * @return array|mixed|object
-		 * @return Exception
 		 */
 		public function get_attributes() {
-			return $this->_get(
+			return $this->get(
 				'contacts/attributes',
 				array()
 			);
@@ -355,15 +378,14 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param       $name
-		 * @param       $category
-		 * @param array    $args
+		 * @param string $name Name.
+		 * @param string $category Category.
+		 * @param array  $data Data.
 		 *
 		 * @return array|mixed|object
-		 * @return Exception
 		 */
 		public function create_attributes( $name, $category = 'normal', $data = array() ) {
-			return $this->_post(
+			return $this->post(
 				'contacts/attributes/' .
 				rawurlencode( trim( $category ) ) . '/' .
 				rawurlencode( trim( $name ) ),
@@ -376,15 +398,12 @@ if ( ! class_exists( 'Hustle_SendinBlue_Api' ) ) :
 		 *
 		 * @since 4.0.2
 		 *
-		 * @param       $name
-		 * @param       $category
-		 * @param array    $args
+		 * @param string $name Name.
 		 *
 		 * @return array|mixed|object
-		 * @return Exception
 		 */
 		public function migrate_to_v3( $name ) {
-			return $this->_post( ' ', $name, true );
+			return $this->post( ' ', $name, true );
 		}
 	}
 endif;

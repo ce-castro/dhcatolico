@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_ConvertKit_Api class
+ *
+ * @package Hustle
+ */
+
 /**
  * ConvertKit API
  *
@@ -6,37 +12,53 @@
  **/
 class Hustle_ConvertKit_Api {
 
-	private $_api_key;
-	private $_api_secret;
-	private $_endpoint = 'https://api.convertkit.com/v3/';
+	/**
+	 * Api key
+	 *
+	 * @var string
+	 */
+	private $api_key;
+	/**
+	 * Api secret
+	 *
+	 * @var string
+	 */
+	private $api_secret;
+	/**
+	 * Endpoint
+	 *
+	 * @var string
+	 */
+	private $endpoint = 'https://api.convertkit.com/v3/';
 
 	/**
 	 * Constructs class with required data
 	 *
 	 * Hustle_ConvertKit_Api constructor.
 	 *
-	 * @param $api_key
+	 * @param string $api_key Api key.
+	 * @param string $api_secret Api secret.
 	 */
 	public function __construct( $api_key, $api_secret = '' ) {
-		$this->_api_key    = $api_key;
-		$this->_api_secret = $api_secret;
+		$this->api_key    = $api_key;
+		$this->api_secret = $api_secret;
 	}
 
 	/**
 	 * Sends request to the endpoint url with the provided $action
 	 *
-	 * @param string $verb
-	 * @param string $action rest action
-	 * @param array  $args
+	 * @param string $action rest action.
+	 * @param string $verb Verb.
+	 * @param array  $args Args.
 	 * @return object|WP_Error
 	 */
-	private function _request( $action, $verb = 'GET', $args = array() ) {
-		$url = trailingslashit( $this->_endpoint ) . $action;
+	private function request( $action, $verb = 'GET', $args = array() ) {
+		$url = trailingslashit( $this->endpoint ) . $action;
 
 		$_args = array(
 			'method'  => $verb,
 			'headers' => array(
-				'X-Auth-Token' => 'api-key ' . $this->_api_key,
+				'X-Auth-Token' => 'api-key ' . $this->api_key,
 				'Content-Type' => 'application/json;charset=utf-8',
 			),
 		);
@@ -49,11 +71,11 @@ class Hustle_ConvertKit_Api {
 
 		$res = wp_remote_request( $url, $_args );
 
-		// logging data
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request   = $url;
-		$utils->_last_data_sent     = $_args;
-		$utils->_last_data_received = $res;
+		// logging data.
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_url_request   = $url;
+		$utils->last_data_sent     = $_args;
+		$utils->last_data_received = $res;
 
 		if ( ! is_wp_error( $res ) && is_array( $res ) ) {
 
@@ -72,34 +94,34 @@ class Hustle_ConvertKit_Api {
 	/**
 	 * Sends rest GET request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _get( $action, $args = array() ) {
-		return $this->_request( $action, 'GET', $args );
+	private function get( $action, $args = array() ) {
+		return $this->request( $action, 'GET', $args );
 	}
 
 	/**
 	 * Sends rest POST request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _post( $action, $args = array() ) {
-		return $this->_request( $action, 'POST', $args );
+	private function post( $action, $args = array() ) {
+		return $this->request( $action, 'POST', $args );
 	}
 
 	/**
 	 * Sends rest PUT request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _put( $action, $args = array() ) {
-		return $this->_request( $action, 'PUT', $args );
+	private function put( $action, $args = array() ) {
+		return $this->request( $action, 'PUT', $args );
 	}
 
 	/**
@@ -108,10 +130,10 @@ class Hustle_ConvertKit_Api {
 	 * @return array|WP_Error
 	 */
 	public function get_forms() {
-		$forms = $this->_get(
+		$forms = $this->get(
 			'forms',
 			array(
-				'api_key' => $this->_api_key,
+				'api_key' => $this->api_key,
 			)
 		);
 		if ( is_wp_error( $forms ) ) {
@@ -126,10 +148,10 @@ class Hustle_ConvertKit_Api {
 	 * @return array|WP_Error
 	 */
 	public function get_subscribers() {
-		$subscribers = $this->_get(
+		$subscribers = $this->get(
 			'subscribers',
 			array(
-				'api_secret' => $this->_api_secret,
+				'api_secret' => $this->api_secret,
 			)
 		);
 		if ( is_wp_error( $subscribers ) ) {
@@ -144,10 +166,10 @@ class Hustle_ConvertKit_Api {
 	 * @return array|WP_Error
 	 */
 	public function get_form_custom_fields() {
-		return $this->_get(
+		return $this->get(
 			'custom_fields',
 			array(
-				'api_key' => $this->_api_key,
+				'api_key' => $this->api_key,
 			)
 		)->custom_fields;
 	}
@@ -155,7 +177,7 @@ class Hustle_ConvertKit_Api {
 	/**
 	 * Add new custom fields to subscription
 	 *
-	 * @param $field_data
+	 * @param array $field_data Fields data.
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function create_custom_fields( $field_data ) {
@@ -163,7 +185,7 @@ class Hustle_ConvertKit_Api {
 		$args = array(
 			'body' => $field_data,
 		);
-		$res  = $this->_post( $url, $args );
+		$res  = $this->post( $url, $args );
 
 		return empty( $res ) ? __( 'Successfully added custom field', 'hustle' ) : $res;
 	}
@@ -171,8 +193,8 @@ class Hustle_ConvertKit_Api {
 	/**
 	 * Add new subscriber
 	 *
-	 * @param $form_id
-	 * @param $data
+	 * @param string $form_id Form ID.
+	 * @param array  $data Data.
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function subscribe( $form_id, $data ) {
@@ -180,7 +202,7 @@ class Hustle_ConvertKit_Api {
 		$args = array(
 			'body' => $data,
 		);
-		$res  = $this->_post( $url, $args );
+		$res  = $this->post( $url, $args );
 
 		return empty( $res ) ? __( 'Successful subscription', 'hustle' ) : $res;
 	}
@@ -190,37 +212,58 @@ class Hustle_ConvertKit_Api {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $form_id
-	 * @param $data
+	 * @param string $id ID.
+	 * @param array  $data Data.
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function update_subscriber( $id, $data ) {
 		$url                = 'subscribers/' . $id;
-		$data['api_secret'] = $this->_api_secret;
+		$data['api_secret'] = $this->api_secret;
 		$args               = array(
 			'body' => $data,
 		);
-		$res                = $this->_put( $url, $args );
+		$res                = $this->put( $url, $args );
 
 		return empty( $res ) ? __( 'Successful subscription', 'hustle' ) : $res;
 	}
 
 	/**
+	 * Delete subscriber from the list
+	 *
+	 * @param string $list_id List ID.
+	 * @param string $email Email.
+	 *
+	 * @return bool
+	 */
+	public function delete_email( $list_id, $email ) {
+		$args = array(
+			'body' => array(
+				'email'      => $email,
+				'form'       => $list_id, // Actually they don't support this argument and have ability only cancel subscriptions to all forms.
+				'api_secret' => $this->api_secret,
+			),
+		);
+		$res  = $this->put( 'unsubscribe', $args );
+
+		return ! is_wp_error( $res );
+	}
+
+	/**
 	 * Verify if an email is already a subscriber.
 	 *
-	 * @param (string) $email
+	 * @param (string) $email Email.
 	 *
 	 * @return (object) Returns data of existing subscriber if exist otherwise false.
 	 **/
 	public function is_subscriber( $email ) {
 		$url  = 'subscribers';
 		$args = array(
-			'api_key'       => $this->_api_key,
-			'api_secret'    => $this->_api_secret,
+			'api_key'       => $this->api_key,
+			'api_secret'    => $this->api_secret,
 			'email_address' => $email,
 		);
 
-		$res = $this->_get( $url, $args );
+		$res = $this->get( $url, $args );
 
 		return ! is_wp_error( $res ) && ! empty( $res->subscribers ) ? array_shift( $res->subscribers ) : false;
 	}
@@ -228,23 +271,23 @@ class Hustle_ConvertKit_Api {
 	/**
 	 * Verify if an email is already a subscriber in a form.
 	 *
-	 * @param string  $email
-	 * @param integer $form_id
+	 * @param string  $email Email.
+	 * @param integer $form_id Form ID.
 	 *
 	 * @return boolean True if the subscriber exists, otherwise false.
 	 **/
 	public function is_form_subscriber( $email, $form_id ) {
 		$url   = 'forms/' . $form_id . '/subscriptions';
 		$args  = array(
-			'api_secret' => $this->_api_secret,
+			'api_secret' => $this->api_secret,
 		);
 		$exist = false;
-		$res   = $this->_get( $url, $args );
+		$res   = $this->get( $url, $args );
 
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_data_received = $res;
-		$utils->_last_url_request   = trailingslashit( $this->_endpoint ) . $url;
-		$utils->_last_data_sent     = $args;
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_data_received = $res;
+		$utils->last_url_request   = trailingslashit( $this->endpoint ) . $url;
+		$utils->last_data_sent     = $args;
 
 		if ( is_wp_error( $res ) ) {
 			Hustle_Provider_Utils::maybe_log( 'There was an error retrieving the subscribers from Convertkit: ' . $res->get_error_message() );
@@ -259,16 +302,16 @@ class Hustle_ConvertKit_Api {
 			if ( false === $exist && $res->total_pages > 1 ) {
 				for ( $i = 2; $i <= $res->total_pages; $i++ ) {
 
-					$url                        = 'forms/' . $form_id . '/subscriptions';
-					$args                       = array(
-						'api_secret' => $this->_api_secret,
+					$url                       = 'forms/' . $form_id . '/subscriptions';
+					$args                      = array(
+						'api_secret' => $this->api_secret,
 						'page'       => $i,
 					);
-					$res                        = $this->_get( $url, $args );
-					$utils                      = Hustle_Provider_Utils::get_instance();
-					$utils->_last_data_received = $res;
-					$utils->_last_url_request   = trailingslashit( $this->_endpoint ) . $url;
-					$utils->_last_data_sent     = $args;
+					$res                       = $this->get( $url, $args );
+					$utils                     = Hustle_Provider_Utils::get_instance();
+					$utils->last_data_received = $res;
+					$utils->last_url_request   = trailingslashit( $this->endpoint ) . $url;
+					$utils->last_data_sent     = $args;
 
 					$subscriptions  = wp_list_pluck( $res->subscriptions, 'subscriber' );
 					$subscribers    = wp_list_pluck( $subscriptions, 'email_address' );

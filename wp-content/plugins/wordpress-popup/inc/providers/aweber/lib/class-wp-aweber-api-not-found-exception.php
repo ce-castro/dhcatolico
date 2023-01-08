@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception

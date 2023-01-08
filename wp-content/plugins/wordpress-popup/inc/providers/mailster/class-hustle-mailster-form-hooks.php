@@ -72,12 +72,29 @@ class Hustle_Mailster_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$this->form_settings_instance
 		);
 
-		// Only update `_submit_form_error_message` when $is_success is not empty nor 'true'.
+		// Only update `submit_form_error_message` when $is_success is not empty nor 'true'.
 		if ( true !== $is_success && ! empty( $is_success ) ) {
-			$this->_submit_form_error_message = (string) $is_success;
+			$this->submit_form_error_message = (string) $is_success;
 		}
 
 		return $is_success;
+	}
+
+	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$list_id                = $addon_setting_values['list_id'];
+		try {
+			mailster( 'subscribers' )->unsubscribe_by_mail( $email, $list_id );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
 	}
 
 	/**

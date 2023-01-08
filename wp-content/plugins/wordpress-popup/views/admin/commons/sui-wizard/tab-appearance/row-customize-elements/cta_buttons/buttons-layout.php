@@ -1,19 +1,18 @@
 <?php
+/**
+ * Buttons Layout settings
+ *
+ * @package Hustle
+ */
+
 $device_suffix = $device ? '_' . $device : '';
 
 $layout_type      = 'cta_buttons_layout_type' . $device_suffix;
 $layout_gap_value = 'cta_buttons_layout_gap_value' . $device_suffix;
 $layout_gap_unit  = 'cta_buttons_layout_gap_unit' . $device_suffix;
-
-$units = array(
-	'px' => 'px',
-	'%'  => '%',
-	'vw' => 'vw',
-	'vh' => 'vh',
-);
 ?>
 
-<div class="sui-box-settings-row">
+<div class="sui-box-settings-row hustle-cta_button_layout" style="<?php echo ( '2' !== $show_cta ) ? 'display: none;' : ''; ?>">
 
 	<div class="sui-box-settings-col-2">
 
@@ -92,31 +91,20 @@ $units = array(
 			</div>
 
 			<?php // COL: Gap. ?>
-			<div class="hui-fields-col" data-field-size="90">
+			<div class="hui-fields-col" data-field-size="100">
 
 				<div class="sui-form-field">
 
-					<label class="sui-label">
-						<?php esc_html_e( 'Gap', 'hustle' ); ?>
-						<?php
-						Hustle_Layout_Helper::get_html_for_options(
-							array(
-								array(
-									'type'       => 'select',
-									'name'       => $layout_gap_unit,
-									'options'    => $units,
-									'id'         => 'hustle-' . $layout_gap_unit,
-									'selected'   => $settings[ $layout_gap_unit ],
-									'class'      => 'sui-inlabel sui-dropdown-align--right-desktop',
-									'attributes' => array(
-										'data-attribute' => $layout_gap_unit,
-										'aria-label'     => esc_html__( 'Choose value unit from the options', 'hustle' ),
-									),
-								),
-							)
-						);
-						?>
-					</label>
+					<?php
+					$this->render(
+						'admin/global/components/select-units',
+						array(
+							'label'    => esc_html__( 'Gap', 'hustle' ),
+							'name'     => $layout_gap_unit,
+							'selected' => $settings[ $layout_gap_unit ],
+						)
+					);
+					?>
 
 					<?php
 					Hustle_Layout_Helper::get_html_for_options(

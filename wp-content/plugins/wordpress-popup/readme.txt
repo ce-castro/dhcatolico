@@ -1,14 +1,14 @@
 === Hustle - Email Marketing, Lead Generation, Optins, Popups ===
 Plugin Name: Hustle - Email Marketing, Lead Generation, Opt-ins, Popups
-Version: 7.5.0
+Version: 7.6.3
 Author: WPMU DEV
 Author URI: https://wpmudev.com/
 Contributors: WPMUDEV
 Tags: marketing, popup, optin, newsletter, subscription form, email, advertise, signup, mailing list, wordpress popup plugin, popup maker, pop-up, opt-in
 Requires at least: 5.2
-Tested up to: 6.0.1
+Tested up to: 6.1
 Requires PHP: 5.6.20
-Stable tag: 7.5.0
+Stable tag: 7.6.3
 
 Setup email optin forms, popups, newsletter forms & subscription forms to generate email leads with the best marketing popup builder
 
@@ -185,6 +185,58 @@ No! Hustle gives you all the same settings and options as Hustle Pro. The only d
 
 == Changelog ==
 
+= 7.6.3 ( 2022-12-26 ) =
+
+- Fix: Loading issues with Mobile styles
+- Fix: Vertical Scroll bar in Slide-ins
+- Fix: Conflict with Elementor sliders
+
+
+= 7.6.2 ( 2022-12-19 ) =
+
+- Enhance: White label browser tabs
+- Enhance: Do not add 'https://' to CTA redirect URL
+- Enhance: Add appearance settings for CTA helper text
+- Fix: Fatal error when there are many CPTs on the site
+- Fix: IContact integration is still connected if you enter invalid credentials
+- Fix: Embed Container Margin does not work
+- Fix: Custom Font Styles Reset is not Working
+- Fix: Custom Mobile Settings > Featured Image On/Off Bug
+- Fix: Preview does not work for Hustle Embed modules with Twenty Twenty-Two theme
+- Fix: Recipient field for Automated email is empty when you update it after resaving
+
+
+= 7.6.1 ( 2022-11-16 ) =
+
+- New: Add global option to disable tracking
+- Fix: Popup Template goes away after changing Color Theme
+- Fix: Cannot select time in optin modules Emails > Automated emails > Schedule
+- Fix: If multiple modules have time picker field on front end, the field works only in one module, not others
+- Fix: Fatal error on Popup optin module when we schedule Automated email with delay 0 seconds
+- Fix: Help text should be hidden when CTA is set to none
+
+
+= 7.6.0 ( 2022-10-07 ) =
+
+- New: Add second Call to Action button
+- New: Add the ability to download a file after successful opt-in
+- New: Add CC email to Automated Email
+- New: Add redirect to new tab after submission
+- New: Add Close button to the module content in addition to the Cross button
+- Enhance: Unsubscribe users from third party email lists
+- Enhance: Add RTL support
+- Enhance: Support wildcards in Referral URL Visibility Rule
+- Enhance: Replace Google fonts with Bunny fonts for GDPR compliance
+- Enhance: Use module name by default for local list Name instead of ID
+- Enhance: Add settings to reset cookie expiration
+- Enhance: Set Time Trigger Delay to 3 seconds by default for new modules to improve Page Speed results
+- Enhance: Ability to add sub-text below CTA button
+- Enhance: Membership status check
+- Fix: Module import doesn't work
+- Fix: Preview doesn't work for modules with Date field
+- Fix: Category conditions stopped working when Static cache is enabled
+
+
 = 7.5.0 ( 2022-07-14 ) =
 
 - New: Allow to select years and months in the date picker
@@ -232,45 +284,6 @@ No! Hustle gives you all the same settings and options as Hustle Pro. The only d
 - Fix: Schedule does not follow the relevant Timezone
 - Fix: Wildcard does not work well
 - Fix: `Never end the schedule` option issue
-
-
-= 7.4.11 ( 2021-12-22 ) =
-
-- Enhance: Plugin icon
-- Fix: Some Visibility conditions are not working with Static Cache
-
-
-= 7.4.10 ( 2021-12-06 ) =
-
-- Fix: Fatal error - Call to undefined method Hustle_SShare_Model::get_settings()
-
-
-= 7.4.9 ( 2021-12-06 ) =
-
-- New: In-plugin tutorials
-- Enhance: Change modules order to by date instead of by name
-- Enhance: Support field shortcodes in automated e-mail subject
-- Enhance: Properly displaying modules with static cache enabled (use HUSTLE_STATIC_CACHE_ENABLED constant)
-- Enhance: Support "wd_hustle" shortcodes in the AJAX request
-- Enhance: White labeling support
-- Fix: User IP detection when Cloudflare is used
-- Fix: Get Response integration doesn't work with name field
-- Fix: Scroll percentages for slide-ins not working as expected
-- Fix: Hustle module doesn't work properly if it's inserted in Elementor Lightbox Element
-- Fix: Duplicate fields in MailerLite
-- Fix: Hero image is showing when custom branding image is empty
-- Fix: Firefox color picker doesn't show preview color on change
-- Fix: Constant Schedule set everyday over a 2 day period doesn't work
-- Fix: Imported json showing wrong error message when "upload" folder is not writable
-- Fix: Slide In width in %
-- Fix: Use proper Custom CSS selectors for Stacked layout
-- Fix: Conflict with Front-End Manager
-- Fix: Browser's selectors display as usual when High Contrast Mode is enabled
-
-
-= 7.4.8 ( 2021-11-03 ) =
-
-- Enhance: White labeling support
 
 [Changelog for previous versions](https://wpmudev.com/project/hustle/#view-changelog).
 

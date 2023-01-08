@@ -81,9 +81,18 @@ $hide_after_subscription_desc = $is_optin ?
 				</option>
 			</select>
 
-			<div style="margin-top: 10px;" data-field-content="hide_after_subscription">
-				<?php Opt_In_Utils::get_cookie_saving_notice(); ?>
-			</div>
+			<?php
+			// Reset cookie settings.
+			$this->render(
+				'admin/commons/sui-wizard/tab-behaviour/reset-cookie-settings',
+				array(
+					'settings'           => $settings,
+					'data_field_content' => 'hide_after_subscription',
+					'option_prefix'      => 'after_optin_',
+					'description'        => __( 'This module will be visible again after this much time has passed since opt-in.', 'hustle' ),
+				)
+			);
+			?>
 
 		</div>
 
@@ -101,9 +110,18 @@ $hide_after_subscription_desc = $is_optin ?
 				<option value="no_show_on_post" <?php selected( $settings['hide_after_cta'], 'no_show_on_post' ); ?>><?php esc_html_e( 'No longer show this module on this post/page', 'hustle' ); ?></option>
 			</select>
 
-			<div style="margin-top: 10px;" data-field-content="hide_after_cta">
-				<?php Opt_In_Utils::get_cookie_saving_notice(); ?>
-			</div>
+			<?php
+			// Reset cookie settings.
+			$this->render(
+				'admin/commons/sui-wizard/tab-behaviour/reset-cookie-settings',
+				array(
+					'settings'           => $settings,
+					'data_field_content' => 'hide_after_cta',
+					'option_prefix'      => 'after_cta_',
+					'description'        => __( 'This module will be visible again after this much time has passed since CTA conversion.', 'hustle' ),
+				)
+			);
+			?>
 
 		</div>
 

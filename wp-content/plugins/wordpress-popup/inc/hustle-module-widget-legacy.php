@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Legacy class for old widgets.
  *
@@ -37,12 +37,12 @@ class Hustle_Module_Widget_Legacy extends WP_Widget {
 	 */
 	private function get_module_id( $optin_id ) {
 		global $wpdb;
-		$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM  `{$wpdb->prefix}optins` WHERE `optin_id`=%d", $optin_id ), OBJECT );
+		$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM  `{$wpdb->prefix}optins` WHERE `optin_id`=%d", $optin_id ), OBJECT );// phpcs:ignore
 
 		if ( isset( $data->optin_name ) ) {
 			$type = 'embedded';
 			$type = ( 'social_sharing' === $data->optin_provider ) ? 'social_sharing' : $type;
-			$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM  `{$wpdb->prefix}hustle_modules` WHERE `module_name`=%s and `module_type` = %s", $data->optin_name, $type ), OBJECT );
+			$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM  `{$wpdb->prefix}hustle_modules` WHERE `module_name`=%s and `module_type` = %s", $data->optin_name, $type ), OBJECT );// phpcs:ignore
 			return ( isset( $data->module_id ) ) ? (int) $data->module_id : false;
 		}
 		return false;
@@ -140,12 +140,10 @@ class Hustle_Module_Widget_Legacy extends WP_Widget {
 					if ( is_wp_error( $module ) ) {
 						continue;
 					}
-					// if( $module->settings->widget->show_in_front() ):
 					?>
 					<option <?php selected( $instance['module_id'], $mod->module_id ); ?> value="<?php echo esc_attr( $mod->module_id ); ?>"><?php echo esc_attr( $mod->module_name ); ?></option>
 
 					<?php
-					// endif;
 					endforeach;
 				?>
 			</select>

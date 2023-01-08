@@ -196,7 +196,7 @@ class Hustle_Provider_Admin_Ajax {
 		if ( empty( $class_name ) || ! class_exists( $class_name ) ) {
 			wp_send_json_error( __( 'Settings class not found', 'hustle' ) );
 		}
-		$form_settings_instance = new $class_name( $provider, '' );
+		$form_settings_instance = new $class_name( $provider, $module_id );
 		$lists                  = $form_settings_instance->get_global_multi_lists( true, $module_id, $type );
 
 		$list_id = empty( $type ) || 'forms' !== $type ? 'list_id' : 'form_id';
@@ -393,7 +393,7 @@ class Hustle_Provider_Admin_Ajax {
 	public function form_deactivate() {
 		$this->validate_ajax();
 
-		$sanitized_data = Opt_In_Utils::validate_and_sanitize_fields( $_POST['data'], array( 'slug', 'module_id' ) );
+		$sanitized_data = Opt_In_Utils::validate_and_sanitize_fields( $_POST['data'], array( 'slug', 'module_id' ) );// phpcs:ignore
 		$slug           = $sanitized_data['slug'];
 		$module_id      = $sanitized_data['module_id'];
 
@@ -439,6 +439,7 @@ class Hustle_Provider_Admin_Ajax {
 			$form_settings->disconnect_form( $sanitized_data );
 
 			$response = array(
+				/* translators: provider title */
 				'message' => sprintf( __( 'Successfully disconnected %1$s from this form', 'hustle' ), $provider_title ),
 				'data'    => array(
 					'notification' => array(
@@ -450,6 +451,7 @@ class Hustle_Provider_Admin_Ajax {
 			wp_send_json_success( $response );
 		} else {
 			$response = array(
+				/* translators: provider title */
 				'message' => sprintf( __( 'Failed to disconnect %1$s from this form', 'hustle' ), $provider_title ),
 				'data'    => array(
 					'notification' => array(
@@ -498,7 +500,7 @@ class Hustle_Provider_Admin_Ajax {
 	public function migrate_aweber() {
 		$this->validate_ajax();
 
-		if ( isset( $_POST['data'] ) && is_array( $_POST['data'] ) ) { // WPCS: CSRF ok.
+		if ( isset( $_POST['data'] ) && is_array( $_POST['data'] ) ) {// phpcs:ignore
 			$post_data = filter_input( INPUT_POST, 'data', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 		} else {
 			$post_data = filter_input( INPUT_POST, 'data' );
@@ -523,14 +525,14 @@ class Hustle_Provider_Admin_Ajax {
 	public function is_on_module() {
 		$this->validate_ajax();
 
-		$data = Opt_In_Utils::validate_and_sanitize_fields( $_POST['data'], array( 'slug' ) ); // WPCS: CSRF ok.
+		$data = Opt_In_Utils::validate_and_sanitize_fields( $_POST['data'], array( 'slug' ) );// phpcs:ignore
 		$slug = $data['slug'];
 
 		$provider           = Hustle_Provider_Utils::get_provider_by_slug( $slug );
 		$is_multi_on_global = $provider->is_allow_multi_on_global();
 		$is_multi_on_form   = $provider->is_allow_multi_on_form();
 
-		$global_multi_id = filter_var( $_POST['data']['globalMultiId'] );
+		$global_multi_id = filter_var( $_POST['data']['globalMultiId'] );// phpcs:ignore
 		$global_multi_id = ( $is_multi_on_global && ! $is_multi_on_form && ! empty( $global_multi_id ) ) ? $global_multi_id : false;
 
 		$modules = Hustle_Provider_Utils::get_modules_by_active_provider( $slug, $global_multi_id );

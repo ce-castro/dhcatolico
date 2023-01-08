@@ -1,6 +1,22 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Zapier_API class
+ *
+ * @package Hustle
+ */
 
+/**
+ * Class Hustle_Zapier_API
+ */
 class Hustle_Zapier_API {
+
+	/**
+	 * Make requet
+	 *
+	 * @param string $url URL.
+	 * @param array  $args Args.
+	 * @return boolean
+	 */
 	public static function make_request( $url, $args = array() ) {
 		$request  = apply_filters(
 			'hustle_zapier_args',
@@ -15,11 +31,11 @@ class Hustle_Zapier_API {
 		);
 		$response = wp_remote_post( $url, $request );
 
-		// logging data
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request   = $url;
-		$utils->_last_data_received = $response;
-		$utils->_last_data_sent     = $request;
+		// logging data.
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_url_request   = $url;
+		$utils->last_data_received = $response;
+		$utils->last_data_sent     = $request;
 
 		if (
 			is_wp_error( $response )
@@ -37,6 +53,8 @@ class Hustle_Zapier_API {
 	}
 
 	/**
+	 * Return error
+	 *
 	 * @return WP_Error
 	 */
 	private static function error() {

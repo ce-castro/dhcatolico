@@ -13,7 +13,7 @@ $content_options = array(
 		'value' => esc_html__( 'This will delete all the modules and their data - submissions, conversion data, and plugin settings when the plugin is uninstalled.', 'hustle' ),
 	),
 );
-$options = array(
+$options         = array(
 	'0' => array(
 		'value' => '0',
 		'label' => esc_html__( 'Preserve', 'hustle' ),

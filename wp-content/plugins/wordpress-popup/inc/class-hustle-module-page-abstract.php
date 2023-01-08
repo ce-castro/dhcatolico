@@ -137,16 +137,6 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	}
 
 	/**
-	 * Method called when the action 'load-' . $this->page_slug runs.
-	 * That is, Listing page only.
-	 *
-	 * @since 4.2.0
-	 */
-	public function current_page_loaded() {
-		parent::current_page_loaded();
-	}
-
-	/**
 	 * Actions to run on listing pages only
 	 *
 	 * @since 4.2.0
@@ -266,6 +256,8 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 		wp_enqueue_script( 'jquery-ui-sortable' );
 
+		wp_enqueue_script( 'fast_wistia', '//fast.wistia.com/assets/external/E-v1.js', array(), '1', true );
+
 		self::add_color_picker();
 	}
 
@@ -297,14 +289,6 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		wp_enqueue_script( 'thickbox' );
 		wp_enqueue_media();
 		wp_enqueue_script( 'media-upload' );
-
-//		wp_enqueue_script(
-//			'optin_admin_ace',
-//			Opt_In::$plugin_url . 'assets/js/vendor/ace/ace.js',
-//			array(),
-//			Opt_In::VERSION,
-//			true
-//		);
 
 		Opt_In_Utils::maybe_add_scripts_for_ie();
 
@@ -448,7 +432,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		);
 
 		// Don't use filter_input() here, because of see Hustle_Module_Admin::maybe_remove_paged function.
-		$paged = ! empty( $_GET['paged'] ) ? (int) $_GET['paged'] : 1; // phpcs:ignore
+		$paged = ! empty( $_GET['paged'] ) ? (int) $_GET['paged'] : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$args = array(
 			'module_type' => $this->module_type,
@@ -479,7 +463,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			'total'            => $this->get_total_count_modules_current_type(),
 			'active'           => $active_modules,
 			'modules'          => $modules,
-			'is_free'          => Opt_In_Utils::_is_free(),
+			'is_free'          => Opt_In_Utils::is_free(),
 			'capability'       => $capability,
 			'entries_per_page' => $entries_per_page,
 			'message'          => filter_input( INPUT_GET, 'message' ),
@@ -623,6 +607,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 				'module_imported'       => esc_html__( 'Module successfully imported.', 'hustle' ),
 				'module_duplicated'     => esc_html__( 'Module successfully duplicated.', 'hustle' ),
 				'module_tracking_reset' => esc_html__( "Module's tracking data successfully reset.", 'hustle' ),
+				'module_purge_emails'   => esc_html__( "Module's Email List successfully purged.", 'hustle' ),
 				'module-not-found'      => $module_not_found_message,
 			);
 
@@ -755,7 +740,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 				continue;
 			}
 
-			$cpt_ids = $this->get_conditions_ids( $settings, $cpt->label );
+			$cpt_ids = $this->get_conditions_ids( $settings, $cpt->name );
 
 			$cpt_array['name']  = $cpt->name;
 			$cpt_array['label'] = $cpt->label;
@@ -769,7 +754,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		$vars['wc_tags']    = $wc_tags;
 		$vars['tags']       = $tags;
 		$vars['posts']      = $posts;
-		$vars['post_types'] = Opt_In_Utils::get_post_types();
+		$vars['post_types'] = $post_types;
 		$vars['pages']      = $pages;
 
 		$vars['countries'] = Opt_In_Utils::get_countries();
@@ -938,8 +923,6 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			$templates_helper  = new Hustle_Templates_Helper();
 			$template_settings = $templates_helper->get_template( $design_settings['base_template'], $this->module->module_mode );
 			$defaults          = ! empty( $template_settings['design'] ) ? $template_settings['design'] : array();
-
-			$defaults['base_template'] = $design_settings['base_template'];
 		}
 
 		if ( empty( $defaults ) ) {
@@ -947,6 +930,10 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 			$defaults += $this->module->get_design()->get_typography_defaults( 'desktop' );
 			$defaults += $this->module->get_design()->get_border_spacing_shadow_defaults( 'mobile' );
 			$defaults += $this->module->get_design()->get_typography_defaults( 'mobile' );
+		}
+
+		if ( ! empty( $design_settings['base_template'] ) ) {
+			$defaults['base_template'] = $design_settings['base_template'];
 		}
 
 		return $defaults;
@@ -1112,7 +1099,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 		<main class="<?php echo esc_attr( $main_class ); ?>">
 
 			<?php
-			$renderer      = $this->get_renderer();
+			$renderer = $this->get_renderer();
 			$renderer->render( $this->page_edit_template_path, $template_args );
 			?>
 
@@ -1258,16 +1245,16 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 	 */
 	private static function get_charts_data( $sub_types, $views, Hustle_Model $module ) {
 
-		$sql_month_start_date = date( 'Y-m-d H:i:s', strtotime( '-30 days midnight' ) );
+		$sql_month_start_date = date( 'Y-m-d H:i:s', strtotime( '-30 days midnight' ) );// phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 		$tracking_model       = Hustle_Tracking_Model::get_instance();
 		$days_array           = array();
 		$default_array        = array();
 
 		for ( $h = 30; $h >= 0; $h-- ) {
 			$time                   = strtotime( '-' . $h . ' days' );
-			$date                   = date( 'Y-m-d', $time );
+			$date                   = date( 'Y-m-d', $time );// phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 			$default_array[ $date ] = 0;
-			$days_array[]           = date( 'M j, Y', $time );
+			$days_array[]           = date( 'M j, Y', $time );// phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 		}
 
 		$sub_types[]      = 'overall';
@@ -1275,6 +1262,7 @@ abstract class Hustle_Module_Page_Abstract extends Hustle_Admin_Page_Abstract {
 
 		if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 			$conversion_types[] = 'cta';
+			$conversion_types[] = 'cta_2';
 
 			if ( Hustle_Module_Model::OPTIN_MODE === $module->module_mode ) {
 				$conversion_types[] = 'optin';

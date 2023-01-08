@@ -59,6 +59,9 @@ class Hustle_Meta_Base_Emails extends Hustle_Meta {
 			'schedule_auto_email_unit'    => 'seconds',
 			'email_subject'               => '',
 			'email_body'                  => '',
+			'automated_file'              => '0',
+			'auto_download_file'          => '',
+			'redirect_tab'                => '',
 		);
 	}
 
@@ -66,8 +69,6 @@ class Hustle_Meta_Base_Emails extends Hustle_Meta {
 	 * Default form fields for new modules.
 	 *
 	 * @since the beginning of time
-	 * @since 4.0.2 Moved from Opt_In_Static to Hustle_Popup_Emails.
-	 * @since 4.2.0 Moved from Hustle_Popup_Emails to this class.
 	 *
 	 * @return array
 	 */

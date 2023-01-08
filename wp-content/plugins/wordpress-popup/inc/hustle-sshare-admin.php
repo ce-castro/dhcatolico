@@ -1,9 +1,20 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_SShare_Admin
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_SShare_Admin' ) ) :
 
+	/**
+	 * Class Hustle_SShare_Admin
+	 */
 	class Hustle_SShare_Admin extends Hustle_Module_Page_Abstract {
 
+		/**
+		 * Set page properties
+		 */
 		protected function set_page_properties() {
 
 			$this->module_type = Hustle_Module_Model::SOCIAL_SHARING_MODULE;

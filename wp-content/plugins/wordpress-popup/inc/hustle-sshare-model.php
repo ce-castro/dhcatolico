@@ -1,5 +1,13 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Test CPT conditions
+ *
+ * @package Hustle
+ */
 
+/**
+ * Hustle_SShare_Model class
+ */
 class Hustle_SShare_Model extends Hustle_Model {
 
 	const SETTINGS_KEY       = 'sshare_counters';
@@ -10,15 +18,11 @@ class Hustle_SShare_Model extends Hustle_Model {
 	const FLOAT_MOBILE       = 'float_mobile';
 	const FLOAT_MODULE       = 'floating';
 
-	public static function instance() {
-		_deprecated_function( __METHOD__, '4.3.0', 'new Hustle_SShare_Model' );
-		return new self();
-	}
-
 	/**
 	 * Get the sub-types for this module.
 	 *
 	 * @since 4.2.0
+	 * @param bool $with_titles With titles.
 	 *
 	 * @return array
 	 */
@@ -35,10 +39,20 @@ class Hustle_SShare_Model extends Hustle_Model {
 		}
 	}
 
+	/**
+	 * Get content
+	 *
+	 * @return \Hustle_SShare_Content
+	 */
 	public function get_content() {
 		return new Hustle_SShare_Content( $this->get_settings_meta( self::KEY_CONTENT ), $this );
 	}
 
+	/**
+	 * Get design
+	 *
+	 * @return \Hustle_SShare_Design
+	 */
 	public function get_design() {
 		return new Hustle_SShare_Design( $this->get_settings_meta( self::KEY_DESIGN ), $this );
 	}
@@ -64,6 +78,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	public function get_decorator_instance() {
 		return new Hustle_Decorator_Sshare( $this );
 	}
+
 	/**
 	 * Create a new module of the provided mode and type.
 	 *
@@ -166,7 +181,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 			}
 		}
 
-		// css selector check
+		// css selector check.
 		if ( ! empty( $selector ) ) {
 			if ( 'css_selector' === $selector['desktop'] && empty( $display['float_desktop_css_selector'] )
 			&& ! empty( $display['float_desktop_enabled'] ) ) {
@@ -230,6 +245,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 * Get the sub-types for this module.
 	 *
 	 * @since 4.3.1
+	 * @param bool $with_titles With titles.
 	 *
 	 * @return array
 	 */
@@ -242,7 +258,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 3.0.3
 	 *
-	 * @param string $type
+	 * @param string $type Type.
 	 * @return boolean
 	 */
 	public function is_click_counter_type_enabled( $type ) {
@@ -292,7 +308,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 3.0.3
 	 *
-	 * @param integer $post_id
+	 * @param integer $post_id Post ID.
 	 * @return array
 	 */
 	public function get_stored_network_shares( $post_id ) {
@@ -314,8 +330,8 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 3.0.3
 	 *
-	 * @param integer $post_id
-	 * @param bool    $check_expiration_time Optional. Check expiration time or not
+	 * @param integer $post_id Post ID.
+	 * @param bool    $check_expiration_time Optional. Check expiration time or not.
 	 * @return bool
 	 */
 	public function should_use_stored( $post_id, $check_expiration_time = false ) {
@@ -331,7 +347,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 			// If we're in somewhere that's not a page/post...
 		} else {
 
-			// Don't use stored if we don't have anything stored in the options;
+			// Don't use stored if we don't have anything stored in the options.
 			$sshare_networks_option = Hustle_Settings_Admin::get_hustle_settings( self::SETTINGS_KEY );
 			if ( empty( $sshare_networks_option ) || empty( $sshare_networks_option[ self::COUNTER_META_KEY ] ) ) {
 				return false;
@@ -339,7 +355,8 @@ class Hustle_SShare_Model extends Hustle_Model {
 		}
 
 		// Do use stored values if traffic is a crawler/bot.
-		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && preg_match( '/bot|crawler|ia_archiver|mediapartners-google|80legs|wget|voyager|baiduspider|curl|yahoo!|slurp/i', $_SERVER['HTTP_USER_AGENT'] ) ) {
+		$user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT' );
+		if ( $user_agent && preg_match( '/bot|crawler|ia_archiver|mediapartners-google|80legs|wget|voyager|baiduspider|curl|yahoo!|slurp/i', $user_agent ) ) {
 			return true;
 		}
 
@@ -371,13 +388,13 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 * @since 3.0.3
 	 * @since 4.0
 	 *
-	 * @param array   $network
-	 * @param integer $post_id
+	 * @param array   $networks Networks.
+	 * @param integer $post_id Post ID.
 	 * @return array
 	 */
 	public function retrieve_networks_shares( $networks, $post_id ) {
 
-		// TODO: handle homepage when post_id is not a specific page
+		// TODO: handle homepage when post_id is not a specific page.
 		$post_id = apply_filters( 'hustle_network_shares_post_id', $post_id );
 
 		$current_link = ( 0 !== $post_id && get_permalink( $post_id ) ) ? get_permalink( $post_id ) : home_url();
@@ -410,14 +427,14 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $current_link
-	 * @param array  $networks
-	 * @param id     $post_id
+	 * @param string $current_link Current link.
+	 * @param array  $networks Networks.
+	 * @param id     $post_id Post ID.
 	 * @return array
 	 */
 	public function get_refreshed_counters( $current_link, $networks, $post_id ) {
 
-		// Get array with json formatted data for each active network
+		// Get array with json formatted data for each active network.
 		$networks_info = $this->get_networks_data_from_api( $current_link, $networks );
 		$networks_info = $this->format_networks_api_raw_data( $networks_info, false );
 
@@ -461,7 +478,9 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 3.0.3
 	 *
-	 * @param string $current_link, array $social_networks, array $options
+	 * @param string $current_link Current Link.
+	 * @param array  $social_networks Social networks.
+	 * @param array  $options Options.
 	 * @return array
 	 */
 	private function get_networks_data_from_api( $current_link, $social_networks = array(), $options = array() ) {
@@ -493,8 +512,8 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $networks only
-	 * @param string $current_link
+	 * @param string $networks_only Networks only.
+	 * @param string $current_link Current link.
 	 * @return array
 	 */
 	public static function get_networks_counter_endpoint( $networks_only = true, $current_link = '' ) {
@@ -526,7 +545,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array   $networks_data
+	 * @param array   $networks_data Networks data.
 	 * @param boolean $shorten_count If true, 1000 shares would be formatted to 1K.
 	 * @return array
 	 */
@@ -536,7 +555,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 
 		foreach ( $networks_data as $network => $response ) {
 
-			// Get "count" from each network's response and add the "count" number to $formatted array
+			// Get "count" from each network's response and add the "count" number to $formatted array.
 			$get_formatted_response = 'format_' . $network . '_api_response';
 			if ( ! is_callable( array( $this, $get_formatted_response ) ) ) {
 				continue;
@@ -557,7 +576,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 3.0.3
 	 *
-	 * @param integer $count
+	 * @param integer $count Count.
 	 * @return string
 	 */
 	private function shorten_count( $count ) {
@@ -585,7 +604,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 3.0.3
 	 *
-	 * @param string $response
+	 * @param string $response Response.
 	 * @return integer
 	 */
 	private function format_facebook_api_response( $response ) {
@@ -595,11 +614,23 @@ class Hustle_SShare_Model extends Hustle_Model {
 		return $engagement;
 	}
 
+	/**
+	 * Format twitter api response
+	 *
+	 * @param string $response Response.
+	 * @return int
+	 */
 	private function format_twitter_api_response( $response ) {
 		$response = json_decode( $response, true );
 		return isset( $response['count'] ) ? intval( $response['count'] ) : 0;
 	}
 
+	/**
+	 * Format pinterest api response
+	 *
+	 * @param string $response Response.
+	 * @return int
+	 */
 	private function format_pinterest_api_response( $response ) {
 		preg_match( '/^receiveCount\((.*)\)$/', $response, $match );
 		if ( ! isset( $match[1] ) ) {
@@ -609,6 +640,12 @@ class Hustle_SShare_Model extends Hustle_Model {
 		return isset( $response['count'] ) ? intval( $response['count'] ) : 0;
 	}
 
+	/**
+	 * Format reddit api response
+	 *
+	 * @param string $response Response.
+	 * @return int
+	 */
 	private function format_reddit_api_response( $response ) {
 		$response = json_decode( $response, true );
 		if ( ! isset( $response['data']['children'] ) ) {
@@ -625,6 +662,12 @@ class Hustle_SShare_Model extends Hustle_Model {
 		return $counter;
 	}
 
+	/**
+	 * Format vkontakte api response
+	 *
+	 * @param string $response Response.
+	 * @return int
+	 */
 	private function format_vkontakte_api_response( $response ) {
 		preg_match( '/^VK\.Share\.count\(.{1,3}(.*)\)/', $response, $match );
 		if ( ! isset( $match[1] ) ) {
@@ -638,7 +681,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param bool $networks_only
+	 * @param bool $networks_only Networks only.
 	 * @return array
 	 */
 	public static function get_sharing_endpoints( $networks_only = true ) {
@@ -654,7 +697,7 @@ class Hustle_SShare_Model extends Hustle_Model {
 		global $wp;
 		$current_url = rawurlencode( home_url( $wp->request ) );
 
-		// let users filter the title
+		// let users filter the title.
 		$title = apply_filters( 'hustle_social_share_platform_title', rawurlencode( html_entity_decode( esc_html( get_the_title() ) ) ) );
 
 		return apply_filters(
@@ -675,6 +718,11 @@ class Hustle_SShare_Model extends Hustle_Model {
 		);
 	}
 
+	/**
+	 * Get renderer
+	 *
+	 * @return \Hustle_Renderer_Sshare
+	 */
 	public function get_renderer() {
 		return new Hustle_Renderer_Sshare();
 	}

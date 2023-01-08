@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Activecampaign_Api class
+ *
+ * @package Hustle
+ */
+
 /**
  * ActiveCampaign API implementation
  *
@@ -6,32 +12,49 @@
  */
 class Hustle_Activecampaign_Api {
 
-	private $_url;
-	private $_key;
+	/**
+	 * URL
+	 *
+	 * @var string
+	 */
+	private $url;
+	/**
+	 * Key
+	 *
+	 * @var string
+	 */
+	private $key;
 
+	/**
+	 * Constructor
+	 *
+	 * @param string $url URL.
+	 * @param string $api_key Api key.
+	 */
 	public function __construct( $url, $api_key ) {
-		$this->_url = trailingslashit( $url ) . 'admin/api.php';
-		$this->_key = $api_key;
+		$this->url = trailingslashit( $url ) . 'admin/api.php';
+		$this->key = $api_key;
 	}
 
 	/**
 	 * Sends request to the endpoint url with the provided $action
 	 *
-	 * @param string $verb
-	 * @param string $action rest action
-	 * @param array  $args
+	 * @param string $action rest action.
+	 * @param string $verb Verb.
+	 * @param array  $args Args.
 	 * @return object|WP_Error
+	 * @throws Exception Failed to process request.
 	 */
-	private function _request( $action, $verb = 'GET', $args = array() ) {
+	private function request( $action, $verb = 'GET', $args = array() ) {
 
 		$utils = Hustle_Provider_Utils::get_instance();
 
-		$url = $this->_url;
+		$url = $this->url;
 
 		$args = array_merge(
 			array(
 				'api_action' => $action,
-				'api_key'    => $this->_key,
+				'api_key'    => $this->key,
 				'api_output' => 'json',
 			),
 			$args
@@ -54,8 +77,8 @@ class Hustle_Activecampaign_Api {
 			$_args['body'] = $args;
 		}
 
-		$utils->_last_url_request = $url;
-		$utils->_last_data_sent   = $args;
+		$utils->last_url_request = $url;
+		$utils->last_data_sent   = $args;
 
 		$res = wp_remote_request( $url, $_args );
 
@@ -74,34 +97,32 @@ class Hustle_Activecampaign_Api {
 					$msg = $res['response']['message'];
 				}
 
-				if ( 404 === $status_code ) {
-					throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
-				}
-
+				/* translators: error message */
 				throw new Exception( sprintf( __( 'Failed to processing request : %s', 'hustle' ), $msg ) );
 			}
 		}
 
 		$body = wp_remote_retrieve_body( $res );
 
-		// probably silent mode
+		// probably silent mode.
 		if ( ! empty( $body ) ) {
 			$res = json_decode( $body, true );
 
-			// auto validate
+			// auto validate.
 			if ( ! empty( $res ) ) {
-				// list_field_view may return empty when there are no custom fields, so we shouldn't throw an exception
+				// list_field_view may return empty when there are no custom fields, so we shouldn't throw an exception.
 				if ( ( ! isset( $res['result_code'] ) || 1 !== $res['result_code'] ) && 'list_field_view' !== $action ) {
 					$message = '';
 					if ( isset( $res['result_message'] ) && ! empty( $res['result_message'] ) ) {
 						$message = ' ' . $res['result_message'];
 					}
-					throw new Exception( sprintf( __( 'Failed to get ActiveCampaign data.%1$s', 'hustle' ), $message ) );
+					/* translators: error message */
+					throw new Exception( sprintf( __( 'Failed to get ActiveCampaign data. %s', 'hustle' ), $message ) );
 				}
 			}
 		}
 
-		$utils->_last_data_received = $res;
+		$utils->last_data_received = $res;
 
 		return $res;
 	}
@@ -109,23 +130,23 @@ class Hustle_Activecampaign_Api {
 	/**
 	 * Sends rest GET request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _get( $action, $args = array() ) {
-		return $this->_request( $action, 'GET', $args );
+	private function get( $action, $args = array() ) {
+		return $this->request( $action, 'GET', $args );
 	}
 
 	/**
 	 * Sends rest POST request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _post( $action, $args = array() ) {
-		return $this->_request( $action, 'POST', $args );
+	private function post( $action, $args = array() ) {
+		return $this->request( $action, 'POST', $args );
 	}
 
 	/**
@@ -136,7 +157,7 @@ class Hustle_Activecampaign_Api {
 	public function get_lists() {
 
 		try {
-			$res = $this->_get(
+			$res = $this->get(
 				'list_list',
 				array(
 					'ids'           => 'all',
@@ -166,7 +187,7 @@ class Hustle_Activecampaign_Api {
 	 */
 	public function get_account() {
 
-		return $this->_get( 'account_view' );
+		return $this->get( 'account_view' );
 	}
 
 	/**
@@ -175,7 +196,7 @@ class Hustle_Activecampaign_Api {
 	 * @return array|WP_Error
 	 */
 	public function get_custom_fields() {
-		$res = $this->_get(
+		$res = $this->get(
 			'list_field_view',
 			array(
 				'ids' => 'all',
@@ -188,7 +209,7 @@ class Hustle_Activecampaign_Api {
 
 		$custom_fields = array();
 
-		if ( isset( $res['result_code'] ) && $res['result_code'] !== 0 ) {
+		if ( isset( $res['result_code'] ) && 0 !== $res['result_code'] ) {
 			foreach ( $res as $key => $value ) {
 				if ( is_numeric( $key ) ) {
 					array_push( $custom_fields, $value );
@@ -208,7 +229,7 @@ class Hustle_Activecampaign_Api {
 
 		$res2 = array();
 		try {
-			$res = $this->_get( 'form_getforms' );
+			$res = $this->get( 'form_getforms' );
 
 			foreach ( $res as $key => $value ) {
 				if ( is_numeric( $key ) ) {
@@ -225,11 +246,11 @@ class Hustle_Activecampaign_Api {
 	/**
 	 * Add new contact
 	 *
-	 * @param string              $id ID of the List or Form to which the user will be subscribed to
-	 * @param array               $data with the subscription data
-	 * @param Hustle_Module_Model $module
-	 * @param array               $orig_data
-	 * @param string              $sign_up_to Indicates if the subscription is done to a Form or to a List
+	 * @param string              $id ID of the List or Form to which the user will be subscribed to.
+	 * @param array               $data with the subscription data.
+	 * @param Hustle_Module_Model $module Module.
+	 * @param array               $orig_data Original data.
+	 * @param string              $sign_up_to Indicates if the subscription is done to a Form or to a List.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
@@ -242,13 +263,13 @@ class Hustle_Activecampaign_Api {
 
 					$data['p']      = array( $id => $id );
 					$data['status'] = array( $id => 1 );
-					$res            = $this->_post( 'contact_sync', $data );
+					$res            = $this->post( 'contact_sync', $data );
 				} else {
-					$res = $this->_post( 'contact_add', $data );
+					$res = $this->post( 'contact_add', $data );
 				}
 			} else {
 				$data['form'] = $id;
-				$res          = $this->_post( 'contact_sync', $data );
+				$res          = $this->post( 'contact_sync', $data );
 			}
 
 			if ( is_array( $res ) && isset( $res['result_code'] ) && 'SUCCESS' === $res['result_code'] ) {
@@ -257,7 +278,7 @@ class Hustle_Activecampaign_Api {
 				return __( 'Successful subscription', 'hustle' );
 			}
 		} else {
-			$res = $this->_post( 'contact_sync', $data );
+			$res = $this->post( 'contact_sync', $data );
 		}
 
 		if ( is_array( $res ) && isset( $res['result_code'] ) ) {
@@ -272,13 +293,53 @@ class Hustle_Activecampaign_Api {
 	}
 
 	/**
+	 * Delete subscriber from the list
+	 *
+	 * @param string $list_id List ID.
+	 * @param string $email Email.
+	 * @param string $sign_up_to Indicates if the subscription is done to a Form or to a List.
+	 *
+	 * @return bool
+	 */
+	public function delete_email( $list_id, $email, $sign_up_to ) {
+		if ( empty( $sign_up_to ) ) {
+			$sign_up_to = 'list';
+		}
+
+		$data = array(
+			'email'  => $email,
+			'status' => array( $list_id => 2 ),
+			'p'      => array( $list_id => $list_id ),
+		);
+
+		if ( 'form' === $sign_up_to ) {
+			$forms = $this->get_forms();
+			$lists = wp_list_pluck( $forms, 'lists', 'id' );
+			if ( empty( $lists[ $list_id ] ) || ! is_array( $lists[ $list_id ] ) ) {
+				return false;
+			}
+			$data['status'] = array_fill_keys( $lists[ $list_id ], 2 );
+			$data['p']      = array_combine( $lists[ $list_id ], $lists[ $list_id ] );
+		}
+
+		$res = $this->post( 'contact_sync', $data );
+
+		return ! isset( $res['result_code'] ) || 'FAILED' !== $res['result_code'];
+	}
+
+	/**
 	 * Checks email in a list
+	 *
+	 * @param string $email Email.
+	 * @param string $id ID.
+	 * @param string $type Type.
+	 * @return boolean
 	 */
 	public function email_exist( $email, $id, $type = 'list' ) {
 
 		try {
 
-			$res = $this->_get( 'contact_view_email', array( 'email' => $email ) );
+			$res = $this->get( 'contact_view_email', array( 'email' => $email ) );
 
 			// See if duplicate exists.
 			if (
@@ -295,7 +356,7 @@ class Hustle_Activecampaign_Api {
 						}
 					}
 				} else {
-					// Or active form if checking on a form
+					// Or active form if checking on a form.
 					if ( $id === $res['formid'] ) {
 						return true;
 					}
@@ -309,18 +370,25 @@ class Hustle_Activecampaign_Api {
 		return false;
 	}
 
+	/**
+	 * Add custom filed
+	 *
+	 * @param array               $custom_fields Custom fields.
+	 * @param string              $list List.
+	 * @param Hustle_Module_Model $module Module.
+	 */
 	public function add_custom_fields( $custom_fields, $list, Hustle_Module_Model $module ) {
 		if ( ! empty( $custom_fields ) ) {
 			foreach ( $custom_fields as $key => $value ) {
 
 				$field_data = array(
 					'title'   => $value['label'],
-					'type'    => $value['type'], // support for text and date field,
+					'type'    => $value['type'], // support for text and date field.
 					'perstag' => $key,
 					'p[0]'    => 0,
 					'req'     => 0,
 				);
-				$res        = $this->_post( 'list_field_add', $field_data );
+				$res        = $this->post( 'list_field_add', $field_data );
 			}
 		}
 	}

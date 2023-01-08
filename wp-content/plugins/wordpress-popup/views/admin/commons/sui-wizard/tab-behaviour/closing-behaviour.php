@@ -101,70 +101,19 @@
 
 			</div>
 
-			<div class="sui-border-frame" style="margin-bottom: 5px;" data-field-content="after_close">
-
-				<label class="sui-label"><?php esc_html_e( 'Reset this after', 'hustle' ); ?></label>
-
-				<div class="sui-row">
-
-					<div class="sui-col-md-6">
-
-						<input type="number"
-							value="<?php echo esc_attr( $settings['expiration'] ); ?>"
-							min="0"
-							class="sui-form-control"
-							data-attribute="expiration" />
-
-					</div>
-
-					<div class="sui-col-md-6">
-
-						<select data-attribute="expiration_unit" >
-
-							<option value="seconds"
-								<?php selected( $settings['expiration_unit'], 'seconds' ); ?>>
-								<?php esc_html_e( 'second(s)', 'hustle' ); ?>
-							</option>
-
-							<option value="minutes"
-								<?php selected( $settings['expiration_unit'], 'minutes' ); ?>>
-								<?php esc_html_e( 'minute(s)', 'hustle' ); ?>
-							</option>
-
-							<option value="hours"
-								<?php selected( $settings['expiration_unit'], 'hours' ); ?>>
-								<?php esc_html_e( 'hour(s)', 'hustle' ); ?>
-							</option>
-
-							<option value="days"
-								<?php selected( $settings['expiration_unit'], 'days' ); ?>>
-								<?php esc_html_e( 'day(s)', 'hustle' ); ?>
-							</option>
-
-							<option value="weeks"
-								<?php selected( $settings['expiration_unit'], 'weeks' ); ?>>
-								<?php esc_html_e( 'week(s)', 'hustle' ); ?>
-							</option>
-
-							<option value="months"
-								<?php selected( $settings['expiration_unit'], 'months' ); ?>>
-								<?php esc_html_e( 'month(s)', 'hustle' ); ?>
-							</option>
-
-						</select>
-
-					</div>
-
-					<div class="sui-col-md-12">
-						<?php /* translators: module type capitalized and in singular */ ?>
-						<span class="sui-description"><?php printf( esc_html__( '%s will be visible again after this much time has passed since it was closed.', 'hustle' ), esc_html( $capitalize_singular ) ); ?></span>
-					</div>
-
-				</div>
-
-				<?php Opt_In_Utils::get_cookie_saving_notice(); ?>
-
-			</div>
+			<?php
+			// Reset cookie settings.
+			$this->render(
+				'admin/commons/sui-wizard/tab-behaviour/reset-cookie-settings',
+				array(
+					'settings'           => $settings,
+					'data_field_content' => 'after_close',
+					'option_prefix'      => '',
+					/* translators: module type capitalized and in singular */
+					'description'        => sprintf( __( '%s will be visible again after this much time has passed since it was closed.', 'hustle' ), $capitalize_singular ),
+				)
+			);
+			?>
 
 		</div>
 

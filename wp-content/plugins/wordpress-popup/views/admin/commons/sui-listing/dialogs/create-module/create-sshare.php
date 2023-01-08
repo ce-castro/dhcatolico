@@ -72,7 +72,7 @@ $image_2x = self::$plugin_url . 'assets/images/hustle-create@2x.png';
 			class="sui-image sui-image-center"
 			aria-hidden="true"
 		/>
-	<?php
+		<?php
 	} else {
 		echo $this->render_image_markup( $this->branding_image, '', 'sui-image sui-image-center', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}

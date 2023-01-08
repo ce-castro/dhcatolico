@@ -259,7 +259,7 @@ $units = array(
 					<?php if ( 'custom' === $value ) { ?>
 						<?php echo esc_html( $option['name'] ); ?>
 					<?php } else { ?>
-						<?php $v_position = 'center' === $value ? 'middle' : $value ; ?>
+						<?php $v_position = 'center' === $value ? 'middle' : $value; ?>
 						<span class="hui-tab-icon-position-<?php echo esc_attr( $v_position ); ?>" aria-hidden="true"></span>
 						<span class="sui-screen-reader-text"><?php echo esc_html( $option['name'] ); ?></span>
 					<?php } ?>

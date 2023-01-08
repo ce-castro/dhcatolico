@@ -1,7 +1,15 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_SendGrid class
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 
+	/**
+	 * Class Hustle_SendGrid
+	 */
 	class Hustle_SendGrid extends Hustle_Provider_Abstract {
 
 		const SLUG = 'sendgrid';
@@ -13,38 +21,46 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'sendgrid';
+		protected $slug = 'sendgrid';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'SendGrid';
+		protected $title = 'SendGrid';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_SendGrid_Form_Settings';
+		protected $form_settings = 'Hustle_SendGrid_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -52,14 +68,14 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_SendGrid_Form_Hooks';
+		protected $form_hooks = 'Hustle_SendGrid_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 
 			include_once 'hustle-sendgrid-api.php';
 			include_once 'hustle-sendgrid-api-new.php';
@@ -71,13 +87,20 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
+		/**
+		 * Get API
+		 *
+		 * @param string $api_key Api key.
+		 * @param string $new_campaigns New campaigns.
+		 * @return \Hustle_New_SendGrid_Api|\Exception|\Hustle_SendGrid_Api
+		 */
 		public static function api( $api_key = '', $new_campaigns = '' ) {
 			try {
 				if ( 'new_campaigns' === $new_campaigns ) {
@@ -114,7 +137,7 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
@@ -147,9 +170,9 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 						'name'          => $current_data['name'],
 					);
 					// If not active, activate it.
-					// TODO: Wrap this in a friendlier method
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					// TODO: Wrap this in a friendlier method.
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -312,7 +335,8 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $api_key
+		 * @param string $api_key Api key.
+		 * @param string $new_campaigns New campaigns.
 		 * @return bool
 		 */
 		private function validate_api_key( $api_key, $new_campaigns ) {
@@ -320,9 +344,9 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 				return false;
 			}
 
-			// Check API Key by validating it on get_info request
+			// Check API Key by validating it on get_info request.
 			try {
-				// Check if API key is valid
+				// Check if API key is valid.
 				$api = self::api( $api_key, $new_campaigns );
 
 				if ( $api ) {
@@ -341,6 +365,11 @@ if ( ! class_exists( 'Hustle_SendGrid' ) ) :
 			return true;
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'api_key' => 'api_key',

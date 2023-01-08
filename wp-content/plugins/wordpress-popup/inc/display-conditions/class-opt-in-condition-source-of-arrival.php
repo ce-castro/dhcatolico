@@ -100,7 +100,6 @@ class Opt_In_Condition_Source_Of_Arrival extends Opt_In_Condition_Abstract {
 
 	/**
 	 * Checks if the referrer is a google web-source.
-	 * Courtesy Philipp Stracker.
 	 *
 	 * @param  string $referrer The referrer.
 	 * @return bool

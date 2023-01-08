@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_GHBlock_Popup_Trigger class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_GHBlock_Popup_Trigger
@@ -14,7 +19,7 @@ class Hustle_GHBlock_Popup_Trigger extends Hustle_GHBlock_Abstract {
 	 *
 	 * @var string
 	 */
-	protected $_slug = 'popup-trigger';
+	protected $slug = 'popup-trigger';
 
 	/**
 	 * Hustle_GHBlock_Popup_Trigger constructor.
@@ -22,7 +27,7 @@ class Hustle_GHBlock_Popup_Trigger extends Hustle_GHBlock_Abstract {
 	 * @since 1.0 Gutenberg Addon
 	 */
 	public function __construct() {
-		// Initialize block
+		// Initialize block.
 		$this->init();
 	}
 
@@ -30,7 +35,7 @@ class Hustle_GHBlock_Popup_Trigger extends Hustle_GHBlock_Abstract {
 	 * Render block markup on front-end
 	 *
 	 * @since 1.0 Gutenberg Addon
-	 * @param array $properties Block properties
+	 * @param array $properties Block properties.
 	 *
 	 * @return string
 	 */
@@ -51,15 +56,16 @@ class Hustle_GHBlock_Popup_Trigger extends Hustle_GHBlock_Abstract {
 	 * @since 1.0 Gutenberg Addon
 	 */
 	public function load_assets() {
-		// Scripts
+		// Scripts.
 		wp_enqueue_script(
 			'hustle-block-popup-trigger',
 			Hustle_Gutenberg::get_plugin_url() . '/js/popup-trigger-block.min.js',
 			array( 'wp-blocks', 'wp-i18n', 'wp-element' ),
-			filemtime( Hustle_Gutenberg::get_plugin_dir() . '/js/popup-trigger-block.min.js' )
+			filemtime( Hustle_Gutenberg::get_plugin_dir() . '/js/popup-trigger-block.min.js' ),
+			true
 		);
 
-		// Localize scripts
+		// Localize scripts.
 		wp_localize_script(
 			'hustle-block-popup-trigger',
 			'hustle_popup_trigger_data',
@@ -75,11 +81,21 @@ class Hustle_GHBlock_Popup_Trigger extends Hustle_GHBlock_Abstract {
 		);
 	}
 
+	/**
+	 * Get modules
+	 *
+	 * @return array
+	 */
 	public function get_modules() {
 		$module_list = $this->get_modules_by_type( 'popup' );
 		return $module_list;
 	}
 
+	/**
+	 * Get texts for localize
+	 *
+	 * @return array
+	 */
 	private function localize() {
 		return array(
 			'module'                 => esc_html__( 'Module', 'hustle' ),
@@ -90,7 +106,7 @@ class Hustle_GHBlock_Popup_Trigger extends Hustle_GHBlock_Abstract {
 			'trigger_content'        => esc_html__( 'Trigger Content', 'hustle' ),
 			'name'                   => esc_html__( 'Name', 'hustle' ),
 			'customize_module'       => esc_html__( 'Customize Popup', 'hustle' ),
-			'rendering'              => esc_html__( 'Rendering...', 'hustle' ), // Unused
+			'rendering'              => esc_html__( 'Rendering...', 'hustle' ), // Unused.
 			'block_name'             => esc_html__( 'Popup Trigger', 'hustle' ),
 			'block_description'      => esc_html__( 'Embed the trigger button for a popup module.', 'hustle' ),
 			'block_more_description' => esc_html__( 'Note: the Trigger property of the Popup should be set to Click to embed the trigger button for the module.', 'hustle' ),

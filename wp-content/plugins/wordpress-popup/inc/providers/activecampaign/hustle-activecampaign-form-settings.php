@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Activecampaign_Form_Settings class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 
 	/**
@@ -39,7 +45,7 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 		 */
 		public function form_settings_wizards() {
 			// already filtered on Abstract
-			// numerical array steps
+			// numerical array steps.
 			return array(
 				// 0
 				array(
@@ -76,14 +82,14 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 
 			if ( $is_form ) {
 				if ( empty( $this->addon_form_settings['form_id'] ) ) {
-					// preliminary value
+					// preliminary value.
 					$this->addon_form_settings['form_id'] = 0;
 
 					return false;
 				}
 			} else {
 				if ( empty( $this->addon_form_settings['list_id'] ) ) {
-					// preliminary value
+					// preliminary value.
 					$this->addon_form_settings['list_id'] = 0;
 
 					return false;
@@ -99,7 +105,7 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 		 * @since 3.0.5
 		 * @since 4.0 param $validate removed.
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function first_step_callback( $submitted_data ) {
@@ -140,7 +146,7 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 				'has_errors' => false,
 			);
 
-			// Save only after the step has been validated
+			// Save only after the step has been validated.
 			if ( $is_submit ) {
 				$this->save_form_settings_values( $current_data );
 			}
@@ -153,7 +159,7 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		private function get_first_step_options( $submitted_data ) {
@@ -200,7 +206,7 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 		 * @since 3.0.5
 		 * @since 4.0 param $validate removed.
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function second_step_callback( $submitted_data ) {
@@ -260,9 +266,9 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 				'has_errors' => $has_errors,
 			);
 
-			// Save only after the step has been validated and there are no errors
+			// Save only after the step has been validated and there are no errors.
 			if ( $is_submit && ! $has_errors ) {
-				// Save additional data for submission's entry
+				// Save additional data for submission's entry.
 				if ( ! empty( $current_data[ $list_id ] ) ) {
 					$current_data[ $list_name ] = ! empty( $this->lists[ $current_data[ $list_id ] ] )
 						? $this->lists[ $current_data[ $list_id ] ] . ' (' . $current_data[ $list_id ] . ')' : $current_data[ $list_id ];
@@ -276,8 +282,8 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 		/**
 		 * Refresh list array via API
 		 *
-		 * @param object $provider
-		 * @param string $global_multi_id
+		 * @param object $provider Provider.
+		 * @param string $global_multi_id Global multi ID.
 		 * @return array
 		 */
 		public function refresh_global_multi_lists( $provider, $global_multi_id ) {
@@ -291,7 +297,7 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 			if ( ! $this->list_type || 'forms' !== $this->list_type ) {
 				$_lists = $api->get_lists();
 			} else {
-				// Retrieve forms otherwise
+				// Retrieve forms otherwise.
 				$_lists = $api->get_forms();
 			}
 
@@ -307,8 +313,8 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
-		 * @param bool  $is_form
+		 * @param array $submitted_data Submitted data.
+		 * @param bool  $is_form Is Form.
 		 * @return array
 		 */
 		private function get_second_step_options( $submitted_data, $is_form ) {
@@ -383,6 +389,7 @@ if ( ! class_exists( 'Hustle_Activecampaign_Form_Settings' ) ) :
 		 * Get the options that should be completed for the form.
 		 *
 		 * @since 4.2.0
+		 * @param bool $saved_form_settings Form settings.
 		 * @return array
 		 */
 		public function get_form_completion_options( $saved_form_settings ) {

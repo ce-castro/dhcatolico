@@ -1,4 +1,10 @@
 <?php
+/**
+ * Position row
+ *
+ * @package Hustle
+ */
+
 $name     = 'close_icon_position' . ( $device ? '_' . $device : '' );
 $settings = $settings[ $name ];
 
@@ -9,13 +15,13 @@ $position = array(
 );
 ?>
 
-<div class="sui-box-settings-row">
+<div class="sui-box-settings-row hustle-close_icon_position <?php echo ( 'hidden' === $settings ) ? 'hustle-no-bottom-line' : ''; ?>">
 
 	<div class="sui-box-settings-col-2">
 
 		<h5 class="sui-settings-label sui-dark" style="font-size: 13px;"><?php esc_html_e( 'Position', 'wpmudev-popup' ); ?></h5>
 
-		<p class="sui-description"><?php printf( esc_html__( 'Choose whether you want to place the close icon outside or inside of your %1$s container. You can also hide it from your %1$s if you wish so.', 'wpmudev-popup' ), esc_html( $smallcaps_singular ) ); ?></p>
+		<p class="sui-description"><?php /* translators: module type */  printf( esc_html__( 'Choose whether you want to place the close icon outside or inside of your %1$s container. You can also hide it from your %1$s if you wish so.', 'wpmudev-popup' ), esc_html( $smallcaps_singular ) ); ?></p>
 
 		<div class="sui-tabs sui-side-tabs">
 
@@ -24,10 +30,10 @@ $position = array(
 				<input
 					type="radio"
 					name="<?php echo esc_attr( $name ); ?>"
-					value="<?php echo esc_attr( $option ); ?>"
+					value="<?php echo esc_attr( $key ); ?>"
 					id="hustle-<?php echo esc_attr( $name ); ?>--<?php echo esc_attr( $key ); ?>"
 					class="sui-screen-reader-text hustle-tabs-option"
-					data-attributes="<?php echo esc_attr( $name ); ?>"
+					data-attribute="<?php echo esc_attr( $name ); ?>"
 					aria-hidden="true"
 					tabindex="-1"
 					<?php checked( $settings, $key ); ?>

@@ -76,12 +76,12 @@ $palette_info = array(
 		'key'     => 'layout_content',
 		'palette' => array(
 			'colors' => array(
-				'container_border'     => array(
+				'container_border'      => array(
 					'name'  => __( 'Border color', 'hustle' ),
 					'value' => 'layout_content_border',
 					'alpha' => 'true',
 				),
-				'container_background' => array(
+				'container_background'  => array(
 					'name'  => __( 'Background color', 'hustle' ),
 					'value' => 'layout_content_bg',
 					'alpha' => 'true',
@@ -138,12 +138,12 @@ $palette_info = array(
 		'key'     => 'content_wrap',
 		'palette' => array(
 			'colors' => array(
-				'content_wrap_border' => array(
+				'content_wrap_border'      => array(
 					'name'  => __( 'Border color', 'hustle' ),
 					'value' => 'content_wrap_border',
 					'alpha' => 'true',
 				),
-				'content_wrap_bg'     => array(
+				'content_wrap_bg'          => array(
 					'name'  => __( 'Background color', 'hustle' ),
 					'value' => 'content_wrap_bg',
 					'alpha' => 'true',
@@ -395,10 +395,15 @@ $palette_info = array(
 				'default' => array(
 					'name'   => __( 'Default', 'hustle' ),
 					'colors' => array(
-						'close_icon_default' => array(
+						'close_icon_default'    => array(
 							'name'  => __( 'Icon color', 'hustle' ),
 							'value' => 'close_button_static_color',
 							'alpha' => 'true',
+						),
+						'close_icon_default_bg' => array(
+							'name'  => __( 'Icon background color', 'hustle' ),
+							'value' => 'close_button_static_background',
+							'alpha' => 'false',
 						),
 					),
 				),

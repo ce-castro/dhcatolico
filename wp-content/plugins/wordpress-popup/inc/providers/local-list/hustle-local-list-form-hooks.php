@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Local_List_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Local_List_Form_Hooks
@@ -13,7 +18,8 @@ class Hustle_Local_List_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -66,11 +72,11 @@ class Hustle_Local_List_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 
 			return $is_success;
@@ -87,71 +93,5 @@ class Hustle_Local_List_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * Hustle_Module_Modal::add_local_subscription() doesn't exist anymore.
 	 * We're handling entries with hustle_Entry_Model class.
 	 */
-
-	/**
-	 * Add Local List data to entry.
-	 *
-	 * @since 4.0
-	 *
-	 * @param array $submitted_data
-	 * @return array
-	 */
-	// public function add_entry_fields( $submitted_data ) {
-
-	// $module_id = $this->module_id;
-	// $form_settings_instance = $this->form_settings_instance;
-
-	// **
-	// * @since 4.0
-	// */
-	// $submitted_data = apply_filters( 'hustle_provider_' . $this->addon->get_slug() . '_form_submitted_data', $submitted_data, $module_id, $form_settings_instance );
-
-	// $addon_setting_values = $form_settings_instance->get_form_settings_values();
-
-	// try {
-	// if ( empty( $submitted_data['email'] ) ) {
-	// throw new Exception( __('Required Field "email" was not filled by the user.', 'hustle' ) );
-	// }
-
-	// $submitted_data = $this->check_legacy( $submitted_data );
-
-	// $module = new Hustle_Module_Model( $module_id );
-
-	// $local_subscription_data = wp_parse_args( $submitted_data, array(
-	// 'module_type' => $module->module_type,
-	// 'time' => current_time( 'timestamp' ),
-	// ) );
-
-	// $res = $module->add_local_subscription( $local_subscription_data );
-
-	// if ( is_wp_error( $res ) ) {
-	// $entry_fields = array(
-	// array(
-	// 'name'  => 'status',
-	// 'value' => array(
-	// 'is_sent'       => false,
-	// 'description'   => $res->get_error_message(),
-	// ),
-	// ),
-	// );
-	// } else {
-
-	// $entry_fields = array(
-	// array(
-	// 'name'  => 'status',
-	// 'value' => array(
-	// 'is_sent'       => true,
-	// 'description'   => __( 'Successfully added or updated member on Local list', 'hustle' ),
-	// ),
-	// ),
-	// );
-	// }
-
-	// } catch ( Exception $e ) {
-	// $entry_fields = $this->exception( $e );
-	// }
-
-	// return $entry_fields;
-	// }
 
 }

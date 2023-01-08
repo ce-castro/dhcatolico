@@ -32,7 +32,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var self|null
 	 */
-	protected static $_instance;
+	protected static $instance;
 
 	/**
 	 * Minimum Hustle version required by your integration in order to work properly.
@@ -45,7 +45,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var string
 	 */
-	public static $_min_hustle_version = '3.0.5';
+	public static $min_hustle_version = '3.0.5';
 
 	/**
 	 * Minimum PHP version required by your integration in order to work properly.
@@ -58,7 +58,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var string
 	 */
-	public static $_min_php_version = PHP_VERSION;
+	public static $min_php_version = PHP_VERSION;
 
 	/**
 	 * Slug will be used as an identifier throughout hustle.
@@ -69,7 +69,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var string
 	 */
-	protected $_slug;
+	protected $slug;
 
 	/**
 	 * Version number of the integration.
@@ -79,7 +79,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var string
 	 */
-	protected $_version;
+	protected $version;
 
 	/**
 	 * Class name of your integration's main class.
@@ -90,7 +90,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var string
 	 */
-	protected $_class;
+	protected $class;
 
 	/**
 	 * Title of your integration.
@@ -101,7 +101,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var string
 	 */
-	protected $_title;
+	protected $title;
 
 	/**
 	 * Icon url that will be displayed in the providers list.
@@ -113,7 +113,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since  3.0.5
 	 * @var string
 	 */
-	protected $_icon_2x;
+	protected $icon_2x;
 
 	/**
 	 * Retina logo url that will be displayed in the provider's modal,
@@ -125,7 +125,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since  4.0.0
 	 * @var string
 	 */
-	protected $_logo_2x;
+	protected $logo_2x;
 
 	/**
 	 * Regular banner for promoting the provider.
@@ -135,7 +135,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.1
 	 * @var string
 	 */
-	protected $_banner_1x;
+	protected $banner_1x;
 
 	/**
 	 * Retina banner for promoting the provider.
@@ -146,7 +146,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.1
 	 * @var string
 	 */
-	protected $_banner_2x;
+	protected $banner_2x;
 
 	/**
 	 * Provider's documentation URL.
@@ -154,7 +154,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.1
 	 * @var string
 	 */
-	protected $_documentation_url;
+	protected $documentation_url;
 
 	/**
 	 * Short description to be used in the non-connected integrations column.
@@ -162,7 +162,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.1
 	 * @var string
 	 */
-	protected $_short_description;
+	protected $short_description;
 
 	/**
 	 * Whether the provider supports having multiple instances in the modules.
@@ -200,7 +200,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.0
 	 * @var bool
 	 */
-	private $_is_admin_hooked = false;
+	private $is_admin_hooked = false;
 
 	/**
 	 * Semaphore non redundant hooks for global hooks
@@ -208,7 +208,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.0
 	 * @var bool
 	 */
-	private $_is_global_hooked = false;
+	private $is_global_hooked = false;
 
 	/*********************************** Errors Messages ********************************/
 
@@ -218,7 +218,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since  4.0.0
 	 * @var string
 	 */
-	protected $_activation_error_message = '';
+	protected $activation_error_message = '';
 
 	/*********************************** END Errors Messages ********************************/
 
@@ -232,7 +232,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 3.0.5
 	 * @var null|string
 	 */
-	protected $_form_settings = null;
+	protected $form_settings = null;
 
 	/**
 	 * Classname of form hooks in string or empty if the form hooks is not needed.
@@ -242,11 +242,11 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.0
 	 * @var null|string
 	 */
-	protected $_form_hooks = null;
+	protected $form_hooks = null;
 
 	/**
 	 * Form Setting Instances with 'module_id' as key
-	 * If your integration has a value assigned to @see Hustle_Provider_Abstract::$_form_settings ,
+	 * If your integration has a value assigned to @see Hustle_Provider_Abstract::$form_settings ,
 	 * an instance of that class will be assigned to this property.
 	 * -Shouldn't be overridden.
 	 *
@@ -255,7 +255,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 *
 	 * @var Hustle_Provider_Form_Settings_Abstract[]|array
 	 */
-	protected $_provider_form_settings_instance = array();
+	protected $provider_form_settings_instance = array();
 
 	/**
 	 * Form Hooks Instances with `module_id` as key
@@ -263,7 +263,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.0
 	 * @var Hustle_Provider_Form_Hooks_Abstract[]|array
 	 */
-	protected $_provider_form_hooks_instances = array();
+	protected $provider_form_hooks_instances = array();
 
 	/**
 	 * Array of options which should exist for confirming that settings are completed
@@ -271,7 +271,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.0
 	 * @var Hustle_Provider_Form_Hooks_Abstract[]|array
 	 */
-	protected $_completion_options = array( 'api_key' );
+	protected $completion_options = array( 'api_key' );
 
 	/**
 	 * ID of the selected provider's global instance.
@@ -291,11 +291,11 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 *
 	 *
 	 * public static function get_instance() {
-	 *      if ( is_null( self::$_instance ) ) {
-	 *          self::$_instance = new self();
+	 *      if ( is_null( self::$instance ) ) {
+	 *          self::$instance = new self();
 	 *      }
 	 *
-	 *      return self::$_instance;
+	 *      return self::$instance;
 	 *  }
 	 */
 
@@ -303,7 +303,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	/**
 	 * Gets this provider slug.
 	 *
-	 * @see Hustle_Provider_Abstract::$_slug
+	 * @see Hustle_Provider_Abstract::$slug
 	 *
 	 * The slug property behaves as `IDENTIFIER`, used for:
 	 * - Easily calling this instance with @see Hustle_Provider_Utils::get_provider_by_slug(`slug`)
@@ -313,7 +313,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_slug() {
-		return $this->_slug;
+		return $this->slug;
 	}
 
 	/**
@@ -323,7 +323,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_version() {
-		return $this->_version;
+		return $this->version;
 	}
 
 	/**
@@ -333,7 +333,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_class() {
-		return $this->_class;
+		return $this->class;
 	}
 
 	/**
@@ -343,7 +343,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_title() {
-		return $this->_title;
+		return $this->title;
 	}
 
 	/**
@@ -353,7 +353,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_icon_2x() {
-		return $this->_icon_2x;
+		return $this->icon_2x;
 	}
 
 	/**
@@ -363,7 +363,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_logo_2x() {
-		return $this->_logo_2x;
+		return $this->logo_2x;
 	}
 
 	/**
@@ -373,7 +373,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_banner_1x() {
-		return $this->_banner_1x;
+		return $this->banner_1x;
 	}
 
 	/**
@@ -383,7 +383,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_banner_2x() {
-		return $this->_banner_2x;
+		return $this->banner_2x;
 	}
 
 	/**
@@ -393,7 +393,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_documentation_url() {
-		return $this->_documentation_url;
+		return $this->documentation_url;
 	}
 
 	/**
@@ -403,7 +403,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	final public function get_short_description() {
-		return $this->_short_description;
+		return $this->short_description;
 	}
 
 	/**
@@ -557,7 +557,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return bool
 	 */
 	public function check_is_activable() {
-		if ( ! self::check_is_compatible( $this->_class ) ) {
+		if ( ! self::check_is_compatible( $this->class ) ) {
 			return false;
 		}
 
@@ -586,8 +586,8 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 		// We can remove this now. YAI!!
 		$reflector = new ReflectionClass( $class_name );
 
-		$_min_php_version         = $reflector->getStaticPropertyValue( '_min_php_version' );
-		$is_php_version_supported = version_compare( PHP_VERSION, $_min_php_version, '>=' );
+		$min_php_version          = $reflector->getStaticPropertyValue( 'min_php_version' );
+		$is_php_version_supported = version_compare( PHP_VERSION, $min_php_version, '>=' );
 		if ( ! $is_php_version_supported ) {
 			return false;
 		}
@@ -597,8 +597,8 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 			return true;
 		}
 
-		$_min_hustle_version         = $reflector->getStaticPropertyValue( '_min_hustle_version' );
-		$is_hustle_version_supported = version_compare( Opt_In::VERSION, $_min_hustle_version, '>=' );
+		$min_hustle_version          = $reflector->getStaticPropertyValue( 'min_hustle_version' );
+		$is_hustle_version_supported = version_compare( Opt_In::VERSION, $min_hustle_version, '>=' );
 		if ( ! $is_hustle_version_supported ) {
 			return false;
 		}
@@ -665,7 +665,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 		if ( false === $installed_version ) {
 			return false;
 		}
-		$version_is_changed = version_compare( $this->_version, $installed_version, '!=' );
+		$version_is_changed = version_compare( $this->version, $installed_version, '!=' );
 		if ( $version_is_changed ) {
 			return true;
 		}
@@ -691,7 +691,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return string
 	 */
 	public function get_activation_error_message() {
-		return $this->_activation_error_message;
+		return $this->activation_error_message;
 	}
 
 	/**
@@ -968,7 +968,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 		$settings_values = $this->get_settings_values();
 		$is_connected    = true;
 
-		foreach ( $this->_completion_options as $key ) {
+		foreach ( $this->completion_options as $key ) {
 			if ( empty( $multi_id ) || ! is_string( $multi_id ) ) {
 				$is_connected = $is_connected && ! empty( $settings_values[ $key ] );
 			} else {
@@ -994,7 +994,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 		}
 
 		$form_settings_instance = $this->get_provider_form_settings( $module_id );
-		if ( ! $form_settings_instance instanceof $this->_form_settings ) {
+		if ( ! $form_settings_instance instanceof $this->form_settings ) {
 			return false;
 		}
 
@@ -1051,7 +1051,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 */
 	public function get_selected_global_multi_id( $module_id ) {
 		$form_settings_instance = $this->get_provider_form_settings( $module_id );
-		if ( ! $form_settings_instance instanceof $this->_form_settings ) {
+		if ( ! $form_settings_instance instanceof $this->form_settings ) {
 			return false;
 		}
 
@@ -1087,7 +1087,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 */
 	final public function get_form_settings_class_name() {
 		$provider_slug            = $this->get_slug();
-		$form_settings_class_name = $this->_form_settings;
+		$form_settings_class_name = $this->form_settings;
 
 		/**
 		 * Filter the class name of the integration's form settings class.
@@ -1114,7 +1114,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 */
 	final public function get_provider_form_settings( $module_id ) {
 		$class_name = $this->get_form_settings_class_name();
-		if ( ! isset( $this->_provider_form_settings_instance[ $module_id ] ) || ! $this->_provider_form_settings_instance[ $module_id ] instanceof Hustle_Provider_Form_Settings_Abstract ) {
+		if ( ! isset( $this->provider_form_settings_instance[ $module_id ] ) || ! $this->provider_form_settings_instance[ $module_id ] instanceof Hustle_Provider_Form_Settings_Abstract ) {
 			if ( empty( $class_name ) ) {
 				return null;
 			}
@@ -1128,7 +1128,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 				if ( ! $form_settings_instance instanceof Hustle_Provider_Form_Settings_Abstract ) {
 					throw new Exception( $class_name . ' is not instanceof Hustle_Provider_Form_Settings_Abstract' );
 				}
-				$this->_provider_form_settings_instance[ $module_id ] = $form_settings_instance;
+				$this->provider_form_settings_instance[ $module_id ] = $form_settings_instance;
 			} catch ( Exception $e ) {
 				Hustle_Provider_Utils::maybe_log( $this->get_slug(), 'Failed to instantiate its _form_settings_instance', $e->getMessage() );
 
@@ -1136,7 +1136,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 			}
 		}
 
-		return $this->_provider_form_settings_instance[ $module_id ];
+		return $this->provider_form_settings_instance[ $module_id ];
 	}
 
 	/**
@@ -1190,19 +1190,19 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return Hustle_Provider_Form_Hooks_Abstract|null
 	 */
 	final public function get_addon_form_hooks( $module_id ) {
-		if ( ! isset( $this->_provider_form_hooks_instances[ $module_id ] ) || ! $this->_provider_form_hooks_instances[ $module_id ] instanceof Hustle_Provider_Form_Hooks_Abstract ) {
-			if ( empty( $this->_form_hooks ) ) {
+		if ( ! isset( $this->provider_form_hooks_instances[ $module_id ] ) || ! $this->provider_form_hooks_instances[ $module_id ] instanceof Hustle_Provider_Form_Hooks_Abstract ) {
+			if ( empty( $this->form_hooks ) ) {
 				return null;
 			}
 
-			if ( ! class_exists( $this->_form_hooks ) ) {
+			if ( ! class_exists( $this->form_hooks ) ) {
 				return null;
 			}
 
 			try {
 
-				$classname = $this->_form_hooks;
-				$this->_provider_form_hooks_instances[ $module_id ] = new $classname( $this, $module_id );
+				$classname = $this->form_hooks;
+				$this->provider_form_hooks_instances[ $module_id ] = new $classname( $this, $module_id );
 			} catch ( Exception $e ) {
 				Hustle_Provider_Utils::maybe_log( $this->get_slug(), 'Failed to instantiate its _addon_form_hooks_instance', $e->getMessage() );
 
@@ -1210,7 +1210,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 			}
 		}
 
-		return $this->_provider_form_hooks_instances[ $module_id ];
+		return $this->provider_form_hooks_instances[ $module_id ];
 	}
 
 	/**
@@ -1455,7 +1455,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return bool
 	 */
 	final public function admin_hookable() {
-		if ( $this->_is_admin_hooked ) {
+		if ( $this->is_admin_hooked ) {
 			return true;
 		}
 
@@ -1474,7 +1474,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 				add_filter( $filter, $function_to_add, 10, $accepted_args );
 			}
 		}
-		$this->_is_admin_hooked = true;
+		$this->is_admin_hooked = true;
 
 		return true;
 	}
@@ -1486,7 +1486,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @return bool
 	 */
 	final public function global_hookable() {
-		if ( $this->_is_global_hooked ) {
+		if ( $this->is_global_hooked ) {
 			return true;
 		}
 
@@ -1505,7 +1505,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 				add_filter( $filter, $function_to_add, 10, $accepted_args );
 			}
 		}
-		$this->_is_global_hooked = true;
+		$this->is_global_hooked = true;
 
 		return true;
 	}
@@ -1516,7 +1516,6 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 * @since 4.0.1
 	 */
 	public function remove_wp_options() {
-		return;
 	}
 
 	/**
@@ -1896,7 +1895,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 		$mapped_40_provider = $this->map_30_provider( $v3_provider );
 
 		foreach ( $v40_providers as $global_multi_id => $v40_provider ) {
-			if ( $v40_provider == $mapped_40_provider ) {
+			if ( $v40_provider === $mapped_40_provider ) {
 				return $global_multi_id;
 			}
 		}
@@ -1940,7 +1939,7 @@ abstract class Hustle_Provider_Abstract implements Hustle_Provider_Interface {
 	 */
 	protected function provider_connection_falied() {
 		/* translators: provider's title */
-		$error_message = sprintf( __( "We couldn't connect to your %s account. Please resolve the errors below and try again.", 'hustle' ), $this->_title );
+		$error_message = sprintf( __( "We couldn't connect to your %s account. Please resolve the errors below and try again.", 'hustle' ), $this->title );
 		return $error_message;
 	}
 }

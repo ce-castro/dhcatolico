@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Settings_Page
+ *
+ * @package Hustle
+ */
+
 /**
  * Class Hustle_Settings_Page
  */
@@ -11,6 +17,9 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 	 */
 	const SETTINGS_OPTION_KEY = 'hustle_settings';
 
+	/**
+	 * Init
+	 */
 	public function init() {
 
 		$this->page = 'hustle_settings';
@@ -51,6 +60,11 @@ class Hustle_Settings_Page extends Hustle_Admin_Page_Abstract {
 		self::add_color_picker();
 	}
 
+	/**
+	 * Get page template args
+	 *
+	 * @return array
+	 */
 	public function get_page_template_args() {
 		$current_user     = wp_get_current_user();
 		$general_settings = Hustle_Settings_Admin::get_general_settings();

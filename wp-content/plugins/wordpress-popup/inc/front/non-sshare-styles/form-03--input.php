@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $component = '.hustle-field .hustle-input';
@@ -16,14 +20,14 @@ $padding_right  = ( '' !== $advanced['input_padding_right'] ) ? $advanced['input
 $padding_bottom = ( '' !== $advanced['input_padding_bottom'] ) ? $advanced['input_padding_bottom'] . $advanced['input_padding_unit'] : '0';
 $padding_left   = ( '' !== $advanced['input_padding_left'] ) ? $advanced['input_padding_left'] . $advanced['input_padding_unit'] : '0';
 
-$padding = $padding_top . ' ' . $padding_right . ' ' . $padding_bottom . ' ' . $padding_left;
+$padding = ( ! $is_rtl ) ? $padding_top . ' ' . $padding_right . ' ' . $padding_bottom . ' ' . $padding_left : $padding_top . ' ' . $padding_left . ' ' . $padding_bottom . ' ' . $padding_right;
 
 $mobile_padding_top    = ( '' !== $advanced['input_padding_top_mobile'] ) ? $advanced['input_padding_top_mobile'] . $advanced['input_padding_unit_mobile'] : $padding_top;
 $mobile_padding_right  = ( '' !== $advanced['input_padding_right_mobile'] ) ? $advanced['input_padding_right_mobile'] . $advanced['input_padding_unit_mobile'] : $padding_right;
 $mobile_padding_bottom = ( '' !== $advanced['input_padding_bottom_mobile'] ) ? $advanced['input_padding_bottom_mobile'] . $advanced['input_padding_unit_mobile'] : $padding_bottom;
 $mobile_padding_left   = ( '' !== $advanced['input_padding_left_mobile'] ) ? $advanced['input_padding_left_mobile'] . $advanced['input_padding_unit_mobile'] : $padding_left;
 
-$mobile_padding = $mobile_padding_top . ' ' . $mobile_padding_right . ' ' . $mobile_padding_bottom . ' ' . $mobile_padding_left;
+$mobile_padding = ( ! $is_rtl ) ? $mobile_padding_top . ' ' . $mobile_padding_right . ' ' . $mobile_padding_bottom . ' ' . $mobile_padding_left : $mobile_padding_top . ' ' . $mobile_padding_left . ' ' . $mobile_padding_bottom . ' ' . $mobile_padding_right;
 $mobile_padding = ( ! $is_mobile_enabled || ( $is_mobile_enabled && $default_advanced ) ) ? $padding : $mobile_padding;
 
 // SETTINGS: Border.
@@ -55,7 +59,7 @@ $radius_topright    = ( '' !== $advanced['input_radius_top_right'] ) ? $advanced
 $radius_bottomright = ( '' !== $advanced['input_radius_bottom_right'] ) ? $advanced['input_radius_bottom_right'] . $advanced['input_radius_unit'] : '0';
 $radius_bottomleft  = ( '' !== $advanced['input_radius_bottom_left'] ) ? $advanced['input_radius_bottom_left'] . $advanced['input_radius_unit'] : '0';
 
-$border_radius = $radius_topleft . ' ' . $radius_topright . ' ' . $radius_bottomright . ' ' . $radius_bottomleft;
+$border_radius = ( ! $is_rtl ) ? $radius_topleft . ' ' . $radius_topright . ' ' . $radius_bottomright . ' ' . $radius_bottomleft : $radius_topright . ' ' . $radius_topleft . ' ' . $radius_bottomleft . ' ' . $radius_bottomright;
 
 $mobile_radius_topleft     = ( '' !== $advanced['input_radius_top_left_mobile'] ) ? $advanced['input_radius_top_left_mobile'] . $advanced['input_radius_unit_mobile'] : $radius_topleft;
 $mobile_radius_topright    = ( '' !== $advanced['input_radius_top_right_mobile'] ) ? $advanced['input_radius_top_right_mobile'] . $advanced['input_radius_unit_mobile'] : $radius_topright;
@@ -96,7 +100,7 @@ $font_family    = $typography['input_font_family'];
 $font_size      = $typography['input_font_size'] . $typography['input_font_size_unit'];
 $font_weight    = $typography['input_font_weight'];
 $font_style     = 'normal';
-$alignment      = $typography['input_alignment'];
+$alignment      = ( ! $is_rtl ) ? $typography['input_alignment'] : 'right';
 $line_height    = $typography['input_line_height'] . $typography['input_line_height_unit'];
 $letter_spacing = $typography['input_letter_spacing'] . $typography['input_letter_spacing_unit'];
 $text_transform = $typography['input_text_transform'];
@@ -122,7 +126,7 @@ if ( 'regular' === $font_weight ) {
 $mobile_font_size      = ( '' !== $typography['input_font_size_mobile'] ) ? $typography['input_font_size_mobile'] . $typography['input_font_size_unit_mobile'] : $font_size;
 $mobile_font_weight    = $typography['input_font_weight_mobile'];
 $mobile_font_style     = 'normal';
-$mobile_alignment      = $typography['input_alignment_mobile'];
+$mobile_alignment      = ( ! $is_rtl ) ? $typography['input_alignment_mobile'] : 'right';
 $mobile_line_height    = ( '' !== $typography['input_line_height_mobile'] ) ? $typography['input_line_height_mobile'] . $typography['input_line_height_unit_mobile'] : $line_height;
 $mobile_letter_spacing = ( '' !== $typography['input_letter_spacing_mobile'] ) ? $typography['input_letter_spacing_mobile'] . $typography['input_letter_spacing_unit_mobile'] : $letter_spacing;
 $mobile_text_transform = $typography['input_text_transform'];
@@ -167,7 +171,7 @@ if ( $is_optin ) {
 	$style     .= $prefix_mobile . $component . ' {';
 		$style .= 'margin: 0;';
 		$style .= 'padding: ' . $mobile_padding . ';';
-		$style .= ( 'none' === $design['form_fields_icon'] ) ? '' : 'padding-left: calc(' . $mobile_padding_left . ' + 25px);';
+		$style .= ( 'none' === $design['form_fields_icon'] ) ? '' : ( ( ! $is_rtl ) ? 'padding-left: calc(' . $mobile_padding_left . ' + 25px);' : 'padding-right: calc(' . $mobile_padding_left . ' + 25px);' );
 		$style .= 'border-width: ' . $mobile_border_width . ';';
 		$style .= 'border-style: ' . $mobile_border_style . ';';
 		$style .= ( ! $is_vanilla ) ? 'border-color: ' . $border_color_default . ';' : '';

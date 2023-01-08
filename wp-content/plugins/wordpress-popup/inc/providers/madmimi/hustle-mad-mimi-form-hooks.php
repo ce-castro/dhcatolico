@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Mad_Mimi_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Mad_Mimi_Form_Hooks
@@ -14,8 +19,9 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
+	 * @throws Exception Required fields are missed.
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
@@ -83,7 +89,7 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				'zip',
 				'country',
 			);
-			// Remove unwanted fields
+			// Remove unwanted fields.
 			foreach ( $submitted_data as $key => $sub_d ) {
 
 				if ( in_array( $key, $exisiting_fields, true ) ) {
@@ -116,11 +122,11 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$form_settings_instance
 			);
 
-			// update if email exisits
+			// update if email exisits.
 			if ( ! empty( $email_exist->subscribers ) ) {
 				$existing_member = $email_exist->subscribers[0];
-				$exisiting_list  = $existing_member->subscriberLists; //phpcs:ignore
-				$is_member       = $this->_is_memeber_on_list( $exisiting_list, $list_id );
+				$exisiting_list  = $existing_member->subscriberLists;// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$is_member       = $this->is_memeber_on_list( $exisiting_list, $list_id );
 				$lists           = array();
 
 				if ( true !== $is_member ) {
@@ -190,11 +196,33 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	}
 
 	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$list_id                = $addon_setting_values['list_id'];
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
+		$key                    = $addon->get_setting( 'api_key', '', $global_multi_id );
+		$user                   = $addon->get_setting( 'username', '', $global_multi_id );
+		try {
+			$api = $addon::api( $user, $key );
+			$api->delete_email( $list_id, $email );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Check whether the email is already subscribed.
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -236,12 +264,12 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				// triggers exception if not found.
 				$existing_member = $this->get_subscriber( $api, $submitted_data['email'] );
 				// var_dump($existing_member);
-				// if member exisits check if member is on a current list
+				// if member exisits check if member is on a current list.
 				if ( ! empty( $existing_member->subscribers ) ) {
 					$existing_member = $existing_member->subscribers[0];
-					$exisiting_list  = $existing_member->subscriberLists; //phpcs:ignore
+					$exisiting_list  = $existing_member->subscriberLists;// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-					if ( true === $this->_is_memeber_on_list( $exisiting_list, $list_id ) ) {
+					if ( true === $this->is_memeber_on_list( $exisiting_list, $list_id ) ) {
 						$is_success = self::ALREADY_SUBSCRIBED_ERROR;
 					}
 				}
@@ -268,11 +296,11 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 			return $is_success;
 		}
@@ -285,11 +313,11 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param $existing_lists
-	 * @param $list current list
+	 * @param array $existing_lists All lists.
+	 * @param int   $list current list.
 	 * @return bool
 	 */
-	private function _is_memeber_on_list( $existing_lists, $list ) {
+	private function is_memeber_on_list( $existing_lists, $list ) {
 		$lists = array();
 		foreach ( $existing_lists as $key => $exisiting_list ) {
 			$lists[] = $exisiting_list->id;
@@ -306,20 +334,20 @@ class Hustle_Mad_Mimi_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * This method is to be inherited
 	 * And extended by child classes.
 	 *
-	 * Make use of the property `$_subscriber`
+	 * Make use of the property `$subscriber`
 	 * Method to omit double api calls
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param   object $api
-	 * @param   mixed  $data
+	 * @param   object $api Api.
+	 * @param   mixed  $data Data.
 	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ) {
-			$this->_subscriber[ md5( $data ) ] = $api->get_subscriber( array( 'query' => $data ) );
+		if ( empty( $this->subscriber ) && ! isset( $this->subscriber[ md5( $data ) ] ) ) {
+			$this->subscriber[ md5( $data ) ] = $api->get_subscriber( array( 'query' => $data ) );
 		}
 
-		return $this->_subscriber[ md5( $data ) ];
+		return $this->subscriber[ md5( $data ) ];
 	}
 }

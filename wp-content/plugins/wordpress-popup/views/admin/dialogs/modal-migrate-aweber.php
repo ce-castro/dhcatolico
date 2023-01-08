@@ -53,7 +53,7 @@ $aweber = Hustle_Aweber::get_instance();
 						$auth_url = $api->get_authorization_uri( 0, true, Hustle_Data::INTEGRATIONS_PAGE );
 
 						if ( $auth_url ) :
-						?>
+							?>
 
 							<a
 								href="<?php echo esc_url( $auth_url ); ?>"

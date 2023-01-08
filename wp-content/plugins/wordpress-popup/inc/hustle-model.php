@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Model
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Model
@@ -55,9 +60,19 @@ abstract class Hustle_Model {
 	 */
 	public $id;
 
-	protected $_track_types = array();
+	/**
+	 * Track types
+	 *
+	 * @var array
+	 */
+	protected $track_types = array();
 
-	protected $_decorator = false;
+	/**
+	 * Decorator
+	 *
+	 * @var bool
+	 */
+	protected $decorator = false;
 
 	/**
 	 * Data.
@@ -78,11 +93,18 @@ abstract class Hustle_Model {
 	 */
 	protected $wpdb;
 
+	/**
+	 * Use count cookie
+	 *
+	 * @var bool
+	 */
 	public static $use_count_cookie;
 
 	/**
-	 *
 	 * Opt_In_Data constructor.
+	 *
+	 * @param int $id Module ID.
+	 * @return \WP_Error|null
 	 */
 	public function __construct( $id = null ) {
 		global $wpdb;
@@ -98,7 +120,7 @@ abstract class Hustle_Model {
 
 		if ( false === $data ) {
 			global $wpdb;
-			$data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'hustle_modules WHERE module_id = %d', $id ), OBJECT );
+			$data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'hustle_modules WHERE module_id = %d', $id ), OBJECT );// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			if ( empty( $data ) ) {
 				return new WP_Error( 'hustle-module', __( 'Module does not exist!', 'hustle' ) );
 			}
@@ -132,35 +154,6 @@ abstract class Hustle_Model {
 	}
 
 	/**
-	 * Returns a module based on the provided ID.
-	 *
-	 * @since unknown
-	 *
-	 * @param integer $id Module ID.
-	 * @return Hustle_Model
-	 */
-	public function get( $id ) {
-		_deprecated_function( __METHOD__, '4.3.0', 'new ' . get_class( $this ) );
-
-		global $wpdb;
-
-		$cache_group = 'hustle_model_data';
-		$this->data  = wp_cache_get( $id, $cache_group );
-		$id          = (int) $id;
-
-		if ( false === $this->data ) {
-			$data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'hustle_modules WHERE module_id = %d', $id ), OBJECT );
-			if ( empty( $data ) ) {
-				return new WP_Error( 'hustle-module', __( 'Module does not exist!', 'hustle' ) );
-			}
-			$this->data = $data;
-			wp_cache_set( $id, $this->data, $cache_group );
-		}
-		$this->populate();
-		return $this;
-	}
-
-	/**
 	 * Sets the core properties of the module as properties of the instance.
 	 * These are module_id, module_name, module_type, active, and blog_id.
 	 *
@@ -187,7 +180,7 @@ abstract class Hustle_Model {
 		$data  = get_object_vars( $this );
 		$table = Hustle_Db::modules_table();
 		if ( empty( $this->id ) ) {
-			$this->wpdb->insert( $table, $this->_sanitize_model_data( $data ), array_values( $this->get_format() ) );
+			$this->wpdb->insert( $table, $this->sanitize_model_data( $data ), array_values( $this->get_format() ) );
 			$this->id = $this->wpdb->insert_id;
 
 			/**
@@ -201,7 +194,7 @@ abstract class Hustle_Model {
 			 */
 			do_action( 'hustle_after_create_module', $this->module_type, $data, $this->id );
 		} else {
-			$this->wpdb->update( $table, $this->_sanitize_model_data( $data ), array( 'module_id' => $this->id ), array_values( $this->get_format() ), array( '%d' ) );
+			$this->wpdb->update( $table, $this->sanitize_model_data( $data ), array( 'module_id' => $this->id ), array_values( $this->get_format() ), array( '%d' ) );
 
 			/**
 			 * Action Hustle after updating module
@@ -259,7 +252,7 @@ abstract class Hustle_Model {
 		// clone module data.
 		$data = $this->clone_module();
 
-		// rename
+		// rename.
 		$this->module_name .= __( ' (copy)', 'hustle' );
 
 		// Turn status off.
@@ -309,7 +302,6 @@ abstract class Hustle_Model {
 				$providers    = Hustle_Providers::get_instance()->get_providers();
 				foreach ( $providers as $slug => $provider ) {
 					$provider_data = $this->get_provider_settings( $slug, false );
-					// if ( 'local_list' !== $slug && $provider_data && $provider->is_connected()
 					if ( $provider_data && $provider->is_connected()
 							&& $provider->is_form_connected( $this->module_id ) ) {
 						$integrations[ $slug ] = $provider_data;
@@ -338,7 +330,7 @@ abstract class Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $data
+	 * @param array $data Data.
 	 */
 	public function activate_providers( $data ) {
 
@@ -346,7 +338,7 @@ abstract class Hustle_Model {
 			return;
 		}
 
-		// Activate other saved providers
+		// Activate other saved providers.
 		if ( ! empty( $data['integrations'] ) ) {
 			$providers = Hustle_Providers::get_instance()->get_providers();
 			foreach ( $providers as $slug => $provider ) {
@@ -358,7 +350,7 @@ abstract class Hustle_Model {
 			// Activate Local list provider if there are no integrations.
 			$slug          = 'local_list';
 			$provider_data = array(
-				'local_list_name' => $this->id,
+				'local_list_name' => $this->module_name,
 			);
 			$this->set_provider_settings( $slug, $provider_data );
 		}
@@ -369,7 +361,7 @@ abstract class Hustle_Model {
 	 *
 	 * @since 3.0.7
 	 *
-	 * @param string $type Optional. Type of cache which should be removed ( data | meta | shortcode )
+	 * @param string $type Optional. Type of cache which should be removed ( data | meta | shortcode ).
 	 * @return void
 	 */
 	public function clean_module_cache( $type = '' ) {
@@ -401,16 +393,16 @@ abstract class Hustle_Model {
 	 */
 	public function get_attributes() {
 		$data = (array) $this->data;
-		return $this->_sanitize_model_data( $data );
+		return $this->sanitize_model_data( $data );
 	}
 
 	/**
 	 * Matches given data to the data format
 	 *
-	 * @param $data
+	 * @param array $data Data.
 	 * @return array
 	 */
-	private function _sanitize_model_data( array $data ) {
+	private function sanitize_model_data( array $data ) {
 		$d = array();
 		foreach ( $this->get_format() as $key => $format ) {
 			$d[ $key ] = isset( $data[ $key ] ) ? $data[ $key ] : '';
@@ -423,8 +415,8 @@ abstract class Hustle_Model {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param $meta_key
-	 * @param $meta_value
+	 * @param string       $meta_key Meta key.
+	 * @param array|string $meta_value Meta value.
 	 * @return false|int
 	 */
 	public function add_meta( $meta_key, $meta_value ) {
@@ -434,8 +426,8 @@ abstract class Hustle_Model {
 			Hustle_Db::modules_meta_table(),
 			array(
 				'module_id'  => $this->id,
-				'meta_key'   => $meta_key,
-				'meta_value' => is_array( $meta_value ) || is_object( $meta_value ) ? wp_json_encode( $meta_value ) : $meta_value,
+				'meta_key'   => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value' => is_array( $meta_value ) || is_object( $meta_value ) ? wp_json_encode( $meta_value ) : $meta_value, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			),
 			array(
 				'%d',
@@ -450,8 +442,8 @@ abstract class Hustle_Model {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param $meta_key
-	 * @param $meta_value
+	 * @param string       $meta_key Meta key.
+	 * @param array|string $meta_value Meta value.
 	 * @return false|int
 	 */
 	public function update_meta( $meta_key, $meta_value ) {
@@ -460,11 +452,11 @@ abstract class Hustle_Model {
 			$res = $this->wpdb->update(
 				Hustle_Db::modules_meta_table(),
 				array(
-					'meta_value' => is_array( $meta_value ) || is_object( $meta_value ) ? wp_json_encode( $meta_value ) : $meta_value,
+					'meta_value' => is_array( $meta_value ) || is_object( $meta_value ) ? wp_json_encode( $meta_value ) : $meta_value, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 				),
 				array(
 					'module_id' => $this->id,
-					'meta_key'  => $meta_key,
+					'meta_key'  => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				),
 				array(
 					'%s',
@@ -491,11 +483,11 @@ abstract class Hustle_Model {
 	/**
 	 * Checks if optin has $meta_key added disregarding the meta_value
 	 *
-	 * @param $meta_key
+	 * @param string $meta_key Meta key.
 	 * @return bool
 	 */
 	public function has_meta( $meta_key ) {
-		return (bool) $this->wpdb->get_row( $this->wpdb->prepare( 'SELECT * FROM ' . Hustle_Db::modules_meta_table() . ' WHERE `meta_key`=%s AND `module_id`=%d', $meta_key, (int) $this->id ) );
+		return (bool) $this->wpdb->get_row( $this->wpdb->prepare( 'SELECT * FROM ' . Hustle_Db::modules_meta_table() . ' WHERE `meta_key`=%s AND `module_id`=%d', $meta_key, (int) $this->id ) ); // phpcs:ignore
 	}
 
 	/**
@@ -504,9 +496,9 @@ abstract class Hustle_Model {
 	 * @since ??
 	 * @since 4.0 param $get_cached added.
 	 *
-	 * @param string $meta_key
-	 * @param mixed  $default
-	 * @param bool   $get_cached
+	 * @param string $meta_key Meta key.
+	 * @param mixed  $default Default value.
+	 * @param bool   $get_cached Get cached.
 	 * @return null|string|$default
 	 */
 	public function get_meta( $meta_key, $default = null, $get_cached = true ) {
@@ -520,7 +512,7 @@ abstract class Hustle_Model {
 				$module_meta = array();
 			}
 
-			$value                    = $this->wpdb->get_var( $this->wpdb->prepare( 'SELECT `meta_value` FROM ' . Hustle_Db::modules_meta_table() . ' WHERE `meta_key`=%s AND `module_id`=%d', $meta_key, (int) $this->id ) );
+			$value                    = $this->wpdb->get_var( $this->wpdb->prepare( 'SELECT `meta_value` FROM ' . Hustle_Db::modules_meta_table() . ' WHERE `meta_key`=%s AND `module_id`=%d', $meta_key, (int) $this->id ) );// phpcs:ignore
 			$module_meta[ $meta_key ] = $value;
 			wp_cache_set( $this->id, $module_meta, $cache_group );
 
@@ -588,7 +580,7 @@ abstract class Hustle_Model {
 
 		$this->clean_module_cache();
 
-		// delete optin
+		// delete optin.
 		$result = $this->wpdb->delete(
 			Hustle_Db::modules_table(),
 			array(
@@ -599,7 +591,7 @@ abstract class Hustle_Model {
 			)
 		);
 
-		// delete metas
+		// delete metas.
 		$result = $result && $this->wpdb->delete(
 			Hustle_Db::modules_meta_table(),
 			array(
@@ -610,7 +602,7 @@ abstract class Hustle_Model {
 			)
 		);
 
-		// delete tracking data
+		// delete tracking data.
 		$this->wpdb->delete(
 			Hustle_Db::tracking_table(),
 			array(
@@ -621,19 +613,20 @@ abstract class Hustle_Model {
 			)
 		);
 
-		// delete entries
+		// delete entries.
 		Hustle_Entry_Model::delete_entries( $this->id );
 
 		return $result;
 	}
+
 	/**
 	 * Retrieves active tracking types from db
 	 *
 	 * @return null|array
 	 */
 	public function get_tracking_types() {
-		$this->_track_types = json_decode( $this->get_meta( self::TRACK_TYPES, '{}' ), true );
-		return $this->_track_types;
+		$this->track_types = json_decode( $this->get_meta( self::TRACK_TYPES, '{}' ), true );
+		return $this->track_types;
 	}
 
 	/**
@@ -654,17 +647,22 @@ abstract class Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param $type
+	 * @param string $type Type.
 	 * @return bool
 	 */
 	public function is_tracking_enabled( $type ) {
-		$tracking_types = $this->get_tracking_types();
+		// Check global option first.
+		if ( ! Hustle_Settings_Admin::global_tracking() ) {
+			$is_tracking_enabled = false;
+		} else {
+			$tracking_types = $this->get_tracking_types();
 
-		$is_tracking_enabled = (
-			is_array( $tracking_types )
-			&& array_key_exists( $type, $tracking_types )
-			&& true === $tracking_types[ $type ]
-		);
+			$is_tracking_enabled = (
+				is_array( $tracking_types )
+				&& array_key_exists( $type, $tracking_types )
+				&& true === $tracking_types[ $type ]
+			);
+		}
 
 		$is_tracking_enabled = apply_filters( 'hustle_is_tracking_enabled', $is_tracking_enabled, $this, $type );
 
@@ -675,7 +673,7 @@ abstract class Hustle_Model {
 	 * Edit the modules' "edit_roles" meta.
 	 *
 	 * @since 4.0
-	 * @param array $roles Roles
+	 * @param array $roles Roles.
 	 * @return false|integer
 	 */
 	public function update_edit_roles( $roles ) {
@@ -689,27 +687,27 @@ abstract class Hustle_Model {
 	/**
 	 * Checks if $type is allowed to track views and conversions
 	 *
-	 * @param $type
+	 * @param string $type Type.
 	 * @return bool
 	 */
 	public function is_track_type_active( $type ) {
-		return isset( $this->_track_types[ $type ] );
+		return isset( $this->track_types[ $type ] );
 	}
 
 	/**
 	 * Toggles $type's tracking mode
 	 *
-	 * @param $type
+	 * @param string $type Type.
 	 * @return bool
 	 */
 	public function toggle_type_track_mode( $type ) {
 
 		if ( $this->is_track_type_active( $type ) ) {
-			unset( $this->_track_types[ $type ] );
+			unset( $this->track_types[ $type ] );
 		} else {
-			$this->_track_types[ $type ] = true;
+			$this->track_types[ $type ] = true;
 		}
-		$res = $this->update_meta( self::TRACK_TYPES, $this->_track_types );
+		$res = $this->update_meta( self::TRACK_TYPES, $this->track_types );
 
 		return $res;
 	}
@@ -720,22 +718,23 @@ abstract class Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param integer $module_id
+	 * @param integer $module_id Module ID.
 	 * @return string|null
 	 */
 	public static function get_module_type_by_module_id( $module_id ) {
 		$cache_group = 'hustle_module_type';
+		if ( empty( $module_id ) ) {
+			return false;
+		}
 		$module_type = wp_cache_get( $module_id, $cache_group );
 		if ( false === $module_type ) {
 			global $wpdb;
 			$query = $wpdb->prepare(
-				'
-				SELECT module_type FROM `' . Hustle_Db::modules_table() . '`
-				WHERE `module_id`=%s',
+				'SELECT module_type FROM `' . Hustle_Db::modules_table() . '` WHERE `module_id`=%s', // phpcs:ignore
 				$module_id
 			);
 
-			$module_type = $wpdb->get_var( $query );
+			$module_type = $wpdb->get_var( $query );// phpcs:ignore
 			wp_cache_set( $module_id, $module_type, $cache_group );
 		}
 
@@ -758,7 +757,7 @@ abstract class Hustle_Model {
 
 		if ( empty( $module_id ) ) {
 			// Retrieve the shortcode_id from the db for backwards compatibility.
-			$module_id = $wpdb->get_var(
+			$module_id = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 				$wpdb->prepare(
 					'SELECT module_id FROM ' . $wpdb->prefix . "hustle_modules_meta
 					WHERE meta_key = 'shortcode_id'
@@ -781,45 +780,43 @@ abstract class Hustle_Model {
 	/**
 	 * Disable $type's tracking mode
 	 *
-	 * @param $type
-	 * @param bool $force
-	 * @return bool
+	 * @param string $type Type.
+	 * @param bool   $force Force.
 	 */
 	public function disable_type_track_mode( $type, $force = false ) {
-		if ( $force && ! empty( $this->_track_types ) ) {
-			$this->_track_types = array();
-			$updated            = true;
+		if ( $force && ! empty( $this->track_types ) ) {
+			$this->track_types = array();
+			$updated           = true;
 		} elseif ( $this->is_track_type_active( $type ) ) {
-			unset( $this->_track_types[ $type ] );
+			unset( $this->track_types[ $type ] );
 			$updated = true;
 		}
 		if ( ! empty( $updated ) ) {
-			$res = $this->update_meta( self::TRACK_TYPES, $this->_track_types );
+			$res = $this->update_meta( self::TRACK_TYPES, $this->track_types );
 		}
 	}
 
 	/**
-	 * enable $type's tracking mode
+	 * Enable $type's tracking mode
 	 *
-	 * @param $type
-	 * @param bool $force
-	 * @return bool
+	 * @param string $type Type.
+	 * @param bool   $force Force.
 	 */
 	public function enable_type_track_mode( $type, $force = false ) {
 		if ( $force && 'social_sharing' === $type ) {
-			$subtypes           = static::get_sshare_types();
-			$this->_track_types = array_fill_keys( $subtypes, true );
-			$updated            = true;
+			$subtypes          = static::get_sshare_types();
+			$this->track_types = array_fill_keys( $subtypes, true );
+			$updated           = true;
 		} elseif ( $force && 'embedded' === $type ) {
-			$subtypes           = static::get_embedded_types();
-			$this->_track_types = array_fill_keys( $subtypes, true );
-			$updated            = true;
+			$subtypes          = static::get_embedded_types();
+			$this->track_types = array_fill_keys( $subtypes, true );
+			$updated           = true;
 		} elseif ( ! $this->is_track_type_active( $type ) ) {
-			$this->_track_types[ $type ] = true;
-			$updated                     = true;
+			$this->track_types[ $type ] = true;
+			$updated                    = true;
 		}
 		if ( ! empty( $updated ) ) {
-			$res = $this->update_meta( self::TRACK_TYPES, $this->_track_types );
+			$res = $this->update_meta( self::TRACK_TYPES, $this->track_types );
 		}
 	}
 
@@ -830,7 +827,7 @@ abstract class Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $tracking_types
+	 * @param array $tracking_types Tracking types.
 	 */
 	private function set_sub_type_tracking_status( $tracking_types ) {
 
@@ -840,13 +837,13 @@ abstract class Hustle_Model {
 			}
 
 			if ( $status ) {
-				$this->_track_types[ $type ] = true;
-			} elseif ( isset( $this->_track_types[ $type ] ) ) {
-				unset( $this->_track_types[ $type ] );
+				$this->track_types[ $type ] = true;
+			} elseif ( isset( $this->track_types[ $type ] ) ) {
+				unset( $this->track_types[ $type ] );
 			}
 		}
 
-		$res = $this->update_meta( self::TRACK_TYPES, $this->_track_types );
+		$res = $this->update_meta( self::TRACK_TYPES, $this->track_types );
 
 		return $res;
 	}
@@ -856,7 +853,7 @@ abstract class Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_types
+	 * @param array $submitted_types Submitted types.
 	 */
 	public function update_submitted_tracking_types( $submitted_types ) {
 
@@ -976,9 +973,6 @@ abstract class Hustle_Model {
 	/**
 	 * Returns the link to the wizard page into the defined tab.
 	 *
-	 * @since unknown
-	 * @since 4.3.0 Moved from Hustle_Module_Decorator to this class.
-	 *
 	 * @param string $section Slug of the section to go to.
 	 * @return string
 	 */
@@ -1027,14 +1021,14 @@ abstract class Hustle_Model {
 	/**
 	 * Decorates current model
 	 *
-	 * @return Hustle_Module_Decorator
+	 * @return Hustle_Decorator_Abstract
 	 */
 	public function get_decorated() {
-		if ( ! $this->_decorator ) {
-			$this->_decorator = $this->get_decorator_instance();
+		if ( ! $this->decorator ) {
+			$this->decorator = $this->get_decorator_instance();
 		}
 
-		return $this->_decorator;
+		return $this->decorator;
 	}
 
 	/**
@@ -1061,9 +1055,9 @@ abstract class Hustle_Model {
 	 *
 	 * @since 4.0
 	 *
-	 * @param string $sub_type
-	 * @param string $custom_classes
-	 * @param bool   $is_preview
+	 * @param string $sub_type Sub types.
+	 * @param string $custom_classes Custom classes.
+	 * @param bool   $is_preview Is preview.
 	 * @return string
 	 */
 	public function display( $sub_type = null, $custom_classes = '', $is_preview = false ) {
@@ -1095,9 +1089,9 @@ abstract class Hustle_Model {
 	 * @since 4.0
 	 * @since 4.0.3 $module_type, $module_mode and $with_display_name params added.
 	 *
-	 * @param string $module_type
-	 * @param string $module_mode
-	 * @param bool   $with_display_name
+	 * @param string $module_type Module type.
+	 * @param string $module_mode Module mode.
+	 * @param bool   $with_display_name With display mode.
 	 *
 	 * @return array
 	 */
@@ -1214,14 +1208,11 @@ abstract class Hustle_Model {
 	 * @return boolean
 	 */
 	public static function can_role_edit_one_module( $role_slug ) {
-
 		global $wpdb;
-		$cap   = 'hustle_edit_module';
 		$table = Hustle_Db::modules_meta_table();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$query = $wpdb->prepare( "SELECT module_id FROM `{$table}` WHERE `meta_key`='edit_roles' AND meta_value LIKE %s LIMIT 1", '%"' . $role_slug . '"%' );
-		return $wpdb->get_var( $query );
+		$query = $wpdb->prepare( "SELECT module_id FROM `{$table}` WHERE `meta_key`='edit_roles' AND meta_value LIKE %s LIMIT 1", '%"' . $role_slug . '"%' );// phpcs:ignore
+		return $wpdb->get_var( $query );// phpcs:ignore
 	}
 
 	/**
@@ -1251,7 +1242,7 @@ abstract class Hustle_Model {
 	public function save_from_migration() {
 		$module_data = get_object_vars( $this );
 		$table       = Hustle_Db::modules_table();
-		$data        = $this->_sanitize_model_data( $module_data );
+		$data        = $this->sanitize_model_data( $module_data );
 		$format      = $this->get_format();
 		$format      = array_values( $format );
 		/**

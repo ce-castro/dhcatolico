@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Local_List_Form_Settings class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 
 	/**
@@ -23,7 +29,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 		 */
 		public function form_settings_wizards() {
 			// already filtered on Abstract
-			// numerical array steps
+			// numerical array steps.
 			return array(
 				// 0
 				array(
@@ -51,7 +57,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 		 * @since 3.0.5
 		 * @since 4.0 param $validate removed.
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function first_step_callback( $submitted_data ) {
@@ -81,6 +87,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 			$step_html    = Hustle_Provider_Utils::get_integration_modal_title_markup(
 				__( 'Hustle\'s Local List', 'hustle' ),
 				sprintf(
+					/* translators: 1. open 'a' tag 2. closing 'a' tag */
 					__( 'Save the submissions in your database so you can access them or export them from the %1$sEmail Lists%2$s page. Local list (when active) also stores the status of active third-party apps for each submission.', 'hustle' ),
 					'<a href="' . $entries_page . '" target="_blank">',
 					'</a>'
@@ -111,7 +118,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 				'has_errors' => $has_errors,
 			);
 
-			// Save only after the step has been validated and there are no errors
+			// Save only after the step has been validated and there are no errors.
 			if ( $is_submit && ! $has_errors ) {
 				$this->save_form_settings_values( $current_data );
 			}
@@ -124,7 +131,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		private function get_first_step_options( $submitted_data ) {

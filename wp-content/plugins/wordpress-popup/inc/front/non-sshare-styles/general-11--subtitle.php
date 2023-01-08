@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $component = '.hustle-layout .hustle-subtitle';
@@ -98,7 +102,7 @@ $font_family     = $typography['subtitle_font_family'];
 $font_size       = $typography['subtitle_font_size'] . $typography['subtitle_font_size_unit'];
 $font_weight     = $typography['subtitle_font_weight'];
 $font_style      = 'normal';
-$alignment       = $typography['subtitle_alignment'];
+$alignment       = ( ! $is_rtl ) ? $typography['subtitle_alignment'] : 'right';
 $line_height     = $typography['subtitle_line_height'] . $typography['subtitle_line_height_unit'];
 $letter_spacing  = $typography['subtitle_letter_spacing'] . $typography['subtitle_letter_spacing_unit'];
 $text_transform  = $typography['subtitle_text_transform'];
@@ -125,10 +129,10 @@ if ( 'regular' === $font_weight ) {
 $mobile_font_size       = ( '' !== $typography['subtitle_font_size_mobile'] ) ? $typography['subtitle_font_size_mobile'] . $typography['subtitle_font_size_unit_mobile'] : $font_size;
 $mobile_font_weight     = $typography['subtitle_font_weight_mobile'];
 $mobile_font_style      = 'normal';
-$mobile_alignment       = $typography['subtitle_alignment_mobile'];
+$mobile_alignment       = ( ! $is_rtl ) ? $typography['subtitle_alignment_mobile'] : 'right';
 $mobile_line_height     = ( '' !== $typography['subtitle_line_height_mobile'] ) ? $typography['subtitle_line_height_mobile'] . $typography['subtitle_line_height_unit_mobile'] : $line_height;
 $mobile_letter_spacing  = ( '' !== $typography['subtitle_letter_spacing_mobile'] ) ? $typography['subtitle_letter_spacing_mobile'] . $typography['subtitle_letter_spacing_unit_mobile'] : $letter_spacing;
-$mobile_text_transform  = $typography['subtitle_text_transform'];
+$mobile_text_transform  = $typography['subtitle_text_transform_mobile'];
 $mobile_text_decoration = $typography['subtitle_text_decoration_mobile'];
 
 if ( 'regular' === $mobile_font_weight ) {

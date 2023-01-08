@@ -55,11 +55,17 @@ class Opt_In_Condition_On_Browser extends Opt_In_Condition_Abstract {
 	private function get_current_user_agent() {
 		$browser = 'other';
 		if ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$unlashed_agent = wp_unslash( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$user_agent     = filter_var( $unlashed_agent );
+			$user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT' );
 		} else {
 			$user_agent = false;
 		}
+
+		/**
+		 * Filter the current user agent
+		 *
+		 * @param string $user_agent Passed user agent.
+		 */
+		$user_agent = apply_filters( 'hustle_get_user_agent', $user_agent );
 
 		try {
 

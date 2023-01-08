@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Mailchimp_Api class
+ *
+ * @package Hustle
+ */
+
 /**
  * Mailchimp API
  *
@@ -6,46 +12,63 @@
  **/
 class Hustle_Mailchimp_Api {
 
-	private $_api_key;
-	private $_data_center;
-	private $_user;
+	/**
+	 * Api key
+	 *
+	 * @var string
+	 */
+	private $api_key;
+	/**
+	 * Data center
+	 *
+	 * @var string
+	 */
+	private $data_center;
+	/**
+	 * User
+	 *
+	 * @var string
+	 */
+	private $user;
 
-	/*
-	The <dc> part of the URL corresponds to the data center for your account. For example, if the last part of your Mailchimp API key is us6, all API endpoints for your account are available at https://us6.api.mailchimp.com/3.0/.
-	*/
-	private $_endpoint = 'https://<dc>.api.mailchimp.com/3.0/';
+	/**
+	 * The <dc> part of the URL corresponds to the data center for your account. For example, if the last part of your Mailchimp API key is us6, all API endpoints for your account are available at https://us6.api.mailchimp.com/3.0/.
+	 *
+	 * @var string
+	 */
+	private $endpoint = 'https://<dc>.api.mailchimp.com/3.0/';
 
 	/**
 	 * Constructs class with required data
 	 *
 	 * Hustle_Mailchimp_Api constructor.
 	 *
-	 * @param $api_key
+	 * @param string $api_key Api key.
+	 * @param string $data_center Data center.
 	 */
 	public function __construct( $api_key, $data_center ) {
-		$this->_api_key     = $api_key;
-		$this->_data_center = $data_center;
-		$this->_endpoint    = str_replace( '<dc>', $data_center, $this->_endpoint );
-		$this->_user        = wp_get_current_user()->display_name;
+		$this->api_key     = $api_key;
+		$this->data_center = $data_center;
+		$this->endpoint    = str_replace( '<dc>', $data_center, $this->endpoint );
+		$this->user        = wp_get_current_user()->display_name;
 	}
 
 	/**
 	 * Sends request to the endpoint url with the provided $action
 	 *
-	 * @param string $verb
-	 * @param string $action rest action
-	 * @param array  $args
+	 * @param string $action rest action.
+	 * @param string $verb Verb.
+	 * @param array  $args Args.
 	 * @return object|WP_Error
 	 */
-	private function _request( $action, $verb = 'GET', $args = array() ) {
-		$url = trailingslashit( $this->_endpoint ) . $action;
+	private function request( $action, $verb = 'GET', $args = array() ) {
+		$url = trailingslashit( $this->endpoint ) . $action;
 
 		$_args = array(
 			'method'  => $verb,
 			'headers' => array(
-				'Authorization' => 'apikey ' . $this->_api_key,
+				'Authorization' => 'apikey ' . $this->api_key,
 				'Content-Type'  => 'application/json;charset=utf-8',
-				// 'X-Trigger-Error' => 'APIKeyMissing',
 			),
 		);
 
@@ -57,10 +80,10 @@ class Hustle_Mailchimp_Api {
 
 		$res = wp_remote_request( $url, $_args );
 
-		$utils                      = Hustle_Provider_Utils::get_instance();
-		$utils->_last_url_request   = $url;
-		$utils->_last_data_received = $res;
-		$utils->_last_data_sent     = $_args;
+		$utils                     = Hustle_Provider_Utils::get_instance();
+		$utils->last_url_request   = $url;
+		$utils->last_data_received = $res;
+		$utils->last_data_sent     = $_args;
 
 		if ( ! is_wp_error( $res ) && is_array( $res ) ) {
 			if ( $res['response']['code'] <= 204 ) {
@@ -78,62 +101,62 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Sends rest GET request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _get( $action, $args = array() ) {
-		return $this->_request( $action, 'GET', $args );
+	private function get( $action, $args = array() ) {
+		return $this->request( $action, 'GET', $args );
 	}
 
 	/**
 	 * Sends rest GET request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _delete( $action, $args = array() ) {
-		return $this->_request( $action, 'DELETE', $args );
+	private function delete( $action, $args = array() ) {
+		return $this->request( $action, 'DELETE', $args );
 	}
 
 	/**
 	 * Sends rest POST request
 	 *
-	 * @param $action
-	 * @param array  $args
+	 * @param string $action Action.
+	 * @param array  $args Args.
 	 * @return array|mixed|object|WP_Error
 	 */
-	private function _post( $action, $args = array() ) {
-		return $this->_request( $action, 'POST', $args );
+	private function post( $action, $args = array() ) {
+		return $this->request( $action, 'POST', $args );
 	}
 
-	 /**
-	  * Sends rest PUT request
-	  *
-	  * @param $action
-	  * @param array  $args
-	  * @return array|mixed|object|WP_Error
-	  */
-	private function _put( $action, $args = array() ) {
-		return $this->_request( $action, 'PUT', $args );
+	/**
+	 * Sends rest PUT request
+	 *
+	 * @param string $action Action.
+	 * @param array  $args Args.
+	 * @return array|mixed|object|WP_Error
+	 */
+	private function put( $action, $args = array() ) {
+		return $this->request( $action, 'PUT', $args );
 	}
 
-	 /**
-	  * Sends rest PATCH request
-	  *
-	  * @param $action
-	  * @param array  $args
-	  * @return array|mixed|object|WP_Error
-	  */
-	private function _patch( $action, $args = array() ) {
-		return $this->_request( $action, 'PATCH', $args );
+	/**
+	 * Sends rest PATCH request
+	 *
+	 * @param string $action Action.
+	 * @param array  $args Args.
+	 * @return array|mixed|object|WP_Error
+	 */
+	private function patch( $action, $args = array() ) {
+		return $this->request( $action, 'PATCH', $args );
 	}
 
 	/**
 	 * Get User Info for the current API KEY
 	 *
-	 * @param $fields
+	 * @param array $fields Fields.
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function get_info( $fields = array() ) {
@@ -141,7 +164,7 @@ class Hustle_Mailchimp_Api {
 			$fields = array( 'account_id', 'account_name', 'email' );
 		}
 
-		return $this->_request(
+		return $this->request(
 			'',
 			'GET',
 			array(
@@ -153,15 +176,16 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Gets all the lists
 	 *
-	 * @param $count - current total lists to show
+	 * @param int $offset - current total lists to show.
+	 * @param int $count - current total lists to show.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function get_lists( $offset = 50, $count = 10 ) {
-		return $this->_get(
+		return $this->get(
 			'lists',
 			array(
-				'user'   => $this->_user . ':' . $this->_api_key,
+				'user'   => $this->user . ':' . $this->api_key,
 				'offset' => $offset,
 				'count'  => $count,
 			)
@@ -171,15 +195,16 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Gets all the groups under a list
 	 *
-	 * @param $list_id
+	 * @param string $list_id List ID.
+	 * @param int    $total Total.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function get_interest_categories( $list_id, $total = 10 ) {
-		return $this->_get(
+		return $this->get(
 			'lists/' . $list_id . '/interest-categories',
 			array(
-				'user'  => $this->_user . ':' . $this->_api_key,
+				'user'  => $this->user . ':' . $this->api_key,
 				'count' => $total,
 			)
 		);
@@ -188,7 +213,7 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Gets all the GDPR fields under a list
 	 *
-	 * @param $list_id
+	 * @param string $list_id List ID.
 	 *
 	 * @return array
 	 */
@@ -223,14 +248,14 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Get members by list ID
 	 *
-	 * @param string $list_id
+	 * @param string $list_id List ID.
 	 * @return array
 	 */
 	private function get_members( $list_id ) {
-		$data = $this->_get(
+		$data = $this->get(
 			'lists/' . $list_id . '/members',
 			array(
-				'user' => $this->_user . ':' . $this->_api_key,
+				'user' => $this->user . ':' . $this->api_key,
 			)
 		);
 
@@ -240,16 +265,17 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Gets all the interests under a group list
 	 *
-	 * @param $list_id
-	 * @param $category_id
+	 * @param string $list_id List ID.
+	 * @param string $category_id Category ID.
+	 * @param int    $total Total.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function get_interests( $list_id, $category_id, $total = 10 ) {
-		return $this->_get(
+		return $this->get(
 			'lists/' . $list_id . '/interest-categories/' . $category_id . '/interests',
 			array(
-				'user'  => $this->_user . ':' . $this->_api_key,
+				'user'  => $this->user . ':' . $this->api_key,
 				'count' => $total,
 			)
 		);
@@ -258,16 +284,16 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Gets all the tags/static segments on a list
 	 *
-	 * @param $list_id
+	 * @param string $list_id List ID.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function get_tags( $list_id ) {
-		return $this->_get(
+		return $this->get(
 			'lists/' . $list_id . '/segments',
 			array(
 				'count' => 1000,
-				'user'  => $this->_user . ':' . $this->_api_key,
+				'user'  => $this->user . ':' . $this->api_key,
 				'type'  => 'static',
 			)
 		);
@@ -276,17 +302,17 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Check member email address if already existing
 	 *
-	 * @param $list_id
-	 * @param $email
+	 * @param string $list_id List ID.
+	 * @param string $email Email.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function check_email( $list_id, $email ) {
 		$md5_email = md5( strtolower( $email ) );
-		return $this->_get(
+		return $this->get(
 			'lists/' . $list_id . '/members/' . $md5_email,
 			array(
-				'user' => $this->_user . ':' . $this->_api_key,
+				'user' => $this->user . ':' . $this->api_key,
 			)
 		);
 	}
@@ -294,28 +320,27 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Delete detail of member
 	 *
-	 * @param $list_id
-	 * @param $email
+	 * @param string $list_id List ID.
+	 * @param string $email Email.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
-
 	public function delete_email( $list_id, $email ) {
 		$md5_email = md5( strtolower( $email ) );
 		$this->update_subscription_patch( $list_id, $email, array( 'status' => 'unsubscribed' ) );
-		return $this->_delete( 'lists/' . $list_id . '/members/' . $md5_email );
+		return $this->delete( 'lists/' . $list_id . '/members/' . $md5_email );
 	}
 
 	/**
 	 * Add custom field for list
 	 *
-	 * @param $list_id
-	 * @param $field_data
+	 * @param string $list_id List ID.
+	 * @param array  $field_data Field data.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function add_custom_field( $list_id, $field_data ) {
-		return $this->_post(
+		return $this->post(
 			'lists/' . $list_id . '/merge-fields',
 			array(
 				'body' => $field_data,
@@ -326,17 +351,17 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Get custom fields for list
 	 *
-	 * @param $list_id
-	 * @param $count
-	 * @param $offset
+	 * @param string $list_id List ID.
+	 * @param int    $count Count.
+	 * @param int    $offset Offset.
 	 *
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function get_custom_fields( $list_id, $count = PHP_INT_MAX, $offset = 0 ) {
-		return $this->_get(
+		return $this->get(
 			'lists/' . $list_id . '/merge-fields',
 			array(
-				'user'   => $this->_user . ':' . $this->_api_key,
+				'user'   => $this->user . ':' . $this->api_key,
 				'offset' => $offset,
 				'count'  => $count,
 			)
@@ -346,12 +371,13 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Add new subscriber
 	 *
-	 * @param $list_id
-	 * @param $data
+	 * @param string $list_id List ID.
+	 * @param array  $data Data.
 	 * @return array|mixed|object|WP_Error
+	 * @throws Exception Something went wrong.
 	 */
 	public function subscribe( $list_id, $data ) {
-		$res = $this->_post(
+		$res = $this->post(
 			'lists/' . $list_id . '/members',
 			array(
 				'body' => $data,
@@ -360,7 +386,6 @@ class Hustle_Mailchimp_Api {
 
 		if ( ! is_wp_error( $res ) ) {
 			return $res;
-			// return __("Successful subscription", 'hustle' );
 		} else {
 			if ( strpos( $res->get_error_data(), '"Forgotten Email Not Subscribed"' ) ) {
 				$error  = __( "This contact was previously removed from this list via Mailchimp dashboard. To rejoin, they'll need to sign up using a Mailchimp native form.", 'hustle' );
@@ -380,45 +405,43 @@ class Hustle_Mailchimp_Api {
 	/**
 	 * Update subscription
 	 *
-	 * @param $list_id - the list id
-	 * @param $email - the email
-	 * @param $data - array
+	 * @param string $list_id - the list id.
+	 * @param string $email - the email.
+	 * @param array  $data - data.
 	 *
 	 * @return array|mixed|object|WP_Error
+	 * @throws Exception Something went wrong.
 	 */
 	public function update_subscription( $list_id, $email, $data ) {
 		$md5_email = md5( strtolower( $email ) );
-		$res       = $this->_put(
+		$res       = $this->put(
 			'lists/' . $list_id . '/members/' . $md5_email,
 			array(
 				'body' => $data,
 			)
 		);
-		$error     = __( 'This email address has already subscribed', 'hustle' );
 
 		if ( ! is_wp_error( $res ) ) {
-			// returns object on success @since 4.0.2 as we need it for GDPR
+			// returns object on success @since 4.0.2 as we need it for GDPR.
 			return $res;
-
-			return __( 'You have been added to the new group', 'hustle' );
-			throw new Exception( $error );
 		}
 	}
 
 	/**
 	 * Update subscription
 	 *
-	 * @param $list_id - the list id
-	 * @param $email - the email
-	 * @param $data - array
+	 * @param string $list_id - the list id.
+	 * @param string $email - the email.
+	 * @param array  $data - array.
 	 *
 	 * @return array|mixed|object|WP_Error
+	 * @throws Exception Something went wrong.
 	 */
 	public function update_subscription_patch( $list_id, $email, $data ) {
 		$md5_email = md5( strtolower( $email ) );
 		if ( ! empty( $data['tags'] ) && is_array( $data['tags'] ) ) {
 			foreach ( $data['tags'] as $tag_id ) {
-				$res = $this->_post(
+				$res = $this->post(
 					'lists/' . $list_id . '/segments/' . $tag_id . '/members/',
 					array(
 						'body' => array(
@@ -429,7 +452,7 @@ class Hustle_Mailchimp_Api {
 			}
 			unset( $data['tags'] );
 		}
-		$res = $this->_patch(
+		$res = $this->patch(
 			'lists/' . $list_id . '/members/' . $md5_email,
 			array(
 				'body' => $data,

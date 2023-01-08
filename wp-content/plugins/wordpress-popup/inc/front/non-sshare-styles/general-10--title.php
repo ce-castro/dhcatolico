@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $component = '.hustle-layout .hustle-title';
@@ -16,7 +20,7 @@ $margin_right  = ( '' !== $advanced['title_margin_right'] ) ? $advanced['title_m
 $margin_bottom = ( '' !== $advanced['title_margin_bottom'] ) ? $advanced['title_margin_bottom'] . $advanced['title_margin_unit'] : '0';
 $margin_left   = ( '' !== $advanced['title_margin_left'] ) ? $advanced['title_margin_left'] . $advanced['title_margin_unit'] : '0';
 
-$margin = $margin_top . ' ' . $margin_right . ' ' . $margin_bottom . ' ' . $margin_left;
+$margin = ( ! $is_rtl ) ? $margin_top . ' ' . $margin_right . ' ' . $margin_bottom . ' ' . $margin_left : $margin_top . ' ' . $margin_left . ' ' . $margin_bottom . ' ' . $margin_right;
 
 $mobile_margin_top    = ( '' !== $advanced['title_margin_top_mobile'] ) ? $advanced['title_margin_top_mobile'] . $advanced['title_margin_unit_mobile'] : $margin_top;
 $mobile_margin_right  = ( '' !== $advanced['title_margin_right_mobile'] ) ? $advanced['title_margin_right_mobile'] . $advanced['title_margin_unit_mobile'] : $margin_right;
@@ -98,7 +102,7 @@ $font_family     = $typography['title_font_family'];
 $font_size       = $typography['title_font_size'] . $typography['title_font_size_unit'];
 $font_weight     = $typography['title_font_weight'];
 $font_style      = 'normal';
-$alignment       = $typography['title_alignment'];
+$alignment       = ( ! $is_rtl || 'center' === $typography['title_alignment'] ) ? $typography['title_alignment'] : 'right';
 $line_height     = $typography['title_line_height'] . $typography['title_line_height_unit'];
 $letter_spacing  = $typography['title_letter_spacing'] . $typography['title_letter_spacing_unit'];
 $text_transform  = $typography['title_text_transform'];
@@ -125,7 +129,7 @@ if ( 'regular' === $font_weight ) {
 $mobile_font_size       = ( '' !== $typography['title_font_size_mobile'] ) ? $typography['title_font_size_mobile'] . $typography['title_font_size_unit_mobile'] : $font_size;
 $mobile_font_weight     = $typography['title_font_weight_mobile'];
 $mobile_font_style      = 'normal';
-$mobile_alignment       = $typography['title_alignment_mobile'];
+$mobile_alignment       = ( ! $is_rtl || 'center' === $typography['title_alignment_mobile'] ) ? $typography['title_alignment_mobile'] : 'right';
 $mobile_line_height     = ( '' !== $typography['title_line_height_mobile'] ) ? $typography['title_line_height_mobile'] . $typography['title_line_height_unit_mobile'] : $line_height;
 $mobile_letter_spacing  = ( '' !== $typography['title_letter_spacing_mobile'] ) ? $typography['title_letter_spacing_mobile'] . $typography['title_letter_spacing_unit_mobile'] : $letter_spacing;
 $mobile_text_transform  = $typography['title_text_transform_mobile'];

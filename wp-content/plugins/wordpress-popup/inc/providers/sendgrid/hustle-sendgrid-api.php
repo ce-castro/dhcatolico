@@ -1,21 +1,39 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * SendGrid API Helper
+ *
+ * @package Hustle
  **/
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
 if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 
+	/**
+	 * Class Hustle_SendGrid_Api
+	 */
 	class Hustle_SendGrid_Api {
 		/**
-		 * @var (string) SendGrid API KEY
+		 * SendGrid API KEY
+		 *
+		 * @var (string)
 		 **/
 		private $api_key;
 
+		/**
+		 * SendGrid URL
+		 *
+		 * @var string
+		 */
 		protected $sendgrid_url = 'https://api.sendgrid.com/v3/contactdb';
 
+		/**
+		 * Constructor
+		 *
+		 * @param string $api_key Api key.
+		 */
 		public function __construct( $api_key ) {
 			$this->api_key = $api_key;
 		}
@@ -77,9 +95,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		/**
 		 * Adds a recipient in the SendGrid MC contact db
 		 *
-		 * @param   string $email          The email of the recipient
-		 * @param   string $first_name     The first name of the recipient
-		 * @param   string $last_name      The last name of the recipient
+		 * @param array $data Data.
 		 *
 		 * @return  mixed   The recipient ID if successful, false otherwise.
 		 */
@@ -120,7 +136,8 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		/**
 		 * Updates a recipient in the SendGrid MC contact db
 		 *
-		 * @param   array $data          Recipient data
+		 * @param string $list_id List ID.
+		 * @param array  $data Recipient data.
 		 *
 		 * @return  mixed   The recipient ID if successful, false otherwise.
 		 */
@@ -191,10 +208,30 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		}
 
 		/**
+		 * Delete subscriber from the list
+		 *
+		 * @param string $list_id List ID.
+		 * @param string $email Email.
+		 *
+		 * @return bool
+		 */
+		public function delete_email( $list_id, $email ) {
+			$recipient_id = $this->add_recipient( array( 'email' => $email ) );
+			if ( empty( $recipient_id ) ) {
+				return false;
+			}
+
+			$url = $this->sendgrid_url . '/lists/' . $list_id . '/recipients/' . $recipient_id;
+			$res = $this->request( $url, array(), 'DELETE' );
+
+			return ! is_wp_error( $res );
+		}
+
+		/**
 		 * Adds a recipient in the SendGrid MC contact db and adds it to the list
 		 *
-		 * @param   string $list_id        The list ID to which the recipient will be added.
-		 * @param   string $data           The data of the recipient
+		 * @param   string $list_id The list ID to which the recipient will be added.
+		 * @param   string $data    The data of the recipient.
 		 *
 		 * @return  WP_Error|boolean   True if successful, WP_Error otherwise.
 		 */
@@ -208,6 +245,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 				$missing_fields = $this->get_non_existent_fields( $data );
 				$error_message  = empty( $missing_fields ) ?
 					__( 'The recipient could not be created. Check if your settings are correct.', 'hustle' ) :
+					/* translators: Missed fields */
 					sprintf( __( 'The recipient could not be created. Please make sure these fields exist in your Sendgrid account: %s.', 'hustle' ), implode( ', ', $missing_fields ) );
 				return new WP_Error( 'subscribe_error', $error_message );
 			}
@@ -223,7 +261,8 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		/**
 		 * Check if an email is already used.
 		 *
-		 * @param string $email
+		 * @param string $email Email.
+		 * @param string $list_id List ID.
 		 * @return boolean true if the given email already in use otherwise false.
 		 **/
 		public function email_exists( $email, $list_id ) {
@@ -255,7 +294,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		/**
 		 * Unsets the fields that don't exist at Sendgrid to prevent subscription errors.
 		 *
-		 * @param array $data Submitted data
+		 * @param array $data Submitted data.
 		 * @return array
 		 */
 		private function get_non_existent_fields( $data ) {
@@ -266,12 +305,12 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 				return false;
 			}
 
-			// Get reserved fields
+			// Get reserved fields.
 			$reserved_fields_url      = $this->sendgrid_url . '/reserved_fields';
 			$reserved_fields_response = $this->request( $reserved_fields_url, $args );
 			$reserved_fields          = json_decode( $reserved_fields_response['body'], true );
 
-			// Get custom fields
+			// Get custom fields.
 			$custom_fields_url      = $this->sendgrid_url . '/custom_fields';
 			$custom_fields_response = $this->request( $custom_fields_url, $args );
 			$custom_fields          = json_decode( $custom_fields_response['body'], true );
@@ -300,7 +339,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		/**
 		 * Add custom fields
 		 *
-		 * @param array $fields
+		 * @param array $fields Fields.
 		 */
 		public function add_custom_fields( $fields ) {
 			foreach ( $fields as $field ) {
@@ -320,7 +359,7 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		/**
 		 * Add custom field
 		 *
-		 * @param array $field_data (name, type)
+		 * @param array $field_data (name, type).
 		 */
 		private function add_custom_field( $field_data ) {
 
@@ -348,9 +387,9 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 		/**
 		 * Request
 		 *
-		 * @param string $url
-		 * @param array  $args
-		 * @param string $method GET|POST
+		 * @param string $url URL.
+		 * @param array  $args Args.
+		 * @param string $method GET|POST.
 		 * @return array|WP_Error
 		 */
 		private function request( $url, $args, $method = 'GET' ) {
@@ -360,14 +399,19 @@ if ( ! class_exists( 'Hustle_SendGrid_Api' ) ) :
 
 			$response = wp_remote_request( $url, $args );
 
-			$utils                      = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request   = $url;
-			$utils->_last_data_sent     = $args;
-			$utils->_last_data_received = $response;
+			$utils                     = Hustle_Provider_Utils::get_instance();
+			$utils->last_url_request   = $url;
+			$utils->last_data_sent     = $args;
+			$utils->last_data_received = $response;
 
 			return $response;
 		}
 
+		/**
+		 * Get reserved fields name
+		 *
+		 * @return type
+		 */
 		public function get_reserved_fields_name() {
 			return array(
 				'email'      => '',

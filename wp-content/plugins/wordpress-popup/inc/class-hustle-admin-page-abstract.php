@@ -80,6 +80,13 @@ if ( ! class_exists( 'Hustle_Admin_Page_Abstract' ) ) :
 		private $renderer;
 
 		/**
+		 * White Label -> WPMU DEV Plugin Labels
+		 *
+		 * @var string
+		 */
+		private static $branding_plugin_name;
+
+		/**
 		 * Class constructor.
 		 *
 		 * @since 4.0.1
@@ -102,16 +109,62 @@ if ( ! class_exists( 'Hustle_Admin_Page_Abstract' ) ) :
 		abstract protected function init();
 
 		/**
+		 * Get branded plugin name
+		 *
+		 * @return string
+		 */
+		private static function get_branding_plugin_name() {
+			if ( is_null( self::$branding_plugin_name ) ) {
+				self::set_branding_plugin_name();
+			}
+
+			return self::$branding_plugin_name;
+		}
+
+		/**
+		 * Set $branding_plugin_name
+		 *
+		 * @return null
+		 */
+		private static function set_branding_plugin_name() {
+			self::$branding_plugin_name = false;
+			if ( ! class_exists( 'WPMUDEV_Dashboard' )
+					|| empty( WPMUDEV_Dashboard::$whitelabel )
+					|| ! method_exists( WPMUDEV_Dashboard::$whitelabel, 'get_settings' ) ) {
+				return;
+			}
+			$settings = WPMUDEV_Dashboard::$whitelabel->get_settings();
+			if ( empty( $settings['enabled'] ) || true !== $settings['enabled']
+					|| empty( $settings['labels_config'][1107020]['name'] ) ) {
+				return;
+			}
+
+			self::$branding_plugin_name = $settings['labels_config'][1107020]['name'];
+		}
+
+		/**
 		 * Register the admin menus.
 		 *
 		 * @since 4.0.1
 		 */
 		public function register_admin_menu() {
+			$this->maybe_whitelabel_page_title();
 
 			$this->page_slug = add_submenu_page( 'hustle', $this->page_title, $this->page_menu_title, $this->page_capability, $this->page, array( $this, 'render_main_page' ) );
 
 			add_action( 'admin_init', array( $this, 'maybe_export' ) );
 			add_action( 'load-' . $this->page_slug, array( $this, 'current_page_loaded' ) );
+		}
+
+		/**
+		 * Maybe whitelabel page title
+		 */
+		private function maybe_whitelabel_page_title() {
+			$branding_plugin_name = self::get_branding_plugin_name();
+
+			if ( $branding_plugin_name ) {
+				$this->page_title = str_replace( array( 'Hustle Pro', 'Hustle' ), $branding_plugin_name, $this->page_title );
+			}
 		}
 
 		/**
@@ -281,19 +334,19 @@ if ( ! class_exists( 'Hustle_Admin_Page_Abstract' ) ) :
 
 			wp_register_style(
 				'hstl-roboto',
-				'https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i',
+				'https://fonts.bunny.net/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i',
 				array(),
 				Opt_In::VERSION
 			);
 			wp_register_style(
 				'hstl-opensans',
-				'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i',
+				'https://fonts.bunny.net/css?family=Open+Sans:400,400i,700,700i',
 				array(),
 				Opt_In::VERSION
 			);
 			wp_register_style(
 				'hstl-source',
-				'https://fonts.googleapis.com/css?family=Source+Code+Pro',
+				'https://fonts.bunny.net/css?family=Source+Code+Pro',
 				array(),
 				Opt_In::VERSION
 			);

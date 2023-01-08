@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Deletion
+ *
+ * @package Hustle
+ */
 
 /**
  * Methods for the plugin's data deletion.
@@ -134,10 +139,10 @@ class Hustle_Deletion {
 				++$max_module_meta_id
 			);
 
-			$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_modules" );
+			$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_modules" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$wpdb->query( $alter_modules );// phpcs:ignore
 
-			$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_modules_meta" );
+			$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_modules_meta" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$wpdb->query( $alter_meta );// phpcs:ignore
 		}
 	}
@@ -164,9 +169,9 @@ class Hustle_Deletion {
 			}
 		}
 
-		$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_entries" );
+		$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_entries" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 
-		$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_entries_meta" );
+		$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_entries_meta" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 
 		/**
 		 * Hook to reset auto increment on entries reset.
@@ -210,7 +215,7 @@ class Hustle_Deletion {
 	 */
 	public static function hustle_clear_module_views() {
 		global $wpdb;
-		$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_tracking" );
+		$wpdb->query( "TRUNCATE {$wpdb->prefix}hustle_tracking" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 	}
 
 	/**
@@ -220,13 +225,13 @@ class Hustle_Deletion {
 	 */
 	public static function hustle_drop_custom_tables() {
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_entries" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_entries_meta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_modules" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_modules_meta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_tracking" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}optin_meta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}optins" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_entries" );// phpcs:ignore
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_entries_meta" );// phpcs:ignore
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_modules" );// phpcs:ignore
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_modules_meta" );// phpcs:ignore
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hustle_tracking" );// phpcs:ignore
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}optin_meta" );// phpcs:ignore
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}optins" );// phpcs:ignore
 	}
 
 	/**

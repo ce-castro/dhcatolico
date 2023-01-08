@@ -50,7 +50,7 @@ if ( ! class_exists( 'Hustle_Multisite' ) ) :
 						}
 						restore_current_blog();
 					} catch ( Exception $e ) {
-						error_log( 'There is something wrong with cloning modules to the new site' );
+						error_log( 'There is something wrong with cloning modules to the new site' );// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 					}
 				}
 			}

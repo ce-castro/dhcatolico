@@ -1,7 +1,20 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Popup_Settings class
+ *
+ * @package Hustle
+ */
 
+/**
+ * Class Hustle_Popup_Settings
+ */
 class Hustle_Popup_Settings extends Hustle_Meta_Base_Settings {
 
+	/**
+	 * Get the default settings.
+	 *
+	 * @return array
+	 */
 	public function get_defaults() {
 		$base = parent::get_defaults();
 

@@ -47,7 +47,7 @@ if ( Opt_In_Utils::is_woocommerce_active() ) {
 
 	<?php
 	$content = ob_get_clean();
-	$body = array(
+	$body    = array(
 		'classes' => 'sui-spacing-bottom--0',
 		'content' => $content,
 	);
@@ -141,7 +141,7 @@ $attributes = array(
 		/* translators: module type in small caps and in singular */
 		'description'   => sprintf( __( 'Choose the visibility conditions which you want to apply on the %s.', 'hustle' ), $smallcaps_singular ),
 	),
-	'body' => $body,
+	'body'               => $body,
 	'after_body_content' => $after_body_content,
 	'footer'             => array(
 		'classes' => 'sui-content-separated',

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Form Fields row
+ *
+ * @package Hustle
+ */
+
 $device_suffix = $device ? '_' . $device : '';
 
 $icon       = 'form_fields_icon' . $device_suffix;

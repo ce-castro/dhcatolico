@@ -9,6 +9,7 @@
 $is_tracking_disabled = empty( $module->get_tracking_types() );
 $last_conversion_text = __( 'Last conversion', 'hustle' );
 
+$global_tracking  = Hustle_Settings_Admin::global_tracking();
 $module_tag_class = $module->active ? ' sui-tag-blue' : '';
 $tooltip_message  = '';
 $schedule_icon    = '';
@@ -66,11 +67,9 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 <div class="sui-accordion-item">
 
 	<?php
-	$module_id       = $module->module_id;
-	$can_edit        = Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module_id );
-	$tracking_model  = Hustle_Tracking_Model::get_instance();
-	$last_entry_time = $tracking_model->get_latest_conversion_time_by_module_id( $module_id );
-	$view_stats      = filter_input( INPUT_GET, 'view_stats', FILTER_VALIDATE_INT );
+	$module_id  = $module->module_id;
+	$can_edit   = Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module_id );
+	$view_stats = filter_input( INPUT_GET, 'view_stats', FILTER_VALIDATE_INT );
 
 	if ( $view_stats && intval( $module_id ) === $view_stats ) {
 		$display_chart_class = ' hustle-display-chart hustle-scroll-to';
@@ -118,16 +117,24 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 
 			</span>
 
+			<?php if ( $global_tracking ) { ?>
 			<span class="sui-tag sui-tag-disabled hustle-analytics-disabled-tag<?php echo ( $module->active && $is_tracking_disabled ) ? '' : ' sui-hidden-important'; ?>">
 				<?php esc_html_e( 'Tracking Disabled', 'hustle' ); ?>
 			</span>
+			<?php } ?>
 
 		</div>
 
+		<?php
+		if ( Hustle_Settings_Admin::global_tracking() ) {
+			$tracking_model  = Hustle_Tracking_Model::get_instance();
+			$last_entry_time = $tracking_model->get_latest_conversion_time_by_module_id( $module_id );
+			?>
 		<div class="sui-accordion-item-date">
 			<strong><?php echo esc_html( $last_conversion_text ); ?></strong>
 			<?php echo esc_html( $last_entry_time ); ?>
 		</div>
+		<?php } ?>
 
 		<div class="sui-accordion-col-auto">
 
@@ -165,16 +172,19 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 
 			</div>
 
+			<?php if ( $global_tracking ) { ?>
 			<button class="sui-button-icon sui-accordion-open-indicator">
 				<span class="sui-icon-chevron-down" aria-hidden="true"></span>
 				<span class="sui-screen-reader-text"><?php esc_html_e( 'View module stats', 'hustle' ); ?></span>
 			</button>
+			<?php } ?>
 
 		</div>
 
 	</div>
 
-	<?php // START: Item body. ?>
+	<?php if ( $global_tracking ) { ?>
+		<?php // START: Item body. ?>
 	<div class="sui-accordion-item-body">
 
 		<?php
@@ -195,8 +205,9 @@ if ( Hustle_Module_Model::SOCIAL_SHARING_MODULE !== $module->module_type ) {
 					'multiple_charts'  => false,
 				)
 			);
-			?>
+		?>
 
 	</div>
+	<?php } ?>
 
 </div>

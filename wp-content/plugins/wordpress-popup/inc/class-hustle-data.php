@@ -138,7 +138,7 @@ class Hustle_Data {
 	public static function was_free_limit_reached( $module_type ) {
 
 		// If it's Pro, the sky's the limit.
-		if ( ! Opt_In_Utils::_is_free() ) {
+		if ( ! Opt_In_Utils::is_free() ) {
 			return false;
 		}
 

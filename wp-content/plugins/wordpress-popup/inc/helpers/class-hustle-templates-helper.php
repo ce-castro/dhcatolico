@@ -57,7 +57,7 @@ class Hustle_Templates_Helper {
 	public function get_optin_templates_data() {
 
 		$templates = array(
-			'halloween'       => array(
+			'halloween'        => array(
 				'label'            => __( 'Halloween', 'hustle' ),
 				'description'      => __( 'Encourage your visitors to purchase discounted items for Halloween.', 'hustle' ),
 				'thumbnail'        => $this->thumbnails_url . 'optin-halloween.jpg',
@@ -216,7 +216,7 @@ class Hustle_Templates_Helper {
 	public function get_informational_templates_data() {
 
 		$templates = array(
-			'halloween'       => array(
+			'halloween'        => array(
 				'label'            => __( 'Halloween', 'hustle' ),
 				'description'      => __( 'Encourage your visitors to purchase discounted items for Halloween.', 'hustle' ),
 				'thumbnail'        => $this->thumbnails_url . 'informational-halloween.jpg',

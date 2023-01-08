@@ -6,6 +6,10 @@
  * @since 4.3.0
  */
 
+global $wp_locale;
+
+$is_rtl = $wp_locale->is_rtl();
+
 // phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
 
 $component = '.hustle-layout .hustle-layout-form';
@@ -32,7 +36,7 @@ $padding_right  = ( '' !== $advanced['form_cont_padding_right'] ) ? $advanced['f
 $padding_bottom = ( '' !== $advanced['form_cont_padding_bottom'] ) ? $advanced['form_cont_padding_bottom'] . $advanced['form_cont_padding_unit'] : '0';
 $padding_left   = ( '' !== $advanced['form_cont_padding_left'] ) ? $advanced['form_cont_padding_left'] . $advanced['form_cont_padding_unit'] : '0';
 
-$padding = $padding_top . ' ' . $padding_right . ' ' . $padding_bottom . ' ' . $padding_left;
+$padding = ( ! $is_rtl ) ? $padding_top . ' ' . $padding_right . ' ' . $padding_bottom . ' ' . $padding_left : $padding_top . ' ' . $padding_left . ' ' . $padding_bottom . ' ' . $padding_right;
 
 $mobile_padding_top    = ( '' !== $advanced['form_cont_padding_top_mobile'] ) ? $advanced['form_cont_padding_top_mobile'] . $advanced['form_cont_padding_unit_mobile'] : $padding_top;
 $mobile_padding_right  = ( '' !== $advanced['form_cont_padding_right_mobile'] ) ? $advanced['form_cont_padding_right_mobile'] . $advanced['form_cont_padding_unit_mobile'] : $padding_right;
@@ -48,7 +52,7 @@ $border_right  = ( '' !== $advanced['form_cont_border_right'] ) ? $advanced['for
 $border_bottom = ( '' !== $advanced['form_cont_border_bottom'] ) ? $advanced['form_cont_border_bottom'] . $advanced['form_cont_border_unit'] : '0';
 $border_left   = ( '' !== $advanced['form_cont_border_left'] ) ? $advanced['form_cont_border_left'] . $advanced['form_cont_border_unit'] : '0';
 
-$border_width = $border_top . ' ' . $border_right . ' ' . $border_bottom . ' ' . $border_left;
+$border_width = ( ! $is_rtl ) ? $border_top . ' ' . $border_right . ' ' . $border_bottom . ' ' . $border_left : $border_top . ' ' . $border_left . ' ' . $border_bottom . ' ' . $border_right;
 $border_style = ( '' !== $advanced['form_cont_border_type'] ) ? $advanced['form_cont_border_type'] : 'solid';
 $border_color = $colors['form_cont_border'];
 

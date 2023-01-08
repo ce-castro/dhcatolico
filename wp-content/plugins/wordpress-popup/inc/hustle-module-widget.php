@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Module_Widget
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_Module_Widget
@@ -6,7 +11,9 @@
 class Hustle_Module_Widget extends WP_Widget {
 
 	/**
-	 * @var string Widget Id
+	 * Widget Id
+	 *
+	 * @var string
 	 */
 	const WIDGET_ID = 'hustle_module_widget';
 
@@ -28,7 +35,7 @@ class Hustle_Module_Widget extends WP_Widget {
 	 *
 	 * Front-end display of widget.
 	 *
-	 * @param array $args
+	 * @param array $args Args.
 	 * @param array $instance Previously saved values from database.
 	 * @return string
 	 */
@@ -91,20 +98,16 @@ class Hustle_Module_Widget extends WP_Widget {
 			<select name="<?php echo esc_attr( $this->get_field_name( 'module_id' ) ); ?>" id="hustle_module_id">
 				<option value=""><?php echo esc_attr__( 'Select Module', 'hustle' ); ?></option>
 				<?php
-					$types = array( 'embedded', 'social_sharing' );
+				$types = array( 'embedded', 'social_sharing' );
 				foreach ( Hustle_Module_Collection::instance()->get_embed_id_names( $types ) as $mod ) :
 					$module = new Hustle_Module_Model( $mod->module_id );
 					if ( is_wp_error( $module ) ) {
 						continue;
 					}
-					// if( $module->settings->widget->show_in_front() ):
 					?>
 					<option <?php selected( $instance['module_id'], $mod->module_id ); ?> value="<?php echo esc_attr( $mod->module_id ); ?>"><?php echo esc_attr( $mod->module_name ); ?></option>
 
-					<?php
-					// endif;
-						endforeach;
-				?>
+				<?php endforeach; ?>
 			</select>
 		</p>
 		<?php

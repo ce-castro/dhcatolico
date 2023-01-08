@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Popup_Admin
+ *
+ * @package Hustle
+ */
 
 if ( ! class_exists( 'Hustle_Popup_Admin' ) ) :
 
@@ -7,6 +12,9 @@ if ( ! class_exists( 'Hustle_Popup_Admin' ) ) :
 	 */
 	class Hustle_Popup_Admin extends Hustle_Module_Page_Abstract {
 
+		/**
+		 * Set page properties.
+		 */
 		protected function set_page_properties() {
 
 			$this->module_type = Hustle_Module_Model::POPUP_MODULE;

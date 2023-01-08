@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_ConstantContact_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_ConstantContact_Form_Hooks
@@ -14,8 +19,9 @@ class Hustle_ConstantContact_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstr
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
 	 * @return array
+	 * @throws Exception Required fields are missed.
 	 */
 	public function add_entry_fields( $submitted_data ) {
 
@@ -57,7 +63,7 @@ class Hustle_ConstantContact_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstr
 				throw new Exception( __( 'Wrong API credentials', 'hustle' ) );
 			}
 
-			// check exists
+			// check exists.
 			$exists = $this->get_subscriber(
 				$api,
 				array(
@@ -163,11 +169,30 @@ class Hustle_ConstantContact_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstr
 	}
 
 	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$list_id                = $addon_setting_values['list_id'];
+		try {
+			$api = $addon->api();
+			$api->delete_email( $list_id, $email );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Check whether the email is already subscribed.
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -233,11 +258,11 @@ class Hustle_ConstantContact_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstr
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 			return $is_success;
 		}
@@ -251,20 +276,20 @@ class Hustle_ConstantContact_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstr
 	 * This method is to be inherited
 	 * And extended by child classes.
 	 *
-	 * Make use of the property `$_subscriber`
+	 * Make use of the property `$subscriber`
 	 * Method to omit double api calls
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param   object $api
-	 * @param   mixed  $data
+	 * @param   object $api Api.
+	 * @param   mixed  $data Data.
 	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data['email'] ) ] ) ) {
-			$this->_subscriber[ md5( $data['email'] ) ] = $api->get_contact( $data['email'] );
+		if ( empty( $this->subscriber ) && ! isset( $this->subscriber[ md5( $data['email'] ) ] ) ) {
+			$this->subscriber[ md5( $data['email'] ) ] = $api->get_contact( $data['email'] );
 		}
-		return $this->_subscriber[ md5( $data['email'] ) ];
+		return $this->subscriber[ md5( $data['email'] ) ];
 	}
 
 }

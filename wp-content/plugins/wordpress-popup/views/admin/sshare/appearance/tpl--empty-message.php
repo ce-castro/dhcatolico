@@ -11,11 +11,9 @@
 
 	<?php
 	if ( ! $this->is_branding_hidden ) :
-		echo $this->render_image_markup( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			self::$plugin_url . 'assets/images/hustle-empty-message.png',
-			self::$plugin_url . 'assets/images/hustle-empty-message@2x.png',
-			'sui-image'
-		);
+		$image_path        = self::$plugin_url . 'assets/images/hustle-empty-message.png';
+		$image_retina_path = self::$plugin_url . 'assets/images/hustle-empty-message@2x.png';
+		echo $this->render_image_markup( $image_path, $image_retina_path, 'sui-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	else :
 		echo $this->render_image_markup( $this->branding_image, '', 'sui-image', 172, 192 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	endif;

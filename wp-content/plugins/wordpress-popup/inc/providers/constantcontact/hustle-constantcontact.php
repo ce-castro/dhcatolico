@@ -1,10 +1,24 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_ConstantContact class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 
+	/**
+	 * Class Hustle_ConstantContact
+	 */
 	class Hustle_ConstantContact extends Hustle_Provider_Abstract {
 
 		const SLUG = 'constantcontact';
 
+		/**
+		 * Errors
+		 *
+		 * @var array
+		 */
 		protected static $errors;
 
 		/**
@@ -14,39 +28,51 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * PHP min version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		public static $_min_php_version = '5.3';
+		public static $min_php_version = '5.3';
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'constantcontact';
+		protected $slug = 'constantcontact';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'Constant Contact';
+		protected $title = 'Constant Contact';
 
 		/**
+		 * Is multi on global
+		 *
 		 * @since 4.0
 		 * @var boolean
 		 */
@@ -57,7 +83,7 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_ConstantContact_Form_Settings';
+		protected $form_settings = 'Hustle_ConstantContact_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -65,19 +91,19 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_ConstantContact_Form_Hooks';
+		protected $form_hooks = 'Hustle_ConstantContact_Form_Hooks';
 
 		/**
 		 * Hustle_ConstantContact constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 
 			if ( ! class_exists( 'Hustle_ConstantContact_Api' ) ) {
 				require_once 'hustle-constantcontact-api.php';
 			}
-			// Instantiate the API on constructor because it's required after getting the authorization
+			// Instantiate the API on constructor because it's required after getting the authorization.
 			$hustle_constantcontact = new Hustle_ConstantContact_Api();
 		}
 
@@ -87,17 +113,18 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
 		 * Check if the settings are completed
 		 *
 		 * @since 4.0
+		 * @param string $multi_id Multi ID.
 		 * @return boolean
 		 */
 		protected function settings_are_completed( $multi_id = '' ) {
@@ -107,12 +134,19 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 		}
 
 		/**
+		 * Get api
+		 *
 		 * @return bool|Opt_In_ConstantContact_Api
 		 */
 		public function api() {
 			return self::static_api();
 		}
 
+		/**
+		 * Get api by static method
+		 *
+		 * @return \WP_Error|\Hustle_ConstantContact_Api
+		 */
 		public static function static_api() {
 			if ( ! class_exists( 'Hustle_ConstantContact_Api' ) ) {
 				require_once 'hustle-constantcontact-api.php';
@@ -149,6 +183,9 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 		 *
 		 * @since 4.0
 		 *
+		 * @param array $submitted_data Submitted data.
+		 * @param bool  $is_submit Is submit.
+		 * @param int   $module_id Module ID.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data, $is_submit, $module_id ) {
@@ -257,6 +294,13 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 			return $account_email;
 		}
 
+		/**
+		 * Migrate 3.0
+		 *
+		 * @param object $module Module.
+		 * @param object $old_module Old module.
+		 * @return boolean
+		 */
 		public function migrate_30( $module, $old_module ) {
 			$migrated = parent::migrate_30( $module, $old_module );
 			if ( ! $migrated ) {
@@ -270,10 +314,10 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 			 */
 			$module_provider_settings = $module->get_provider_settings( $this->get_slug() );
 			if ( ! empty( $module_provider_settings ) ) {
-				// At provider level don't store anything (at least not in the regular option)
+				// At provider level don't store anything (at least not in the regular option).
 				delete_option( $this->get_settings_options_name() );
 
-				// selected_global_multi_id not needed at module level
+				// selected_global_multi_id not needed at module level.
 				unset( $module_provider_settings['selected_global_multi_id'] );
 				$module->set_provider_settings( $this->get_slug(), $module_provider_settings );
 			}
@@ -302,7 +346,7 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 				if ( ! $this->is_active() ) {
 
 					$providers_instance = Hustle_Providers::get_instance();
-					$activated          = $providers_instance->activate_addon( $this->_slug );
+					$activated          = $providers_instance->activate_addon( $this->slug );
 
 					// Provider successfully activated.
 					if ( $activated ) {
@@ -310,7 +354,8 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 						$response = array(
 							'action'  => 'notification',
 							'status'  => 'success',
-							'message' => sprintf( esc_html__( '%s successfully connected.', 'hustle' ), '<strong>' . $this->_title . '</strong>' ),
+							/* translators: integration name */
+							'message' => sprintf( esc_html__( '%s successfully connected.', 'hustle' ), '<strong>' . $this->title . '</strong>' ),
 						);
 
 						$this->save_account_email();
@@ -329,7 +374,8 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 				$response = array(
 					'action'  => 'notification',
 					'status'  => 'error',
-					'message' => sprintf( esc_html__( 'Authentication failed! Please check your %s credentials and try again.', 'hustle' ), $this->_title ),
+					/* translators: integration name */
+					'message' => sprintf( esc_html__( 'Authentication failed! Please check your %s credentials and try again.', 'hustle' ), $this->title ),
 				);
 
 			}
@@ -337,10 +383,18 @@ if ( ! class_exists( 'Hustle_ConstantContact' ) ) :
 			return $response;
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array();
 		}
 
+		/**
+		 * Remove wp_options rows
+		 */
 		public function remove_wp_options() {
 			$api = $this->api();
 			$api->remove_wp_options();

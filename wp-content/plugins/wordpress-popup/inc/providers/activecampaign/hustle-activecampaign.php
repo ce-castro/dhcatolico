@@ -1,17 +1,32 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Activecampaign class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 
 	include_once 'hustle-activecampaign-api.php';
 
+	/**
+	 * Class Hustle_Activecampaign
+	 */
 	class Hustle_Activecampaign extends Hustle_Provider_Abstract {
 
 		const SLUG = 'activecampaign';
-		// const NAME = "ActiveCampaign";
 
 		/**
-		 * @var $api Activecampaign
+		 * Api
+		 *
+		 * @var Hustle_Activecampaign_Api
 		 */
 		protected static $api;
+		/**
+		 * Errors
+		 *
+		 * @var array
+		 */
 		protected static $errors;
 
 		/**
@@ -21,38 +36,46 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'activecampaign';
+		protected $slug = 'activecampaign';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'ActiveCampaign';
+		protected $title = 'ActiveCampaign';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Activecampaign_Form_Settings';
+		protected $form_settings = 'Hustle_Activecampaign_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -60,7 +83,7 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Activecampaign_Form_Hooks';
+		protected $form_hooks = 'Hustle_Activecampaign_Form_Hooks';
 
 		/**
 		 * Array of options which should exist for confirming that settings are completed
@@ -68,14 +91,14 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 		 * @since 4.0
 		 * @var array
 		 */
-		protected $_completion_options = array( 'api_key', 'api_url' );
+		protected $completion_options = array( 'api_key', 'api_url' );
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -84,19 +107,20 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
-		 * @param $username
-		 * @param $api_key
+		 * Get api.
+		 *
+		 * @param string $url URL.
+		 * @param string $api_key Api key.
 		 * @return Hustle_Activecampaign_Api
 		 */
-		// protected static function api( $url, $api_key ){
 		public static function api( $url, $api_key ) {
 
 			if ( empty( self::$api ) ) {
@@ -134,7 +158,7 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
@@ -155,9 +179,8 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 
 				$api_url_valid     = $this->is_non_empty( $current_data['api_url'] );
 				$api_key_valid     = $this->is_non_empty( $current_data['api_key'] );
-				$api_key_validated = $api_url_valid
-								 && $api_key_valid
-								 && $this->validate_credentials( $submitted_data['api_url'], $submitted_data['api_key'] );
+				$api_key_validated = $api_url_valid && $api_key_valid
+					&& $this->validate_credentials( $submitted_data['api_url'], $submitted_data['api_key'] );
 
 				if ( ! $api_key_validated ) {
 					$error_message = $this->provider_connection_falied();
@@ -173,9 +196,9 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 						'name'    => $current_data['name'],
 					);
 					// If not active, activate it.
-					// TODO: Wrap this in a friendlier method
-					if ( Hustle_Provider_Utils::is_provider_active( $this->_slug )
-						|| Hustle_Providers::get_instance()->activate_addon( $this->_slug ) ) {
+					// TODO: Wrap this in a friendlier method.
+					if ( Hustle_Provider_Utils::is_provider_active( $this->slug )
+						|| Hustle_Providers::get_instance()->activate_addon( $this->slug ) ) {
 						$this->save_multi_settings_values( $global_multi_id, $settings_to_save );
 					} else {
 						$error_message = __( "Provider couldn't be activated.", 'hustle' );
@@ -346,8 +369,8 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $api_url
-		 * @param string $api_key
+		 * @param string $api_url Api URL.
+		 * @param string $api_key Api key.
 		 * @return bool
 		 */
 		private function validate_credentials( $api_url, $api_key ) {
@@ -356,7 +379,7 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 			}
 
 			try {
-				// Check if credentials are valid
+				// Check if credentials are valid.
 				$api = self::api( $api_url, $api_key );
 				if ( $api ) {
 					$account = $api->get_account();
@@ -374,10 +397,21 @@ if ( ! class_exists( 'Hustle_Activecampaign' ) ) :
 			return true;
 		}
 
+		/**
+		 * Is non empty
+		 *
+		 * @param string $value Value.
+		 * @return bool
+		 */
 		private function is_non_empty( $value ) {
 			return ! empty( trim( $value ) );
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return array
+		 */
 		protected function get_30_provider_mappings() {
 			return array(
 				'api_key' => 'api_key',

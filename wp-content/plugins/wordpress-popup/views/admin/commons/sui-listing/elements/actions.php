@@ -13,8 +13,6 @@ $can_edit   = Opt_In_Utils::is_user_allowed( 'hustle_edit_module', $module->id )
 $can_create = current_user_can( 'hustle_create' );
 $can_emails = current_user_can( 'hustle_access_emails' );
 
-$is_tracking_disabled = empty( $module->get_tracking_types() );
-
 // BUTTON: Open dropdown list. ?>
 <button class="sui-button-icon sui-dropdown-anchor" aria-expanded="false">
 	<span class="sui-loading-text">
@@ -115,6 +113,17 @@ if (
 	echo '<span class="sui-icon-community-people" aria-hidden="true"></span> ';
 	esc_html_e( 'View Email List', 'hustle' );
 	echo '</a></li>';
+	?>
+		<li>
+			<button class="hustle-module-purge-email-list-button"
+					data-module-id="<?php echo esc_attr( $module->id ); ?>"
+					data-title="<?php esc_attr_e( 'Purge Email List', 'hustle' ); ?>"
+					data-description="<?php esc_attr_e( 'Are you sure you wish purge the Email List of this module?', 'hustle' ); ?>"
+				>
+				<span class="sui-icon-refresh2" aria-hidden="true"></span> <?php esc_html_e( 'Purge Email List', 'hustle' ); ?>
+			</button>
+		</li>
+	<?php
 }
 ?>
 
@@ -135,11 +144,13 @@ if ( empty( $dashboard ) && $can_create ) :
 <?php
 // Tracking.
 if ( empty( $dashboard ) && $can_edit ) :
-	if ( empty( $edit_page ) ) :
+	if ( empty( $edit_page ) && Hustle_Settings_Admin::global_tracking() ) :
 		?>
 
 	<li>
 		<?php if ( ! $is_embedded_or_social ) : ?>
+
+			<?php $is_tracking_disabled = empty( $module->get_tracking_types() ); ?>
 
 			<button
 				class="hustle-single-module-button-action hustle-onload-icon-action"
@@ -174,6 +185,7 @@ if ( empty( $dashboard ) && $can_edit ) :
 
 	<?php endif; ?>
 
+	<?php if ( Hustle_Settings_Admin::global_tracking() ) : ?>
 	<li>
 		<button class="hustle-module-tracking-reset-button"
 				data-module-id="<?php echo esc_attr( $module->id ); ?>"
@@ -183,6 +195,7 @@ if ( empty( $dashboard ) && $can_edit ) :
 			<span class="sui-icon-undo" aria-hidden="true"></span> <?php esc_html_e( 'Reset Tracking Data', 'hustle' ); ?>
 		</button>
 	</li>
+	<?php endif; ?>
 
 <?php endif; ?>
 

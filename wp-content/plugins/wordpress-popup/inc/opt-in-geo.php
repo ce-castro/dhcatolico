@@ -1,10 +1,11 @@
-<?php
-
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Geolocation utility functions
  *
- * Most of the methods are courtesy Philipp Stracker
- *
+ * @package Hustle
+ */
+
+/**
  * Class Opt_In_Geo
  */
 class Opt_In_Geo {
@@ -29,20 +30,20 @@ class Opt_In_Geo {
 	 */
 	public static function get_user_ip() {
 		// check for bot.
-		if ( self::_is_crawler() ) {
+		if ( self::is_crawler() ) {
 			return false;
 		}
 
 		// Check if request is from CloudFlare.
 		if ( self::is_cloudflare() ) {
-			$cf_ip = $_SERVER['HTTP_CF_CONNECTING_IP']; // We already make sure this is set in the checks.
-			if ( filter_var( $cf_ip, FILTER_VALIDATE_IP ) ) {
+			$cf_ip = filter_input( INPUT_SERVER, 'HTTP_CF_CONNECTING_IP', FILTER_VALIDATE_IP );
+			if ( $cf_ip ) {
 				return apply_filters( 'hustle_user_ip', $cf_ip );
 			}
 		}
 
 		$result = (object) array(
-			'ip'       => $_SERVER['REMOTE_ADDR'],
+			'ip'       => filter_input( INPUT_SERVER, 'REMOTE_ADDR' ),
 			'proxy'    => false,
 			'proxy_ip' => '',
 		);
@@ -64,7 +65,8 @@ class Opt_In_Geo {
 		$forwarded = false;
 		foreach ( $ip_fields as $key ) {
 			if ( true === array_key_exists( $key, $_SERVER ) ) {
-				foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) {
+				$ips = filter_input( INPUT_SERVER, $key );
+				foreach ( explode( ',', $ips ) as $ip ) {
 					$ip = trim( $ip );
 
 					if ( false !== filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
@@ -177,11 +179,11 @@ class Opt_In_Geo {
 	 */
 	private static function is_cloudflare() {
 		if ( isset( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-			$ip = $_SERVER['HTTP_CLIENT_IP'];
+			$ip = filter_input( INPUT_SERVER, 'HTTP_CLIENT_IP' );
 		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			$ip = filter_input( INPUT_SERVER, 'HTTP_X_FORWARDED_FOR' );
 		} else {
-			$ip = $_SERVER['REMOTE_ADDR'];
+			$ip = filter_input( INPUT_SERVER, 'REMOTE_ADDR' );
 		}
 		if ( isset( $ip ) ) {
 			$request_check = self::cloudflare_requests_check();
@@ -204,16 +206,19 @@ class Opt_In_Geo {
 	 */
 	public function get_user_country() {
 
-		// check for bot
-		if ( self::_is_crawler() ) {
+		// check for bot.
+		if ( self::is_crawler() ) {
 			return false;
 		}
 
-		// Grab the users IP address
+		// Grab the users IP address.
 		$ip = self::get_user_ip();
 
+		// Deprecated.
+		$country = apply_filters_deprecated( 'wpoi-get-user-country', array( '', $ip ), '4.6.0', 'hustle_get_user_country' );
+
 		// See if an add-on provides the country for us.
-		$country = apply_filters( 'wpoi-get-user-country', '', $ip );
+		$country = apply_filters( 'hustle_get_user_country', $country, $ip );
 
 		if ( empty( $country ) ) {
 			$country = $this->get_country_from_ip( $ip );
@@ -231,7 +236,7 @@ class Opt_In_Geo {
 	 *
 	 * @return array List of available webservices.
 	 */
-	private function _get_geo_services() {
+	private function get_geo_services() {
 		static $geo_service = null;
 		if ( null === $geo_service ) {
 			$geo_service = array();
@@ -249,59 +254,43 @@ class Opt_In_Geo {
 				'field' => array( 'geoplugin_countryCode' ),
 			);
 
+			// Deprecated.
+			$geo_service = apply_filters_deprecated( 'wpoi-geo-services', array( $geo_service ), '4.6.0', 'hustle_geo_services' );
+
 			/**
 			 * Allow other modules/plugins to register a geo service.
 			 */
-			$geo_service = apply_filters( 'wpoi-geo-services', $geo_service );
+			$geo_service = apply_filters( 'hustle_geo_services', $geo_service );
 		}
 
 		return $geo_service;
 	}
 
 	/**
-	 * Returns a list of deprecated geo ip-resolution services.
-	 *
-	 * @since 4.2.1
-	 * @return array List of deprecated webservices.
-	 */
-	private function get_deprecated_geo_services() {
-		$geo_service = array(
-			'telize',
-			'nekudo',
-		);
-
-		/**
-		 * Hook to filter the list of depracated geo ip-resolution services.
-		 *
-		 * @since 4.2.1
-		 *
-		 * @param array
-		 */
-		$geo_service = apply_filters( 'hustle_depracated_geo_services', $geo_service );
-
-		return $geo_service;
-	}
-
-
-	/**
 	 * Returns the lookup-service details
 	 *
+	 * @param string $type Type.
 	 * @return object Service object for geo lookup
 	 */
-	private function _get_service( $type = null ) {
+	private function get_service( $type = null ) {
 		$service = false;
 		if ( null === $type ) {
-			$remote_ip_url = apply_filters( 'wpoi-remote-ip-url', '' );
+			// Deprecated.
+			$remote_ip_url = apply_filters_deprecated( 'wpoi-remote-ip-url', array( '' ), '4.6.0', 'hustle_remote_ip_url' );
+			$remote_ip_url = apply_filters( 'hustle_remote_ip_url', $remote_ip_url );
 			if ( ! empty( $remote_ip_url ) ) {
 				$type = '';
 			} else {
 				$type = self::DEFAULT_GEOIP_PROVIDER;
 			}
 
+			// Deprecated.
+			$type = apply_filters_deprecated( 'wpoi-geo-type-service', array( $type ), '4.6.0', 'hustle_geo_type_service' );
+
 			/**
 			 * Allow to choose a geo service.
 			 */
-			$type = apply_filters( 'wpoi-geo-type-service', $type );
+			$type = apply_filters( 'hustle_geo_type_service', $type );
 		}
 
 		if ( empty( $type ) ) {
@@ -317,32 +306,19 @@ class Opt_In_Geo {
 				'type'  => 'text',
 			);
 		} else {
-			$geo_service            = $this->_get_geo_services();
-			$deprecated_geo_service = $this->get_deprecated_geo_services();
-
-			if ( in_array( $type, $deprecated_geo_service, true ) ) {
-				$message = sprintf(
-					/* translators: %s: geoip provider name. */
-					__( 'GeoIP provider %s is no longer available. Switching to default.', 'hustle' ),
-					$type
-				);
-				_deprecated_argument( __FUNCTION__, '4.2.1', $message );
-
-				$service = $geo_service[ self::DEFAULT_GEOIP_PROVIDER ];
+			$geo_service = $this->get_geo_services();
+			if ( isset( $geo_service[ $type ] ) ) {
+				$service = $geo_service[ $type ];
 			} else {
-				if ( isset( $geo_service[ $type ] ) ) {
-					$service = $geo_service[ $type ];
-				} else {
-					if ( WP_DEBUG ) {
-						$message = sprintf(
-							/* translators: %s: geoip provider name. */
-							__( 'GeoIP provider %s does not exist. Switching to default.', 'hustle' ),
-							$type
-						);
-						trigger_error( $message, E_USER_NOTICE );
-					}
-					$service = $geo_service[ self::DEFAULT_GEOIP_PROVIDER ];
+				if ( WP_DEBUG ) {
+					$message = sprintf(
+						/* translators: %s: geoip provider name. */
+						__( 'GeoIP provider %s does not exist. Switching to default.', 'hustle' ),
+						$type
+					);
+					trigger_error( esc_html( $message ), E_USER_NOTICE ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 				}
+				$service = $geo_service[ self::DEFAULT_GEOIP_PROVIDER ];
 			}
 		}
 
@@ -356,7 +332,7 @@ class Opt_In_Geo {
 	 * @param  object $service Lookup-Service details.
 	 * @return string The country code.
 	 */
-	private function _country_from_api( $ip, $service ) {
+	private function country_from_api( $ip, $service ) {
 		$country = false;
 
 		if ( is_object( $service ) && ! empty( $service->url ) ) {
@@ -380,7 +356,7 @@ class Opt_In_Geo {
 							if ( is_array( $service->field ) ) {
 								$keys  = $service->field;
 								$value = $data;
-								while ( $a = array_shift( $keys ) ) { // phpcs:ignore
+								while ( $a = array_shift( $keys ) ) { // phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 									if ( is_array( $value ) ) {
 										if ( isset( $value[ $a ] ) ) {
 											$value = $value[ $a ];
@@ -409,11 +385,11 @@ class Opt_In_Geo {
 	/**
 	 * Updates ip-country map and stores in  options ( sitemeta ) table
 	 *
-	 * @param $ip
-	 * @param $country
+	 * @param string $ip IP.
+	 * @param string $country Country.
 	 * @return mixed
 	 */
-	private function _update_ip_county_map( $ip, $country ) {
+	private function update_ip_county_map( $ip, $country ) {
 		$country_ip_map[ $ip ] = $country;
 		update_option( self::COUNTRY_IP_MAP, $country_ip_map );
 		return $country;
@@ -424,7 +400,7 @@ class Opt_In_Geo {
 	 *
 	 * @return array
 	 */
-	private function _get_ip_county_map() {
+	private function get_ip_county_map() {
 		return get_option( self::COUNTRY_IP_MAP, array() );
 	}
 
@@ -433,9 +409,10 @@ class Opt_In_Geo {
 	 *
 	 * @return bool
 	 */
-	private static function _is_crawler() {
+	private static function is_crawler() {
 
-		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && preg_match( '/bot|crawler|ia_archiver|mediapartners-google|80legs|wget|voyager|baiduspider|curl|yahoo!|slurp/i', $_SERVER['HTTP_USER_AGENT'] ) ) {
+		$user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT' );
+		if ( $user_agent && preg_match( '/bot|crawler|ia_archiver|mediapartners-google|80legs|wget|voyager|baiduspider|curl|yahoo!|slurp/i', $user_agent ) ) {
 			return true;
 		}
 
@@ -445,31 +422,31 @@ class Opt_In_Geo {
 	/**
 	 * Returns country string using ip address
 	 *
-	 * @param $ip
+	 * @param string $ip IP.
 	 * @return string
 	 */
 	public function get_country_from_ip( $ip ) {
-		// check for bot
-		if ( self::_is_crawler() ) {
+		// check for bot.
+		if ( self::is_crawler() ) {
 			return false;
 		}
 
 		$ip = (string) $ip;
 
 		if ( '127.0.0.1' === $ip ) {
-			return $this->_update_ip_county_map( $ip, 'localhost' ); }
+			return $this->update_ip_county_map( $ip, 'localhost' ); }
 
-		$country_ip_map = $this->_get_ip_county_map();
+		$country_ip_map = $this->get_ip_county_map();
 		if ( isset( $country_ip_map[ $ip ] ) ) {
 			if ( ! empty( $country_ip_map[ $ip ] ) ) {
 				return $country_ip_map[ $ip ];
 			}
 		}
-		$service = $this->_get_service();
-		$country = $this->_country_from_api( $ip, $service );
+		$service = $this->get_service();
+		$country = $this->country_from_api( $ip, $service );
 
 		if ( ! empty( $country ) ) {
-			return $this->_update_ip_county_map( $ip, $country );
+			return $this->update_ip_county_map( $ip, $country );
 		}
 
 		return 'XX';

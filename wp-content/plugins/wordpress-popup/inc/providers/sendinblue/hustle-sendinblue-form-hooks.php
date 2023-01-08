@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_SendinBlue_Form_Hooks class
+ *
+ * @package Hustle
+ */
 
 /**
  * Class Hustle_SendinBlue_Form_Hooks
@@ -13,7 +18,8 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.0
 	 *
-	 * @param array $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @throws Exception Required fields are missed.
 	 * @return array
 	 */
 	public function add_entry_fields( $submitted_data ) {
@@ -64,7 +70,7 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$submitted_data['LASTNAME'] = $submitted_data['last_name'];
 			}
 
-			// unset this as we don't need it
+			// unset this as we don't need it.
 			unset( $submitted_data['first_name'] );
 			unset( $submitted_data['last_name'] );
 
@@ -81,10 +87,10 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$merge_vals[ strtoupper( $key ) ] = $sub_d;
 			}
 
-			// currently only supports text fields
+			// currently only supports text fields.
 			if ( ! empty( $merge_vals ) ) {
 
-				// get custom fields
+				// get custom fields.
 				$result     = $api->get_attributes();
 				$api_fields = array();
 
@@ -99,13 +105,13 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$form_fields = array_change_key_case( $form_fields, CASE_UPPER );
 
 				foreach ( $new_fields as $custom_field ) {
-					// create custom fields
+					// create custom fields.
 					$type = isset( $form_fields[ $custom_field ] ) ? $this->get_field_type( $form_fields[ $custom_field ]['type'] ) : 'text';
 					$api->create_attributes( $custom_field, 'normal', array( 'type' => $type ) );
 				}
 			}
 
-			// check if email exists
+			// check if email exists.
 			try {
 				$email_exists = $this->get_subscriber( $api, $email );
 			} catch ( Exception $e ) {
@@ -139,12 +145,11 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				$form_settings_instance
 			);
 
-			// update contact if email exists
+			// update contact if email exists.
 			if ( false === $email_exists ) {
 				$res = $api->create_contact( $subscribe_data );
 			} else {
-				//phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
-				$subscribe_data['listIds'] = array_unique( array_merge( $email_exists->listIds, $subscribe_data['listIds'] ) );
+				$subscribe_data['listIds'] = array_unique( array_merge( $email_exists->listIds, $subscribe_data['listIds'] ) );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				$res                       = $api->update_contact( $subscribe_data );
 			}
 
@@ -204,11 +209,31 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	}
 
 	/**
+	 * Unsubscribe
+	 *
+	 * @param string $email Email.
+	 */
+	public function unsubscribe( $email ) {
+		$addon                  = $this->addon;
+		$form_settings_instance = $this->form_settings_instance;
+		$addon_setting_values   = $form_settings_instance->get_form_settings_values();
+		$list_id                = (int) $addon_setting_values['list_id'];
+		$global_multi_id        = $addon_setting_values['selected_global_multi_id'];
+		try {
+			$api = $addon::api( $addon->get_setting( 'api_key', '', $global_multi_id ) );
+			$api->delete_email( $list_id, $email );
+		} catch ( Exception $e ) {
+			Opt_In_Utils::maybe_log( $addon->get_slug(), 'unsubscribtion is failed', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Check whether the email is already subscribed.
 	 *
 	 * @since 4.0
 	 *
-	 * @param $submitted_data
+	 * @param array $submitted_data Submitted data.
+	 * @param bool  $allow_subscribed Allow already subscribed.
 	 * @return bool
 	 */
 	public function on_form_submit( $submitted_data, $allow_subscribed = true ) {
@@ -248,7 +273,7 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 				// triggers exception if not found.
 				$existing_user = $this->get_subscriber( $api, $submitted_data['email'] );
 
-				if ( ! empty( $existing_user ) && in_array( $list_id, $existing_user->listIds, true ) ) { //phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+				if ( ! empty( $existing_user ) && in_array( $list_id, $existing_user->listIds, true ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 					$is_success = self::ALREADY_SUBSCRIBED_ERROR;
 				}
 			} catch ( Exception $e ) {
@@ -274,11 +299,11 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 			$form_settings_instance
 		);
 
-		// process filter
+		// process filter.
 		if ( true !== $is_success ) {
-			// only update `_submit_form_error_message` when not empty
+			// only update `submit_form_error_message` when not empty.
 			if ( ! empty( $is_success ) ) {
-				$this->_submit_form_error_message = (string) $is_success;
+				$this->submit_form_error_message = (string) $is_success;
 			}
 			return $is_success;
 		}
@@ -292,21 +317,21 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 * This method is to be inherited
 	 * And extended by child classes.
 	 *
-	 * Make use of the property `$_subscriber`
+	 * Make use of the property `$subscriber`
 	 * Method to omit double api calls
 	 *
 	 * @since 4.0.2
 	 *
-	 * @param   object $api
-	 * @param   mixed  $data
+	 * @param   object $api Api.
+	 * @param   mixed  $data Data.
 	 * @return  mixed   array/object API response on queried subscriber
 	 */
 	protected function get_subscriber( $api, $data ) {
-		if ( empty( $this->_subscriber ) && ! isset( $this->_subscriber[ md5( $data ) ] ) ) {
-			$this->_subscriber[ md5( $data ) ] = $api->get_contact( $data );
+		if ( empty( $this->subscriber ) && ! isset( $this->subscriber[ md5( $data ) ] ) ) {
+			$this->subscriber[ md5( $data ) ] = $api->get_contact( $data );
 		}
 
-		return $this->_subscriber[ md5( $data ) ];
+		return $this->subscriber[ md5( $data ) ];
 	}
 
 	/**
@@ -320,7 +345,7 @@ class Hustle_SendinBlue_Form_Hooks extends Hustle_Provider_Form_Hooks_Abstract {
 	 *
 	 * @since 4.1
 	 *
-	 * @param string hustle field type
+	 * @param string $type hustle field type.
 	 * @return string Api field type
 	 */
 	protected function get_field_type( $type ) {

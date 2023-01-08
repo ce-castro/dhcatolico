@@ -128,7 +128,7 @@ if ( ! class_exists( 'Hustle_Module_Admin' ) ) :
 				);
 
 				// Upgrade link.
-				if ( Opt_In_Utils::_is_free() ) {
+				if ( Opt_In_Utils::is_free() ) {
 					if ( ! Opt_In_Utils::is_hustle_included_in_membership() ) {
 						$url   = Opt_In_Utils::get_link( 'wpmudev', 'hustle_pluginlist_upgrade' );
 						$label = __( 'Upgrade to Hustle Pro', 'hustle' );
@@ -164,7 +164,7 @@ if ( ! class_exists( 'Hustle_Module_Admin' ) ) :
 			if ( Opt_In::$plugin_base_file === $plugin_file ) {
 				$row_meta = array();
 
-				if ( Opt_In_Utils::_is_free() ) {
+				if ( Opt_In_Utils::is_free() ) {
 					$row_meta['rate'] = '<a href="https://wordpress.org/support/plugin/wordpress-popup/reviews/#new-post" target="_blank">' . esc_html__( 'Rate Hustle', 'hustle' ) . '</a>';
 				}
 
@@ -239,7 +239,7 @@ if ( ! class_exists( 'Hustle_Module_Admin' ) ) :
 		 * @since 4.2.0
 		 */
 		private function maybe_add_recommended_plugins_notice() {
-			if ( ! Opt_In_Utils::_is_free() ) {
+			if ( ! Opt_In_Utils::is_free() ) {
 				return;
 			}
 

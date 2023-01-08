@@ -43,6 +43,7 @@ $vanilla_notice = array(
 			'is_optin'           => $is_optin,
 			'device'             => $device,
 			'smallcaps_singular' => $smallcaps_singular,
+			'show_cta'           => $show_cta,
 		)
 	);
 	?>

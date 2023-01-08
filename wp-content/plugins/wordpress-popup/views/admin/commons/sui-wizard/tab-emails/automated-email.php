@@ -205,7 +205,10 @@ $options = array(
 
 					<div class="sui-form-field">
 
-						<label for="hustle-email-recipient" class="sui-label"><?php esc_html_e( 'Recipient', 'hustle' ); ?></label>
+						<label for="hustle-email-recipient" class="sui-label">
+							<?php esc_html_e( 'Recipient', 'hustle' ); ?>
+							<span class="sui-label-note"><?php esc_html_e( 'Separate multiple emails with a comma', 'hustle' ); ?></span>
+						</label>
 
 						<div class="sui-insert-variables">
 
@@ -221,6 +224,7 @@ $options = array(
 							<select
 								class="sui-variables hustle-field-options hustle-select-variables"
 								data-for="hustle-email-recipient"
+								data-behavior="insert"
 								data-type="email"
 							></select>
 

@@ -1,5 +1,13 @@
 <?php
-$image_url = $settings[ $attribute ];
+/**
+ * Upload image section
+ *
+ * @package Hustle
+ */
+
+if ( empty( $button_text ) ) {
+	$button_text = __( 'Upload image', 'hustle' );
+}
 ?>
 
 <div class="sui-form-field">
@@ -29,7 +37,7 @@ $image_url = $settings[ $attribute ];
 		</div>
 
 		<button class="sui-upload-button hustle-image-uploader-browse">
-			<i class="sui-icon-upload-cloud" aria-hidden="true"></i> <?php esc_html_e( 'Upload image', 'hustle' ); ?>
+			<i class="sui-icon-upload-cloud" aria-hidden="true"></i> <?php echo esc_html( $button_text ); ?>
 		</button>
 
 		<div class="sui-upload-file">

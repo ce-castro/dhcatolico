@@ -1,10 +1,18 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+/**
+ * Hustle_Aweber class
+ *
+ * @package Hustle
+ */
+
 if ( ! class_exists( 'Hustle_Aweber' ) ) :
 
+	/**
+	 * Class Hustle_Aweber
+	 */
 	class Hustle_Aweber extends Hustle_Provider_Abstract {
 
 		const SLUG = 'aweber';
-		// const NAME = "AWeber";
 
 		const APP_ID = 'b0cd0152';
 
@@ -18,9 +26,16 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		const ACCESS_OAUTH2_REFRESH = 'access_oauth2_refresh';
 
 		/**
-		 * @var $api AWeberAPI
+		 * Api
+		 *
+		 * @var AWeberAPI
 		 */
 		protected static $api;
+		/**
+		 * Errors
+		 *
+		 * @var array
+		 */
 		protected static $errors;
 
 		/**
@@ -30,38 +45,46 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 *
 		 * @var self|null
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
+		 * Slug
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_slug = 'aweber';
+		protected $slug = 'aweber';
 
 		/**
+		 * Version
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_version = '1.0';
+		protected $version = '1.0';
 
 		/**
+		 * Class
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_class = __CLASS__;
+		protected $class = __CLASS__;
 
 		/**
+		 * Title
+		 *
 		 * @since 3.0.5
 		 * @var string
 		 */
-		protected $_title = 'Aweber';
+		protected $title = 'Aweber';
 
 		/**
 		 * Class name of form settings
 		 *
 		 * @var string
 		 */
-		protected $_form_settings = 'Hustle_Aweber_Form_Settings';
+		protected $form_settings = 'Hustle_Aweber_Form_Settings';
 
 		/**
 		 * Class name of form hooks
@@ -69,21 +92,14 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 * @since 4.0
 		 * @var string
 		 */
-		protected $_form_hooks = 'Hustle_Aweber_Form_Hooks';
-
-		/**
-		 * Connected Account Info
-		 *
-		 * @var integer
-		 */
-		private $_account_id = 0;
+		protected $form_hooks = 'Hustle_Aweber_Form_Hooks';
 
 		/**
 		 * Provider constructor.
 		 */
 		public function __construct() {
-			$this->_icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
-			$this->_logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
+			$this->icon_2x = plugin_dir_url( __FILE__ ) . 'images/icon.png';
+			$this->logo_2x = plugin_dir_url( __FILE__ ) . 'images/logo.png';
 		}
 
 		/**
@@ -92,13 +108,18 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 * @return self|null
 		 */
 		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
 
-			return self::$_instance;
+			return self::$instance;
 		}
 
+		/**
+		 * Get API
+		 *
+		 * @return null|object
+		 */
 		public static function api() {
 			if ( ! is_null( self::$api ) ) {
 
@@ -107,17 +128,18 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 
 			return null;
 		}
+
 		/**
 		 * Get API Instance
 		 *
 		 * @since 1.0
 		 * @since 4.0.1 $multi_global_id parameter added
 		 *
-		 * @param string|null $multi_global_id
-		 * @param array|null  $api_credentials
+		 * @param string|null $multi_global_id Multi global ID.
+		 * @param array|null  $api_credentials Api creds.
 		 *
 		 * @return Hustle_Addon_Aweber_Wp_Api
-		 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
+		 * @throws Hustle_Addon_Aweber_Wp_Api_Exception Missing global ID.
 		 */
 		public function get_api( $multi_global_id = null, $api_credentials = array() ) {
 
@@ -149,7 +171,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 *
 		 * @since 4.0.1
 		 *
-		 * @param string $multi_global_id
+		 * @param string|null $multi_global_id Multi global ID.
 		 * @return array
 		 */
 		private function get_credentials_keys( $multi_global_id ) {
@@ -212,7 +234,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 *
 		 * @since 4.0.1
 		 *
-		 * @param string $global_multi_id
+		 * @param string $global_multi_id Global multi ID.
 		 * @return string|false
 		 */
 		public function get_account_id( $global_multi_id ) {
@@ -239,10 +261,10 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		/**
 		 * Get validated account_id
 		 *
+		 * @param string $global_multi_id Global multi ID.
+		 * @param array  $api_key Api key.
 		 * @return integer
-		 * @throws Hustle_Addon_Aweber_Exception
-		 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-		 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
+		 * @throws Hustle_Addon_Aweber_Exception Failed to get AWeber account information.
 		 */
 		public function get_validated_account_id( $global_multi_id = null, $api_key = array() ) {
 
@@ -278,24 +300,17 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		/**
 		 * Validate Access Token
 		 *
-		 * @param $application_key
-		 * @param $application_secret
-		 * @param $request_token
-		 * @param $token_secret
-		 * @param $oauth_verifier
-		 *
-		 * @throws Hustle_Addon_Aweber_Wp_Api_Exception
-		 * @throws Hustle_Addon_Aweber_Wp_Api_Not_Found_Exception
+		 * @param string $verifier_code Verification code.
 		 */
 		public function get_validated_access_token( $verifier_code ) {
-			// reinit api
+			// reinit api.
 			self::$api = null;
 
-			// get access_token
+			// get access_token.
 			$api           = $this->get_api();
 			$access_tokens = $api->process_callback_request( $verifier_code );
 
-			// reinit api with new access token open success for future usage
+			// reinit api with new access token open success for future usage.
 			self::$api = null;
 			return $access_tokens;
 		}
@@ -322,7 +337,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param array $submitted_data
+		 * @param array $submitted_data Submitted data.
 		 * @return array
 		 */
 		public function configure_api_key( $submitted_data ) {
@@ -350,7 +365,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 					// If not active, activate it.
 					if (
 					$this->is_active() ||
-					Hustle_Providers::get_instance()->activate_addon( $this->_slug )
+					Hustle_Providers::get_instance()->activate_addon( $this->slug )
 					) {
 
 						$keys_names = self::get_option_keys();
@@ -456,6 +471,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 
 			$auth_url = $api->get_authorization_uri( 0, true, Hustle_Data::INTEGRATIONS_PAGE );
 
+			/* translators: 1. open 'a' tag 2. closing 'a' tag */
 			$step_html = Hustle_Provider_Utils::get_integration_modal_title_markup( __( 'Configure Aweber', 'hustle' ), sprintf( __( 'Please %1$sclick here%2$s to connect to Aweber service to get your authorization code.', 'hustle' ), '<a href="' . esc_url( $auth_url ) . '" target="_blank">', '</a>' ) );
 			if ( $has_errors ) {
 
@@ -517,7 +533,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 *
 		 * @since 4.1.1
 		 *
-		 * @param array $data
+		 * @param array $data Data.
 		 * @return array
 		 */
 		public function configure_migrated_api_key( $data ) {
@@ -540,7 +556,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 				// If not active, activate it.
 				if (
 				$this->is_active() ||
-				Hustle_Providers::get_instance()->activate_addon( $this->_slug )
+				Hustle_Providers::get_instance()->activate_addon( $this->slug )
 				) {
 
 					$keys_names = self::get_option_keys();
@@ -557,7 +573,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 							continue;
 						}
 
-						// Add the key to the $settings_to_save
+						// Add the key to the $settings_to_save.
 						$settings_to_save[ $name ] = $validated_credentials[ $name ];
 
 						// Store it in the wp_options to remain compatible with 4.0.0 in case of a rollback, even though these won't be used.
@@ -579,7 +595,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 		 *
 		 * @since 4.0
 		 *
-		 * @param string $api_key
+		 * @param string $api_key Api key.
 		 * @return bool
 		 */
 		private function get_validated_credentials( $api_key ) {
@@ -587,7 +603,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 				return false;
 			}
 
-			// Check if API key is valid
+			// Check if API key is valid.
 			try {
 
 				$tokens = $this->get_validated_access_token( $api_key );
@@ -605,7 +621,7 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 				return false;
 			}
 
-			// Check API Key by validating it on get_info request
+			// Check API Key by validating it on get_info request.
 			try {
 				$account_id = $this->get_validated_account_id( null, $api_key );
 				if ( ! $account_id ) {
@@ -620,6 +636,9 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 			return $api_key;
 		}
 
+		/**
+		 * Remove wp_options rows
+		 */
 		public function remove_wp_options() {
 			$keys_names = self::get_option_keys();
 
@@ -646,6 +665,11 @@ if ( ! class_exists( 'Hustle_Aweber' ) ) :
 			);
 		}
 
+		/**
+		 * Get 3.0 provider mappings
+		 *
+		 * @return array
+		 */
 		public function get_30_provider_mappings() {
 			return array(
 				'api_key' => 'api_key',

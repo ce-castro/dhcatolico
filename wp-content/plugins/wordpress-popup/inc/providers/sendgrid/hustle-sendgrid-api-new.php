@@ -1,21 +1,39 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * SendGrid API Helper for New Marketing Campaigns
+ *
+ * @package Hustle
  **/
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
 if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 
+	/**
+	 * Class Hustle_New_SendGrid_Api
+	 */
 	class Hustle_New_SendGrid_Api {
 		/**
-		 * @var (string) SendGrid API KEY
+		 * SendGrid API KEY
+		 *
+		 * @var (string)
 		 **/
 		private $api_key;
 
+		/**
+		 * SendGrid URL
+		 *
+		 * @var string
+		 */
 		protected $sendgrid_url = 'https://api.sendgrid.com/v3';
 
+		/**
+		 * Constructor
+		 *
+		 * @param string $api_key Api key.
+		 */
 		public function __construct( $api_key ) {
 			$this->api_key = $api_key;
 		}
@@ -76,16 +94,50 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 
 		/**
 		 * Updates a recipient in the SendGrid
+		 *
+		 * @param string $list_id List ID.
+		 * @param array  $data Data.
+		 * @return bool
 		 */
 		public function update_recipient( $list_id, $data ) {
 			return $this->create_and_add_recipient_to_list( $list_id, $data );
 		}
 
 		/**
+		 * Delete subscriber from the list
+		 *
+		 * @param string $list_id List ID.
+		 * @param string $email Email.
+		 *
+		 * @return bool
+		 */
+		public function delete_email( $list_id, $email ) {
+			$args       = $this->get_headers();
+			$contact_id = $this->email_exists( $email, $list_id );
+			if ( empty( $contact_id ) ) {
+				return false;
+			}
+
+			$url      = $this->sendgrid_url . '/marketing/lists/' . $list_id . '/contacts';
+			$response = $this->request( add_query_arg( 'contact_ids', $contact_id, $url ), $args, 'DELETE' );
+
+			if ( ! is_array( $response ) || ! isset( $response['body'] ) ) {
+				return false;
+			}
+
+			$recipient_response = json_decode( $response['body'], true );
+			if ( empty( $recipient_response['job_id'] ) ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
 		 * Adds/Updates a recipient in the SendGrid and adds it to the list
 		 *
 		 * @param   string $list_id        The list ID to which the recipient will be added.
-		 * @param   string $data           The data of the recipient
+		 * @param   string $data           The data of the recipient.
 		 *
 		 * @return  WP_Error|boolean   True if successful, WP_Error otherwise.
 		 */
@@ -140,7 +192,7 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		/**
 		 * Prepare custom field to Sendgrid format
 		 *
-		 * @param array $data
+		 * @param array $data Data.
 		 * @return array
 		 */
 		public function prepare_custom_fields( $data ) {
@@ -167,7 +219,8 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		/**
 		 * Check if an email is already used.
 		 *
-		 * @param string $email
+		 * @param string $email Email.
+		 * @param string $list_id List ID.
 		 * @return boolean true if the given email already in use otherwise false.
 		 **/
 		public function email_exists( $email, $list_id ) {
@@ -205,7 +258,7 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		/**
 		 * Get Sendgrid Custom/Reserved fields
 		 *
-		 * @param bool $reserved
+		 * @param bool $reserved Reserved.
 		 * @return array
 		 */
 		private function get_custom_fields( $reserved = false ) {
@@ -245,7 +298,7 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		/**
 		 * Add custom fields
 		 *
-		 * @param array $fields
+		 * @param array $fields Fields.
 		 */
 		public function add_custom_fields( $fields ) {
 			$existed_fields  = wp_list_pluck( $this->get_custom_fields(), 'id', 'name' );
@@ -273,7 +326,7 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		/**
 		 * Add custom field
 		 *
-		 * @param array $field_data (name, field_type)
+		 * @param array $field_data (name, field_type).
 		 */
 		public function add_custom_field( $field_data ) {
 
@@ -301,22 +354,22 @@ if ( ! class_exists( 'Hustle_New_SendGrid_Api' ) ) :
 		/**
 		 * Request
 		 *
-		 * @param string $url
-		 * @param array  $args
-		 * @param string $method GET|POST
+		 * @param string $url URL.
+		 * @param array  $args Args.
+		 * @param string $method GET|POST.
 		 * @return array|WP_Error
 		 */
 		private function request( $url, $args, $method = 'GET' ) {
-			if ( empty( $args['method'] ) && in_array( $method, array( 'GET', 'POST', 'PUT' ), true ) ) {
+			if ( empty( $args['method'] ) && in_array( $method, array( 'GET', 'POST', 'PUT', 'DELETE' ), true ) ) {
 				$args['method'] = $method;
 			}
 
 			$response = wp_remote_request( $url, $args );
 
-			$utils                      = Hustle_Provider_Utils::get_instance();
-			$utils->_last_url_request   = $url;
-			$utils->_last_data_sent     = $args;
-			$utils->_last_data_received = $response;
+			$utils                     = Hustle_Provider_Utils::get_instance();
+			$utils->last_url_request   = $url;
+			$utils->last_data_sent     = $args;
+			$utils->last_data_received = $response;
 
 			return $response;
 		}
