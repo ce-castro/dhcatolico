@@ -428,7 +428,7 @@ class Hustle_Module_Front {
 		}
 		$font_name = Opt_In::$plugin_url . 'assets/hustle-ui/fonts/hustle-icons-font';
 		?>
-			<link rel="preload" href="<?php echo esc_attr( $font_name . '.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
+			<link rel="preload" href="<?php echo esc_url( $font_name . '.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 		<?php
 	}
 
@@ -625,7 +625,7 @@ class Hustle_Module_Front {
 			wp_enqueue_style( $id, $google_font_url, array(), '1.0' );
 		} else {
 			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
-			return '<link rel="stylesheet" id="' . $id . '" href="' . $google_font_url . '" media="all">';
+			return '<link rel="stylesheet" id="' . $id . '" href="' . esc_url( $google_font_url ) . '" media="all">';
 		}
 	}
 

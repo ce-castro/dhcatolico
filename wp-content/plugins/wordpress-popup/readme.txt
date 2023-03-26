@@ -1,6 +1,6 @@
 === Hustle - Email Marketing, Lead Generation, Optins, Popups ===
 Plugin Name: Hustle - Email Marketing, Lead Generation, Opt-ins, Popups
-Version: 7.6.3
+Version: 7.6.4
 Author: WPMU DEV
 Author URI: https://wpmudev.com/
 Contributors: WPMUDEV
@@ -8,7 +8,7 @@ Tags: marketing, popup, optin, newsletter, subscription form, email, advertise, 
 Requires at least: 5.2
 Tested up to: 6.1
 Requires PHP: 5.6.20
-Stable tag: 7.6.3
+Stable tag: 7.6.4
 
 Setup email optin forms, popups, newsletter forms & subscription forms to generate email leads with the best marketing popup builder
 
@@ -185,6 +185,11 @@ No! Hustle gives you all the same settings and options as Hustle Pro. The only d
 
 == Changelog ==
 
+= 7.6.4 ( 2023-02-01 ) =
+
+- Enhance: Security improvements.
+
+
 = 7.6.3 ( 2022-12-26 ) =
 
 - Fix: Loading issues with Mobile styles
@@ -266,24 +271,6 @@ No! Hustle gives you all the same settings and options as Hustle Pro. The only d
 - Enhance: Update integration with WPMU DEV Dashboard plugin
 - Fix: Social sharing icons are always vertical
 - Fix: Offset settings don't work in social share
-
-
-= 7.4.12 ( 2022-02-07 ) =
-
-- Enhance: Enable the analytics tracking by default for new modules
-- Enhance: Speed up query time by caching `attachment_url_to_postid` function
-- Enhance: Update wp-color-picker-alpha library to 3.0.2 version
-- Enhance: Hubspot migration to Granular CRM Scopes
-- Enhance: Plugin icon
-- Enhance: Preload icons font
-- Enhance: Caching some DB requests
-- Enhance: One-Click unsubscribe for local lists
-- Fix: Error when nothing is selected from Mailchimp Group Dropdown
-- Fix: Social Sharing modules do not follow the defined Mobile Breakpoint
-- Fix: It does not subscribe Mailchimp archived contacts
-- Fix: Schedule does not follow the relevant Timezone
-- Fix: Wildcard does not work well
-- Fix: `Never end the schedule` option issue
 
 [Changelog for previous versions](https://wpmudev.com/project/hustle/#view-changelog).
 

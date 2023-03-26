@@ -173,7 +173,7 @@ class Hustle_Module_Front_Ajax {
 			} else {
 				$unsubscribe_url = '';
 			}
-			$body = str_replace( '{hustle_unsubscribe_link}', $unsubscribe_url, $body );
+			$body = str_replace( '{hustle_unsubscribe_link}', esc_url( $unsubscribe_url ), $body );
 		}
 
 		$subject = $this->replace_placeholders( $module_id, $subject, $form_data );

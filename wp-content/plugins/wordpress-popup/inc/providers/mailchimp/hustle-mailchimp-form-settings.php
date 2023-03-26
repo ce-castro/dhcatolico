@@ -556,7 +556,7 @@ class Hustle_Mailchimp_Form_Settings extends Hustle_Provider_Form_Settings_Abstr
 			if ( is_wp_error( $response ) ) {
 				$integrations_global_url = add_query_arg( 'page', Hustle_Data::INTEGRATIONS_PAGE, admin_url( 'admin.php' ) );
 				/* translators: 1. open 'a' tag 2. closing 'a' tag */
-				$message = sprintf( __( 'There was an error fetching the lists. Please make sure the %1$sselected account settings%2$s are correct.', 'hustle' ), '<a href="' . $integrations_global_url . '" target="_blank">', '</a>' );
+				$message = sprintf( __( 'There was an error fetching the lists. Please make sure the %1$sselected account settings%2$s are correct.', 'hustle' ), '<a href="' . esc_url( $integrations_global_url ) . '" target="_blank">', '</a>' );
 
 				// TODO: handle errors from here on all providers gracefully.
 

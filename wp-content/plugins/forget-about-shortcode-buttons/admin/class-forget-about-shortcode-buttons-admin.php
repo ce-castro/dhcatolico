@@ -61,6 +61,8 @@ class Forget_About_Shortcode_Buttons_Admin {
 	}
 	public function fasc_buttons()
 	{
+		check_ajax_referer( 'fasc_save', 'security' );
+
 		if($_GET['load']=="save_button")
 		{
 			//$buttons = get_user_meta(get_current_user_id(), 'fasc-buttons', true); //get existing buttons
@@ -242,20 +244,12 @@ class Forget_About_Shortcode_Buttons_Admin {
 			//but we do want to add CSS, so any buttons in the widget area look good at least
 			//passing load_js = false, prevents the FASC MCE plugin from loading, but we do register the CSS
 			wp_enqueue_script( $this->plugin_name."-admin", plugin_dir_url( __FILE__ ) . 'js/forget-about-shortcode-buttons-admin.js', array( 'jquery' ), $this->version, false );
-			wp_localize_script($this->plugin_name."-admin", 'Fasc', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'load_js' => false,  'plugin_url' => plugin_dir_url( __FILE__ ), 'home_url' => (home_url('/')) ));
+			wp_localize_script($this->plugin_name."-admin", 'Fasc', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'load_js' => false,  'plugin_url' => plugin_dir_url( __FILE__ ), 'home_url' => home_url('/'), 'ajax_nonce' => wp_create_nonce('fasc_save') ));
 		}
 
 	}
 	public function enqueue_scripts() {
-
-
-		/*echo "stuff";
-		global $wp_scripts;
-		foreach( $wp_scripts->queue as $script ) :
-		   //$result['scripts'][] =  $wp_scripts->registered[$script]->src . ";";
-		   echo "".$wp_scripts->registered[$script]->src . ";\r\n";
-		endforeach;*/
-
+		
 		//don't load scripts if WP isn't loading mce-view
 		//if(( ! wp_script_is( 'mce-view', 'enqueued' ) )&&( ! wp_script_is( 'customize-widgets', 'enqueued' ) )){
 		if( ! wp_script_is( 'mce-view', 'enqueued' ) ){
@@ -265,7 +259,7 @@ class Forget_About_Shortcode_Buttons_Admin {
 
 		// // load this everywhere, to hook into tinymce via JS (for widget area etc)
 		wp_enqueue_script( $this->plugin_name."-admin", plugin_dir_url( __FILE__ ) . 'js/forget-about-shortcode-buttons-admin.js', array( 'jquery' ), $this->version, false );
-		wp_localize_script($this->plugin_name."-admin", 'Fasc', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'load_js' => true,  'plugin_url' => plugin_dir_url( __FILE__ ), 'home_url' => (home_url('/')) ));
+		wp_localize_script($this->plugin_name."-admin", 'Fasc', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'load_js' => true,  'plugin_url' => plugin_dir_url( __FILE__ ), 'home_url' => home_url('/'), 'ajax_nonce' => wp_create_nonce('fasc_save') ));
 
 		wp_enqueue_script( $this->plugin_name.'-fasc-views', plugin_dir_url( __FILE__ ) . 'js/forget-about-shortcode-buttons-fasc-views.js', array( 'jquery', 'editor', 'mce-view', 'wp-color-picker'), $this->version, false );
 		//wp_enqueue_script( $this->plugin_name.'-fasc-plugin', plugin_dir_url( __FILE__ ) . 'js/forget-about-shortcode-buttons-fasc-plugin.js', array( 'jquery', 'editor', $this->plugin_name.'-fasc-views' ), $this->version, false );
@@ -276,8 +270,7 @@ class Forget_About_Shortcode_Buttons_Admin {
 		wp_enqueue_script( $this->plugin_name.'-minicolors', plugin_dir_url( __FILE__ ) . 'js/jquery.minicolors.min.js', array( 'jquery', $this->plugin_name.'-fasc-views', 'wp-color-picker' ), $this->version, false );
 
 		$this->enqueue_styles();
-
-
+		
 	}
 	
 	public function mce_add_editor_style() {		

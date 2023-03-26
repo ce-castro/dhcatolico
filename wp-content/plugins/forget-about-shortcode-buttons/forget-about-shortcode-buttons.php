@@ -16,7 +16,7 @@
  * Plugin Name:       Forget About Shortcode Buttons
  * Plugin URI:        http://www.designsandcode.com/wordpress-plugins/forget-about-shortcode-buttons-plugin/
  * Description:       A visual way to add CSS buttons in the rich text editor and to your themes.
- * Version:           2.1.2
+ * Version:           2.1.3
  * Author:            Designs & Code
  * Author URI:        http://designsandcode.com
  * License:           GPL-2.0+

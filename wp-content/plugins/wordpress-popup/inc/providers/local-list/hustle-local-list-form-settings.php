@@ -89,7 +89,7 @@ if ( ! class_exists( 'Hustle_Local_List_Form_Settings' ) ) :
 				sprintf(
 					/* translators: 1. open 'a' tag 2. closing 'a' tag */
 					__( 'Save the submissions in your database so you can access them or export them from the %1$sEmail Lists%2$s page. Local list (when active) also stores the status of active third-party apps for each submission.', 'hustle' ),
-					'<a href="' . $entries_page . '" target="_blank">',
+					'<a href="' . esc_url( $entries_page ) . '" target="_blank">',
 					'</a>'
 				)
 			);

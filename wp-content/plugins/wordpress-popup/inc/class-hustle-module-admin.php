@@ -123,7 +123,7 @@ if ( ! class_exists( 'Hustle_Module_Admin' ) ) :
 				$admin_url    = admin_url( 'admin.php' );
 				$settings_url = add_query_arg( 'page', 'hustle_settings', $admin_url );
 				$links        = array(
-					'settings' => '<a href="' . $settings_url . '">' . esc_html__( 'Settings', 'hustle' ) . '</a>',
+					'settings' => '<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Settings', 'hustle' ) . '</a>',
 					'docs'     => '<a href="' . esc_url( Opt_In_Utils::get_link( 'docs', 'hustle_pluginlist_docs' ) ) . '" target="_blank">' . esc_html__( 'Docs', 'hustle' ) . '</a>',
 				);
 

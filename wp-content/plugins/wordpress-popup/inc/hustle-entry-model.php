@@ -746,7 +746,7 @@ class Hustle_Entry_Model {
 						if ( strlen( $website ) > $truncate ) {
 							$website = substr( $website, 0, $truncate ) . '...';
 						}
-						$string_value = '<a href="' . $website . '" target="_blank" title="' . __( 'View Website', 'hustle' ) . '">' . $website . '</a>';
+						$string_value = '<a href="' . esc_url( $website ) . '" target="_blank" title="' . __( 'View Website', 'hustle' ) . '">' . $website . '</a>';
 					} else {
 						// truncate url.
 						if ( strlen( $string_value ) > $truncate ) {

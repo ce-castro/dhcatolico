@@ -69,7 +69,7 @@ class Forget_About_Shortcode_Buttons {
 	public function __construct() {
 
 		$this->plugin_name = 'forget-about-shortcode-buttons';
-		$this->version = '2.1.2';
+		$this->version = '2.1.3';
 
 		$this->load_dependencies();
 		$this->set_locale();

@@ -1,10 +1,10 @@
 === Forget About Shortcode Buttons ===
-Contributors: DesignsAndCode
+Contributors: DesignsAndCode, codeamp
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZAHPNUHNUBQJY&lc=GB&item_name=Ross%20Morsali&item_number=wordpress%2dplugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: css, button, shortcode, edit, visual editor, buttons, wysiwyg, post editor, tinymce, shortcodes, button editor, wysiwyg
 Requires at least: 4.2
-Tested up to: 4.9
-Stable tag: 2.1.2
+Tested up to: 6.1
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,9 @@ Ask me some questions!
 
 
 == Changelog ==
+
+= 2.1.3 =
+* Fix - a potential security issue with nonce validation for authenticated users
 
 = 2.1.2 =
 * Fix - JS issues when no TinyMCE instance is loaded on the page
@@ -98,6 +101,8 @@ Ask me some questions!
 
 
 == Description ==
+
+**Compatible with the WordPress Classic Editor, Gutenberg integration coming soon :)**
 
 **Feature requests/ideas welcome!**
 

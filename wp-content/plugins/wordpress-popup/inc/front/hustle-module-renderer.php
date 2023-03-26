@@ -447,7 +447,7 @@ class Hustle_Module_Renderer extends Hustle_Renderer_Abstract {
 		$data        = '';
 
 		if ( 'close' !== $target ) {
-			$data  = sprintf( 'href="%s" target="_%s"', $url, $target );
+			$data  = sprintf( 'href="%s" target="_%s"', esc_url( $url ), $target );
 			$class = $extra_class;
 		}
 
